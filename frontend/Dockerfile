@@ -1,6 +1,6 @@
 # FIRST STAGE
 # Define the base image
-FROM node:20.12.2 as build
+FROM node:18.4.0 as build
 
 # Create a folder, and copy package.json and package-lock.json to it
 WORKDIR /app
