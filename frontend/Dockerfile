@@ -1,10 +1,14 @@
-FROM docker.io/library/nginx:alpine
-EXPOSE 80
-COPY ./build /var/www
-COPY nginx.conf.template /etc/nginx/nginx.conf
-RUN apk add --no-cache tzdata jq
-RUN cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime
-RUN echo "Europe/Brussels" >  /etc/timezone
+# Define the base image
+FROM node:alpine
 
-RUN chmod +w /var/www
-CMD ["nginx", "-g", "daemon off;"]
+# Create a folder and copy the folder structure from local
+WORKDIR /app
+COPY . /app
+
+# Install dependencies
+RUN npm install -g @angular/cli
+RUN npm install
+
+EXPOSE 4200
+
+CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200"]
