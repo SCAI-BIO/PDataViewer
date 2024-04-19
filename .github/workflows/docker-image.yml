@@ -11,6 +11,9 @@ jobs:
     name: Build Docker Images
     runs-on: ubuntu-latest
     steps:
+    - name: Set repository name to lowercase
+      id: repo_name
+      run: echo "::set-env name=REPO_NAME::$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')"
     - name: Checkout
       uses: actions/checkout@v2
     - name: Get Version Tags
@@ -36,20 +39,17 @@ jobs:
         npm install --legacy-peer-deps
         npm ci --loglevel verbose --userconfig npmrc --max-old-space-size=16096 -legacy-peer-deps
         npm run build --userconfig npmrc --max-old-space-size=16096
-    - name: Convert to Lowercase
-      id: lowercase
-      run: echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]'
     - name: Build & push frontend
       uses: docker/build-push-action@v2
       with:
         context: ./frontend
         file: ./frontend/Dockerfile
         push: true
-        tags: ghcr.io/${{ steps.lowercase.outputs.stdout }}/frontend:latest-main, ghcr.io/${{ steps.lowercase.outputs.stdout }}/frontend:${{ steps.versions.outputs.FRONTEND_VERSION }}-main
+        tags: ghcr.io/$REPO_NAME/frontend:latest-main, ghcr.io/$REPO_NAME/frontend:${{ steps.versions.outputs.FRONTEND_VERSION }}-main
     - name: Build & push backend
       uses: docker/build-push-action@v2
       with:
         context: ./backend
         file: ./backend/Dockerfile
         push: true
-        tags: ghcr.io/${{ steps.lowercase.outputs.stdout }}/backend:latest-main, ghcr.io/${{ steps.lowercase.outputs.stdout }}/backend:${{ steps.versions.outputs.BACKEND_VERSION }}-main
+        tags: ghcr.io/$REPO_NAME/backend:latest-main, ghcr.io/$REPO_NAME/backend:${{ steps.versions.outputs.BACKEND_VERSION }}-main
