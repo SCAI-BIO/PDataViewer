@@ -14,7 +14,7 @@ jobs:
     - name: downcase REPO
       id: lowercase
       run: | 
-        echo "REPO=$(GITHUB_REPOSITORY,,)" >> "$GITHUB_OUTPUT"
+        echo "REPO=$(GITHUB_REPOSITORY,,)" >> "${GITHUB_ENV}"
     - name: Checkout
       uses: actions/checkout@v2
     - name: Get Version Tags
@@ -46,11 +46,11 @@ jobs:
         context: ./frontend
         file: ./frontend/Dockerfile
         push: true
-        tags: ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:latest-main, ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:${{ steps.versions.outputs.FRONTEND_VERSION }}-main
+        tags: ghcr.io/${REPO}/frontend:latest-main, ghcr.io/${REPO}/frontend:${{ steps.versions.outputs.FRONTEND_VERSION }}-main
     - name: Build & push backend
       uses: docker/build-push-action@v2
       with:
         context: ./backend
         file: ./backend/Dockerfile
         push: true
-        tags: ghcr.io/${{ steps.lowercase.outputs.REPO }}/backend:latest-main, ghcr.io/${{ steps.lowercase.outputs.REPO }}/backend:${{ steps.versions.outputs.BACKEND_VERSION }}-main
+        tags: ghcr.io/${REPO}/backend:latest-main, ghcr.io/${REPO}/backend:${{ steps.versions.outputs.BACKEND_VERSION }}-main
