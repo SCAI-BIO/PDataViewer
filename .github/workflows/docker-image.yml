@@ -1,0 +1,57 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    steps:
+    - name: downcase REPO
+      id: lowercase
+      run: | 
+        echo "REPO=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Get Version Tags
+      id: versions
+      run: |
+        echo "FRONTEND_VERSION=$(node -p "require('./frontend/package.json').version")" >> "$GITHUB_OUTPUT"
+        echo "BACKEND_VERSION=$(echo "$(<backend/api/routes.py)" | grep -oP "(?<=version=\")[^\"]+")" >> "$GITHUB_OUTPUT"
+    - name: Docker Login
+      uses: docker/login-action@v3
+      with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Setup Node 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.12.2
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    - name: npm build
+      run: |
+        export NODE_OPTIONS="--max_old_space_size=4096"
+        cd frontend
+        npm install --legacy-peer-deps
+        npm ci --loglevel verbose --userconfig npmrc --max-old-space-size=16096 -legacy-peer-deps
+        npm run build --userconfig npmrc --max-old-space-size=16096
+    - name: Build & push frontend
+      uses: docker/build-push-action@v5
+      with:
+        context: ./frontend
+        file: ./frontend/Dockerfile
+        push: true
+        tags: ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:latest, ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:${{ steps.versions.outputs.FRONTEND_VERSION }}
+    - name: Build & push backend
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        file: ./backend/Dockerfile
+        push: true
+        tags: ghcr.io/${{ steps.lowercase.outputs.REPO }}/backend:latest, ghcr.io/${{ steps.lowercase.outputs.REPO }}/backend:${{ steps.versions.outputs.BACKEND_VERSION }}
