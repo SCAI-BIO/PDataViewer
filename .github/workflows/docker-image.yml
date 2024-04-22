@@ -47,11 +47,11 @@ jobs:
         context: ./frontend
         file: ./frontend/Dockerfile
         push: true
-        tags: ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:latest-main, ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:${{ steps.versions.outputs.FRONTEND_VERSION }}-main
+        tags: ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:latest, ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:${{ steps.versions.outputs.FRONTEND_VERSION }}
     - name: Build & push backend
       uses: docker/build-push-action@v5
       with:
         context: ./backend
         file: ./backend/Dockerfile
         push: true
-        tags: ghcr.io/${{ steps.lowercase.outputs.REPO }}/backend:latest-main, ghcr.io/${{ steps.lowercase.outputs.REPO }}/backend:${{ steps.versions.outputs.BACKEND_VERSION }}-main
+        tags: ghcr.io/${{ steps.lowercase.outputs.REPO }}/backend:latest, ghcr.io/${{ steps.lowercase.outputs.REPO }}/backend:${{ steps.versions.outputs.BACKEND_VERSION }}
