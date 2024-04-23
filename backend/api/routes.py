@@ -75,6 +75,7 @@ def get_error_log(response: Response):
         response.status_code = 204
         return {"content": "No error occurred."}
 
+
 @app.get("/datasets", tags=["info"])
 def get_available_cdms():
     datasets = [f for f in os.listdir("datasets") if os.path.isdir(os.path.join("datasets", f))]
