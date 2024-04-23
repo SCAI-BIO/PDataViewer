@@ -77,6 +77,6 @@ def get_error_log(response: Response):
 
 @app.get("/datasets", tags=["info"])
 def get_available_cdms():
-    datasets = [f for f in os.listdir("data") if os.path.isdir(os.path.join("data", f))]
+    datasets = [f for f in os.listdir("datasets") if os.path.isdir(os.path.join("datasets", f))]
     datasets_sorted = np.sort(datasets)
     return datasets_sorted
