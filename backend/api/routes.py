@@ -79,5 +79,4 @@ def get_error_log(response: Response):
 def get_available_cdms():
     datasets = [f for f in os.listdir("data") if os.path.isdir(os.path.join("data", f))]
     datasets_sorted = np.sort(datasets)
-    datasets_sorted_without_default = np.delete(datasets_sorted, np.argwhere(datasets_sorted == "default"))
-    return datasets_sorted_without_default.tolist()
+    return datasets_sorted
