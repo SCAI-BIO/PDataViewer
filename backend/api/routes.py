@@ -1,11 +1,15 @@
 import logging
 import os
+import sys
+
+sys.path.insert(0, "../../backend")
 
 from api.auth import init_credentials
 
 from contextlib import asynccontextmanager
 
 import numpy as np
+import pandas as pd
 
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
@@ -20,7 +24,7 @@ resources = {}
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # On startup
-    init_credentials()
+    # init_credentials()
     resources["msg"] = "Successfully initialized credentials"
     yield
     # On shutdown
@@ -76,8 +80,31 @@ def get_error_log(response: Response):
         return {"content": "No error occurred."}
 
 
-@app.get("/datasets", tags=["info"])
-def get_available_cdms():
-    datasets = [f for f in os.listdir("datasets") if os.path.isdir(os.path.join("datasets", f))]
+@app.get("/datasets")
+def get_available_datasets():
+    datasets = [f for f in os.listdir("../datasets") if os.path.isdir(os.path.join("../datasets", f))]
     datasets_sorted = np.sort(datasets)
-    return datasets_sorted
+    return {idx: dataset for idx, dataset in enumerate(datasets_sorted)}
+
+
+@app.get("/datasets/cdm")
+def get_cdm():
+    folder_path = "../datasets/cdm"
+    files = [file for file in os.listdir(folder_path) if file.endswith(".csv")]
+    dfs = [pd.read_csv(os.path.join(folder_path, file), keep_default_na=False) for file in files]
+    cdm = pd.concat(dfs, ignore_index=True)
+    return cdm.to_dict()
+
+
+@app.get("/datasets/cdm/available_modalities")
+def get_available_modalities():
+    folder_path = "../datasets/cdm"
+    files = [file.replace(".csv", "") for file in os.listdir(folder_path) if file.endswith(".csv")]
+    return {idx: file for idx, file in enumerate(files)}
+
+
+@app.get("/datasets/cdm/{modality}")
+def get_modality(modality: str):
+    folder_path = "../datasets/cdm"
+    mappings = pd.read_csv(f"{folder_path}/{modality}.csv", keep_default_na=False) 
+    return mappings.to_dict()
