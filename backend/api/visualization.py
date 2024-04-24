@@ -1,8 +1,8 @@
-from networkx import chordal_graph_treewidth
+from typing import Any, Hashable
 import pandas as pd
 import json
 
-def generate_chords(modality: str, cohorts: list[str]):
+def generate_chords(modality: str, cohorts: list[str]) -> dict[Hashable, Any]:
     """Generate linkage information for cohorts in a modality.
 
     The variables of each cohort will be encoded in numbers consecutively
@@ -14,7 +14,7 @@ def generate_chords(modality: str, cohorts: list[str]):
         cohorts (list[str]): Cohorts to be included in the mappings
 
     Returns:
-        chords (dict): A dictionary containing linkage information
+        chords (dict[str, str | int]): A dictionary containing linkage information
     """    
     # Initialize a dictionary to decode the numbers of variables later on, and save used cohorts
     decoder = {}
