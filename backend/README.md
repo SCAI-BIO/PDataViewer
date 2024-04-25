@@ -9,5 +9,5 @@ pip install fastapi
 ## Usage
 
 ```python
-cd api && uvicorn routes:app --reload
+uvicorn app.routes:app --reload
 ```
