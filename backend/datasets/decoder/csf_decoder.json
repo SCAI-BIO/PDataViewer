@@ -1,1 +1,0 @@
-{"cohorts": ["PPMI", "BIOFIND", "LuxPARK", "LCC", "PRoBaND", "OPDC"], "PPMI": {"1": "RBCRSLT", "2": "TGLCRSLT", "3": "TOPRRSLT", "4": "WBCRSLT"}, "BIOFIND": {"1": "RBCRSLT", "2": "TGLCRSLT", "3": "TOPRRSLT", "4": "WBCRSLT"}, "LuxPARK": {"1": "ibbl_kit_csf9", "2": "ibbl_kit_csf8", "3": "ibbl_kit_csf10"}, "LCC": {"1": "C_RBCRSLT", "2": "C_TGLCRSLT", "3": "C_TOPRRSLT"}}
