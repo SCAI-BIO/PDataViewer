@@ -1,0 +1,5 @@
+feature,cohort_x,cohort_y,cohort_z,cohort_d
+age,age_x,age_y,,
+height,height_x,height_y,height_z,
+weight,weight_x,,weight_z,
+bmi,,,,
