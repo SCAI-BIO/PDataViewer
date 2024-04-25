@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def generate_chords(modality: str, cohorts: list[str]):
+def generate_chords(modality: str, cohorts: list[str], folder="./cdm"):
     """Generate linkage information for cohorts in a modality.
 
     The variables of each cohort will be encoded in numbers consecutively
@@ -20,7 +20,7 @@ def generate_chords(modality: str, cohorts: list[str]):
     decoder = {}
     decoder["cohorts"] = cohorts
     # Read the .csv file
-    mappings = pd.read_csv(f"{"./cdm"}/{modality}.csv", usecols=cohorts)
+    mappings = pd.read_csv(f"{folder}/{modality}.csv", usecols=cohorts)
     # Filter out rows with only 1 mapping
     mappings = mappings[mappings.notna().sum(axis=1) > 1]
     # Filter out empty columns
