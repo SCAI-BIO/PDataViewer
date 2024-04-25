@@ -1,16 +1,13 @@
 import logging
 import os
 import sys
-import json
 
 sys.path.insert(0, "../../backend")
 
-from api.auth import init_credentials
 from api.visualization import generate_chords
 
 from contextlib import asynccontextmanager
 
-import numpy as np
 import pandas as pd
 
 from fastapi import FastAPI
@@ -26,7 +23,6 @@ resources = {}
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # On startup
-    # init_credentials()
     resources["msg"] = "Successfully initialized credentials"
     yield
     # On shutdown
@@ -82,52 +78,30 @@ def get_error_log(response: Response):
         return {"content": "No error occurred."}
 
 
-@app.get("/datasets", tags=["info"])
-def get_available_datasets():
-    datasets = [f for f in os.listdir("../datasets") if os.path.isdir(os.path.join("../datasets", f))]
-    datasets_sorted = np.sort(datasets)
-    return {idx: dataset for idx, dataset in enumerate(datasets_sorted)}
-
-
-@app.get("/datasets/cdm", tags=["info"])
+@app.get("/cdm", tags=["info"])
 def get_cdm():
-    folder_path = "../datasets/cdm"
+    folder_path = "../cdm"
     files = [file for file in os.listdir(folder_path) if file.endswith(".csv")]
     dfs = [pd.read_csv(os.path.join(folder_path, file), keep_default_na=False) for file in files]
     cdm = pd.concat(dfs, ignore_index=True)
     return cdm.to_dict()
 
 
-@app.get("/datasets/cdm/available_modalities", tags=["info"])
+@app.get("/cdm/available_modalities", tags=["info"])
 def get_available_modalities():
-    folder_path = "../datasets/cdm"
+    folder_path = "../cdm"
     files = [file.replace(".csv", "") for file in os.listdir(folder_path) if file.endswith(".csv")]
     return {idx: file for idx, file in enumerate(files)}
 
 
-@app.get("/datasets/cdm/{modality}", tags=["search"])
+@app.get("/cdm/{modality}", tags=["search"])
 def get_modality(modality: str):
-    folder_path = "../datasets/cdm"
-    mappings = pd.read_csv(f"{folder_path}/{modality}.csv", keep_default_na=False) 
+    folder_path = "../cdm"
+    mappings = pd.read_csv(f"{folder_path}/{modality}.csv", keep_default_na=False)
     return mappings.to_dict()
-
-
-@app.get("/datasets/decoder/available_decoders", tags=["info"])
-def get_available_decoders():
-    folder_path = "../datasets/decoder"
-    files = [file.replace("_decoder.json", "") for file in os.listdir(folder_path) if file.endswith(".json")]
-    return {idx: file for idx, file in enumerate(files)}
-
-
-@app.get("/datasets/decoder/{modality}", tags=["search"])
-def get_decoder(modality: str):
-    folder_path = "../datasets/decoder"
-    f = open(f"{folder_path}/{modality}_decoder.json")
-    decoder = json.load(f)
-    return decoder
 
 
 @app.post("/visualization/chords/{modality}", tags=["visualization"])
 def get_chords(modality: str, cohorts: list[str]):
-    chords = generate_chords(modality, cohorts)
-    return chords
+    chords, decoder = generate_chords(modality, cohorts)
+    return chords, decoder
