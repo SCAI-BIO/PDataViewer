@@ -1,8 +1,7 @@
-from typing import Any, Hashable
 import pandas as pd
-import json
 
-def generate_chords(modality: str, cohorts: list[str]) -> dict[Hashable, Any]:
+
+def generate_chords(modality: str, cohorts: list[str]):
     """Generate linkage information for cohorts in a modality.
 
     The variables of each cohort will be encoded in numbers consecutively
@@ -15,12 +14,12 @@ def generate_chords(modality: str, cohorts: list[str]) -> dict[Hashable, Any]:
 
     Returns:
         chords (dict[str, str | int]): A dictionary containing linkage information
-    """    
+    """
     # Initialize a dictionary to decode the numbers of variables later on, and save used cohorts
     decoder = {}
     decoder["cohorts"] = cohorts
     # Read the .csv file
-    folder_path = "../datasets/cdm"
+    folder_path = "../cdm"
     mappings = pd.read_csv(f"{folder_path}/{modality}.csv", usecols=cohorts)
     # Filter out rows with only 1 mapping
     mappings = mappings[mappings.notna().sum(axis=1) > 1]
@@ -39,9 +38,6 @@ def generate_chords(modality: str, cohorts: list[str]) -> dict[Hashable, Any]:
                 decoder[column][number] = mappings.loc[row, column]
                 mappings.loc[row, column] = number
                 number += 1
-    # Save the decoder as json
-    with open(f"../datasets/decoder/{modality}_decoder.json", "w") as outfile:
-        json.dump(decoder, outfile)
     # Create an empty data frame with column names
     chords = pd.DataFrame(columns=["link_id", "cohort", "start", "end"])
     # Populate chords with link_ids
@@ -53,4 +49,4 @@ def generate_chords(modality: str, cohorts: list[str]) -> dict[Hashable, Any]:
                 chords.loc[len(chords.index)] = [f"link_{link_id}", column, value, value]
         link_id += 1
     chords = chords.to_dict()
-    return chords
+    return chords, decoder
