@@ -7,29 +7,11 @@ def test_generate_chords():
     modality = "test_mappings"
     cohorts = ["cohort_x", "cohort_y", "cohort_z"]
 
-    chords, decoder = generate_chords(
-        modality, cohorts, folder="./backend/tests/resources"
-    )
+    chords, decoder = generate_chords(modality, cohorts, folder="./backend/tests/resources")
 
     chords_result = {
-        "link_id": [
-            "link_0",
-            "link_0",
-            "link_1",
-            "link_1",
-            "link_1",
-            "link_2",
-            "link_2",
-        ],
-        "cohort": [
-            "cohort_x",
-            "cohort_y",
-            "cohort_x",
-            "cohort_y",
-            "cohort_z",
-            "cohort_x",
-            "cohort_z",
-        ],
+        "link_id": ["link_0", "link_0", "link_1", "link_1", "link_1", "link_2", "link_2",],
+        "cohort": ["cohort_x", "cohort_y", "cohort_x", "cohort_y", "cohort_z", "cohort_x", "cohort_z",],
         "start": [1, 1, 2, 2, 1, 3, 2],
         "end": [1, 1, 2, 2, 1, 3, 2],
     }
