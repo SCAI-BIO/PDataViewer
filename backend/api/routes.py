@@ -64,7 +64,7 @@ def swagger_redirect():
 
 @app.get("/version", tags=["info"])
 def get_current_version():
-    app.version
+    return app.version
 
 
 @app.get("/error", status_code=200, tags=["info"])
