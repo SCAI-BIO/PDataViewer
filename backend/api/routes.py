@@ -77,7 +77,7 @@ def get_available_modalities():
 
 @app.get("/cdm/{modality}", tags=["search"])
 def get_modality(modality: str):
-    mappings = pd.read_csv(f"{"./cdm"}/{modality}.csv", keep_default_na=False)
+    mappings = pd.read_csv(f"{'./cdm'}/{modality}.csv", keep_default_na=False)
     return mappings.to_dict()
 
 

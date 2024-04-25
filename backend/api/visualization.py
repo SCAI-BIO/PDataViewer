@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def generate_chords(modality: str, cohorts: list[str], folder="./cdm"):
+def generate_chords(modality: str, cohorts: list[str], folder='./cdm'):
     """Generate linkage information for cohorts in a modality.
 
     The variables of each cohort will be encoded in numbers consecutively
