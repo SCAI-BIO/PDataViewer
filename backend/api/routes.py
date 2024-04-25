@@ -1,7 +1,7 @@
 import logging
 import os
 
-from api.visualization import generate_chords
+from preprocessing.visualization import generate_chords
 
 from contextlib import asynccontextmanager
 

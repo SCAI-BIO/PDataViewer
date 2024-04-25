@@ -1,6 +1,6 @@
 import pandas as pd
 
-from api.visualization import generate_chords
+from preprocessing.visualization import generate_chords
 
 
 def test_generate_chords():
