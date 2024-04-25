@@ -12,7 +12,6 @@ from fastapi.responses import RedirectResponse
 
 from starlette.middleware.cors import CORSMiddleware
 
-
 resources = {}
 
 @asynccontextmanager
