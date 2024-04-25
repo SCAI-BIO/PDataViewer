@@ -13,7 +13,8 @@ def generate_chords(modality: str, cohorts: list[str]):
         cohorts (list[str]): Cohorts to be included in the mappings
 
     Returns:
-        chords (dict[str, str | int]): A dictionary containing linkage information
+        chords (dict[Hashable, Any]): A dictionary containing linkage information
+        decoder (dict[Hashable, Any]): A dictionary to decode the numbers in the linkage information
     """
     # Initialize a dictionary to decode the numbers of variables later on, and save used cohorts
     decoder = {}
