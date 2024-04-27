@@ -2,6 +2,8 @@ import logging
 import os
 
 from preprocessing.visualization import generate_chords
+from preprocessing.merge_clean import merge_modalities, clean_extra_columns
+from preprocessing.studypicker import rank_cohorts
 
 from contextlib import asynccontextmanager
 
@@ -63,19 +65,30 @@ def get_current_version():
 
 @app.get("/cdm", tags=["info"])
 def get_cdm():
-    files = [file for file in os.listdir("./cdm") if file.endswith(".csv")]
-    dfs = [pd.read_csv(os.path.join("./cdm", file), keep_default_na=False) for file in files]
-    cdm = pd.concat(dfs, ignore_index=True)
+    cdm = merge_modalities()
     return cdm.to_dict()
 
 
+@app.get("/cdm/cohorts", tags=["info"])
+def get_cohorts():
+    cdm = merge_modalities()
+    cdm = clean_extra_columns(cdm)
+    return {idx: cohort for idx, cohort in enumerate(cdm.columns)}
+
+
+@app.get("/cdm/features", tags=["info"])
+def get_features():
+    features = merge_modalities(usecols=["Feature"])
+    return features.to_dict()
+
+
 @app.get("/cdm/modalities", tags=["info"])
-def get_available_modalities():
+def get_modalities():
     files = [file.replace(".csv", "") for file in os.listdir("./cdm") if file.endswith(".csv")]
     return {idx: file for idx, file in enumerate(files)}
 
 
-@app.get("/cdm/{modality}", tags=["search"])
+@app.get("/cdm/modalities/{modality}", tags=["search"])
 def get_modality(modality: str):
     mappings = pd.read_csv(f"{'./cdm'}/{modality}.csv", keep_default_na=False)
     return mappings.to_dict()
@@ -85,3 +98,9 @@ def get_modality(modality: str):
 def get_chords(modality: str, cohorts: list[str]):
     chords, decoder = generate_chords(modality, cohorts)
     return chords, decoder
+
+
+@app.post("/studypicker/rank", tags=["studypicker"])
+def get_ranked_cohorts(features: list[str]):
+    ranked_cohorts = rank_cohorts(features)
+    return ranked_cohorts.to_dict()
