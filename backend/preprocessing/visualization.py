@@ -1,7 +1,9 @@
+import os
+
 import pandas as pd
 
 
-def generate_chords(modality: str, cohorts: list[str], folder='./cdm'):
+def generate_chords(modality: str, cohorts: list[str], folder: str='./cdm'):
     """Generate linkage information for cohorts in a modality.
 
     The variables of each cohort will be encoded in numbers consecutively
@@ -11,11 +13,26 @@ def generate_chords(modality: str, cohorts: list[str], folder='./cdm'):
     Args:
         modality (str): Name of the modality
         cohorts (list[str]): Cohorts to be included in the mappings
+        folder (str, optional): Path to the folder containing the modality
+
+    Raises:
+        FileNotFoundError: The folder does not exist
+        FileNotFoundError: The folder is empty
+        ValueError: cohorts list cannot be empty
 
     Returns:
         chords (dict[Hashable, Any]): A dictionary containing linkage information
         decoder (dict[Hashable, Any]): A dictionary to decode the numbers in the linkage information
     """
+    # Check if the folder exists
+    if not os.path.exists(folder):
+        raise FileNotFoundError(f"the folder '{folder}' does not exist.")
+    # Check if the folder is empty
+    if not bool(os.listdir(folder)):
+        raise FileNotFoundError(f"the folder '{folder}' is empty.")
+    # Check if the cohorts list is empty
+    if not cohorts:
+        raise ValueError("The 'cohorts' list cannot be empty.")    
     # Initialize a dictionary to decode the numbers of variables later on, and save used cohorts
     decoder = {}
     decoder["cohorts"] = cohorts
