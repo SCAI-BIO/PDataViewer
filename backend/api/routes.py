@@ -60,11 +60,8 @@ def swagger_redirect():
     return RedirectResponse(url="/docs")
 
 
-@app.get("/version", tags=["info"])
+@app.get("/version", tags=["info"], description="Gets API version")
 def get_current_version():
-    """
-    Get the version of the API.
-    """
     return app.version
 
 
