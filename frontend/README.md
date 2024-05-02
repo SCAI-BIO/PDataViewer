@@ -47,5 +47,5 @@ docker pull ghcr.io/scai-bio/pdataviewer/frontend:latest
 After build/download you will be able to start the container and access the PDataViewer web application per default on [localhost:8080](http://localhost:8080/):
 
 ``` bash
-docker run -p 8080:80 ghcr.io/pdataviewer/scai-bio/frontend:latest
+docker run -p 8080:80 ghcr.io/scai-bio/pdataviewer/frontend:latest
 ```
