@@ -54,9 +54,11 @@ def rank_cohorts(features: list[str], folder: str="./cdm") -> pd.DataFrame:
         ranked_cohorts.loc[len(ranked_cohorts.index)] = [column, found_features, missing_features]
     # Sort values based on the number of successfully found features
     ranked_cohorts.sort_values(by="Successfully found", ascending=False, inplace=True)
+    # Reset the indices, otherwise creates an issue in json
+    ranked_cohorts.reset_index(drop=True, inplace=True)
     # Calculate the percentage of features found
-    percentage_found = ((ranked_cohorts['Successfully found'] / total_features) * 100).round(2)
+    percentage_found = ((ranked_cohorts["Successfully found"] / total_features) * 100).round(2)
     # Format the "Successfully found" column so that it displays the data in
     # "(found_features)/(total_features) (percentage_found)" format
-    ranked_cohorts['Successfully found'] = ranked_cohorts['Successfully found'].astype(str) + '/' + str(total_features) + ' (' + percentage_found.astype(str) + '%)'
+    ranked_cohorts["Successfully found"] = ranked_cohorts["Successfully found"].astype(str) + "/" + str(total_features) + " (" + percentage_found.astype(str) + "%)"
     return ranked_cohorts
