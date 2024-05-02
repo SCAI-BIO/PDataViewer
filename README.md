@@ -59,7 +59,8 @@ You can access the backend functionalities by accessing the provided REST API. <
 Run the Backend API on port 5000:
 
 ```python
-uvicorn PDataViewer.backend.api.routes:app --reload -port 5000
+cd backend
+uvicorn api.routes:app --reload -port 5000
 ```
 
 ### Run the Backend via Docker
