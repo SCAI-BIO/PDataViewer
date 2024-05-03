@@ -65,11 +65,8 @@ def get_current_version():
     return app.version
 
 
-@app.get("/cdm", tags=["info"])
+@app.get("/cdm", tags=["info"], description="Gets PASSIONATE CDM")
 def get_cdm():
-    """
-    Get PASSIONATE CDM.
-    """
     cdm = merge_modalities()
     return cdm.to_dict()
 
