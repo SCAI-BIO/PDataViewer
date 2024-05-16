@@ -1,2 +1,44 @@
 <app-nav-bar></app-nav-bar>
-<p>study-picker works!</p>
+<h3>StudyPicker</h3>
+<p>
+  The StudyPicker helps you to find accessible cohort datasets and ranks them
+  based on their fit to your requirements. Enter your features of interest below
+  and submit.
+</p>
+<mat-form-field>
+  <mat-chip-listbox #chipListBox aria-label="Feature selection">
+    <mat-chip-option *ngFor="let option of selectedOptions" [selectable]="true", [removable]="true" (removed)="removeOption(option)">
+      {{ option }}
+      <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip-option>
+    <input matInput placeholder="Enter features of interest" [matAutocomplete]="auto" [formControl]="optionCtrl" (matChipInputTokenEnd)="addOption($event)">
+  </mat-chip-listbox>
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+      {{ option }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
+<div>
+  <input type="text" placeholder="Enter features of interest" #featureInput (keyup)="onInputChange(featureInput.value)"/>
+  <ul class="autocomplete-list" *ngIf="suggestions$ | async as suggestions">
+    <li *ngFor="let suggestion of suggestions" (click)="onSuggestionClick(suggestion)">{{ suggestion }}</li>
+  </ul>
+  <button (click)="getRankings(featureInput.value)">Rank cohorts</button>
+</div>
+<table>
+    <thead>
+      <tr>
+        <th>Cohorts (ranked)</th>
+        <th>Successfully found</th>
+        <th>Missing features</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cohort of cohortRankings">
+        <td>{{ cohort.cohort }}</td>
+        <td>{{ cohort.found }}</td>
+        <td>{{ cohort.missing }}</td>
+      </tr>
+    </tbody>
+</table>
