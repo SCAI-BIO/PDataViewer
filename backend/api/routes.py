@@ -87,7 +87,7 @@ def get_features():
     Get all features available in PASSIONATE.
     """
     features = merge_modalities(usecols=["Feature"])
-    return features.to_dict()
+    return features.to_dict("list")
 
 
 @app.get("/cdm/modalities", tags=["info"])
@@ -127,7 +127,7 @@ def get_ranked_cohorts(features: list[str]):
     Ranks cohorts based on the availability of given features.
     """
     ranked_cohorts = rank_cohorts(features)
-    return ranked_cohorts.to_dict()
+    return ranked_cohorts.to_dict(orient="records")
 
 
 @app.get("/autocompletion", tags=["autocompletion"])
