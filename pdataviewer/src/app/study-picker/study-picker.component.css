@@ -1,19 +1,84 @@
-.autocomplete-list {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    border: 1px solid #ccc;
-    border-top: none;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-  }
+/* Styles for material chips */
+
+.full-width {
+  width: 100%;
+}
+
+mat-chip-listbox {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+mat-chip-option {
+  margin: 20px;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-form-field-infix {
+  width: 100%;
+}
   
-  .autocomplete-list li {
-    padding: 8px 12px;
-    cursor: pointer;
-  }
-  
-  .autocomplete-list li:hover {
-    background-color: #f4f4f4;
-  }
-  
+/* Styles for the table */
+.table-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #f2f2f2;
+  color: black;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+}
+
+thead {
+  background-color: #f2f2f2;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+th {
+  background-color: #9c27b0;
+  color: white;
+}
+
+/* Styles for the Rank cohorts button */
+.full-width {
+  width: calc(100% - 100px); /* Adjusted width to accommodate the button */
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.input-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.rank-button {
+  margin-left: 10px; /* Add spacing between the input field and the button */
+}
