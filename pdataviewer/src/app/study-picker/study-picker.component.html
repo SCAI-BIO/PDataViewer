@@ -27,7 +27,7 @@
     <mat-autocomplete
       #auto="matAutocomplete"
       [displayWith]="displayFn"
-      (optionSelected)="selected($event)"
+      (optionSelected)="optionSelected($event)"
     >
       <mat-option
         *ngFor="let option of filteredFeatures | async"
