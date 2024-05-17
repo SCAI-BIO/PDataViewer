@@ -1,15 +1,18 @@
-import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-import { AutocompleteService } from '../autocomplete.service';
+import { Component, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+
+import { Observable, Subscription } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+
+import { NavBarComponent } from '../nav-bar/nav-bar.component';
 
 @Component({
   selector: 'app-study-picker',
@@ -22,89 +25,94 @@ import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
     MatInputModule,
     MatChipsModule,
     ReactiveFormsModule,
+    MatIconModule,
   ],
   templateUrl: './study-picker.component.html',
   styleUrl: './study-picker.component.css',
 })
-export class StudyPickerComponent implements OnInit {
-  @ViewChild('featureInput') featureInput!: ElementRef<HTMLInputElement>;
-  optionCtrl = new FormControl();
+export class StudyPickerComponent implements OnInit, OnDestroy {
   private apiUrl = 'http://127.0.0.1:5000/';
+  private subscriptions: Subscription[] = [];
+  @ViewChild('featureInput') featureInput!: ElementRef<HTMLInputElement>;
+  featureCtrl = new FormControl();
   cohortRankings: any = [];
   suggestions$: Observable<string[]> | null = null;
-  options: string[] = [];
-  filteredOptions: Observable<string[]> | null = null;
-  selectedOptions: string[] = [];
+  features: string[] = [];
+  filteredFeatures: Observable<string[]> | null = null;
+  selectedFeatures: string[] = [];
 
-  constructor(
-    private autocompleteService: AutocompleteService,
-    private http: HttpClient
-  ) {}
+  constructor(private http: HttpClient) {}
 
-  addOption(event: Event): void {
-    const chipInputEvent = event as unknown as MatChipInputEvent;
-    const value = (chipInputEvent?.value || '').trim();
-    if (value && !this.selectedOptions.includes(value)) {
-      this.selectedOptions.push(value);
-      if (chipInputEvent?.chipInput) {
-        chipInputEvent.chipInput.clear();
-      }
-      this.optionCtrl.setValue(null);
-    }
-  }
-
-  removeOption(option: string): void {
-    const index = this.selectedOptions.indexOf(option);
-    if (index >= 0) {
-      this.selectedOptions.splice(index, 1);
-    }
-  }
-
+  // Fetch features and initialize features and filteredFeatures when the component is initialized
   ngOnInit() {
-    this.fetchOptions().subscribe((options) => {
-      this.options = options.Feature;
-      this.filteredOptions = this.optionCtrl.valueChanges.pipe(
+    const sub = this.fetchFeatures().subscribe((features) => {
+      this.features = features.Feature;
+      this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
         startWith(''),
         map((value) => this._filter(value))
       );
     });
+    this.subscriptions.push(sub);
   }
 
-  fetchOptions(): Observable<{ Feature: string[] }> {
+  addFeature(event: MatChipInputEvent): void {
+    const input = event.chipInput;
+    let feature = event.value;
+
+    feature = (feature || '').trim();
+    if (feature && !this.selectedFeatures.includes(feature)) {
+      this.selectedFeatures.push(feature);
+      if (input) {
+        input.clear();
+      }
+      this.featureCtrl.setValue(null);
+    }
+  }
+
+  removeFeature(feature: string): void {
+    const index = this.selectedFeatures.indexOf(feature);
+    if (index >= 0) {
+      this.selectedFeatures.splice(index, 1);
+    }
+  }
+
+  fetchFeatures(): Observable<{ Feature: string[] }> {
     return this.http.get<{ Feature: string[] }>(this.apiUrl + 'cdm/features');
   }
 
-  displayFn(option: string): string {
-    return option ? option : '';
+  displayFn(feature: string): string {
+    return feature ? feature : '';
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.options.filter((option) =>
-      option.toLowerCase().includes(filterValue)
+    return this.features.filter((feature) =>
+      feature.toLowerCase().includes(filterValue)
     );
   }
 
-  onInputChange(input: string) {
-    if (input.length > 2) {
-      this.suggestions$ = this.autocompleteService.autocomplete(input);
-    } else {
-      this.suggestions$ = null;
+  selected(event: MatAutocompleteSelectedEvent): void {
+    const feature = event.option.value;
+    if (feature && !this.selectedFeatures.includes(feature)) {
+      this.selectedFeatures.push(feature);
+      this.featureInput.nativeElement.value = '';
+      this.featureCtrl.setValue('');
     }
   }
 
-  getRankings(features: string) {
-    this.http
-      .post<any[]>(this.apiUrl + 'studypicker/rank', [features])
+  getRankings(features: string[]) {
+    const sub = this.http
+      .post<any[]>(this.apiUrl + 'studypicker/rank', features)
       .subscribe({
         next: (v) => (this.cohortRankings = v),
         error: (e) => console.error(e),
         complete: () => console.info('complete'),
       });
+    this.subscriptions.push(sub);
   }
 
-  onSuggestionClick(suggestion: string) {
-    this.featureInput.nativeElement.value = suggestion;
-    this.suggestions$ = null;
+  // Unsubscribe from subscriptions when the component is destroyed to prevent memory leaks
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }
