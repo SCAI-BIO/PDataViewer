@@ -43,6 +43,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   features: string[] = [];
   // Observable for filtered features.
   filteredFeatures: Observable<string[]> | null = null;
+  // Array of features selected by the user
   @Input() selectedFeatures: string[] = [];
 
   constructor(private http: HttpClient) {}
