@@ -1,4 +1,4 @@
-import { Component, Input, Output, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -36,13 +36,13 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   // Form control for the feature input.
   featureCtrl = new FormControl();
   // Array of cohort rankings.
-  @Output() cohortRankings: any = [];
+  cohortRankings: any = [];
   // Observable for feature suggestions.
-  @Output() suggestions$: Observable<string[]> | null = null;
+  suggestions$: Observable<string[]> | null = null;
   // Array of available features.
-  @Output() features: string[] = [];
+  features: string[] = [];
   // Observable for filtered features.
-  @Output() filteredFeatures: Observable<string[]> | null = null;
+  filteredFeatures: Observable<string[]> | null = null;
   @Input() selectedFeatures: string[] = [];
 
   constructor(private http: HttpClient) {}
