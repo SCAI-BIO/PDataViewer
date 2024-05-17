@@ -33,17 +33,23 @@ import { NavBarComponent } from '../nav-bar/nav-bar.component';
 export class StudyPickerComponent implements OnInit, OnDestroy {
   private apiUrl = 'http://127.0.0.1:5000/';
   private subscriptions: Subscription[] = [];
+  // Reference to the feature input element.
   @ViewChild('featureInput') featureInput!: ElementRef<HTMLInputElement>;
+  // Form control for the feature input.
   featureCtrl = new FormControl();
+  // Array of cohort rankings.
   cohortRankings: any = [];
+  // Observable for feature suggestions.
   suggestions$: Observable<string[]> | null = null;
+  // Array of available features.
   features: string[] = [];
+  // Observable for filtered features.
   filteredFeatures: Observable<string[]> | null = null;
   selectedFeatures: string[] = [];
 
   constructor(private http: HttpClient) {}
 
-  // Fetch features and initialize features and filteredFeatures when the component is initialized
+  // Fetches features and initializes features and filteredFeatures when the component is initialized.
   ngOnInit() {
     const sub = this.fetchFeatures().subscribe((features) => {
       this.features = features.Feature;
@@ -55,6 +61,10 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  /**
+   * Adds a feature to the selected features list.
+   * @param event - The MatChipInputEvent object.
+   */
   addFeature(event: MatChipInputEvent): void {
     const input = event.chipInput;
     let feature = event.value;
@@ -69,6 +79,10 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Removes a feature from the selected features list.
+   * @param feature - The feature to remove.
+   */
   removeFeature(feature: string): void {
     const index = this.selectedFeatures.indexOf(feature);
     if (index >= 0) {
@@ -76,14 +90,28 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Fetches the available features from the API.
+   * @returns An Observable of the fetched features.
+   */
   fetchFeatures(): Observable<{ Feature: string[] }> {
     return this.http.get<{ Feature: string[] }>(this.apiUrl + 'cdm/features');
   }
 
+  /**
+   * Displays the feature name in the autocomplete input.
+   * @param feature - The feature to display.
+   * @returns The feature name or an empty string.
+   */
   displayFn(feature: string): string {
     return feature ? feature : '';
   }
 
+  /**
+   * Filters the features based on the input value.
+   * @param value - The input value to filter by.
+   * @returns An array of filtered features.
+   */
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.features.filter((feature) =>
@@ -91,6 +119,10 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Handles the selection of a feature from the autocomplete dropdown.
+   * @param event - The MatAutocompleteSelectedEvent object.
+   */
   selected(event: MatAutocompleteSelectedEvent): void {
     const feature = event.option.value;
     if (feature && !this.selectedFeatures.includes(feature)) {
@@ -100,6 +132,10 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Retrieves the rankings for the selected features.
+   * @param features - The selected features.
+   */
   getRankings(features: string[]) {
     const sub = this.http
       .post<any[]>(this.apiUrl + 'studypicker/rank', features)
@@ -111,7 +147,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
-  // Unsubscribe from subscriptions when the component is destroyed to prevent memory leaks
+  // Unsubscribes from subscriptions when the component is destroyed to prevent memory leaks.
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
