@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -33,19 +33,17 @@ import { NavBarComponent } from '../nav-bar/nav-bar.component';
 export class StudyPickerComponent implements OnInit, OnDestroy {
   private apiUrl = 'http://127.0.0.1:5000/';
   private subscriptions: Subscription[] = [];
-  // Reference to the feature input element.
-  @ViewChild('featureInput') featureInput!: ElementRef<HTMLInputElement>;
   // Form control for the feature input.
   featureCtrl = new FormControl();
   // Array of cohort rankings.
-  cohortRankings: any = [];
+  @Output() cohortRankings: any = [];
   // Observable for feature suggestions.
-  suggestions$: Observable<string[]> | null = null;
+  @Output() suggestions$: Observable<string[]> | null = null;
   // Array of available features.
-  features: string[] = [];
+  @Output() features: string[] = [];
   // Observable for filtered features.
-  filteredFeatures: Observable<string[]> | null = null;
-  selectedFeatures: string[] = [];
+  @Output() filteredFeatures: Observable<string[]> | null = null;
+  @Input() selectedFeatures: string[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -127,7 +125,6 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     const feature = event.option.value;
     if (feature && !this.selectedFeatures.includes(feature)) {
       this.selectedFeatures.push(feature);
-      this.featureInput.nativeElement.value = '';
       this.featureCtrl.setValue('');
     }
   }
