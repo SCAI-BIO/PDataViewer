@@ -135,8 +135,20 @@ def autocomplete(text: str):
     """
     Autocomplete user's query.
     """
-    features = merge_modalities(usecols=["Feature"])
-    features = features["Feature"].to_list()
     threshold = 50
-    suggestions = process.extract(text, features, scorer=fuzz.partial_token_set_ratio, limit=10)
-    return [suggestions[0] for suggestions in suggestions if suggestions[1] >= threshold]
+    features = merge_modalities(usecols=["Feature"])
+    filtered_features = features.loc[features["Feature"].str.startswith(text)]
+    # Sort ascending by the length of the string
+    indices = filtered_features.Feature.str.len().sort_values().index
+    filtered_features = filtered_features.reindex(indices)
+    filtered_features.reset_index(drop=True, inplace=True)
+    suggestions = filtered_features.Feature.to_list()
+    # Limit the list of suggestions to a length of 10
+    suggestions = suggestions[:10]
+
+    if filtered_features.empty:
+        features = features["Feature"].to_list()
+        suggestions = process.extract(text, features, scorer=fuzz.partial_token_set_ratio, limit=10)
+        suggestions = [suggestion[0] for suggestion in suggestions if suggestion[1] >= threshold]
+    
+    return suggestions
