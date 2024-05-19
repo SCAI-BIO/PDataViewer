@@ -60,7 +60,7 @@ Run the Backend API on port 5000:
 
 ```python
 cd backend
-uvicorn api.routes:app --reload -port 5000
+uvicorn api.routes:app --reload --port 5000
 ```
 
 ### Run the Backend via Docker
