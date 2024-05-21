@@ -1,4 +1,5 @@
 # PDataViewer
+![tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/test.yml/badge.svg) ![version](https://img.shields.io/github/v/release/SCAI-BIO/PDataViewer)
 
 PDataViewer is a web application that lets you explore the PD data landscape and identify cohort datasets that suit your research needs.
 
