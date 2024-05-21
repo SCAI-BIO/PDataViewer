@@ -26,7 +26,7 @@ def merge_modalities(folder: str="./cdm", usecols: None | list[str] = None) -> p
     # Check if the usecols is not None and not an empty list
     if usecols is not None and not usecols:
         raise ValueError("The 'usecols' list cannot be empty. Please specify columns to use")    
-    files = [file for file in os.listdir(folder) if file.endswith(".csv")]
+    files = sorted([file for file in os.listdir(folder) if file.endswith(".csv")])
     dfs = [pd.read_csv(os.path.join(folder, file), keep_default_na=False, usecols=usecols) for file in files]
     cdm = pd.concat(dfs, ignore_index=True)
     cdm.replace({"No total score.": ""}, inplace=True)
