@@ -1,4 +1,4 @@
-from preprocessing.merge_clean import merge_modalities, clean_extra_columns
+from functions.preprocessing import merge_modalities, clean_extra_columns
 
 def test_merge_modalities():
     folder="./backend/tests/resources/modalities"

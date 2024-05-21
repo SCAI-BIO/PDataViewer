@@ -1,4 +1,4 @@
-from preprocessing.studypicker import rank_cohorts
+from functions.studypicker import rank_cohorts
 
 
 def test_rank_cohorts():
