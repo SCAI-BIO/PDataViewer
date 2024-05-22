@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AutocompleteService {
-  private apiUrl = 'http://127.0.0.1:5000'; // Base URL
+  private API_URL = environment.API_URL // Base URL
   private autocompleteEndpoint = '/autocompletion'; // Endpoint
   constructor(private http: HttpClient) {}
 
@@ -18,7 +19,7 @@ export class AutocompleteService {
    */
   autocomplete(input: string): Observable<string[]> {
     const params = new HttpParams().set('text', input);
-    const url = `${this.apiUrl}${this.autocompleteEndpoint}`;
+    const url = `${this.API_URL}${this.autocompleteEndpoint}`;
     return this.http.get<string[]>(url, { params }).pipe(
       catchError((error) => {
         // Handle the error here

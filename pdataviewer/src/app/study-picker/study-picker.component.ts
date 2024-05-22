@@ -13,6 +13,7 @@ import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-study-picker',
@@ -43,7 +44,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   @Input() selectedFeatures: string[] = [];
   // Observable for feature suggestions.
   suggestions$: Observable<string[]> | null = null;
-  private apiUrl = 'http://127.0.0.1:5000/';
+  private API_URL = environment.API_URL;
   private subscriptions: Subscription[] = [];
 
   constructor(private http: HttpClient) {}
@@ -80,7 +81,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
    * @returns An Observable of the fetched features.
    */
   fetchFeatures(): Observable<{ Feature: string[] }> {
-    return this.http.get<{ Feature: string[] }>(this.apiUrl + 'cdm/features');
+    return this.http.get<{ Feature: string[] }>(this.API_URL + '/cdm/features');
   }
 
   /**
@@ -89,7 +90,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
    */
   getRankings(features: string[]) {
     const sub = this.http
-      .post<any[]>(this.apiUrl + 'studypicker/rank', features)
+      .post<any[]>(this.API_URL + '/studypicker/rank', features)
       .subscribe({
         next: (v) => (this.cohortRankings = v),
         error: (e) => console.error(e),
