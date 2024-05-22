@@ -15,7 +15,9 @@ from fastapi.responses import RedirectResponse
 
 from starlette.middleware.cors import CORSMiddleware
 
+
 resources = {}
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
