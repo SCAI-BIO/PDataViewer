@@ -1,4 +1,4 @@
-Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,Fox Insight
+Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,
 Pathogenic GBA,,Variants in the glucocerebrosidase (GBA) gene are the most common genetic risk factor for Parkinson disease (PD),,GBA_PATHVAR,,control_q7,,,,3041019,
 Pathogenic LRRK2,,Mutations in LRRK2 that are associated with aberrantly enhanced kinase activity are the most common cause of genetic Parkinson's disease (PD),,LRRK2_PATHVAR,,control_q7,lrrk2sub,,,3050582,
 TDP-43 Proteinopathies,OMIT:0026896,"TDP-43 proteinopathies encompass a wide range of neurodegenerative diseases and phenotypes, which may be inherited in a Mendelian pattern or be apparently sporadic.",,TDP_43,,,,,,46236299,

@@ -1,4 +1,4 @@
-Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,Fox Insight
+Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,
 Smoking,NCIT:C173060,Individual's smoking history or smoking habit,Smoking Question,,CIGCURR,rfqu_smoking2,CIGLFREG,smoke_current_amount,merqp_smoking,45880274,
 Smokeless Tobacco,NCIT:C137998,"Use of smokeless tobacco in any form, e.g., chewing or sniffing.","Tobacco, Smokeless, Smokeless Tobacco Use",,,,CHWREG,,,903666,
 Alcohol Consumption,NCIT:C16273,"Consumption of liquids containing ethanol, including the behaviors associated with drinking the alcohol.",Alcohol Consumption,,ALCCURR,rfqu_alcohol2,alclfreg,,,4203148,
