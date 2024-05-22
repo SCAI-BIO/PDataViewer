@@ -1,15 +1,14 @@
 import logging
 import os
 
-from preprocessing.visualization import generate_chords
-from preprocessing.merge_clean import merge_modalities, clean_extra_columns
-from preprocessing.studypicker import rank_cohorts
+from functions.visualization import generate_chords
+from functions.preprocessing import merge_modalities, clean_extra_columns
+from functions.studypicker import rank_cohorts
+from functions.autocomplete import autocomplete
 
 from contextlib import asynccontextmanager
 
 import pandas as pd
-
-from thefuzz import process, fuzz
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
@@ -131,12 +130,8 @@ def get_ranked_cohorts(features: list[str]):
 
 
 @app.get("/autocompletion", tags=["autocompletion"])
-def autocomplete(text: str):
+def autocompletion(text: str):
     """
     Autocomplete user's query.
     """
-    features = merge_modalities(usecols=["Feature"])
-    features = features["Feature"].to_list()
-    threshold = 50
-    suggestions = process.extract(text, features, scorer=fuzz.partial_token_set_ratio, limit=10)
-    return [suggestions[0] for suggestions in suggestions if suggestions[1] >= threshold]
+    return autocomplete(text)

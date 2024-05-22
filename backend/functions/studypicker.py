@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 
-from preprocessing.merge_clean import merge_modalities, clean_extra_columns
+from functions.preprocessing import merge_modalities, clean_extra_columns
 
 def rank_cohorts(features: list[str], folder: str="./cdm") -> pd.DataFrame:
     """Ranks cohorts based on the availability of requested features.
