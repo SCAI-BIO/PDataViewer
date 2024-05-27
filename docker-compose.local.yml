@@ -6,7 +6,7 @@ services:
     image: pdataviewer-frontend
     hostname: frontend
     build:
-      context: ./frontend
+      context: ./pdataviewer
       dockerfile: Dockerfile
     ports:
     - "3000:80"
