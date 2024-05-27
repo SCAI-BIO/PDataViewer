@@ -5,8 +5,7 @@ import { NavBarComponent } from '../nav-bar/nav-bar.component';
   selector: 'app-mappings',
   standalone: true,
   imports: [NavBarComponent],
-  templateUrl: './mappings.component.html',
-  styleUrl: './mappings.component.css'
+  templateUrl: './mappings.component.html'
 })
 export class MappingsComponent {
 

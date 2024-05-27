@@ -6,8 +6,7 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, NavBarComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  templateUrl: './app.component.html'
 })
 export class AppComponent {
   title = 'pdataviewer';
