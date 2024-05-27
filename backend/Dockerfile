@@ -2,17 +2,20 @@
 FROM python:3.12
 
 # Create a folder and copy the folder structure from local
-RUN mkdir -p /api
-RUN mkdir -p /cdm
-RUN mkdir -p /functions
+RUN mkdir -p /app
 
-COPY /api /api
-COPY /cdm /cdm
-COPY /functions /functions
+WORKDIR /app
+
+COPY /api /app/api
+COPY /cdm /app/cdm
+COPY /functions /app/functions
 
 # Install API requirements
 COPY requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
+
+# Set PYTHONPATH to include the directories with local modules
+ENV PYTHONPATH="/app:/app/api:/app/functions"
 
 EXPOSE 80
 
