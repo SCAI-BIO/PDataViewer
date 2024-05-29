@@ -219,7 +219,6 @@ export class MappingsComponent implements OnInit, OnDestroy {
             `
       )
       .style('text-anchor', (d: any) => (d.angle > Math.PI ? 'end' : null))
-      .style('font-size', '12px')
       .text((d: any) => nodes[d.index].name)
       .on('mouseover', function (event: any, d: any) {
         const index = d.index;
@@ -241,6 +240,8 @@ export class MappingsComponent implements OnInit, OnDestroy {
     svgGroup
       .append('g')
       .attr('fill-opacity', 0.75)
+      .attr('stroke-opacity', 0.75)
+      .attr('cursor', 'pointer')
       .selectAll('path')
       .data(chords)
       .enter()
@@ -251,15 +252,38 @@ export class MappingsComponent implements OnInit, OnDestroy {
       .style('stroke', 'skyblue');
 
     // Add legend
-    const legend = d3.select(svgElement).append('div').attr('class', 'legend');
+    const legend = d3
+      .select(svgElement)
+      .append('div')
+      .attr('class', 'legend')
+      .style('display', 'flex')
+      .style('flex-wrap', 'wrap')
+      .style('gap', '10px')
+      .style('margin-top', '1rem');
 
-    cohorts.forEach((cohort, i) => {
-      const legendRow = legend.append('div').attr('class', 'legend-row');
+    cohorts.forEach((cohort) => {
+      const legendRow = legend
+        .append('div')
+        .attr('class', 'legend-row')
+        .style('display', 'flex')
+        .style('align-items', 'center')
+        .style('margin-right', '20px');
+
       legendRow
         .append('div')
         .attr('class', 'legend-color')
-        .style('background-color', color(cohort));
-      legendRow.append('div').attr('class', 'legend-text').text(cohort);
+        .style('background-color', color(cohort))
+        .style('width', '20px')
+        .style('height', '20px')
+        .style('margin-right', '5px')
+        .style('border-radius', '4px');
+
+      legendRow
+        .append('div')
+        .attr('class', 'legend-text')
+        .text(cohort)
+        .style('font-size', '12px')
+        .style('color', '#333');
     });
   }
 }
