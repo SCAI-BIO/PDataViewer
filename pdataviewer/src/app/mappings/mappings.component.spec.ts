@@ -91,12 +91,21 @@ describe('MappingsComponent', () => {
     expect(component['subscriptions'].forEach).toHaveBeenCalled();
   });
 
-  it('should create chord diagram with correct data', () => {
-    component['data'] = mockData;
-    component['createChordDiagram']();
+  it('should create chord diagrams with correct data', () => {
+    component['dataChunks'] = [mockData];
+    fixture.detectChanges();
 
-    const svgElement = fixture.debugElement.query(By.css('svg'));
-    expect(svgElement).toBeTruthy();
+    component.onModalityClick(mockModalities[0]);
+
+    const req = httpMock.expectOne(
+      `${environment.API_URL}/visualization/chords/`
+    );
+    req.flush(mockData);
+
+    fixture.detectChanges();
+
+    const svgElements = fixture.debugElement.queryAll(By.css('svg'));
+    expect(svgElements.length).toBeGreaterThan(0);
   });
 
   it('should handle errors while fetching chord data', () => {
