@@ -144,4 +144,4 @@ You can deploy a local version of the API and the web application together.
 
   This command lists all running containers. You should be able to see your containers with the name `pdataviewer-frontend` and `pdataviewer-backend`. <br>
   
-  You can access the web application on [localhost:3000](http://localhost:3000) and the API on [localhost:8000](http://localhost:8000)
+  You can access the web application on [localhost:3000](http://localhost:3000) and the API on [localhost:5000](http://localhost:5000)
