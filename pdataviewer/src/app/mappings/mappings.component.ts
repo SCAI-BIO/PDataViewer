@@ -169,7 +169,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
       });
     });
 
-    const chord = d3.chord().padAngle(0.03).sortSubgroups(d3.descending);
+    const chord = d3.chord().padAngle(0.06).sortSubgroups(d3.descending);
     const chords = chord(matrix);
 
     const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);
