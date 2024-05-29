@@ -1,2 +1,15 @@
-<app-nav-bar></app-nav-bar>
-<p>mappings works!</p>
+<div>
+    <app-nav-bar></app-nav-bar>
+    <div class="modality-buttons">
+      <button
+        *ngFor="let modality of modalities"
+        (click)="onModalityClick(modality)"
+      >
+        {{ modality }}
+      </button>
+    </div>
+    <div class="chord-diagram">
+      <svg></svg>
+    </div>
+  </div>
+  

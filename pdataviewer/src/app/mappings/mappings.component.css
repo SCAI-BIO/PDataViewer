@@ -1,0 +1,52 @@
+/* General layout and spacing */
+:host {
+    display: block;
+    margin: 20px;
+    font-family: Arial, sans-serif;
+}
+  
+.modality-buttons {
+    margin-bottom: 20px;
+    text-align: center;
+}
+  
+button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+  
+button:hover {
+    background-color: #0056b3;
+}
+  
+.chord-diagram {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+  
+svg {
+    width: 100%;
+    height: auto;
+    max-width: 700px;
+}
+  
+/* Additional styles for responsive design */
+@media (max-width: 800px) {
+    button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    
+    svg {
+        max-width: 100%;
+    }
+}
