@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 import { MappingsComponent } from './mappings.component';
 
@@ -8,7 +10,15 @@ describe('MappingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MappingsComponent]
+      imports: [MappingsComponent],
+      providers: [
+        { 
+          provide: ActivatedRoute, 
+          useValue: {
+            params: of({})  // Mock ActivatedRoute with empty params
+          }
+        }
+      ]
     })
     .compileComponents();
     
