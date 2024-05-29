@@ -45,8 +45,15 @@ ng serve
 You can deploy a local version of the web application via docker. <br>
 You can either build the docker container locally or download the latest build from the PDataViewer GitHub package registry.
 
+To build the Docker container locally:
+
 ```bash
 docker build -t ghcr.io/scai-bio/pdataviewer/frontend:latest .
+```
+
+To download the latest build:
+
+```bash
 docker pull ghcr.io/scai-bio/pdataviewer/frontend:latest
 ```
 
