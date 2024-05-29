@@ -13,10 +13,7 @@ mat-chip-option {
   margin: 20px;
 }
 
-.mat-form-field {
-  width: 100%;
-}
-
+.mat-form-field,
 .mat-form-field-infix {
   width: 100%;
 }
@@ -28,6 +25,7 @@ mat-chip-option {
   align-items: center;
   margin-top: 20px;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -62,10 +60,6 @@ th {
 }
 
 /* Styles for the Rank cohorts button */
-.full-width {
-  width: calc(100% - 100px); /* Adjusted width to accommodate the button */
-}
-
 .button-container {
   display: flex;
   justify-content: center;
