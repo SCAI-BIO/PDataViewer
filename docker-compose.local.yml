@@ -4,7 +4,6 @@ services:
 
   frontend:
     image: pdataviewer-frontend
-    hostname: frontend
     build:
       context: ./pdataviewer
       dockerfile: Dockerfile
@@ -15,7 +14,6 @@ services:
 
   backend:
     image: pdataviewer-backend
-    hostname: backend
     build:
       context: ./backend
       dockerfile: Dockerfile
