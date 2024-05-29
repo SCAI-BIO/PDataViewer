@@ -1,13 +1,13 @@
 .header-area {
-    font-family: "Raleway", sans-serif !important;
-    margin-top: 50px !important;
+    font-family: "Raleway", sans-serif;
+    margin-top: 50px;
     top: 30px;
     left: 0;
     right: 0;
     z-index: 100;
     height: 100px;
     min-height: 80px;
-    transition: all 0.3s ease 0s;
+    transition: all 0.3s ease;
 }
 
 .header-area .main-nav {
@@ -21,7 +21,7 @@
 .header-area .main-nav .logo img,
 .header-area .main-nav .nav,
 .header-area .main-nav .nav li a {
-    transition: all 0.3s ease 0s;
+    transition: all 0.3s ease;
 }
 
 .header-area .main-nav .logo {
@@ -48,14 +48,15 @@
     display: block;
     font-weight: 500;
     font-size: 16px;
-    color: black;
+    color: #1e1e1e;
     height: 40px;
     line-height: 40px;
     border: transparent;
     letter-spacing: 1px;
 }
 
-.header-area .main-nav .nav li a:hover {
+.header-area .main-nav .nav li a:hover,
+.header-area .main-nav .nav li a.active {
     color: #0081bf;
 }
 
@@ -124,21 +125,9 @@
     margin-top: 20px !important;
 }
 
-.header-area .nav li a {
-    color: #1e1e1e;
-}
-
-.header-area .nav li a.active {
-    color: #0081bf;
-}
-
 @media (max-width: 1200px) {
     .header-area .main-nav .nav li {
         padding: 0 12px;
-    }
-
-    .header-area .main-nav:before {
-        display: none;
     }
 }
 
@@ -165,7 +154,7 @@
     .header-area .main-nav .nav {
         float: none;
         width: 100%;
-        margin-top: 80px !important;
+        margin-top: 80px;
         display: none;
         transition: all 0s;
     }
@@ -178,20 +167,20 @@
         width: 100%;
         background: #fff;
         border-bottom: 1px solid #eee;
-        padding: 0 !important;
+        padding: 0;
     }
 
     .header-area .main-nav .nav li a {
-        height: 50px !important;
-        line-height: 50px !important;
-        padding: 0 !important;
-        border: none !important;
-        background: #fff !important;
-        color: #3B566E !important;
+        height: 50px;
+        line-height: 50px;
+        padding: 0;
+        border: none;
+        background: #fff;
+        color: #3B566E;
     }
 
     .header-area .main-nav .nav li a:hover {
-        background: #eee !important;
+        background: #eee;
     }
 }
 
@@ -202,7 +191,7 @@
 }
 
 #pdataviewer-logo {
-    max-height: 57px !important;
+    max-height: 57px;
     vertical-align: middle;
     margin-top: 12px;
 }
