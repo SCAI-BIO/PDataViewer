@@ -26,7 +26,7 @@ describe('NavBarComponent', () => {
           { path: 'tools', component: DummyComponent },
           { path: 'contact-us', component: DummyComponent },
         ]),
-      ]
+      ],
     }).compileComponents();
 
     router = TestBed.inject(Router);
@@ -71,14 +71,18 @@ describe('NavBarComponent', () => {
   });
 
   it('should navigate to the correct route when a link is clicked', async () => {
-    const links = fixture.debugElement.queryAll(By.directive(RouterLinkWithHref));
-    const cohortsLink = links.find(de => de.properties['href'] === '/cohorts');
-    
+    const links = fixture.debugElement.queryAll(
+      By.directive(RouterLinkWithHref)
+    );
+    const cohortsLink = links.find(
+      (de) => de.properties['href'] === '/cohorts'
+    );
+
     if (cohortsLink) {
       cohortsLink.nativeElement.click();
       fixture.detectChanges();
       await fixture.whenStable();
-      
+
       expect(location.path()).toBe('/cohorts');
     }
   });

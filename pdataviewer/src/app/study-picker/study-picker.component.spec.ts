@@ -33,13 +33,13 @@ describe('StudyPickerComponent', () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { 
-          provide: ActivatedRoute, 
+        {
+          provide: ActivatedRoute,
           useValue: {
-            params: of({})  // Mock ActivatedRoute with empty params
-          }
-        }
-      ]
+            params: of({}), // Mock ActivatedRoute with empty params
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(StudyPickerComponent);
@@ -65,13 +65,19 @@ describe('StudyPickerComponent', () => {
   });
 
   it('should add a feature', () => {
-    component.addFeature({ value: 'newFeature', chipInput: { clear: () => {} } } as any);
+    component.addFeature({
+      value: 'newFeature',
+      chipInput: { clear: () => {} },
+    } as any);
     expect(component.selectedFeatures).toContain('newFeature');
   });
 
   it('should not add a duplicate feature', () => {
     component.selectedFeatures = ['newFeature'];
-    component.addFeature({ value: 'newFeature', chipInput: { clear: () => {} } } as any);
+    component.addFeature({
+      value: 'newFeature',
+      chipInput: { clear: () => {} },
+    } as any);
     expect(component.selectedFeatures.length).toBe(1);
   });
 

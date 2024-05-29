@@ -12,16 +12,15 @@ describe('HomeComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
       providers: [
-        { 
-          provide: ActivatedRoute, 
+        {
+          provide: ActivatedRoute,
           useValue: {
-            params: of({})  // Mock ActivatedRoute with empty params
-          }
-        }
-      ]
-    })
-    .compileComponents();
-    
+            params: of({}), // Mock ActivatedRoute with empty params
+          },
+        },
+      ],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
