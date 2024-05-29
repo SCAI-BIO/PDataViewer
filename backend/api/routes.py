@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 
 import pandas as pd
 
+from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 
@@ -56,6 +57,11 @@ app.add_middleware(
 logger = logging.getLogger("uvicorn.info")
 
 
+class ChordsRequest(BaseModel):
+    modality: str
+    cohorts: list[str]
+
+
 @app.get("/", include_in_schema=False)
 def swagger_redirect():
     return RedirectResponse(url="/docs")
@@ -78,8 +84,8 @@ def get_cohorts():
     Get all cohorts available in PASSIONATE.
     """
     cdm = merge_modalities()
-    cdm = clean_extra_columns(cdm)
-    return {idx: cohort for idx, cohort in enumerate(cdm.columns)}
+    cdm = clean_extra_columns(cdm, extra_columns=["Feature", "CURIE", "Definition", "Synonyms", "OMOP"])
+    return cdm.columns.to_list()
 
 
 @app.get("/cdm/features", tags=["info"])
@@ -97,7 +103,7 @@ def get_modalities():
     Get all modalities available in PASSIONATE.
     """
     files = [file.replace(".csv", "") for file in os.listdir("./cdm") if file.endswith(".csv")]
-    return {idx: file for idx, file in enumerate(files)}
+    return files
 
 
 @app.get("/cdm/modalities/{modality}", tags=["search"])
@@ -111,15 +117,17 @@ def get_modality(modality: str):
     return mappings.to_dict()
 
 
-@app.post("/visualization/chords/{modality}", tags=["visualization"])
-def get_chords(modality: str, cohorts: list[str]):
+@app.post("/visualization/chords/", tags=["visualization"])
+def get_chords(request: ChordsRequest):
     """
     Generates links between mappings to visualize with chord diagram.
     """
+    modality = request.modality
+    cohorts = request.cohorts
     if not os.path.exists(f"./cdm/{modality}.csv"):
         raise HTTPException(status_code=404, detail="Modality not found")
-    chords, decoder = generate_chords(modality, cohorts)
-    return chords, decoder
+    data = generate_chords(modality, cohorts)
+    return data
 
 
 @app.post("/studypicker/rank", tags=["studypicker"])
