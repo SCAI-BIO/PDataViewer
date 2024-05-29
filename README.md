@@ -133,7 +133,7 @@ You can deploy a local version of the API and the web application together.
 3. Build and Run the Containers:
   
    ```bash
-   docker-compose -f PDataViewer/docker-compose.local.yml up --build
+   docker-compose -f ./docker-compose.local.yml up --build
    ```
 
 4. Verify that the Containers are Running:
