@@ -20,7 +20,7 @@ COPY . .
 RUN ng build --configuration=production
 
 # SECOND STAGE: Serve the application using Nginx
-FROM nginx:1.26.0
+FROM docker.io/library/nginx:1.26.0
 
 # Copy the built application from the previous stage
 COPY --from=build /app/dist/pdataviewer /usr/share/nginx/html
