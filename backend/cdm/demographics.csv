@@ -1,4 +1,4 @@
-Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,
+Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,Fox Insight
 Participant ID,NCIT:C164337,An alphanumeric identifier assigned to a specific patient.,"patient id, Patient Identifier, patient_id, source id, source_id",PATNO,PATNO,cdisc_dm_usubjd,lrrkid,ID,subject_randid,42528934,
 Visit,NCIT:C25716,The act of going to see some person or place or thing; it can cover a short or long period but refers to a non-permanent arrangement.,"Visit, Visits",EVENT_ID,EVENT_ID,,event_id,Visit,,,
 Biological Sex,NCIT:C28421,The assemblage of physical properties or qualities by which male is distinguished from female; the physical difference between male and female; the distinguishing peculiarity of male or female.,"Gender, SEX, Sex, sex",SEX,GENDER,cdisc_dm_sex,gender,gender,gender,4135376,

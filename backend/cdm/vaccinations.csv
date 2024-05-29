@@ -1,4 +1,4 @@
-Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,
+Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,Fox Insight
 Vaccinated for Chickenpox,VO:0000669,A Herpesvirus vaccine that is used against Varicella-zoster virus infection.,,VAX_CHICKENPOX,,,,,,36712679,
 Vaccinated for SARS-CoV-2 First,VO:0004908,A coronavirus vaccine against the infection of SARS-CoV-2 (cause of COVID-19),,VAX_COVID1,,covid19_vaccine_yn,,,,,
 Vaccinated for SARS-CoV-2 Second,VO:0004908,A coronavirus vaccine against the infection of SARS-CoV-2 (cause of COVID-19),,VAX_COVID2,,,,,,,
