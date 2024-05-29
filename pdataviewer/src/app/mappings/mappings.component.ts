@@ -6,14 +6,12 @@ import { Subscription } from 'rxjs';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { environment } from '../../environments/environment';
 
-// Interface to represent a node (feature)
 interface Node {
   name: string;
   group: string;
   id?: string;
 }
 
-// Interface to represent a link (connection between features)
 interface Link {
   source: string;
   target: string;
@@ -33,6 +31,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
   private modality: string = '';
   private subscriptions: Subscription[] = [];
   public modalities: string[] = [];
+  public dataChunks: any[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -86,7 +85,8 @@ export class MappingsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (v) => {
           this.data = v;
-          this.createChordDiagram();
+          this.dataChunks = this.chunkData(v, 50);
+          this.createChordDiagrams();
         },
         error: (e) => console.error('Error fetching chord data:', e),
         complete: () =>
@@ -95,23 +95,47 @@ export class MappingsComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
-  private createChordDiagram(): void {
-    const svgElement = d3.select('svg');
-    svgElement.selectAll('*').remove(); // Clear previous diagram
+  private chunkData(data: any, chunkSize: number): any[] {
+    const chunks = [];
+    for (let i = 0; i < data.nodes.length; i += chunkSize) {
+      chunks.push({
+        nodes: data.nodes.slice(i, i + chunkSize),
+        links: data.links.filter((link: any) =>
+          data.nodes
+            .slice(i, i + chunkSize)
+            .some(
+              (node: any) =>
+                node.name === link.source || node.name === link.target
+            )
+        ),
+      });
+    }
+    return chunks;
+  }
+
+  private createChordDiagrams(): void {
+    this.dataChunks.forEach((chunk, index) => {
+      setTimeout(() => this.createChordDiagram(chunk, index), 0);
+    });
+  }
+
+  private createChordDiagram(data: any, index: number): void {
+    const svgElement = d3.selectAll('.chord-diagram').nodes()[index];
+    const svg = d3.select(svgElement).select('svg');
+    svg.selectAll('*').remove();
 
     const width = 600;
     const height = 600;
     const outerRadius = Math.min(width, height) * 0.5 - 60;
     const innerRadius = outerRadius - 30;
 
-    let nodes: Node[] = this.data.nodes.map((node: Node) => ({
+    let nodes: Node[] = data.nodes.map((node: Node) => ({
       ...node,
-      id: `${node.name}_${node.group}`, // Create a unique identifier
+      id: `${node.name}_${node.group}`,
     }));
-    const links: Link[] = this.data.links;
+    const links: Link[] = data.links;
 
     const color = d3.scaleOrdinal(d3.schemeCategory10);
-
     nodes = nodes.sort((a, b) => a.group.localeCompare(b.group));
 
     const nodeIndex = new Map(
@@ -151,7 +175,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
     const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);
     const ribbon = d3.ribbon().radius(innerRadius);
 
-    const svg = svgElement
+    const svgGroup = svg
       .attr('width', '100%')
       .attr('height', '100%')
       .attr('viewBox', `0 0 ${width + 200} ${height + 200}`)
@@ -161,7 +185,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
         `translate(${(width + 200) / 2},${(height + 200) / 2})`
       );
 
-    const group = svg
+    const group = svgGroup
       .append('g')
       .selectAll('g')
       .data(chords.groups)
@@ -189,34 +213,34 @@ export class MappingsComponent implements OnInit, OnDestroy {
       .attr(
         'transform',
         (d: any) => `
-          rotate(${(d.angle * 180) / Math.PI - 90})
-          translate(${outerRadius + 20})
-          ${d.angle > Math.PI ? 'rotate(180)' : ''}
-        `
+                rotate(${(d.angle * 180) / Math.PI - 90})
+                translate(${outerRadius + 20})
+                ${d.angle > Math.PI ? 'rotate(180)' : ''}
+            `
       )
       .style('text-anchor', (d: any) => (d.angle > Math.PI ? 'end' : null))
       .style('font-size', '12px')
       .text((d: any) => nodes[d.index].name)
       .on('mouseover', function (event: any, d: any) {
         const index = d.index;
-        svg
+        svgGroup
           .selectAll('.ribbon')
           .filter(
             (r: any) => r.source.index === index || r.target.index === index
           )
           .style('fill', 'black')
-          .style('stroke', 'black')
+          .style('stroke', 'black');
       })
       .on('mouseout', () => {
-        svg
+        svgGroup
           .selectAll('.ribbon')
           .style('fill', 'skyblue')
           .style('stroke', 'skyblue');
       });
 
-    svg
+    svgGroup
       .append('g')
-      .attr('fill-opacity', 1.00)
+      .attr('fill-opacity', 0.75)
       .selectAll('path')
       .data(chords)
       .enter()
@@ -227,29 +251,15 @@ export class MappingsComponent implements OnInit, OnDestroy {
       .style('stroke', 'skyblue');
 
     // Add legend
-    const legend = svg
-      .append('g')
-      .attr('transform', `translate(${width / 2 + 100},${-height / 2 + 50})`);
+    const legend = d3.select(svgElement).append('div').attr('class', 'legend');
 
     cohorts.forEach((cohort, i) => {
-      const legendRow = legend.append('g').attr('transform', `translate(0, ${i * 20})`);
-
+      const legendRow = legend.append('div').attr('class', 'legend-row');
       legendRow
-        .append('rect')
-        .attr('width', 10)
-        .attr('height', 10)
-        .attr('fill', color(cohort))
-
-      legendRow
-        .append('text')
-        .attr('x', 20)
-        .attr('y', 10)
-        .attr('text-anchor', 'start')
-        .style('font-size', '12px')
-        .text(cohort)
-        .attr("stroke, black");
+        .append('div')
+        .attr('class', 'legend-color')
+        .style('background-color', color(cohort));
+      legendRow.append('div').attr('class', 'legend-text').text(cohort);
     });
-
-    console.log('Legend data:', cohorts); // Debugging line
   }
 }

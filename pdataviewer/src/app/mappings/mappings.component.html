@@ -1,15 +1,13 @@
 <div>
-    <app-nav-bar></app-nav-bar>
-    <div class="modality-buttons">
-      <button
-        *ngFor="let modality of modalities"
-        (click)="onModalityClick(modality)"
-      >
-        {{ modality }}
-      </button>
-    </div>
-    <div class="chord-diagram">
+  <app-nav-bar></app-nav-bar>
+  <div class="modality-buttons">
+    <button *ngFor="let modality of modalities" (click)="onModalityClick(modality)">
+      {{ modality }}
+    </button>
+  </div>
+  <div class="chord-diagrams-container">
+    <div *ngFor="let chunk of dataChunks" class="chord-diagram">
       <svg></svg>
     </div>
   </div>
-  
+</div>
