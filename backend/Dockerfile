@@ -1,23 +1,23 @@
-# Define the base image
+# Use an official Python runtime as a parent image
 FROM python:3.12
 
-# Create a folder and copy the folder structure from local
-RUN mkdir -p /app
-
+# Set the working directory in the container
 WORKDIR /app
 
-COPY /api /app/api
-COPY /cdm /app/cdm
-COPY /functions /app/functions
+# Copy the necessary directories into the container
+COPY api /app/api
+COPY cdm /app/cdm
+COPY functions /app/functions
 
-# Install API requirements
-COPY requirements.txt /tmp/
-RUN pip install -r /tmp/requirements.txt
+# Copy the requirements.txt file and install any dependencies
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Set PYTHONPATH to include the directories with local modules
+# Set the PYTHONPATH environemnt variable to include the app directories
 ENV PYTHONPATH="/app:/app/api:/app/functions"
 
+# MAke port 80 available to the world outside this container
 EXPOSE 80
 
-# API entry point
+# Define the command to run the API
 CMD ["uvicorn", "api.routes:app", "--host", "0.0.0.0", "--port", "80"]

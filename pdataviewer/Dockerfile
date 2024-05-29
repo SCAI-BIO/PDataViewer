@@ -14,7 +14,7 @@ RUN npm install --legacy-peer-deps --loglevel verbose
 RUN npm install -g @angular/cli
 
 # Copy the rest of the application code to the working directory
-COPY . ./
+COPY . .
 
 # Build the Angular application
 RUN ng build --configuration=production
@@ -23,7 +23,7 @@ RUN ng build --configuration=production
 FROM nginx:1.26.0
 
 # Copy the built application from the previous stage
-COPY --from=build app/dist/pdataviewer /usr/share/nginx/html
+COPY --from=build /app/dist/pdataviewer /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80

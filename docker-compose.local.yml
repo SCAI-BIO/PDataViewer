@@ -9,7 +9,9 @@ services:
       context: ./pdataviewer
       dockerfile: Dockerfile
     ports:
-    - "3000:80"
+      - "3000:80"
+    depends_on:
+      - backend
 
   backend:
     image: pdataviewer-backend
@@ -18,4 +20,4 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-    - "8000:80"
+      - "8000:80"
