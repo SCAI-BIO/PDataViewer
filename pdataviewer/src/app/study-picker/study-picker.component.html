@@ -5,9 +5,12 @@
   based on their fit to your requirements. Enter your features of interest below
   and submit.
 </p>
+
+<!-- Input container for features -->
 <div class="input-container">
   <mat-form-field class="full-width">
     <mat-chip-listbox #chipListBox multiple>
+      <!-- Loop through selected features and display them as chips -->
       <mat-chip-option
         *ngFor="let feature of selectedFeatures"
         [removable]="true"
@@ -24,6 +27,7 @@
         (matChipInputTokenEnd)="addFeature($any($event))"
       />
     </mat-chip-listbox>
+    <!-- Autocomplete dropdown for feature suggestions -->
     <mat-autocomplete
       #auto="matAutocomplete"
       [displayWith]="displayFn"
@@ -38,12 +42,16 @@
     </mat-autocomplete>
   </mat-form-field>
 </div>
+
+<!-- Button container for ranking cohorts -->
 <div class="button-container">
   <button class="rank-button" (click)="getRankings(selectedFeatures)">
     Rank cohorts
   </button>
 </div>
-<ng-container *ngIf="cohortRankings.length > 0">
+
+<!-- Display cohort rankings if available -->
+<ng-container *ngIf="cohortRankings?.length > 0">
   <div class="table-container">
     <table>
       <thead>
