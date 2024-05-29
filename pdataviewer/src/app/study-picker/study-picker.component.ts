@@ -81,7 +81,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
    * @returns An Observable of the fetched features.
    */
   fetchFeatures(): Observable<{ Feature: string[] }> {
-    return this.http.get<{ Feature: string[] }>(this.API_URL + '/cdm/features');
+    return this.http.get<{ Feature: string[] }>(`${this.API_URL}/cdm/features`);
   }
 
   /**
@@ -90,7 +90,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
    */
   getRankings(features: string[]) {
     const sub = this.http
-      .post<any[]>(this.API_URL + '/studypicker/rank', features)
+      .post<any[]>(`${this.API_URL}/studypicker/rank`, features)
       .subscribe({
         next: (v) => (this.cohortRankings = v),
         error: (e) => console.error(e),
