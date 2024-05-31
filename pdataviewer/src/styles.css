@@ -1,31 +1,72 @@
-/*Common Style CSS*/
-/* ---------------------------------------------
-Main Style for Pages
-------------------------------------------------
-01. font & reset css
-02. reset
-03. global styles
-04. footer
-/*
----------------------------------------------
-font & reset css
----------------------------------------------
-*/
+/* Import Bootstrap and Google Fonts */
+@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import url("https://fonts.googleapis.com/css?family=Raleway:100,300,400,500,700,900");
 
-/*
----------------------------------------------
-reset
----------------------------------------------
-*/
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, div
-pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q,
-s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li,
-figure, header, nav, section, article, aside, footer, figcaption {
+/* Reset and Global Styles */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+font,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+figure,
+header,
+nav,
+section,
+article,
+aside,
+footer,
+figcaption {
     margin: 0;
     padding: 0;
     border: 0;
     outline: 0;
+    list-style: none;
+    box-sizing: border-box;
 }
 
 .clearfix:after {
@@ -49,21 +90,8 @@ html[xmlns] .clearfix {
     height: 1%;
 }
 
-ul, li {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-
-header, nav, section, article, aside, footer, hgroup {
-    display: block;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-html, body {
+html,
+body {
     font-family: "Raleway", sans-serif;
     font-weight: 400;
     background-color: #fff;
@@ -73,34 +101,22 @@ html, body {
 }
 
 a {
-    text-decoration: none !important;
+    text-decoration: none;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    margin-top: 0px;
-    margin-bottom: 0px;
-}
-
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 ul {
-    margin-bottom: 0px;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
-/*
----------------------------------------------
-global styles
----------------------------------------------
-*/
-html,
-body {
-    background: #fff;
-    font-family: "Raleway", sans-serif;
-}
-
-::selection {
-    background: #1cacd7;
-    color: #fff;
-}
-
+/* Global Styles */
+::selection,
 ::-moz-selection {
     background: #1cacd7;
     color: #fff;
@@ -117,25 +133,31 @@ body {
 }
 
 .hr {
-    bottom: 0px;
+    bottom: 0;
     width: 100%;
     height: 1px;
     margin-top: 100px;
     border-bottom: 1px solid #eee;
 }
 
-.left-heading.light .section-title {
+.left-heading.light .section-title,
+.center-heading.colored .section-title,
+.left-text.light {
     color: #ffffff;
 }
 
-.left-heading .section-title {
+.left-heading .section-title,
+.center-heading .section-title {
     font-weight: 500;
-    font-size: 24px;
-    line-height: 42px;
     color: #1e1e1e;
-    letter-spacing: 0.25px;
     margin-bottom: 30px;
     position: relative;
+}
+
+.left-heading .section-title {
+    font-size: 24px;
+    line-height: 42px;
+    letter-spacing: 0.25px;
 }
 
 .center-heading {
@@ -143,38 +165,13 @@ body {
 }
 
 .center-heading .section-title {
-    font-weight: 500;
     font-size: 28px;
-    color: #1e1e1e;
     letter-spacing: 1.75px;
     line-height: 38px;
     margin-bottom: 20px;
 }
 
-.center-heading.colored .section-title {
-    color: #ffffff;
-}
-
-.center-text {
-    text-align: center;
-    font-weight: 400;
-    font-size: 16px;
-    color: #777;
-    line-height: 28px;
-    letter-spacing: 1px;
-    margin-bottom: 50px;
-}
-
-.center-text.colored {
-    color: #fff;
-}
-
-.center-text p {
-    font-size: 15px;
-    color: #777;
-    margin-bottom: 30px;
-}
-
+.center-text,
 .left-text {
     font-weight: 400;
     font-size: 16px;
@@ -183,11 +180,15 @@ body {
     letter-spacing: 1px;
 }
 
-.left-text.light {
-    color: #fff;
+.center-text {
+    text-align: center;
+    margin-bottom: 50px;
 }
 
+.center-text p,
 .left-text p {
+    font-size: 15px;
+    color: #777;
     margin-bottom: 30px;
 }
 
@@ -195,97 +196,76 @@ body {
     color: #3B566E;
 }
 
+/* Utility Classes */
 .padding-bottom-top-60 {
-    padding-top: 60px !important;
-    padding-bottom: 60px !important;
+    padding-top: 60px;
+    padding-bottom: 60px;
 }
 
 .padding-bottom-80 {
-    padding-bottom: 80px !important;
+    padding-bottom: 80px;
 }
 
 .padding-bottom-100 {
-    padding-bottom: 100px !important;
+    padding-bottom: 100px;
 }
 
 .border-bottom {
-    border-bottom: 1px solid #eee !important;
+    border-bottom: 1px solid #eee;
 }
 
 .mbottom-30 {
-    margin-bottom: 30px !important;
+    margin-bottom: 30px;
 }
 
 .align-self-center {
-    -ms-flex-item-align: center !important;
-    align-self: center !important;
+    -ms-flex-item-align: center;
+    align-self: center;
 }
 
 .align-self-bottom {
-    -ms-flex-item-align: flex-end !important;
-    align-self: flex-end !important;
+    -ms-flex-item-align: flex-end;
+    align-self: flex-end;
 }
 
-.padding-bottom-0 {
-    padding-bottom: 0px !important;
-}
-
-.padding-top-0 {
-    padding-top: 0px !important;
-}
-
-.padding-top-80 {
-    padding-top: 80px !important;
-}
-
-.padding-top-70 {
-    padding-top: 70px !important;
-}
-
-.padding-top-20 {
-    padding-top: 20px !important;
-}
-
-.margin-bottom-0 {
-    margin-bottom: 0px !important;
-}
-
-.margin-bottom-30 {
-    margin-bottom: 30px !important;
-}
-
-.margin-top-30 {
-    margin-top: 30px !important;
-}
-
-.margin-top-15 {
-    margin-top: 15px !important;
-}
-
-.margin-bottom-45 {
-    margin-bottom: 45px !important;
-}
-
-.margin-bottom-20 {
-    margin-bottom: 20px !important;
-}
-
-.margin-bottom-60 {
-    margin-bottom: 60px !important;
-}
-
+.padding-bottom-0,
+.padding-top-0,
+.padding-top-80,
+.padding-top-70,
+.padding-top-20,
+.margin-bottom-0,
+.margin-bottom-30,
+.margin-top-30,
+.margin-top-15,
+.margin-bottom-45,
+.margin-bottom-20,
+.margin-bottom-60,
 .margin-bottom-100 {
-    margin-bottom: 100px !important;
+    padding-bottom: 0;
+    padding-top: 0;
+    padding-top: 80px;
+    padding-top: 70px;
+    padding-top: 20px;
+    margin-bottom: 0;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    margin-top: 15px;
+    margin-bottom: 45px;
+    margin-bottom: 20px;
+    margin-bottom: 60px;
+    margin-bottom: 100px;
 }
 
 @media (max-width: 991px) {
-    html, body {
+
+    html,
+    body {
         overflow-x: hidden;
     }
 
     .mobile-top-fix {
         margin-top: 30px;
-        margin-bottom: 0px;
+        margin-bottom: 0;
     }
 
     .mobile-bottom-fix {
@@ -297,21 +277,20 @@ body {
     }
 }
 
-a.main-button {
+a.main-button,
+button.main-button {
     font-size: 13px;
     border-radius: 20px;
     padding: 12px 20px;
     background-color: #1cacd7;
     text-transform: uppercase;
-    color: #fff !important;
+    color: #fff;
     letter-spacing: 0.25px;
-    -webkit-transition: all 0.3s ease 0s;
-    -moz-transition: all 0.3s ease 0s;
-    -o-transition: all 0.3s ease 0s;
     transition: all 0.3s ease 0s;
 }
 
-a.main-button:hover {
+a.main-button:hover,
+button.main-button:hover {
     background-color: #5fb9e9;
     color: #fff;
 }
@@ -320,22 +299,6 @@ button.main-button {
     outline: none;
     border: none;
     cursor: pointer;
-    font-size: 13px;
-    border-radius: 20px;
-    padding: 12px 20px;
-    background-color: #1cacd7;
-    text-transform: uppercase;
-    color: #fff;
-    letter-spacing: 0.25px;
-    -webkit-transition: all 0.3s ease 0s;
-    -moz-transition: all 0.3s ease 0s;
-    -o-transition: all 0.3s ease 0s;
-    transition: all 0.3s ease 0s;
-}
-
-button.main-button:hover {
-    background-color: #5fb9e9;
-    color: #fff;
 }
 
 .btn-primary:hover,
@@ -344,59 +307,11 @@ button.main-button:hover {
     border-color: #5fb9e9;
     box-shadow: none;
     outline: none;
-    color: #fff !important;
+    color: #fff;
 }
 
 .btn-primary {
-    color: #fff !important;
+    color: #fff;
     background-color: #1cacd7;
     border-color: #1cacd7;
 }
-
-/*
----------------------------------------------
-footer
----------------------------------------------
-*/
-footer {
-    background-image: linear-gradient(127deg, #0081bf 0%, #003268 91%);
-    padding-top: 30px;
-    font-family: "Raleway", sans-serif !important;
-    font-size: 16px !important;
-}
-
-#footer a {
-    color: white !important;
-}
-
-footer .copyright {
-    text-align: center;
-    border-top: 1px solid rgba(250, 250, 250, 0.2);
-    padding-top: 30px;
-    padding-bottom: 30px;
-    font-weight: 400;
-    font-size: 12px;
-    color: #fff;
-    letter-spacing: 0.88px;
-    text-transform: uppercase;
-}
-
-@media (max-width: 991px) {
-    footer .text {
-        margin-bottom: 30px;
-    }
-
-    footer h5 {
-        margin-bottom: 15px;
-    }
-
-    footer .footer-nav {
-        margin-bottom: 30px;
-    }
-}
-
-.breadcrumb {
-    background: #0081bf !important;
-}
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

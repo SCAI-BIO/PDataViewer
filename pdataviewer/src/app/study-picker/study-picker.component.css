@@ -17,7 +17,7 @@ mat-chip-option {
 .mat-form-field-infix {
   width: 100%;
 }
-  
+
 /* Styles for the table */
 .table-container {
   display: flex;
@@ -74,5 +74,6 @@ th {
 
 
 .rank-button {
-  margin-left: 10px; /* Add spacing between the input field and the button */
+  margin-left: 10px;
+  /* Add spacing between the input field and the button */
 }
