@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AutocompleteService {
-  private API_URL = environment.API_URL // Base URL
+  private API_URL = environment.API_URL; // Base URL
   private autocompleteEndpoint = '/autocompletion'; // Endpoint
   constructor(private http: HttpClient) {}
 
