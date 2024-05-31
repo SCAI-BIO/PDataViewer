@@ -82,7 +82,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (v) => {
           this.chordService.initializeColorScale(v); // Initialize color scale
-          this.dataChunks = this.chordService.chunkData(v, 50); // Chunk the data
+          this.dataChunks = this.chordService.chunkData(v, 100); // Chunk the data
           this.noData = this.dataChunks.every(chunk => chunk.nodes.length === 0); // Check if all chunks are empty
           if (!this.noData){
             this.chordService.createChordDiagrams(this.dataChunks); // Create the chord diagrams
