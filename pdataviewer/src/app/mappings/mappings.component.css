@@ -46,18 +46,6 @@ button:hover {
     margin: 10px;
 }
 
-/* Tooltip styles */
-.tooltip {
-    position: absolute;
-    text-align: center;
-    padding: 8px;
-    font-size: 12px;
-    background: lightsteelblue;
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    pointer-events: none;
-}
-
 /* Legend styles */
 ::ng-deep .legend {
     display: flex;
