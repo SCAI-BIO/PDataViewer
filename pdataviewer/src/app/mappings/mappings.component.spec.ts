@@ -24,6 +24,10 @@ describe('MappingsComponent', () => {
     ],
     links: [{ source: 'Node1', target: 'Node2' }],
   };
+  const emptyData = {
+    nodes: [],
+    links: [],
+  };
 
   // Setup the testing module and inject the necessary services
   beforeEach(async () => {
@@ -128,6 +132,32 @@ describe('MappingsComponent', () => {
       By.css('.chord-diagram svg')
     );
     expect(svgElements.length).toBeGreaterThan(0);
+  });
+
+  it('should display no data message when there are no data chunks', () => {
+    component['modalities'] = mockModalities;
+    fixture.detectChanges();
+
+    const buttons = fixture.debugElement.queryAll(
+      By.css('.modality-buttons button')
+    );
+    buttons[0].triggerEventHandler('click', null);
+
+    const req = httpMock.expectOne(
+      `${environment.API_URL}/visualization/chords/`
+    );
+    expect(req.request.method).toBe('POST');
+    req.flush(emptyData);
+
+    fixture.detectChanges();
+
+    const noDataMessage = fixture.debugElement.query(
+      By.css('.no-data-message')
+    );
+    expect(noDataMessage).toBeTruthy();
+    expect(noDataMessage.nativeElement.textContent).toContain(
+      'Sorry, no mapping to showcase for this modality currently. We are collecting more data, keep in touch!'
+    );
   });
 
   // Test to verify that errors are handled gracefully when fetching chord data

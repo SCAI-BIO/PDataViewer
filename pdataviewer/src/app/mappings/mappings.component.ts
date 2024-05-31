@@ -21,6 +21,8 @@ export class MappingsComponent implements OnInit, OnDestroy {
   public dataChunks: any[] = [];
   // Array to hold available modalities
   public modalities: string[] = [];
+  // Flag to track if the data is empty
+  public noData: boolean = false;
   // API_URL for fetching data from the backend
   private API_URL = environment.API_URL;
   // Array to hold cohort names
@@ -79,9 +81,12 @@ export class MappingsComponent implements OnInit, OnDestroy {
       .post<any>(`${this.API_URL}/visualization/chords/`, request)
       .subscribe({
         next: (v) => {
-          this.chordService.initializeColorScale(v);
+          this.chordService.initializeColorScale(v); // Initialize color scale
           this.dataChunks = this.chordService.chunkData(v, 50); // Chunk the data
-          this.chordService.createChordDiagrams(this.dataChunks); // Create the chord diagrams
+          this.noData = this.dataChunks.every(chunk => chunk.nodes.length === 0); // Check if all chunks are empty
+          if (!this.noData){
+            this.chordService.createChordDiagrams(this.dataChunks); // Create the chord diagrams
+          }
         },
         error: (e) => console.error('Error fetching chord data:', e),
         complete: () =>

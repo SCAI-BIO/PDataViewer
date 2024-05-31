@@ -5,6 +5,9 @@
       {{ modality }}
     </button>
   </div>
+  <div *ngIf="noData" class="no-data-message">
+    Sorry, no mapping to showcase for this modality currently. We are collecting more data, keep in touch!
+  </div>
   <div class="chord-diagrams-container">
     <div *ngFor="let chunk of dataChunks" class="chord-diagram">
       <svg></svg>
