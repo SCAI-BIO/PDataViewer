@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { By } from '@angular/platform-browser';
 
@@ -29,7 +32,6 @@ describe('MappingsComponent', () => {
     links: [],
   };
 
-  // Setup the testing module and inject the necessary services
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -37,7 +39,7 @@ describe('MappingsComponent', () => {
         ChordDiagramService,
         {
           provide: ActivatedRoute,
-          useValue: { params: of({}) }, // Mock ActivatedRoute with empty params
+          useValue: { params: of({}) },
         },
       ],
     }).compileComponents();
@@ -48,11 +50,9 @@ describe('MappingsComponent', () => {
     chordService = TestBed.inject(ChordDiagramService);
   });
 
-  // Initialize the component and set up HTTP expectations
   beforeEach(() => {
-    fixture.detectChanges(); // Trigger initial data binding and lifecycle hooks
+    fixture.detectChanges();
 
-    // Mock HTTP responses for modalities and cohorts
     const modalitiesReq = httpMock.expectOne(
       `${environment.API_URL}/cdm/modalities`
     );
@@ -61,30 +61,25 @@ describe('MappingsComponent', () => {
     const cohortsReq = httpMock.expectOne(`${environment.API_URL}/cdm/cohorts`);
     cohortsReq.flush(mockCohorts);
 
-    fixture.detectChanges(); // Trigger data binding after responses
+    fixture.detectChanges();
   });
 
-  // Verify no outstanding requests after each test
   afterEach(() => {
     httpMock.verify();
   });
 
-  // Test to ensure the component is created successfully
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  // Test to verify that modalities are fetched on component initialization
   it('should fetch modalities on init', () => {
     expect(component['modalities']).toEqual(mockModalities);
   });
 
-  // Test to verify that cohorts are fetched on component initialization
   it('should fetch cohorts on init', () => {
     expect(component['cohorts']).toEqual(mockCohorts);
   });
 
-  // Test to verify that modality is set and data is fetched on modality click
   it('should set modality and fetch data on modality click', () => {
     component['modalities'] = mockModalities;
     fixture.detectChanges();
@@ -92,7 +87,7 @@ describe('MappingsComponent', () => {
     const buttons = fixture.debugElement.queryAll(
       By.css('.modality-buttons button')
     );
-    buttons[0].triggerEventHandler('click', null); // Simulate click on the first button
+    buttons[0].triggerEventHandler('click', null);
 
     const req = httpMock.expectOne(
       `${environment.API_URL}/visualization/chords/`
@@ -101,17 +96,15 @@ describe('MappingsComponent', () => {
     req.flush(mockData);
 
     expect(component['modality']).toBe(mockModalities[0]);
-    expect(component['dataChunks']).toEqual([mockData]); // Updated to check dataChunks
+    expect(component['dataChunks']).toEqual([mockData]);
   });
 
-  // Test to verify that all subscriptions are unsubscribed on component destruction
   it('should unsubscribe from all subscriptions on destroy', () => {
     spyOn(component['subscriptions'], 'forEach').and.callThrough();
     component.ngOnDestroy();
     expect(component['subscriptions'].forEach).toHaveBeenCalled();
   });
 
-  // Test to verify that chord diagrams are created with the correct data
   it('should create chord diagrams with correct data', () => {
     spyOn(chordService, 'createChordDiagrams').and.callThrough();
     component['dataChunks'] = [mockData];
@@ -160,7 +153,6 @@ describe('MappingsComponent', () => {
     );
   });
 
-  // Test to verify that errors are handled gracefully when fetching chord data
   it('should handle errors while fetching chord data', () => {
     spyOn(console, 'error');
     component['modalities'] = mockModalities;

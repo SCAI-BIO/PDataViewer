@@ -15,7 +15,7 @@ describe('HomeComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            params: of({}), // Mock ActivatedRoute with empty params
+            params: of({}),
           },
         },
       ],
