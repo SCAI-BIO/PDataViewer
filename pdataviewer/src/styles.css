@@ -1,5 +1,6 @@
 /* Import Bootstrap and Google Fonts */
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 @import url("https://fonts.googleapis.com/css?family=Raleway:100,300,400,500,700,900");
 
 /* Reset and Global Styles */
