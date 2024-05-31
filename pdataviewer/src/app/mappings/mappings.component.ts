@@ -79,6 +79,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
       .post<any>(`${this.API_URL}/visualization/chords/`, request)
       .subscribe({
         next: (v) => {
+          this.chordService.initializeColorScale(v);
           this.dataChunks = this.chordService.chunkData(v, 50); // Chunk the data
           this.chordService.createChordDiagrams(this.dataChunks); // Create the chord diagrams
         },

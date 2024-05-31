@@ -7,6 +7,18 @@ import { Link } from '../interfaces/link';
   providedIn: 'root',
 })
 export class ChordDiagramService {
+  private colorScale: d3.ScaleOrdinal<string, string>;
+
+  constructor() {
+    this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+  }
+
+  // Initialize the color scale based on all unique groups
+  initializeColorScale(data: any): void {
+    const allGroups = Array.from(new Set(data.nodes.map((node: Node) => node.group)) as Set<string>);
+    this.colorScale.domain(allGroups);
+  }
+
   // Chunk the data into smaller parts for easier processing
   chunkData(data: any, chunkSize: number): any[] {
     const chunks = [];
@@ -50,13 +62,11 @@ export class ChordDiagramService {
     }));
     const links: Link[] = data.links;
 
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
     nodes = nodes.sort((a, b) => a.group.localeCompare(b.group));
 
     const nodeIndex = new Map(
       nodes.map((node: Node, i: number) => [node.id, i])
     );
-    const cohorts = Array.from(new Set(nodes.map((node) => node.group)));
 
     const matrix = Array(nodes.length)
       .fill(0)
@@ -111,11 +121,11 @@ export class ChordDiagramService {
       .append('path')
       .style('fill', (d: any) => {
         const feature = nodes[d.index];
-        return color(feature.group);
+        return this.colorScale(feature.group);
       })
       .style('stroke', (d: any) => {
         const feature = nodes[d.index];
-        return d3.rgb(color(feature.group)).darker().toString();
+        return d3.rgb(this.colorScale(feature.group)).darker().toString();
       })
       .attr('d', arc as unknown as (d: any) => string);
 
@@ -164,18 +174,19 @@ export class ChordDiagramService {
       .attr('class', 'ribbon')
       .attr('d', ribbon as unknown as (d: any) => string);
 
-    // Add legend
+    // Add legend for existing groups
+    const existingGroups = Array.from(new Set(nodes.map(node => node.group))).sort();
     const legend = d3.select(svgElement).append('div').attr('class', 'legend');
 
-    cohorts.forEach((cohort) => {
+    existingGroups.forEach((group) => {
       const legendRow = legend.append('div').attr('class', 'legend-row');
 
       legendRow
         .append('div')
         .attr('class', 'legend-color')
-        .style('background-color', color(cohort));
+        .style('background-color', this.colorScale(group));
 
-      legendRow.append('div').attr('class', 'legend-text').text(cohort);
+      legendRow.append('div').attr('class', 'legend-text').text(group);
     });
   }
 }
