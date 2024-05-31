@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 
+import { FooterComponent } from '../footer/footer.component';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { environment } from '../../environments/environment';
 
@@ -19,6 +20,7 @@ import { environment } from '../../environments/environment';
   selector: 'app-study-picker',
   standalone: true,
   imports: [
+    FooterComponent,
     NavBarComponent,
     CommonModule,
     MatFormFieldModule,

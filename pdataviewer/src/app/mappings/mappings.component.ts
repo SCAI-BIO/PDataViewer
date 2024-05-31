@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { Subscription } from 'rxjs';
 
+import { FooterComponent } from '../footer/footer.component';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { environment } from '../../environments/environment';
 
@@ -12,7 +13,7 @@ import { ChordDiagramService } from '../services/chord-diagram.service';
 @Component({
   selector: 'app-mappings',
   standalone: true,
-  imports: [NavBarComponent, CommonModule],
+  imports: [CommonModule, FooterComponent, NavBarComponent],
   templateUrl: './mappings.component.html',
   styleUrl: './mappings.component.css',
 })
@@ -83,8 +84,10 @@ export class MappingsComponent implements OnInit, OnDestroy {
         next: (v) => {
           this.chordService.initializeColorScale(v); // Initialize color scale
           this.dataChunks = this.chordService.chunkData(v, 100); // Chunk the data
-          this.noData = this.dataChunks.every(chunk => chunk.nodes.length === 0); // Check if all chunks are empty
-          if (!this.noData){
+          this.noData = this.dataChunks.every(
+            (chunk) => chunk.nodes.length === 0
+          ); // Check if all chunks are empty
+          if (!this.noData) {
             this.chordService.createChordDiagrams(this.dataChunks); // Create the chord diagrams
           }
         },

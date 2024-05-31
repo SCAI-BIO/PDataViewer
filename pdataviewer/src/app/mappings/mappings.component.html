@@ -1,16 +1,34 @@
 <div>
+  <!-- Navigation Bar Component -->
   <app-nav-bar></app-nav-bar>
+
+  <!-- Container for modality buttons -->
   <div class="modality-buttons">
-    <button *ngFor="let modality of modalities" (click)="onModalityClick(modality)">
+    <!-- Loop through each modality and create a button -->
+    <button
+      *ngFor="let modality of modalities"
+      (click)="onModalityClick(modality)"
+    >
+      <!-- Interpolate modality name -->
       {{ modality }}
     </button>
   </div>
+
+  <!-- Conditional display of no-data message -->
   <div *ngIf="noData" class="no-data-message">
-    Sorry, no mapping to showcase for this modality currently. We are collecting more data, keep in touch!
+    Sorry, no mapping to showcase for this modality currently. We are collecting
+    more data, keep in touch!
   </div>
+
+  <!-- Container for chord diagrams -->
   <div class="chord-diagrams-container">
+    <!-- Loop through each data chunk and create a container for chord diagram -->
     <div *ngFor="let chunk of dataChunks" class="chord-diagram">
+      <!-- Placeholder for SVG content of chord diagram -->
       <svg></svg>
     </div>
   </div>
+
+  <!-- Footer Component -->
+  <app-footer></app-footer>
 </div>

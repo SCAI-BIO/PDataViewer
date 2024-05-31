@@ -4,6 +4,7 @@
       <div class="col-12">
         <nav class="main-nav">
           <!-- ***** Logo Start ***** -->
+          <!-- Router Link to home page with logo -->
           <a class="logo" [routerLink]="['/']">
             <img
               class="img-fluid"
@@ -13,17 +14,48 @@
             />
           </a>
           <!-- ***** Logo End ***** -->
+
           <!-- ***** Menu Start ***** -->
+          <!-- Navigation Menu -->
           <ul class="nav">
-            <li><a routerLink="/cohorts" class="button fancy-button">Cohorts</a></li>
-            <li><a routerLink="/biomarkers" class="button fancy-button">Biomarkers</a></li>
-            <li><a routerLink="/study-picker" class="button fancy-button">StudyPicker</a></li>
-            <li><a routerLink="/ethnicity" class="button fancy-button">Ethnicity</a></li>
-            <li><a routerLink="/mappings" class="button fancy-button">Mappings</a></li>
-            <li><a routerLink="/longitudinal" class="button fancy-button">Longitudinal</a></li>
-            <li><a routerLink="/tools" class="button fancy-button">Tools</a></li>
-            <li><a routerLink="/contact-us" class="button fancy-button">Contact Us</a></li>
+            <!-- Router links to different sections of the application -->
+            <li>
+              <a routerLink="/cohorts" class="button fancy-button">Cohorts</a>
+            </li>
+            <li>
+              <a routerLink="/biomarkers" class="button fancy-button"
+                >Biomarkers</a
+              >
+            </li>
+            <li>
+              <a routerLink="/study-picker" class="button fancy-button"
+                >StudyPicker</a
+              >
+            </li>
+            <li>
+              <a routerLink="/ethnicity" class="button fancy-button"
+                >Ethnicity</a
+              >
+            </li>
+            <li>
+              <a routerLink="/mappings" class="button fancy-button">Mappings</a>
+            </li>
+            <li>
+              <a routerLink="/longitudinal" class="button fancy-button"
+                >Longitudinal</a
+              >
+            </li>
+            <li>
+              <a routerLink="/tools" class="button fancy-button">Tools</a>
+            </li>
+            <li>
+              <a routerLink="/contact-us" class="button fancy-button"
+                >Contact Us</a
+              >
+            </li>
           </ul>
+
+          <!-- Menu trigger for mobile view -->
           <a class="menu-trigger" aria-label="Open Menu">
             <span>Menu</span>
           </a>
