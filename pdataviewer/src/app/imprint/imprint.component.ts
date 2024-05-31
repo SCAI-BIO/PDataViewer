@@ -7,8 +7,6 @@ import { FooterComponent } from '../footer/footer.component';
   standalone: true,
   imports: [FooterComponent, NavBarComponent],
   templateUrl: './imprint.component.html',
-  styleUrl: './imprint.component.css'
+  styleUrl: './imprint.component.css',
 })
-export class ImprintComponent {
-
-}
+export class ImprintComponent {}
