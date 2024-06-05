@@ -1,19 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-
 import { Subscription } from 'rxjs';
-
-import { FooterComponent } from '../footer/footer.component';
-import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { environment } from '../../environments/environment';
-
 import { ChordDiagramService } from '../services/chord-diagram.service';
 
 @Component({
   selector: 'app-mappings',
   standalone: true,
-  imports: [CommonModule, FooterComponent, NavBarComponent],
+  imports: [CommonModule],
   templateUrl: './mappings.component.html',
   styleUrl: './mappings.component.css',
 })

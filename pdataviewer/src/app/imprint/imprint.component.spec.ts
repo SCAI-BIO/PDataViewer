@@ -40,16 +40,6 @@ describe('ImprintComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render the navigation component', () => {
-    const navElement = fixture.debugElement.query(By.css('app-nav-bar'));
-    expect(navElement).toBeTruthy();
-  });
-
-  it('should render the footer component', () => {
-    const footerElement = fixture.debugElement.query(By.css('app-footer'));
-    expect(footerElement).toBeTruthy();
-  });
-
   it('should render the Legal section title', () => {
     const legalTitle = fixture.debugElement.query(By.css('h3')).nativeElement;
     expect(legalTitle.textContent).toContain('Legal');
