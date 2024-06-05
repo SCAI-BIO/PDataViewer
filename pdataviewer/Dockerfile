@@ -7,9 +7,6 @@ WORKDIR /app
 # Copy the current directory contents into the working directory
 COPY . .
 
-# Update lock file
-RUN npm install
-
 # Install dependencies
 RUN npm ci
 
