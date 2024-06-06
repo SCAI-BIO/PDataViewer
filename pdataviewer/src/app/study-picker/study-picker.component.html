@@ -1,0 +1,72 @@
+<h3>StudyPicker</h3>
+<p>
+  The StudyPicker helps you to find accessible cohort datasets and ranks them
+  based on their fit to your requirements. Enter your features of interest below
+  and submit.
+</p>
+
+<!-- Input container for features -->
+<div class="input-container">
+  <mat-form-field class="full-width">
+    <mat-chip-listbox #chipListBox multiple>
+      <!-- Loop through selected features and display them as chips -->
+      <mat-chip-option
+        *ngFor="let feature of selectedFeatures"
+        [removable]="true"
+        (removed)="removeFeature(feature)"
+      >
+        {{ feature }}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip-option>
+      <input
+        matInput
+        placeholder="Enter features of interest"
+        [matAutocomplete]="auto"
+        [formControl]="featureCtrl"
+        (matChipInputTokenEnd)="addFeature($any($event))"
+      />
+    </mat-chip-listbox>
+    <!-- Autocomplete dropdown for feature suggestions -->
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      [displayWith]="displayFn"
+      (optionSelected)="optionSelected($event)"
+    >
+      <mat-option
+        *ngFor="let option of filteredFeatures | async"
+        [value]="option"
+      >
+        {{ option }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</div>
+
+<!-- Button container for ranking cohorts -->
+<div class="button-container">
+  <button class="rank-button" (click)="getRankings(selectedFeatures)">
+    Rank cohorts
+  </button>
+</div>
+
+<!-- Display cohort rankings if available -->
+<ng-container *ngIf="cohortRankings?.length > 0">
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Cohorts (ranked)</th>
+          <th>Successfully found</th>
+          <th>Missing features</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cohort of cohortRankings">
+          <td>{{ cohort.cohort }}</td>
+          <td>{{ cohort.found }}</td>
+          <td>{{ cohort.missing }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-container>

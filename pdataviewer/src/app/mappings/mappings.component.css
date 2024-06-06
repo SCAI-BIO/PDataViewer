@@ -1,0 +1,82 @@
+/* General layout and spacing */
+:host {
+    display: block;
+    margin: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Styles for modality buttons */
+.modality-buttons {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Container for chord diagrams */
+.chord-diagrams-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.chord-diagram {
+    flex: 1 1 50%;
+    max-width: 650px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
+
+/* Legend styles */
+::ng-deep .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+::ng-deep .legend-row {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+::ng-deep .legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    border-radius: 4px;
+}
+
+::ng-deep .legend-text {
+    font-size: 12px;
+    color: #333;
+}
+
+/* Ribbon styles */
+::ng-deep .ribbon {
+    fill-opacity: 0.75;
+    stroke-opacity: 0.75;
+    cursor: pointer;
+    fill: skyblue;
+    stroke: skyblue;
+}

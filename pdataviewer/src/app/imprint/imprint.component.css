@@ -1,0 +1,17 @@
+.btn:hover,
+.btn:focus {
+  background-color: #5fb9e9;
+  border-color: #5fb9e9;
+  box-shadow: none;
+  outline: none;
+}
+
+.btn {
+  color: #fff;
+  background-color: #00967f;
+  border-color: #00967f;
+}
+
+a {
+  color: #0081bf;
+}

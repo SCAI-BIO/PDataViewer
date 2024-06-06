@@ -4,18 +4,18 @@ services:
 
   frontend:
     image: pdataviewer-frontend
-    hostname: frontend
     build:
-      context: ./frontend
+      context: ./pdataviewer
       dockerfile: Dockerfile
     ports:
-    - "3000:80"
+      - "3000:80"
+    depends_on:
+      - backend
 
   backend:
     image: pdataviewer-backend
-    hostname: backend
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-    - "8000:80"
+      - "5000:80"

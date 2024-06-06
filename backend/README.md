@@ -1,6 +1,7 @@
 # Backend
 
 - [Backend](#backend)
+  - [Introduction](#introduction)
   - [Tutorial](#tutorial)
   - [Requirements](#requirements)
   - [Installation](#installation)
@@ -8,10 +9,13 @@
     - [Starting the Backend Locally](#starting-the-backend-locally)
     - [Run the Backend via Docker](#run-the-backend-via-docker)
 
+## Introduction
+
+This repository contains the backend code for the PDataViewer web application. It provides the API services necessary for interacting with the PD data landscape.
 
 ## Tutorial
 
-https://fastapi.tiangolo.com/tutorial/
+For a detailed guide on using FastAPI, refer to the official [FastAPI Tutorial](https://fastapi.tiangolo.com/tutorial/)
 
 ## Requirements
 
@@ -19,7 +23,9 @@ https://fastapi.tiangolo.com/tutorial/
 
 ## Installation
 
-```python
+Install the project dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
@@ -29,7 +35,7 @@ pip install -r requirements.txt
 You can access the backend functionalities by accessing the provided REST API. <br>
 Run the Backend API on port 5000:
 
-```python
+```bash
 uvicorn api.routes:app --reload --port 5000
 ```
 
@@ -37,12 +43,18 @@ uvicorn api.routes:app --reload --port 5000
 The API can also be run via docker. <br>
 You can either build the docker container locally or download the latest build from the PDataViewer GitHub package registry.
 
+To build the Docker container locally:
+
 ```bash
-docker build . -t ghcr.io/scai-bio/pdataviewer/backend:latest
+docker build -t ghcr.io/scai-bio/pdataviewer/backend:latest .
+```
+
+To download the latest build:
+```bash
 docker pull ghcr.io/scai-bio/pdataviewer/backend:latest
 ```
 
-After build/download you will be able to start the container and access the PDataViewer API per default on [localhost:8000](http://localhost:8000/):
+After building or downloading, start the container and access the PDataViewer API by default on [localhost:8000](http://localhost:8000):
 
 ```bash
 docker run -p 8000:80 ghcr.io/scai-bio/pdataviewer/backend:latest

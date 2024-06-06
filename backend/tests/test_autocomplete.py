@@ -1,4 +1,4 @@
-from api.routes import autocomplete
+from functions.autocomplete import autocomplete
 
 
 folder = "./backend/tests/resources/features/"

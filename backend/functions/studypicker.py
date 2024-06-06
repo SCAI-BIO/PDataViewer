@@ -31,7 +31,7 @@ def rank_cohorts(features: list[str], folder: str="./cdm") -> pd.DataFrame:
         raise ValueError("The 'features' list cannot be empty")
     total_features = len(features)
     # Initialize an empty data frame
-    ranked_cohorts = pd.DataFrame(columns=["Cohort (ranked)", "Successfully found", "Missing features"])
+    ranked_cohorts = pd.DataFrame(columns=["cohort", "found", "missing"])
     # Merge the modalities together
     cdm = merge_modalities(folder=folder)
     # Use NaN for missing values
@@ -53,12 +53,12 @@ def rank_cohorts(features: list[str], folder: str="./cdm") -> pd.DataFrame:
         # Add derived information to the ranked_cohorts data frame
         ranked_cohorts.loc[len(ranked_cohorts.index)] = [column, found_features, missing_features]
     # Sort values based on the number of successfully found features
-    ranked_cohorts.sort_values(by="Successfully found", ascending=False, inplace=True)
+    ranked_cohorts.sort_values(by="found", ascending=False, inplace=True)
     # Reset the indices, otherwise creates an issue in json
     ranked_cohorts.reset_index(drop=True, inplace=True)
     # Calculate the percentage of features found
-    percentage_found = ((ranked_cohorts["Successfully found"] / total_features) * 100).round(2)
+    percentage_found = ((ranked_cohorts["found"] / total_features) * 100).round(2)
     # Format the "Successfully found" column so that it displays the data in
     # "(found_features)/(total_features) (percentage_found)" format
-    ranked_cohorts["Successfully found"] = ranked_cohorts["Successfully found"].astype(str) + "/" + str(total_features) + " (" + percentage_found.astype(str) + "%)"
+    ranked_cohorts["found"] = ranked_cohorts["found"].astype(str) + "/" + str(total_features) + " (" + percentage_found.astype(str) + "%)"
     return ranked_cohorts
