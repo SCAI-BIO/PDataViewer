@@ -55,6 +55,7 @@ jobs:
         file: ./pdataviewer/Dockerfile
         push: true
         tags: |
+          ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:latest
           ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:${{ steps.versions.outputs.VERSION }}
 
     - name: Build & push backend
