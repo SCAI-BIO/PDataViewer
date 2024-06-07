@@ -65,7 +65,7 @@ jobs:
 
     - name: Install frontend dependencies
       run: |
-        cd pdataviewer
+        cd frontend
         npm ci
 
     - name: Install Angular CLI
@@ -73,5 +73,5 @@ jobs:
 
     - name: Run frontend tests
       run: |
-        cd pdataviewer
+        cd frontend
         ng test --watch=false --browsers=ChromeHeadless
