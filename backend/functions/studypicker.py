@@ -1,3 +1,35 @@
+"""
+The cohort ranking module provides functionality to rank cohorts based on the availability of requested features.
+It includes a function to merge and clean modality data, and then rank cohorts based on the presence of specified features.
+
+The module includes the following function:
+- rank_cohorts(features: list[str], folder: str="./cdm") -> pd.DataFrame:
+    Ranks cohorts based on the availability of requested features by merging modality data and filtering based on the features list.
+
+Usage example:
+---------------
+To rank cohorts based on a list of features using the data in the './cdm' folder:
+
+    from functions.studypicker import rank_cohorts
+
+    features = ['Feature1', 'Feature2', 'Feature3']
+    ranked_cohorts = rank_cohorts(features=features, folder='./cdm')
+    print(ranked_cohorts)
+
+Dependencies:
+--------------
+- os: For checking the existence of directories and files.
+- pandas: For data manipulation and processing.
+- numpy: For handling missing data.
+- functions.preprocessing: For `merge_modalities` and `clean_extra_columns` functions to obtain and clean feature data.
+
+Exceptions:
+-----------
+The `rank_cohorts` function raises the following exceptions:
+- FileNotFoundError: If the specified folder does not exist or is empty.
+- ValueError: If the provided `features` list is empty.
+"""
+
 import os
 
 import pandas as pd

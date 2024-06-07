@@ -1,3 +1,36 @@
+"""
+This module provides functionality to generate linkage information for various cohorts
+based on a specified modality. The main function, `generate_chords`, reads data from
+CSV files, processes it to filter relevant information, and constructs a network of nodes
+and links representing the relationships between the cohorts.
+
+The module includes the following functions:
+- generate_chords(modality: str, cohorts: list[str], folder: str='./cdm'):
+    Generates linkage information for cohorts in a specified modality by reading and 
+    processing a CSV file, and constructing nodes and links representing the mappings.
+
+Usage example:
+---------------
+To generate linkage information for cohorts 'PPMI' and 'BIOFIND' in the 'comorbidities' CSV file 
+located in the './cdm' folder:
+
+    from functions.visualization import generate_chords
+
+    linkage_data = generate_chords(modality='comorbidities', cohorts=['PPMI', 'BIOFIND'], folder='./cdm')
+    print(linkage_data)
+
+Dependencies:
+--------------
+- os: For checking the existence of directories and files.
+- pandas: For data manipulation and processing.
+
+Exceptions:
+-----------
+The `generate_chords` function raises the following exceptions:
+- FileNotFoundError: If the specified folder does not exist or is empty.
+- ValueError: If the provided cohorts list is empty.
+"""
+
 import os
 import pandas as pd
 

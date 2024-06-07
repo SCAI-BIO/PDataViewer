@@ -1,3 +1,38 @@
+"""
+The preprocessing module provides functions to merge and clean modality data for the PASSIONATE CDM.
+It includes functionalities to merge multiple CSV files into a single DataFrame and to clean unnecessary 
+columns from the data.
+
+The module includes the following functions:
+- merge_modalities(folder: str="./cdm", usecols: None | list[str] = None) -> pd.DataFrame:
+    Merges all CSV files in a specified folder into a single DataFrame, optionally selecting specific columns.
+- clean_extra_columns(df: pd.DataFrame, extra_columns: list[str]=["CURIE", "Definition", "Synonyms", "OMOP"]) -> pd.DataFrame:
+    Removes specified columns from a given DataFrame.
+
+Usage example:
+---------------
+To merge all modality CSV files in the './cdm' folder into a single DataFrame and clean it by removing 
+extra columns:
+
+    from functions.preprocessing import merge_modalities, clean_extra_columns
+
+    merged_data = merge_modalities(folder='./cdm')
+    cleaned_data = clean_extra_columns(merged_data, extra_columns=['CURIE', 'Definition'])
+
+Dependencies:
+--------------
+- os: For checking the existence of directories and files.
+- pandas: For data manipulation and processing.
+
+Exceptions:
+-----------
+The `merge_modalities` function raises the following exceptions:
+- FileNotFoundError: If the specified folder does not exist or is empty.
+- ValueError: If the provided `usecols` list is empty.
+
+The `clean_extra_columns` function does not raise any exceptions.
+"""
+
 import os
 import pandas as pd
 

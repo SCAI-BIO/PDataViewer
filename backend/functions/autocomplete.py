@@ -1,3 +1,33 @@
+"""
+The autocomplete module provides functionality to suggest autocompletions based on a given query.
+It leverages regular expression matching and fuzzy string matching to generate suggestions from
+a list of features.
+
+The module includes the following function:
+- autocomplete(text: str, folder="./cdm", threshold=80, limit=10) -> list[str]:
+    Provides autocomplete suggestions based on the given query by performing regex and fuzzy matching.
+
+Usage example:
+---------------
+To get autocomplete suggestions for the query 'Feat' using the data in the './cdm' folder:
+
+    from functions.autocomplete import autocomplete
+
+    suggestions = autocomplete(text='Feat', folder='./cdm')
+    print(suggestions)
+
+Dependencies:
+--------------
+- re: For removing regular expression operations.
+- thefuzz: For fuzzy string matching.
+- functions.preprocessing: For the `merge_modalities` function to obtain feature data.
+
+Exceptions:
+-----------
+The `autocomplete` function does not explicitly raise any exceptions but relies on 
+the underlying functions and libraries which may raise their respective exceptions.
+"""
+
 import re
 from thefuzz import process, fuzz
 from functions.preprocessing import merge_modalities
