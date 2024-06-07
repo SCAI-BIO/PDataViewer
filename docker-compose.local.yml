@@ -6,7 +6,7 @@ services:
     image: pdataviewer-frontend
     build:
       context: ./pdataviewer
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "3000:80"
     depends_on:

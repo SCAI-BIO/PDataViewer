@@ -4,10 +4,6 @@ on:
   release:
     types: [published]
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
   build:
     name: Build Docker Images
@@ -42,17 +38,11 @@ jobs:
     - name: Install Angular CLI
       run: npm install -g @angular/cli
 
-    - name: ng build
-      run: |
-        cd pdataviewer
-        npm install --legacy-peer-deps
-        ng build --configuration=production
-
     - name: Build & push frontend
       uses: docker/build-push-action@v5
       with:
         context: ./pdataviewer
-        file: ./pdataviewer/Dockerfile
+        file: ./pdataviewer/Dockerfile.prod
         push: true
         tags: |
           ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:latest
