@@ -1,10 +1,11 @@
-name: Docker Image CI
+name: Release Run
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  release:
+    types: [published]
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -19,11 +20,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    
     - name: Get Version Tags
-      id: versions
-      run: |
-        echo "FRONTEND_VERSION=$(node -p "require('./pdataviewer/package.json').version")" >> "$GITHUB_OUTPUT"
-        echo "BACKEND_VERSION=$(echo "$(<backend/api/routes.py)" | grep -oP "(?<=version=\")[^\"]+")" >> "$GITHUB_OUTPUT"
+      id: extract_version
+      run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> "$GITHUB_OUTPUT"
 
     - name: Docker Login
       uses: docker/login-action@v3
@@ -46,7 +46,7 @@ jobs:
       run: |
         cd pdataviewer
         npm install --legacy-peer-deps
-        ng build --configuration=development
+        ng build --configuration=production
 
     - name: Build & push frontend
       uses: docker/build-push-action@v5
@@ -56,7 +56,7 @@ jobs:
         push: true
         tags: |
           ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:latest
-          ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:${{ steps.versions.outputs.FRONTEND_VERSION }}
+          ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:${{ steps.versions.outputs.VERSION }}
 
     - name: Build & push backend
       uses: docker/build-push-action@v5
@@ -66,4 +66,4 @@ jobs:
         push: true
         tags: |
           ghcr.io/${{ steps.lowercase.outputs.REPO }}/backend:latest
-          ghcr.io/${{ steps.lowercase.outputs.REPO }}/backend:${{ steps.versions.outputs.BACKEND_VERSION }}
+          ghcr.io/${{ steps.lowercase.outputs.REPO }}/backend:${{ steps.versions.outputs.VERSION }}
