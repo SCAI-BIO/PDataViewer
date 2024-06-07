@@ -5,7 +5,7 @@ services:
   frontend:
     image: pdataviewer-frontend
     build:
-      context: ./pdataviewer
+      context: ./frontend
       dockerfile: Dockerfile.dev
     ports:
       - "3000:80"

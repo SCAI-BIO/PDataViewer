@@ -33,7 +33,7 @@ jobs:
       with:
         node-version: 20.12.2
         cache: 'npm'
-        cache-dependency-path: pdataviewer/package-lock.json
+        cache-dependency-path: frontend/package-lock.json
 
     - name: Install Angular CLI
       run: npm install -g @angular/cli
@@ -41,8 +41,8 @@ jobs:
     - name: Build & push frontend
       uses: docker/build-push-action@v5
       with:
-        context: ./pdataviewer
-        file: ./pdataviewer/Dockerfile.prod
+        context: ./frontend
+        file: ./frontend/Dockerfile.prod
         push: true
         tags: |
           ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:latest
