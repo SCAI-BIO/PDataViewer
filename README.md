@@ -92,7 +92,7 @@ You can deploy a local version of the web application via Angular <br>
 You can access the web application on [localhost:4200](http://localhost:4200):
 
 ```bash
-cd pdataviewer
+cd frontend
 npm install
 ng serve
 ```

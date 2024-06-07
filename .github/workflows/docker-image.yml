@@ -22,7 +22,7 @@ jobs:
     - name: Get Version Tags
       id: versions
       run: |
-        echo "FRONTEND_VERSION=$(node -p "require('./pdataviewer/package.json').version")" >> "$GITHUB_OUTPUT"
+        echo "FRONTEND_VERSION=$(node -p "require('./frontend/package.json').version")" >> "$GITHUB_OUTPUT"
         echo "BACKEND_VERSION=$(echo "$(<backend/api/routes.py)" | grep -oP "(?<=version=\")[^\"]+")" >> "$GITHUB_OUTPUT"
 
     - name: Docker Login
@@ -37,22 +37,22 @@ jobs:
       with:
         node-version: 20.12.2
         cache: 'npm'
-        cache-dependency-path: pdataviewer/package-lock.json
+        cache-dependency-path: frontend/package-lock.json
 
     - name: Install Angular CLI
       run: npm install -g @angular/cli
 
     - name: ng build
       run: |
-        cd pdataviewer
+        cd frontend
         npm install --legacy-peer-deps
         ng build --configuration=development
 
     - name: Build & push frontend
       uses: docker/build-push-action@v5
       with:
-        context: ./pdataviewer
-        file: ./pdataviewer/Dockerfile
+        context: ./frontend
+        file: ./frontend/Dockerfile
         push: true
         tags: |
           ghcr.io/${{ steps.lowercase.outputs.REPO }}/frontend:latest
