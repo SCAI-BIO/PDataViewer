@@ -6,15 +6,11 @@
   font-size: 16px;
 }
 
-:host a {
+:host a, .mat-list-item a {
   color: white;
 }
 
 :host .subheading {
-  color: white;
-}
-
-.mat-list-item a {
   color: white;
 }
 
@@ -31,16 +27,12 @@
 }
 
 @media (max-width: 991px) {
-  :host .text {
+  :host .text, :host .footer-nav {
     margin-bottom: 30px;
   }
 
   :host h5 {
     margin-bottom: 15px;
-  }
-
-  :host .footer-nav {
-    margin-bottom: 30px;
   }
 
   :host .main-headers {
@@ -64,7 +56,6 @@ body {
 .main-headers {
   display: flex;
   justify-content: space-between;
-  flex-wrap: nowrap;
 }
 
 .main-headers .col-12 {
