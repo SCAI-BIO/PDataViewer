@@ -1,8 +1,12 @@
-<h3>Mappings</h3>
+<h1>Mappings</h1>
 <p>
   <br />
   The Mappings helps you to identify semantic equivalent of the feature(s) of
   your interest in another cohort. <br />
+  <br />
+
+  Adjust the "Maximum Number of Features" slider to adjust the maximum number of
+  features to be displayed in a single chord diagram <br />
   <br />
 
   You can hover over the feature of your interest to highlight its semantic
@@ -10,7 +14,8 @@
   <br />
 
   Some of the modalities are too big to showcase in a singular chord diagram,
-  you might need to scroll down to be able to see all the diagrams. <br />
+  especially with a low "Maximum Number of Features" setting. You might need to
+  scroll down to be able to see all the diagrams. <br />
   <br />
 
   Unfortunately, due to data limitation, there might be no mappings to showcase
@@ -37,6 +42,19 @@
   <div *ngIf="noData" class="no-data-message">
     Sorry, no mapping to showcase for this modality currently. We are collecting
     more data, keep in touch!
+  </div>
+
+  <!-- Container for max features label and slider -->
+  <div class="max-features-wrapper">
+    <div class="max-features-container">
+      <label id="featureNumber" class="featureNumber"
+        >Maximum Number of Features:
+      </label>
+      <span class="featureNumber">{{ maxFeatures }}</span>
+    </div>
+    <mat-slider min="10" max="200" step="5" (input)="onSliderChange($event)">
+      <input matSliderThumb value="50" />
+    </mat-slider>
   </div>
 
   <!-- Container for chord diagrams -->
