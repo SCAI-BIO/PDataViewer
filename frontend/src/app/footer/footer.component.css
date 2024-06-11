@@ -10,6 +10,14 @@
   color: white;
 }
 
+:host .subheading {
+  color: white;
+}
+
+.mat-list-item a {
+  color: white;
+}
+
 :host .copyright {
   text-align: center;
   border-top: 1px solid rgba(250, 250, 250, 0.2);
@@ -34,6 +42,10 @@
   :host .footer-nav {
     margin-bottom: 30px;
   }
+
+  :host .main-headers {
+    flex-wrap: wrap;
+  }
 }
 
 .breadcrumb {
@@ -47,4 +59,14 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.main-headers {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+.main-headers .col-12 {
+  flex: 1;
 }

@@ -3,442 +3,309 @@
     <h4 class="section-title">Contact Us</h4>
     <div class="row">
       <!-- Prof. Dr. Martin Hofmann-Apitius -->
-      <div class="col-xs-12 col-sm-4 col-md-4">
-        <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-          <div class="mainflip">
-            <div class="frontside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <p>
-                    <img
-                      class="img-fluid"
-                      src="assets/contact/martin.jpg"
-                      alt="Prof. Dr. Martin Hofmann-Apitius"
-                    />
-                  </p>
-                  <h4 class="card-title">Prof. Dr. Martin Hofmann-Apitius</h4>
-                  <p class="card-text">
-                    Head of the Bioinformatics department.
-                  </p>
-                  <a href="#" class="btn btn-primary btn-sm"
-                    ><i class="bi bi-plus"></i
-                  ></a>
-                </div>
-              </div>
-            </div>
-            <div class="backside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <h4 class="card-title">Prof. Dr. Martin Hofmann-Apitius</h4>
-                  <p class="card-text">
-                    Martin is leading the Department of Bioinformatics at the
-                    Fraunhofer Institute for Algorithms and Scientific Computing
-                    (SCAI) in Sankt Augustin (Germany), a governmental
-                    not-for-profit, applied research institute. He is also
-                    Professor for Applied Life Science Informatics at
-                    Bonn-Aachen International Center for Information Technology
-                    (B-IT). He is (co-) author of more than 150 scientific
-                    publications.
-                  </p>
-                  <ul class="list-inline">
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://twitter.com/apitiushofmann"
-                      >
-                        <i class="bi bi-twitter"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://www.linkedin.com/in/hofmannapitius"
-                      >
-                        <i class="bi bi-linkedin"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://scholar.google.de/citations?user=n2XWGsQAAAAJ"
-                      >
-                        <i class="bi bi-google"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://orcid.org/0000-0001-9012-6720"
-                      >
-                        <img
-                          src="https://s3-eu-west-1.amazonaws.com/ppreviews-orcid-012943482134916/8439047/thumb.png"
-                          height="18px"
-                        />
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="mailto:martin.hofmann-apitius@scai.fraunhofer.de"
-                      >
-                        <i class="bi bi-envelope"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- ./Martin Hofmann-Apitius -->
-      <!-- Marc Jacobs -->
-      <div class="col-xs-12 col-sm-4 col-md-4">
-        <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-          <div class="mainflip">
-            <div class="frontside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <p>
-                    <img
-                      class="img-fluid"
-                      src="assets/contact/marc.png"
-                      alt="Dr. Marc Jacobs"
-                    />
-                  </p>
-                  <h4 class="card-title">Dr. Marc Jacobs</h4>
-                  <p class="card-text">
-                    Group leader of Software and Scientific Computing, <br />
-                    Deputy Head of Business Area Bioinformatics.
-                  </p>
-                  <a href="#" class="btn btn-primary btn-sm"
-                    ><i class="bi bi-plus"></i
-                  ></a>
-                </div>
-              </div>
-            </div>
-            <div class="backside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <h4 class="card-title">Dr. Marc Jacobs</h4>
-                  <p>
-                    Marc is leading the Software and Scientific Computing Team
-                    and also the Deputy Head of Business Area Bioinformatics at
-                    the Fraunhofer Institute for Algorithms and Scientific
-                    Computing (SCAI) in Sankt Augustin (Germany), a governmental
-                    not-for-profit, applied research institute.
-                  </p>
-                  <ul class="list-inline">
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://www.linkedin.com/in/marc-jacobs-801938242/"
-                      >
-                        <i class="bi bi-linkedin"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="mailto:marc.jacobs@scai.fraunhofer.de"
-                      >
-                        <i class="bi bi-envelope"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- ./Marc Jacobs-->
+      <mat-card class="team-member">
+        <div mat-card-avatar class="header-image"></div>
+        <img
+          mat-card-image
+          class="img-fluid"
+          src="assets/contact/martin.jpg"
+          alt="Prof. Dr. Martin Hofmann-Apitius"
+        />
+        <mat-card-header>
+          <mat-card-title>Prof. Dr. Martin Hofmann-Apitius</mat-card-title>
+          <mat-card-subtitle
+            >Head of the Bioinformatics Department</mat-card-subtitle
+          >
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Martin is leading the Department of Bioinformatics at the Fraunhofer
+            Institute for Algorithms and Scientific Computing (SCAI) in Sankt
+            Augustin (Germany), a governmental not-for-profit, applied research
+            institute. He is also Professor for Applied Life Science Informatics
+            at Bonn-Aachen International Center for Information Technology
+            (B-IT). He is (co-) author of more than 150 scientific publications.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <a href="https://x.com/apitiushofmann" target="_blank">
+            <button mat-button>
+              <mat-icon svgIcon="x"></mat-icon>
+            </button>
+          </a>
+          <a href="https://www.linkedin.com/in/hofmannapitius" target="_blank">
+            <button mat-button>
+              <mat-icon svgIcon="linkedin"></mat-icon>
+            </button>
+          </a>
+          <a
+            href="https://scholar.google.de/citations?user=n2XWGsQAAAAJ&hl=en&oi=ao"
+            target="_blank"
+          >
+            <button mat-button>
+              <mat-icon svgIcon="google-scholar"></mat-icon>
+            </button>
+          </a>
+          <a href="https://orcid.org/0000-0001-9012-6720" target="_blank">
+            <button mat-button>
+              <mat-icon svgIcon="orcid"></mat-icon>
+            </button>
+          </a>
+          <a
+            href="mailto:martin.hofmann-apitius@scai.fraunhofer.de"
+            target="_blank"
+          >
+            <button mat-button>
+              <mat-icon
+                aria-hidden="false"
+                aria-label="Mail to"
+                fontIcon="email"
+              ></mat-icon>
+            </button>
+          </a>
+        </mat-card-actions>
+      </mat-card>
+      <!-- ./Prof. Dr. Martin Hofmann-Apitius -->
+      <!-- Dr. Marc Jacobs -->
+      <mat-card class="team-member">
+        <div mat-card-avatar class="header-image"></div>
+        <img
+          mat-card-image
+          class="img-fluid"
+          src="assets/contact/marc.jpg"
+          alt="Dr. Marc Jacobs"
+        />
+        <mat-card-header>
+          <mat-card-title>Dr. Marc Jacobs</mat-card-title>
+          <mat-card-subtitle
+            >Group leader of Software and Scientific Computing, <br />Deputy
+            Head of Business Area Bioinformatics</mat-card-subtitle
+          >
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Marc is leading the Software and Scientific Computing Team and also
+            the Deputy Head of Business Area Bioinformatics at the Fraunhofer
+            Institute for Algorithms and Scientific Computing (SCAI) in Sankt
+            Augustin (Germany), a governmental not-for-profit, applied research
+            institute.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <a
+            href="https://www.linkedin.com/in/marc-jacobs-801938242/"
+            target="_blank"
+          >
+            <button mat-button>
+              <mat-icon svgIcon="linkedin"></mat-icon>
+            </button>
+          </a>
+          <a href="mailto:marc.jacobs@scai.fraunhofer.de" target="_blank">
+            <button mat-button>
+              <mat-icon
+                aria-hidden="false"
+                aria-label="Mail to"
+                fontIcon="email"
+              ></mat-icon>
+            </button>
+          </a>
+        </mat-card-actions>
+      </mat-card>
+      <!-- ./Dr. Marc Jacobs -->
       <!-- Yasamin Salimi -->
-      <div class="col-xs-12 col-sm-4 col-md-4">
-        <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-          <div class="mainflip">
-            <div class="frontside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <p>
-                    <img
-                      class="img-fluid"
-                      src="assets/contact/yasamin.png"
-                      alt="Yasamin Salimi"
-                    />
-                  </p>
-                  <h4 class="card-title">Yasamin Salimi</h4>
-                  <p class="card-text">PhD Candidate.</p>
-                  <a href="#" class="btn btn-primary btn-sm"
-                    ><i class="bi bi-plus"></i
-                  ></a>
-                </div>
-              </div>
-            </div>
-            <div class="backside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <h4 class="card-title">Yasamin Salimi</h4>
-                  <p>
-                    Yasamin Salimi joined Fraunhofer SCAI as a student research
-                    assistant in August 2019. She successfully finished her
-                    Master's thesis on “Comparison of Alzheimer's Disease
-                    Progression Patterns Across Multiple Cohort Studies.” She
-                    started her PhD studies in November 2020 with a focus in
-                    evaluating the Data Landscape in Neurodegenerative Diseases.
-                  </p>
-                  <ul class="list-inline">
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://twitter.com/SalimiYasamin"
-                      >
-                        <i class="bi bi-twitter"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://www.linkedin.com/in/yasamin-salimi-27488662"
-                      >
-                        <i class="bi bi-linkedin"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://scholar.google.com/citations?user=cSR6XQsAAAAJ"
-                      >
-                        <i class="bi bi-google"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://orcid.org/0000-0002-7773-7786"
-                      >
-                        <img
-                          src="https://s3-eu-west-1.amazonaws.com/ppreviews-orcid-012943482134916/8439047/thumb.png"
-                          height="18px"
-                        />
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="mailto:yasamin.salimi@scai.fraunhofer.de"
-                      >
-                        <i class="bi bi-envelope"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- ./Yasamin Salimi -->
+      <mat-card class="team-member">
+        <div mat-card-avatar class="header-image"></div>
+        <img
+          mat-card-image
+          class="img-fluid"
+          src="assets/contact/yasamin.png"
+          alt="Yasamin Salimi"
+        />
+        <mat-card-header>
+          <mat-card-title>Yasamin Salimi</mat-card-title>
+          <mat-card-subtitle>PhD Candidate</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Yasamin Salimi joined Fraunhofer SCAI as a student research
+            assistant in August 2019. She successfully finished her Master's
+            thesis on “Comparison of Alzheimer's Disease Progression Patterns
+            Across Multiple Cohort Studies.” She started her PhD studies in
+            November 2020 with a focus in evaluating the Data Landscape in
+            Neurodegenerative Diseases.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <a href="https://x.com/SalimiYasamin" target="_blank">
+            <button mat-button>
+              <mat-icon svgIcon="x"></mat-icon>
+            </button>
+          </a>
+          <a
+            href="https://www.linkedin.com/in/yasamin-salimi-27488662"
+            target="_blank"
+          >
+            <button mat-button>
+              <mat-icon svgIcon="linkedin"></mat-icon>
+            </button>
+          </a>
+          <a
+            href="https://scholar.google.com/citations?user=cSR6XQsAAAAJ"
+            target="_blank"
+          >
+            <button mat-button>
+              <mat-icon svgIcon="google-scholar"></mat-icon>
+            </button>
+          </a>
+          <a href="https://orcid.org/0000-0002-7773-7786" target="_blank">
+            <button mat-button>
+              <mat-icon svgIcon="orcid"></mat-icon>
+            </button>
+          </a>
+          <a href="mailto:yasamin.salimi@scai.fraunhofer.de" target="_blank">
+            <button mat-button>
+              <mat-icon
+                aria-hidden="false"
+                aria-label="Mail to"
+                fontIcon="email"
+              ></mat-icon>
+            </button>
+          </a>
+        </mat-card-actions>
+      </mat-card>
+      <!-- ./Yasamin Salimi-->
       <!-- Tim Adams -->
-      <div class="col-xs-12 col-sm-4 col-md-4">
-        <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-          <div class="mainflip">
-            <div class="frontside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <p>
-                    <img
-                      class="img-fluid"
-                      src="assets/contact/tim.png"
-                      alt="Tim Adams"
-                    />
-                  </p>
-                  <h4 class="card-title">Tim Adams</h4>
-                  <p class="card-text">Researcher.</p>
-                  <a href="#" class="btn btn-primary btn-sm"
-                    ><i class="bi bi-plus"></i
-                  ></a>
-                </div>
-              </div>
-            </div>
-            <div class="backside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <h4 class="card-title">Tim Adams</h4>
-                  <p>
-                    Tim Adams joined Fraunhofer SCAI in late 2017 as a
-                    researcher. His main research focus is the development of
-                    applications for exploration, evaluation and visualization
-                    of data in the biomedical domain.
-                  </p>
-                  <ul class="list-inline">
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://www.linkedin.com/in/tim-adams-747b821b0/"
-                      >
-                        <i class="bi bi-linkedin"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="mailto:tim.adams@scai.fraunhofer.de"
-                      >
-                        <i class="bi bi-envelope"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <mat-card class="team-member">
+        <div mat-card-avatar class="header-image"></div>
+        <img
+          mat-card-image
+          class="img-fluid"
+          src="assets/contact/tim.jpg"
+          alt="Tim Adams"
+        />
+        <mat-card-header>
+          <mat-card-title>Tim Adams</mat-card-title>
+          <mat-card-subtitle>Scientific Software Developer</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Tim Adams joined Fraunhofer SCAI in late 2017 as a researcher. His
+            main research focus is the development of applications for
+            exploration, evaluation and visualization of data in the biomedical
+            domain.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <a href="https://orcid.org/0000-0002-2823-0102" target="_blank">
+            <button mat-button>
+              <mat-icon svgIcon="orcid"></mat-icon>
+            </button>
+          </a>
+          <a href="https://stackoverflow.com/users/6436977/t-a" target="_blank">
+            <button mat-button>
+              <mat-icon svgIcon="stack-overflow"></mat-icon>
+            </button>
+          </a>
+          <a href="mailto:tim.adams@scai.fraunhofer.de" target="_blank">
+            <button mat-button>
+              <mat-icon
+                aria-hidden="false"
+                aria-label="Mail to"
+                fontIcon="email"
+              ></mat-icon>
+            </button>
+          </a>
+        </mat-card-actions>
+      </mat-card>
       <!-- ./Tim Adams -->
       <!-- Mehmet Can Ay -->
-      <div class="col-xs-12 col-sm-4 col-md-4">
-        <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-          <div class="mainflip">
-            <div class="frontside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <p>
-                    <img
-                      class="img-fluid"
-                      src="assets/contact/can.jpg"
-                      alt="Mehmet Can Ay"
-                    />
-                  </p>
-                  <h4 class="card-title">Mehmet Can Ay</h4>
-                  <p class="card-text">Master's Student.</p>
-                  <a href="#" class="btn btn-primary btn-sm"
-                    ><i class="bi bi-plus"></i
-                  ></a>
-                </div>
-              </div>
-            </div>
-            <div class="backside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <h4 class="card-title">Mehmet Can Ay</h4>
-                  <p>
-                    Can joined Fraunhofer SCAI as a student research assistant
-                    in March 2023 and he is currently pursuing his Master's
-                    degree with a thesis named "PDataViewer: Investigation of
-                    Parkinson's Disease Landscape and Enabling Semantic Data
-                    Harmonization Through Large Language Models".
-                  </p>
-                  <ul class="list-inline">
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://www.linkedin.com/in/mehmet-can-ay/"
-                      >
-                        <i class="bi bi-linkedin"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://scholar.google.com/citations?user=1NMMi9AAAAAJ&hl=en&oi=ao"
-                      >
-                        <i class="bi bi-google"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="https://orcid.org/0000-0002-2977-7695"
-                      >
-                        <img
-                          src="https://s3-eu-west-1.amazonaws.com/ppreviews-orcid-012943482134916/8439047/thumb.png"
-                          height="18px"
-                        />
-                      </a>
-                    </li>
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="mailto:mehmet.ay@scai.fraunhofer.de"
-                      >
-                        <i class="bi bi-envelope"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <mat-card class="team-member">
+        <div mat-card-avatar class="header-image"></div>
+        <img
+          mat-card-image
+          class="img-fluid"
+          src="assets/contact/can.jpg"
+          alt="Mehmet Can Ay"
+        />
+        <mat-card-header>
+          <mat-card-title>Mehmet Can Ay</mat-card-title>
+          <mat-card-subtitle>Master's Student</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Can joined Fraunhofer SCAI as a student research assistant in March
+            2023 and he is currently pursuing his Master's degree with a thesis
+            named "PDataViewer: Investigation of Parkinson's Disease Landscape
+            and Enabling Semantic Data Harmonization Through Large Language
+            Models".
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <a href="https://www.linkedin.com/in/mehmet-can-ay/" target="_blank">
+            <button mat-button>
+              <mat-icon svgIcon="linkedin"></mat-icon>
+            </button>
+          </a>
+          <a
+            href="https://scholar.google.com/citations?user=1NMMi9AAAAAJ&hl=en&oi=ao"
+            target="_blank"
+          >
+            <button mat-button>
+              <mat-icon svgIcon="google-scholar"></mat-icon>
+            </button>
+          </a>
+          <a href="https://orcid.org/0000-0002-2977-7695" target="_blank">
+            <button mat-button>
+              <mat-icon svgIcon="orcid"></mat-icon>
+            </button>
+          </a>
+          <a href="mailto:mehmet.ay@scai.fraunhofer.de" target="_blank">
+            <button mat-button>
+              <mat-icon
+                aria-hidden="false"
+                aria-label="Mail to"
+                fontIcon="email"
+              ></mat-icon>
+            </button>
+          </a>
+        </mat-card-actions>
+      </mat-card>
       <!-- ./Mehmet Can Ay -->
       <!-- Marjan Niazpoor-->
-      <div class="col-xs-12 col-sm-4 col-md-4">
-        <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
-          <div class="mainflip">
-            <div class="frontside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <p>
-                    <img
-                      class="img-fluid"
-                      src="assets/contact/marjan.jpg"
-                      alt="Marjan Niazpoor"
-                    />
-                  </p>
-                  <h4 class="card-title">Marjan Niazpoor</h4>
-                  <p class="card-text">Student Research Assistant.</p>
-                  <a href="#" class="btn btn-primary btn-sm"
-                    ><i class="bi bi-plus"></i
-                  ></a>
-                </div>
-              </div>
-            </div>
-            <div class="backside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <h4 class="card-title">Marjan Niazpoor</h4>
-                  <p>
-                    Marjan joined Fraunhofer SCAI as a student research
-                    assistant in March 2024.
-                  </p>
-                  <ul class="list-inline">
-                    <li class="list-inline-item">
-                      <a
-                        class="social-icon text-xs-center"
-                        target="_blank"
-                        href="mailto:marjan.niazpoor@scai-extern.fraunhofer.de"
-                      >
-                        <i class="bi bi-envelope"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- ./Marjan Niazpoor -->
+      <mat-card class="team-member">
+        <div mat-card-avatar class="header-image"></div>
+        <img
+          mat-card-image
+          class="img-fluid"
+          src="assets/contact/marjan.jpg"
+          alt="Marjan Niazpoor"
+        />
+        <mat-card-header>
+          <mat-card-title>Marjan Niazpoor</mat-card-title>
+          <mat-card-subtitle>Student Research Assistant</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Marjan joined Fraunhofer SCAI as a student research assistant in
+            March 2024.
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <a
+            href="mailto:marjan.niazpoor@scai-extern.fraunhofer.de"
+            target="_blank"
+          >
+            <button mat-button>
+              <mat-icon
+                aria-hidden="false"
+                aria-label="Mail to"
+                fontIcon="email"
+              ></mat-icon>
+            </button>
+          </a>
+        </mat-card-actions>
+      </mat-card>
     </div>
+    <!-- ./Marjan Niazpoor -->
   </div>
 </section>
