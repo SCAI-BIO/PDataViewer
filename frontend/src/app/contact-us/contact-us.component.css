@@ -84,6 +84,31 @@
     text-overflow: ellipsis;
 }
 
+.icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+
+.icon-button mat-icon {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.mat-card-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 16px 8px;
+    width: 100%;
+}
+
+.mat-card-actions a {
+    display: inline-block;
+    text-align: center;
+}
+
 @media (max-width: 768px) {
     .team-member {
         flex: 1 1 100%;
