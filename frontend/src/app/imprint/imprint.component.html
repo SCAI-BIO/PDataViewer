@@ -1,62 +1,68 @@
 <body>
   <div
-    class="container container-fluid"
-    style="margin-top: 150px; margin-bottom: 50px"
+    class="mat-container"
+    style="margin-top: 150px; margin-bottom: 50px; padding: 0 16px"
   >
-    <h3 class="pb-2 mt-4 mb-2 text-center">Legal</h3>
+    <h1 class="mat-typography--headline2 text-center">Legal</h1>
 
-    <div class="row">
-      <div class="col">
+    <div class="mat-row">
+      <div class="mat-column">
         <!-- Imprint -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Imprint and Publishing Notes</h5>
-            <div class="card-text">
+        <mat-card class="fixed-card-size">
+          <mat-card-header>
+            <mat-card-title>Imprint and Publishing Notes</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>
               See the
               <a href="https://www.scai.fraunhofer.de/en/publishing-notes.html"
                 >imprint and publishing notes</a
               >
               for this web application and other Fraunhofer SCAI web
               applications.
-            </div>
-          </div>
-        </div>
+            </p>
+          </mat-card-content>
+        </mat-card>
       </div>
-      <div class="col">
+      <div class="mat-column">
         <!-- Data Protection -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Data Protection</h5>
-            <div class="card-text">
+        <mat-card class="fixed-card-size">
+          <mat-card-header>
+            <mat-card-title>Data Protection</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>
               See the General Data Protection Regulation (GDPR) compliance and
               <a href="https://www.scai.fraunhofer.de/en/data_protection.html"
                 >data protection</a
               >
               information for this web application and other Fraunhofer SCAI web
               applications.
-            </div>
-          </div>
-        </div>
+            </p>
+          </mat-card-content>
+        </mat-card>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col">
-        <div class="card" style="margin-top: 15px">
-          <div class="card-body">
-            <h5 class="card-title">Fraunhofer SCAI Terms and Conditions</h5>
-            <div class="card-text">
-              <p>
-                By using any services of this web application, you accept our
-                <a href="https://www.scaiview.com/en/terms-and-conditions.html"
-                  >Terms and Conditions of Use</a
-                >.
-              </p>
-            </div>
-          </div>
-        </div>
+    <div class="mat-row">
+      <div class="mat-column">
+        <mat-card class="fixed-card-size" style="margin-top: 15px">
+          <mat-card-header>
+            <mat-card-title
+              >Fraunhofer SCAI Terms and Conditions</mat-card-title
+            >
+          </mat-card-header>
+          <mat-card-content>
+            <p>
+              By using any services of this web application, you accept our
+              <a href="https://www.scaiview.com/en/terms-and-conditions.html"
+                >Terms and Conditions of Use</a
+              >.
+            </p>
+          </mat-card-content>
+        </mat-card>
       </div>
-      <div class="col"></div>
+      <div class="mat-column"></div>
     </div>
   </div>
 </body>

@@ -1,17 +1,29 @@
-.btn:hover,
-.btn:focus {
-  background-color: #5fb9e9;
-  border-color: #5fb9e9;
-  box-shadow: none;
-  outline: none;
+.mat-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.btn {
-  color: #fff;
-  background-color: #00967f;
-  border-color: #00967f;
+.mat-row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 16px;
 }
 
-a {
-  color: #0081bf;
+.mat-column {
+  flex: 1;
+  max-width: 45%;
+  margin: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.fixed-card-size {
+  width: 100%;
+  max-width: 600px;
+}
+
+.text-center {
+  text-align: center;
 }
