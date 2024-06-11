@@ -32,7 +32,7 @@ describe('FooterComponent', () => {
   });
 
   it('should render navigation links', () => {
-    const navLinks = fixture.debugElement.queryAll(By.css('.nav-link'));
+    const navLinks = fixture.debugElement.queryAll(By.css('.subheading'));
     expect(navLinks.length).toBeGreaterThan(0);
 
     const internalLinks = [
@@ -68,5 +68,14 @@ describe('FooterComponent', () => {
     const footerText = fixture.debugElement.query(By.css('p.copyright'));
     expect(footerText).toBeTruthy();
     expect(footerText.nativeElement.textContent).toContain('Copyright');
+  });
+
+  it('should render all headers correctly', () => {
+    const headers = fixture.debugElement.queryAll(By.css('h4 > a'));
+    const headerTexts = ['PDataViewer', 'Landscape', 'Tools', 'Other'];
+    
+    headers.forEach((header, index) => {
+      expect(header.nativeElement.textContent).toContain(headerTexts[index]);
+    });
   });
 });
