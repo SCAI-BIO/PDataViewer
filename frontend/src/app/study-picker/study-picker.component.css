@@ -1,40 +1,48 @@
-/* Styles for material chips */
-
-.full-width {
+.full-width, .mat-form-field, .mat-form-field-infix, table {
   width: 100%;
 }
 
 mat-chip-listbox {
   display: flex;
   flex-wrap: wrap;
+  padding: 10px;
 }
 
 mat-chip-option {
-  margin: 20px;
+  margin: 5px;
+  background-color: #d1c4e9;
+  color: #4a148c;
 }
 
-.mat-form-field,
-.mat-form-field-infix {
-  width: 100%;
-}
-
-/* Styles for the table */
-.table-container {
+.table-container, .button-container, .input-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  padding: 20px;
+}
+
+.table-container, .button-container {
   margin-top: 20px;
 }
 
+.table-container {
+  align-items: center;
+}
+
+.input-container {
+  flex-direction: column;
+  align-items: center;
+}
+
 table {
-  width: 100%;
   border-collapse: collapse;
-  background-color: #f2f2f2;
-  color: black;
+  background-color: #ffffff;
+  color: #000000;
+  margin-top: 20px;
+  padding: 10px;
 }
 
 table, th, td {
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
 }
 
 th, td {
@@ -42,8 +50,9 @@ th, td {
   text-align: left;
 }
 
-thead {
-  background-color: #f2f2f2;
+thead, th {
+  background-color: #673ab7 !important;
+  color: white !important;
 }
 
 tbody tr:nth-child(even) {
@@ -51,29 +60,9 @@ tbody tr:nth-child(even) {
 }
 
 tbody tr:hover {
-  background-color: #f1f1f1;
+  background-color: #e1bee7;
 }
 
-th {
-  background-color: #9c27b0;
-  color: white;
-}
-
-/* Styles for the Rank cohorts button */
-.button-container {
-  display: flex;
-  justify-content: center;
-}
-
-.input-container {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-}
-
-
-.rank-button {
-  margin-left: 10px;
-  /* Add spacing between the input field and the button */
+body {
+  padding: 40px 20px;
 }
