@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="PDATAVIEWER API",
     description="API interface to access programmatic functionalities of PDATAVIEWER",
-    version="0.0.0",
+    version="0.0.1",
     terms_of_service="https://www.scai.fraunhofer.de",
     contact={
         "name": "Dr. Marc Jacobs",
