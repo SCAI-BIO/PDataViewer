@@ -6,7 +6,7 @@
   font-size: 16px;
 }
 
-:host a{
+:host a {
   color: white;
 }
 
@@ -27,7 +27,9 @@
 }
 
 @media (max-width: 991px) {
-  :host .text, :host .footer-nav {
+
+  :host .text,
+  :host .footer-nav {
     margin-bottom: 30px;
   }
 
@@ -44,7 +46,8 @@
   background: #0081bf;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -60,4 +63,8 @@ body {
 
 .main-headers .col-12 {
   flex: 1;
+}
+
+#footer {
+  padding-left: 40px;
 }
