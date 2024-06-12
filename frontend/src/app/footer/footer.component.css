@@ -6,7 +6,7 @@
   font-size: 16px;
 }
 
-:host a, .mat-list-item a {
+:host a{
   color: white;
 }
 
