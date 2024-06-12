@@ -183,6 +183,7 @@
 .img-fluid {
     max-width: 100%;
     height: auto;
+    margin: 0 auto;
 }
 
 .d-block {
@@ -232,8 +233,22 @@
 .biomarker p,
 .longitudinal p,
 .ethnicity p,
+.content h2,
 .biomarker h2,
 .longitudinal h2,
 .ethnicity h2 {
     color: #fff;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
