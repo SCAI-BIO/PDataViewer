@@ -3,10 +3,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { Subscription } from 'rxjs';
+import {MatDividerModule} from '@angular/material/divider';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, MatDividerModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
