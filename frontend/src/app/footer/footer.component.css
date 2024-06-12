@@ -6,7 +6,11 @@
   font-size: 16px;
 }
 
-:host a {
+:host a{
+  color: white;
+}
+
+:host .subheading {
   color: white;
 }
 
@@ -23,7 +27,7 @@
 }
 
 @media (max-width: 991px) {
-  :host .text {
+  :host .text, :host .footer-nav {
     margin-bottom: 30px;
   }
 
@@ -31,8 +35,8 @@
     margin-bottom: 15px;
   }
 
-  :host .footer-nav {
-    margin-bottom: 30px;
+  :host .main-headers {
+    flex-wrap: wrap;
   }
 }
 
@@ -47,4 +51,13 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.main-headers {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-headers .col-12 {
+  flex: 1;
 }

@@ -38,35 +38,18 @@ describe('ContactUsComponent', () => {
 
   it('should have 6 contact cards', () => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(
-      compiled.querySelectorAll('.col-xs-12.col-sm-4.col-md-4').length
-    ).toBe(6);
-  });
-
-  it('should have a card for "Prof. Dr. Martin Hofmann-Apitius"', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.card-title').textContent).toContain(
-      'Prof. Dr. Martin Hofmann-Apitius'
-    );
-  });
-
-  it('should toggle class "hover" on touchstart event on image-flip elements', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    const imageFlipElement = compiled.querySelector('.image-flip');
-    const event = new Event('touchstart');
-    imageFlipElement.dispatchEvent(event);
-    expect(imageFlipElement.classList.contains('hover')).toBeTrue();
+    expect(compiled.querySelectorAll('.team-member').length).toBe(6);
   });
 
   it('should contain correct social media links for "Prof. Dr. Martin Hofmann-Apitius"', () => {
     const compiled = fixture.debugElement.nativeElement;
-    const twitterLink = compiled.querySelector(
-      'a[href="https://twitter.com/apitiushofmann"]'
+    const xLink = compiled.querySelector(
+      'a[href="https://x.com/apitiushofmann"]'
     );
     const linkedinLink = compiled.querySelector(
       'a[href="https://www.linkedin.com/in/hofmannapitius"]'
     );
-    expect(twitterLink).toBeTruthy();
+    expect(xLink).toBeTruthy();
     expect(linkedinLink).toBeTruthy();
   });
 

@@ -7,10 +7,14 @@ import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
 
 import { environment } from '../../environments/environment';
 
@@ -25,6 +29,7 @@ import { environment } from '../../environments/environment';
     MatChipsModule,
     ReactiveFormsModule,
     MatIconModule,
+    MatTableModule,
   ],
   templateUrl: './study-picker.component.html',
   styleUrl: './study-picker.component.css',
@@ -32,6 +37,7 @@ import { environment } from '../../environments/environment';
 export class StudyPickerComponent implements OnInit, OnDestroy {
   // Array of cohort rankings.
   cohortRankings: any = [];
+  displayedColumns: string[] = ['cohort', 'found', 'missing'];
   // Form control for the feature input.
   featureCtrl = new FormControl();
   // Array of available features.

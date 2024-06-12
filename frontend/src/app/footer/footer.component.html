@@ -1,160 +1,81 @@
 <footer>
   <div class="container" id="footer">
-    <div class="row">
-      <div class="col-12">
-        <ol
-          class="breadcrumb"
-          itemscope
-          itemtype="http://schema.org/BreadcrumbList"
-        >
-          <!-- Home Breadcrumb Item -->
-          <li
-            class="breadcrumb-item sub first"
-            itemprop="itemListElement"
-            itemscope
-            itemtype="http://schema.org/ListItem"
-          >
-            <a
-              class="sub first"
-              routerLink="/home"
-              itemprop="item"
-              itemtype="https://schema.org/Article"
-            >
-              <i class="bi bi-house"></i>
-              <span itemprop="name" class="sr-only">Home</span>
-            </a>
-            <meta itemprop="position" content="1" />
-          </li>
-          <!-- Site Map Breadcrumb Item -->
-          <li
-            class="breadcrumb-item active"
-            itemprop="itemListElement"
-            itemscope
-            itemtype="http://schema.org/ListItem"
-          >
-            <a
-              class="active"
-              href="#"
-              itemprop="item"
-              itemtype="https://schema.org/Article"
-            >
-              <span itemprop="name">Site map</span>
-            </a>
-            <meta itemprop="position" content="2" />
-          </li>
-        </ol>
-      </div>
-    </div>
-    <div class="row">
-      <!-- First Column: PDataViewer Links -->
+    <div class="row main-headers">
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="frame default frame-type-menu_subpages frame-layout-0">
           <h4><a>PDataViewer</a></h4>
-          <ul class="nav flex-column">
-            <!-- About Link -->
-            <li class="nav-item">
-              <a class="nav-link scroll-link" routerLink="/about">About</a>
-            </li>
-            <!-- Imprint Link -->
-            <li class="nav-item">
-              <a class="nav-link scroll-link" routerLink="/imprint">Imprint</a>
-            </li>
-            <!-- Data Protection Link -->
-            <li class="nav-item">
-              <a
-                class="nav-link scroll-link"
-                href="https://www.scai.fraunhofer.de/en/data_protection.html"
-                >Data Protection</a
-              >
-            </li>
-            <!-- Publishing Notes Link -->
-            <li class="nav-item">
-              <a
-                href="https://www.scai.fraunhofer.de/en/publishing-notes.html"
-                class="nav-link scroll-link"
-                >Publishing Notes</a
-              >
-            </li>
-          </ul>
+          <mat-nav-list>
+            <a mat-list-item routerLink="/about" class="subheading">About</a>
+            <a mat-list-item routerLink="/imprint" class="subheading"
+              >Imprint</a
+            >
+            <a
+              mat-list-item
+              href="https://www.scai.fraunhofer.de/en/data_protection.html"
+              class="subheading"
+              >Data Protection</a
+            >
+            <a
+              mat-list-item
+              href="https://www.scai.fraunhofer.de/en/publishing-notes.html"
+              class="subheading"
+              >Publishing Notes</a
+            >
+          </mat-nav-list>
         </div>
       </div>
-      <!-- Second Column: Landscape Links -->
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div
           class="frame default frame-type-menu_subpages frame-layout-0 mb-3"
           id="c239"
         >
           <h4><a>Landscape</a></h4>
-          <ul class="nav flex-column">
-            <!-- Cohorts Link -->
-            <li class="nav-item">
-              <a class="nav-link scroll-link" routerLink="/cohorts">Cohorts</a>
-            </li>
-            <!-- Biomarkers Link -->
-            <li class="nav-item">
-              <a class="nav-link scroll-link" routerLink="/biomarkers"
-                >Biomarkers</a
-              >
-            </li>
-            <!-- StudyPicker Link -->
-            <li class="nav-item">
-              <a class="nav-link scroll-link" routerLink="/study-picker"
-                >StudyPicker</a
-              >
-            </li>
-            <!-- Ethnicity Link -->
-            <li class="nav-item">
-              <a class="nav-link scroll-link" routerLink="/ethnicity"
-                >Ethnicity</a
-              >
-            </li>
-            <!-- Mappings Link -->
-            <li class="nav-item">
-              <a class="nav-link scroll-link" routerLink="/mappings"
-                >Mappings</a
-              >
-            </li>
-            <!-- Longitudinal Link -->
-            <li class="nav-item">
-              <a class="nav-link scroll-link" routerLink="/longitudinal"
-                >Longitudinal</a
-              >
-            </li>
-          </ul>
+          <mat-nav-list>
+            <a mat-list-item routerLink="/cohorts" class="subheading"
+              >Cohorts</a
+            >
+            <a mat-list-item routerLink="/biomarkers" class="subheading"
+              >Biomarkers</a
+            >
+            <a mat-list-item routerLink="/study-picker" class="subheading"
+              >StudyPicker</a
+            >
+            <a mat-list-item routerLink="/ethnicity" class="subheading"
+              >Ethnicity</a
+            >
+            <a mat-list-item routerLink="/mappings" class="subheading"
+              >Mappings</a
+            >
+            <a mat-list-item routerLink="/longitudinal" class="subheading"
+              >Longitudinal</a
+            >
+          </mat-nav-list>
         </div>
       </div>
-      <!-- Third Column: Tools -->
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div
           class="frame default frame-type-menu_subpages frame-layout-0"
           id="c782"
         >
           <h4><a>Tools</a></h4>
-          <ul class="nav flex-column">
-            <!-- Auto-Harmonizer Link -->
-            <li class="nav-item">
-              <a class="nav-link scroll-link" routerLink="/tools"
-                >Auto-Harmonizer</a
-              >
-            </li>
-          </ul>
+          <mat-nav-list>
+            <a mat-list-item routerLink="/tools" class="subheading"
+              >Auto-Harmonizer</a
+            >
+          </mat-nav-list>
         </div>
       </div>
-      <!-- Fourth Column: Other Links -->
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div
           class="frame default frame-type-menu_subpages frame-layout-0"
           id="c782"
         >
           <h4><a>Other</a></h4>
-          <ul class="nav flex-column">
-            <!-- Contact Us Link -->
-            <li class="nav-item">
-              <a class="nav-link scroll-link" routerLink="/contact-us"
-                >Contact Us</a
-              >
-            </li>
-          </ul>
+          <mat-nav-list>
+            <a mat-list-item routerLink="/contact-us" class="subheading"
+              >Contact Us</a
+            >
+          </mat-nav-list>
         </div>
       </div>
     </div>
