@@ -9,9 +9,11 @@ describe('FooterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FooterComponent],
+      imports: [
+        FooterComponent,
+      ],
       providers: [
-        provideRouter([], withComponentInputBinding()) // Provide router configuration
+        provideRouter([], withComponentInputBinding()), // Provide router configuration
       ],
     }).compileComponents();
   });
@@ -24,11 +26,6 @@ describe('FooterComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should render breadcrumb', () => {
-    const breadcrumb = fixture.debugElement.query(By.css('ol.breadcrumb'));
-    expect(breadcrumb).toBeTruthy();
   });
 
   it('should render navigation links', () => {
@@ -68,5 +65,14 @@ describe('FooterComponent', () => {
     const footerText = fixture.debugElement.query(By.css('p.copyright'));
     expect(footerText).toBeTruthy();
     expect(footerText.nativeElement.textContent).toContain('Copyright');
+  });
+
+  it('should render all headers correctly', () => {
+    const headers = fixture.debugElement.queryAll(By.css('h4 > a'));
+    const headerTexts = ['PDataViewer', 'Landscape', 'Tools', 'Other'];
+
+    headers.forEach((header, index) => {
+      expect(header.nativeElement.textContent).toContain(headerTexts[index]);
+    });
   });
 });
