@@ -59,9 +59,9 @@
 .team-member {
     display: flex;
     flex-direction: column;
-    flex: 1 1 calc(50% - 100px);
+    flex: 1 1 calc(33% - 90px);
     margin: 10px;
-    max-width: calc(50% - 100px);
+    max-width: calc(33% - 90px);
     align-items: center;
     text-align: center;
 }
