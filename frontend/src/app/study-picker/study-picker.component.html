@@ -60,7 +60,13 @@
       <table mat-table [dataSource]="cohortRankings" class="mat-table">
         <ng-container matColumnDef="cohort">
           <th mat-header-cell *matHeaderCellDef>Cohorts (ranked)</th>
-          <td mat-cell *matCellDef="let cohort">{{ cohort.cohort }}</td>
+          <td mat-cell *matCellDef="let cohort">
+            <span
+              class="color-circle"
+              [style.background-color]="cohortColors[cohort.cohort]"
+            ></span>
+            {{ cohort.cohort }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="found">

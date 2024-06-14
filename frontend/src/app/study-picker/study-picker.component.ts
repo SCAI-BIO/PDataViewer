@@ -35,28 +35,19 @@ import { environment } from '../../environments/environment';
   styleUrl: './study-picker.component.css',
 })
 export class StudyPickerComponent implements OnInit, OnDestroy {
-  // Array of cohort rankings.
   cohortRankings: any = [];
   displayedColumns: string[] = ['cohort', 'found', 'missing'];
-  // Form control for the feature input.
   featureCtrl = new FormControl();
-  // Array of available features.
   features: string[] = [];
-  // Observable for filtered features.
   filteredFeatures: Observable<string[]> | null = null;
-  // Array of features selected by the user
   @Input() selectedFeatures: string[] = [];
-  // Observable for feature suggestions.
   suggestions$: Observable<string[]> | null = null;
   private API_URL = environment.API_URL;
   private subscriptions: Subscription[] = [];
+  cohortColors: any = {};
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Adds a feature to the selected features list.
-   * @param event - The MatChipInputEvent object.
-   */
   addFeature(event: MatChipInputEvent): void {
     let feature = event.value;
     const input = event.chipInput;
@@ -71,27 +62,14 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Displays the feature name in the autocomplete input.
-   * @param feature - The feature to display.
-   * @returns The feature name or an empty string.
-   */
   displayFn(feature: string): string {
     return feature ? feature : '';
   }
 
-  /**
-   * Fetches the available features from the API.
-   * @returns An Observable of the fetched features.
-   */
   fetchFeatures(): Observable<{ Feature: string[] }> {
     return this.http.get<{ Feature: string[] }>(`${this.API_URL}/cdm/features`);
   }
 
-  /**
-   * Retrieves the rankings for the selected features.
-   * @param features - The selected features.
-   */
   getRankings(features: string[]) {
     const sub = this.http
       .post<any[]>(`${this.API_URL}/studypicker/rank`, features)
@@ -103,7 +81,12 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
-  // Fetches features and initializes features and filteredFeatures when the component is initialized.
+  fetchColors(): void {
+    this.http.get<any>('/assets/colors.json').subscribe((colors) => {
+      this.cohortColors = colors;
+    });
+  }
+
   ngOnInit() {
     const sub = this.fetchFeatures().subscribe((features) => {
       this.features = features.Feature;
@@ -113,17 +96,13 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
       );
     });
     this.subscriptions.push(sub);
+    this.fetchColors();
   }
 
-  // Unsubscribes from subscriptions when the component is destroyed to prevent memory leaks.
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
-  /**
-   * Handles the selection of a feature from the autocomplete dropdown.
-   * @param event - The MatAutocompleteSelectedEvent object.
-   */
   optionSelected(event: MatAutocompleteSelectedEvent): void {
     const feature = event.option.value;
     if (feature && !this.selectedFeatures.includes(feature)) {
@@ -132,10 +111,6 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Removes a feature from the selected features list.
-   * @param feature - The feature to remove.
-   */
   removeFeature(feature: string): void {
     const index = this.selectedFeatures.indexOf(feature);
     if (index >= 0) {
@@ -143,11 +118,6 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Filters the features based on the input value.
-   * @param value - The input value to filter by.
-   * @returns An array of filtered features.
-   */
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.features.filter((feature) =>
