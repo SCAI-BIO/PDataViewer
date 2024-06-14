@@ -32,6 +32,7 @@
     <button
       *ngFor="let modality of modalities"
       (click)="onModalityClick(modality)"
+      [ngClass]="{ 'selected-modality': modality === selectedModality }"
     >
       <!-- Interpolate modality name -->
       {{ formatModality(modality) }}

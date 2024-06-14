@@ -20,6 +20,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
   public maxFeatures: number = 50;
   public modalities: string[] = [];
   public noData: boolean = false;
+  selectedModality: string = '';
   private API_URL = environment.API_URL;
   private cohorts: string[] = [];
   private modality: string = '';
@@ -61,6 +62,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
   }
 
   onModalityClick(modality: string): void {
+    this.selectedModality = modality;
     this.modality = modality;
     this.fetchData();
   }

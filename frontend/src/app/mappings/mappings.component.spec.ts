@@ -187,4 +187,40 @@ describe('MappingsComponent', () => {
     expect(buttons[2].nativeElement.textContent.trim()).toBe('DaT Scan');
     expect(buttons[3].nativeElement.textContent.trim()).toBe('APOE');
   });
+
+  it('should highlight the selected modality button', () => {
+    component['modalities'] = mockModalities;
+    fixture.detectChanges();
+
+    const buttons = fixture.debugElement.queryAll(
+      By.css('.modality-buttons button')
+    );
+
+    buttons[0].triggerEventHandler('click', null);
+
+    let req = httpMock.expectOne(
+      `${environment.API_URL}/visualization/chords/`
+    );
+    req.flush(mockData);
+
+    fixture.detectChanges();
+
+    expect(
+      buttons[0].nativeElement.classList.contains('selected-modality')
+    ).toBeTrue();
+
+    buttons[1].triggerEventHandler('click', null);
+
+    req = httpMock.expectOne(`${environment.API_URL}/visualization/chords/`);
+    req.flush(mockData);
+
+    fixture.detectChanges();
+
+    expect(
+      buttons[0].nativeElement.classList.contains('selected-modality')
+    ).toBeFalse();
+    expect(
+      buttons[1].nativeElement.classList.contains('selected-modality')
+    ).toBeTrue();
+  });
 });
