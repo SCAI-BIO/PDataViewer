@@ -260,13 +260,6 @@
     margin: 0 auto;
 }
 
-.main-title {
-    font-size: 36px;
-    font-weight: 600;
-    margin-bottom: 30px;
-    color: white;
-}
-
 .section-title {
     font-size: 28px;
     font-weight: 500;
@@ -279,26 +272,9 @@
     margin-right: 20px;
 }
 
-.available-on {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.logo-img {
-    max-width: 200px;
-    height: auto;
-}
-
 .content-header {
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
     text-align: center;
-}
-
-.content-items {
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
