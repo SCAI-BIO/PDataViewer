@@ -108,12 +108,6 @@
     padding-right: 400px;
 }
 
-.home-feature {
-    padding-top: 50px;
-    margin-top: 0;
-    z-index: 9;
-}
-
 /* Counter */
 .counter {
     overflow: hidden;
@@ -140,13 +134,12 @@
 }
 
 .counter .content .count-item {
-    height: 200px;
-    position: relative;
-    width: 100%;
-}
-
-.counter .content .count-item:hover strong {
-    margin-top: 60px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
 }
 
 .counter .content .count-item strong {
@@ -154,7 +147,7 @@
     text-align: center;
     font-weight: 600;
     font-size: 36px;
-    margin: 70px 0 10px;
+    margin: 10px 0;
     color: #fff;
     transition: 0.3s ease;
 }
@@ -169,17 +162,8 @@
 
 @media (max-width: 991px) {
     .counter .content .count-item {
-        height: auto;
         padding: 20px 0;
     }
-
-    .counter .content .count-item strong {
-        margin-top: 0;
-    }
-}
-
-.rounded {
-    border-radius: 0.25em;
 }
 
 .img-fluid {
@@ -257,13 +241,6 @@
     margin-bottom: 20px;
     margin-left: 20px;
     margin-right: 20px;
-}
-
-.content-header {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
-    text-align: center;
 }
 
 /* New Styles for Centering Sections */
