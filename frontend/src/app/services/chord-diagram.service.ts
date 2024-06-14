@@ -12,7 +12,7 @@ export class ChordDiagramService {
   private colorScale: d3.ScaleOrdinal<string, string>;
 
   constructor(private http: HttpClient) {
-    this.colorScale = d3.scaleOrdinal<string, string>(d3.schemeCategory10);
+    this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
   }
 
   loadColors(): Observable<{ [key: string]: string }> {

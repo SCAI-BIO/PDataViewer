@@ -46,10 +46,17 @@ export class MappingsComponent implements OnInit, OnDestroy {
     this.fetchModalities();
     this.fetchCohorts();
 
-    this.chordService.loadColors().subscribe((colors) => {
-      this.chordService.setColors(colors);
-    });
+    // Load colors and set them
+    this.chordService.loadColors().subscribe(
+      (colors) => {
+        this.chordService.setColors(colors);
+      },
+      (error) => {
+        console.error('Error loading colors:', error);
+      }
+    );
 
+    // Debounce slider changes
     this.subscriptions.push(
       this.sliderChange$.pipe(debounceTime(300)).subscribe((value) => {
         this.maxFeatures = value;

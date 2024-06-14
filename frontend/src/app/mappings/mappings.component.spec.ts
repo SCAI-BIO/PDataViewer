@@ -5,7 +5,6 @@ import {
 } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { By } from '@angular/platform-browser';
-
 import { of } from 'rxjs';
 
 import { MappingsComponent } from './mappings.component';
@@ -31,6 +30,10 @@ describe('MappingsComponent', () => {
     nodes: [],
     links: [],
   };
+  const mockColors = {
+    Group1: '#ff0000',
+    Group2: '#00ff00',
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -48,6 +51,9 @@ describe('MappingsComponent', () => {
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
     chordService = TestBed.inject(ChordDiagramService);
+
+    // Mock loadColors to return mockColors
+    spyOn(chordService, 'loadColors').and.returnValue(of(mockColors));
   });
 
   beforeEach(() => {
@@ -70,6 +76,15 @@ describe('MappingsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should fetch colors on init and set the color scale', () => {
+    expect(chordService['colorScale'].domain()).toEqual(
+      Object.keys(mockColors)
+    );
+    expect(chordService['colorScale'].range()).toEqual(
+      Object.values(mockColors)
+    );
   });
 
   it('should fetch modalities on init', () => {
