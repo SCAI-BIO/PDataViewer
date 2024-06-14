@@ -29,7 +29,7 @@ describe('FooterComponent', () => {
   });
 
   it('should render navigation links', () => {
-    const navLinks = fixture.debugElement.queryAll(By.css('.subheading'));
+    const navLinks = fixture.debugElement.queryAll(By.css('mat-nav-list a'));
     expect(navLinks.length).toBeGreaterThan(0);
 
     const internalLinks = [
