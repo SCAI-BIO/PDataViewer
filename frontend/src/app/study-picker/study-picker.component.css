@@ -1,3 +1,7 @@
+.component-container {
+  padding: 0 20px;
+}
+
 .full-width, .mat-form-field, .mat-form-field-infix, table {
   width: 100%;
 }
