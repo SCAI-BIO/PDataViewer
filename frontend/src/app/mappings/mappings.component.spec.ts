@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { By } from '@angular/platform-browser';
 
@@ -15,7 +18,7 @@ describe('MappingsComponent', () => {
   let httpMock: HttpTestingController;
   let chordService: ChordDiagramService;
 
-  const mockModalities = ['Modality1', 'Modality2'];
+  const mockModalities = ['Modality1', 'Modality2', 'datscan', 'apoe'];
   const mockCohorts = ['Cohort1', 'Cohort2'];
   const mockData = {
     nodes: [
@@ -168,5 +171,20 @@ describe('MappingsComponent', () => {
       'Error fetching chord data:',
       jasmine.any(Object)
     );
+  });
+
+  it('should display modality buttons with correct formatting', () => {
+    component['modalities'] = mockModalities;
+    fixture.detectChanges();
+
+    const buttons = fixture.debugElement.queryAll(
+      By.css('.modality-buttons button')
+    );
+
+    expect(buttons.length).toBe(mockModalities.length);
+    expect(buttons[0].nativeElement.textContent.trim()).toBe('Modality1');
+    expect(buttons[1].nativeElement.textContent.trim()).toBe('Modality2');
+    expect(buttons[2].nativeElement.textContent.trim()).toBe('DaT Scan');
+    expect(buttons[3].nativeElement.textContent.trim()).toBe('APOE');
   });
 });
