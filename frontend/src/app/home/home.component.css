@@ -252,3 +252,13 @@
     justify-content: center;
     align-items: center;
 }
+
+.citation-section {
+    text-align: center;
+    padding-left: 200px;
+    padding-right: 200px;
+}
+
+.citation-section .left-text {
+    margin: 0 auto;
+}
