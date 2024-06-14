@@ -1,7 +1,3 @@
-.main-button {
-    margin-top: 50px;
-}
-
 /* Welcome Area */
 .welcome-area {
     overflow: hidden;
@@ -199,8 +195,8 @@
     float: left;
     margin-right: 20px;
     display: block;
-    max-width: 375px;
-    max-height: 225px;
+    max-width: 300px;
+    max-height: 230px;
     width: auto;
     height: auto;
 }
@@ -239,21 +235,10 @@
     color: #fff;
 }
 
-.container,
-.row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.container {
-    flex-direction: column;
-}
-
 .citation-section {
     text-align: center;
-    padding-left: 200px;
-    padding-right: 200px;
+    padding-left: 400px;
+    padding-right: 400px;
 }
 
 .citation-section .left-text {
@@ -277,4 +262,38 @@
     justify-content: space-around;
     align-items: flex-start;
     text-align: center;
+}
+
+/* New Styles for Centering Sections */
+.padding-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.left-heading, .left-text {
+    text-align: center;
+}
+
+/* Ensure Flexbox for Images and Text */
+.section-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 400px;
+    padding-left: 400px;
+}
+
+.section-content img {
+    margin-right: 20px;
+}
+
+.section-content .left-text {
+    text-align: left;
+}
+
+.section-content .text-center {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
