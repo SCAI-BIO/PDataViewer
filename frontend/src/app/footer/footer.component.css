@@ -26,9 +26,13 @@
 .main-headers {
   display: flex;
   justify-content: space-between;
-  font-size: 20px;
+  font-size: 25px;
 }
 
 .main-headers .col-12 {
   flex: 1;
+}
+
+::ng-deep .mat-mdc-list-item-unscoped-content {
+  color: white !important;
 }
