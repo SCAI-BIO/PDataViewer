@@ -22,7 +22,6 @@ export class MappingsComponent implements OnInit, OnDestroy {
   // Minimum amount of features for the min variable of the slider
   minFeatures: number = 20;
   modalities: string[] = [];
-  modalitiesToCapitalize: string[] = ['apoe', 'csf', 'dti', 'pet'];
   noData: boolean = false;
   selectedModality: string = '';
   // Total number of features in the modality
