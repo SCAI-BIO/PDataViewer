@@ -76,7 +76,32 @@
 
         <ng-container matColumnDef="missing">
           <th mat-header-cell *matHeaderCellDef>Missing features</th>
-          <td mat-cell *matCellDef="let cohort">{{ cohort.missing }}</td>
+          <td mat-cell *matCellDef="let cohort" class="missing-features-cell">
+            {{ cohort.missing }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dataAccess">
+          <th mat-header-cell *matHeaderCellDef>Data access</th>
+          <td mat-cell *matCellDef="let cohort">
+            <ng-container
+              *ngIf="
+                cohortLinks[cohort.cohort] === 'Shared by consortium';
+                else buttonTemplate
+              "
+            >
+              {{ cohortLinks[cohort.cohort] }}
+            </ng-container>
+            <ng-template #buttonTemplate>
+              <button
+                mat-button
+                *ngIf="cohortLinks[cohort.cohort]"
+                (click)="openLink(cohortLinks[cohort.cohort])"
+              >
+                Apply
+              </button>
+            </ng-template>
+          </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
