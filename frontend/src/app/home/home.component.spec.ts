@@ -14,7 +14,7 @@ describe('HomeComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         HomeComponent,
-        HttpClientModule // Add HttpClientModule to the imports
+        HttpClientModule, // Add HttpClientModule to the imports
       ],
       providers: [
         {
