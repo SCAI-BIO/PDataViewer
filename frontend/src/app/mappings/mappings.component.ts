@@ -1,11 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatSliderModule } from '@angular/material/slider';
 import { Subscription, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ChordDiagramService } from '../services/chord-diagram.service';
-import { MatSliderModule } from '@angular/material/slider';
+import { ChordData } from '../interfaces/chord-data';
 
 @Component({
   selector: 'app-mappings',
@@ -15,7 +16,7 @@ import { MatSliderModule } from '@angular/material/slider';
   styleUrl: './mappings.component.css',
 })
 export class MappingsComponent implements OnInit, OnDestroy {
-  dataChunks: any[] = [];
+  dataChunks: ChordData[] = [];
   // Maximum amount of features to display in a single chords diagram
   maxFeatures: number = 50;
   // Minimum amount of features for the min variable of the slider
@@ -43,14 +44,12 @@ export class MappingsComponent implements OnInit, OnDestroy {
 
     // Debounce slider changes
     this.subscriptions.push(
-      this.sliderChange$
-        .pipe(debounceTime(300))
-        .subscribe(value => {
-          this.maxFeatures = value;
-          if (this.modality) {
-            this.fetchData();
-          }
-        })
+      this.sliderChange$.pipe(debounceTime(300)).subscribe((value) => {
+        this.maxFeatures = value;
+        if (this.modality) {
+          this.fetchData();
+        }
+      })
     );
   }
 
@@ -113,7 +112,8 @@ export class MappingsComponent implements OnInit, OnDestroy {
           }
         },
         error: (e) => console.error('Error fetching chord data:', e),
-        complete: () => console.info('Chord diagram data fetched successfully.'),
+        complete: () =>
+          console.info('Chord diagram data fetched successfully.'),
       });
     this.subscriptions.push(sub);
   }

@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
 import * as d3 from 'd3';
-import { ChordNode } from '../interfaces/node';
-import { ChordLink } from '../interfaces/link';
+import { ChordNode } from '../interfaces/chord-node';
+import { ChordLink } from '../interfaces/chord-link';
+import { ChordData } from '../interfaces/chord-data';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChordDiagramService {
   private colorScale: d3.ScaleOrdinal<string, string>;
+  private dataChunks: ChordData[] = [];
 
   constructor() {
     this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
   }
 
   // Initialize the color scale based on all unique groups
-  initializeColorScale(data: any): void {
+  initializeColorScale(data: ChordData): void {
     const allGroups = Array.from(
       new Set(data.nodes.map((node: ChordNode) => node.group)) as Set<string>
     );
@@ -22,33 +24,34 @@ export class ChordDiagramService {
   }
 
   // Chunk the data into smaller parts for easier processing
-  chunkData(data: any, chunkSize: number): any[] {
-    const chunks = [];
+  chunkData(data: ChordData, chunkSize: number): ChordData[] {
+    const chunks: ChordData[] = [];
     for (let i = 0; i < data.nodes.length; i += chunkSize) {
       chunks.push({
         nodes: data.nodes.slice(i, i + chunkSize),
-        links: data.links.filter((link: any) =>
+        links: data.links.filter((link: ChordLink) =>
           data.nodes
             .slice(i, i + chunkSize)
             .some(
-              (node: any) =>
+              (node: ChordNode) =>
                 node.name === link.source || node.name === link.target
             )
         ),
       });
     }
+    this.dataChunks = chunks;
     return chunks;
   }
 
   // Create chord diagrams for each chunk of data
-  createChordDiagrams(dataChunks: any[]): void {
+  createChordDiagrams(dataChunks: ChordData[]): void {
     dataChunks.forEach((chunk, index) => {
       setTimeout(() => this.createChordDiagram(chunk, index), 0);
     });
   }
 
   // Create a single chord diagram for a given chunk of data
-  private createChordDiagram(data: any, index: number): void {
+  private createChordDiagram(data: ChordData, index: number): void {
     const svgElement = d3.selectAll('.chord-diagram').nodes()[index];
     const svg = d3.select(svgElement).select('svg');
     svg.selectAll('*').remove();
