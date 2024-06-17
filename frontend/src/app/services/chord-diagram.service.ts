@@ -6,7 +6,6 @@ import { ChordNode } from '../interfaces/chord-node';
 import { ChordLink } from '../interfaces/chord-link';
 import { ChordData } from '../interfaces/chord-data';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -17,7 +16,7 @@ export class ChordDiagramService {
   constructor(private http: HttpClient) {
     this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
   }
-  
+
   loadColors(): Observable<{ [key: string]: string }> {
     return this.http.get<{ [key: string]: string }>('/assets/colors.json');
   }
