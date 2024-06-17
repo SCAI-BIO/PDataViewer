@@ -15,10 +15,17 @@ import { MatSliderModule } from '@angular/material/slider';
   styleUrl: './mappings.component.css',
 })
 export class MappingsComponent implements OnInit, OnDestroy {
-  public dataChunks: any[] = [];
-  public maxFeatures: number = 50;
-  public modalities: string[] = [];
-  public noData: boolean = false;
+  dataChunks: any[] = [];
+  // Maximum amount of features to display in a single chords diagram
+  maxFeatures: number = 50;
+  // Minimum amount of features for the min variable of the slider
+  minFeatures: number = 20;
+  modalities: string[] = [];
+  modalitiesToCapitalize: string[] = ['apoe', 'csf', 'dti', 'pet'];
+  noData: boolean = false;
+  selectedModality: string = '';
+  // Total number of features in the modality
+  totalFeatures: number = 0;
   private API_URL = environment.API_URL;
   private cohorts: string[] = [];
   private modality: string = '';
@@ -53,6 +60,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
 
   onModalityClick(modality: string): void {
     this.modality = modality;
+    this.maxFeatures = 50;
     this.fetchData();
   }
 
@@ -84,7 +92,19 @@ export class MappingsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (v) => {
           this.chordService.initializeColorScale(v);
+          // Adjust the maximum value of the slider
+          if (v['nodes'].length > 100) {
+            this.totalFeatures = 100;
+          } else {
+            // Round up totalFeatures for smooth scaling in the slider
+            this.totalFeatures = Math.max(
+              this.minFeatures,
+              Math.ceil(v['nodes'].length / 10) * 10
+            );
+          }
+          // Chunk the data based on the user adjusted value of the slider
           this.dataChunks = this.chordService.chunkData(v, this.maxFeatures);
+          // Return no data message if all the chunks are empty
           this.noData = this.dataChunks.every(
             (chunk) => chunk.nodes.length === 0
           );
