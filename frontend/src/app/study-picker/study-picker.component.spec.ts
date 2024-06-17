@@ -65,6 +65,18 @@ describe('StudyPickerComponent', () => {
       PRoBaND: '#8c564b',
       OPDC: '#e377c2',
     });
+
+    // Mock initial links fetch request
+    const req3 = httpMock.expectOne('assets/application-links.json');
+    req3.flush({
+      PPMI: 'https://ida.loni.usc.edu/login.jsp',
+      BIOFIND: 'https://ida.loni.usc.edu/login.jsp',
+      LuxPARK: 'Shared by consortium',
+      LCC: 'https://www.michaeljfox.org/news/lrrk2-cohort-consortium',
+      'Fox Insight': 'https://www.michaeljfox.org/fox-insight',
+      PRoBaND: 'https://www.trackingparkinsons.org.uk/',
+      OPDC: 'https://portal.dementiasplatform.uk/CohortDirectory/Item?fingerPrintID=OPDC%20Discovery',
+    });
   });
 
   afterEach(() => {
@@ -88,6 +100,18 @@ describe('StudyPickerComponent', () => {
       'Fox Insight': '#9467bd',
       PRoBaND: '#8c564b',
       OPDC: '#e377c2',
+    });
+  });
+
+  it('should fetch links on init', () => {
+    expect(component.cohortLinks).toEqual({
+      PPMI: 'https://ida.loni.usc.edu/login.jsp',
+      BIOFIND: 'https://ida.loni.usc.edu/login.jsp',
+      LuxPARK: 'Shared by consortium',
+      LCC: 'https://www.michaeljfox.org/news/lrrk2-cohort-consortium',
+      'Fox Insight': 'https://www.michaeljfox.org/fox-insight',
+      PRoBaND: 'https://www.trackingparkinsons.org.uk/',
+      OPDC: 'https://portal.dementiasplatform.uk/CohortDirectory/Item?fingerPrintID=OPDC%20Discovery',
     });
   });
 
