@@ -15,10 +15,12 @@ import { MatSliderModule } from '@angular/material/slider';
   styleUrl: './mappings.component.css',
 })
 export class MappingsComponent implements OnInit, OnDestroy {
+  modalitiesToCapitalize: string[] = ['apoe', 'csf', 'dti', 'pet'];
   public dataChunks: any[] = [];
   public maxFeatures: number = 50;
   public modalities: string[] = [];
   public noData: boolean = false;
+  selectedModality: string = '';
   private API_URL = environment.API_URL;
   private cohorts: string[] = [];
   private modality: string = '';
@@ -30,20 +32,38 @@ export class MappingsComponent implements OnInit, OnDestroy {
     private http: HttpClient
   ) {}
 
+  formatModality(modality: string): string {
+    if (modality.toLowerCase() === 'datscan') {
+      return 'DaT Scan';
+    } else if (this.shouldCapitalize(modality)) {
+      return modality.toUpperCase();
+    } else {
+      return this.toTitleCase(modality);
+    }
+  }
+
   ngOnInit(): void {
     this.fetchModalities();
     this.fetchCohorts();
 
+    // Load colors and set them
+    this.chordService.loadColors().subscribe(
+      (colors) => {
+        this.chordService.setColors(colors);
+      },
+      (error) => {
+        console.error('Error loading colors:', error);
+      }
+    );
+
     // Debounce slider changes
     this.subscriptions.push(
-      this.sliderChange$
-        .pipe(debounceTime(300))
-        .subscribe(value => {
-          this.maxFeatures = value;
-          if (this.modality) {
-            this.fetchData();
-          }
-        })
+      this.sliderChange$.pipe(debounceTime(300)).subscribe((value) => {
+        this.maxFeatures = value;
+        if (this.modality) {
+          this.fetchData();
+        }
+      })
     );
   }
 
@@ -52,6 +72,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
   }
 
   onModalityClick(modality: string): void {
+    this.selectedModality = modality;
     this.modality = modality;
     this.fetchData();
   }
@@ -59,6 +80,17 @@ export class MappingsComponent implements OnInit, OnDestroy {
   onSliderChange(event: any): void {
     const value = Number((event.target as HTMLInputElement).value);
     this.sliderChange$.next(value);
+  }
+
+  shouldCapitalize(modality: string): boolean {
+    return this.modalitiesToCapitalize.includes(modality.toLowerCase());
+  }
+
+  toTitleCase(modality: string): string {
+    return modality.replace(
+      /\w\S*/g,
+      (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase()
+    );
   }
 
   private fetchCohorts(): void {
@@ -93,7 +125,8 @@ export class MappingsComponent implements OnInit, OnDestroy {
           }
         },
         error: (e) => console.error('Error fetching chord data:', e),
-        complete: () => console.info('Chord diagram data fetched successfully.'),
+        complete: () =>
+          console.info('Chord diagram data fetched successfully.'),
       });
     this.subscriptions.push(sub);
   }

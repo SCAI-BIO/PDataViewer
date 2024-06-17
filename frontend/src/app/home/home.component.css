@@ -1,7 +1,3 @@
-.main-button {
-    margin-top: 50px;
-}
-
 /* Welcome Area */
 .welcome-area {
     overflow: hidden;
@@ -47,6 +43,10 @@
     .welcome-area .header-text h1,
     .welcome-area .header-text p {
         margin-bottom: 15px;
+    }
+
+    .content-header {
+        flex-direction: column;
     }
 }
 
@@ -104,12 +104,8 @@
     letter-spacing: 0.5px;
     line-height: 25px;
     margin-bottom: 20px;
-}
-
-.home-feature {
-    padding-top: 50px;
-    margin-top: 0;
-    z-index: 9;
+    padding-left: 400px;
+    padding-right: 400px;
 }
 
 /* Counter */
@@ -138,13 +134,12 @@
 }
 
 .counter .content .count-item {
-    height: 200px;
-    position: relative;
-    width: 100%;
-}
-
-.counter .content .count-item:hover strong {
-    margin-top: 60px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
 }
 
 .counter .content .count-item strong {
@@ -152,7 +147,7 @@
     text-align: center;
     font-weight: 600;
     font-size: 36px;
-    margin: 70px 0 10px;
+    margin: 10px 0;
     color: #fff;
     transition: 0.3s ease;
 }
@@ -167,17 +162,8 @@
 
 @media (max-width: 991px) {
     .counter .content .count-item {
-        height: auto;
         padding: 20px 0;
     }
-
-    .counter .content .count-item strong {
-        margin-top: 0;
-    }
-}
-
-.rounded {
-    border-radius: 0.25em;
 }
 
 .img-fluid {
@@ -190,18 +176,13 @@
     display: block;
 }
 
-.mx-auto {
-    margin-right: auto;
-    margin-left: auto;
-}
-
 /* Custom Styles for Floating Images and Wrapping Text */
 .float-left-img {
     float: left;
     margin-right: 20px;
     display: block;
-    max-width: 375px;
-    max-height: 225px;
+    max-width: 300px;
+    max-height: 230px;
     width: auto;
     height: auto;
 }
@@ -211,7 +192,6 @@
     padding: 70px 0;
 }
 
-/* Study Picker and Biomarker Sections */
 .padding-top-70 {
     padding-top: 70px;
 }
@@ -224,6 +204,7 @@
     padding-bottom: 100px;
 }
 
+/* Background for Biomarker, Longitudinal, and Ethnicity Sections */
 .biomarker,
 .longitudinal,
 .ethnicity {
@@ -240,15 +221,58 @@
     color: #fff;
 }
 
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+.citation-section {
+    text-align: center;
+    padding-left: 400px;
+    padding-right: 400px;
 }
 
-.row {
+.citation-section .left-text {
+    margin: 0 auto;
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.count-item {
+    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* New Styles for Centering Sections */
+.padding-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.left-heading, .left-text {
+    text-align: center;
+}
+
+/* Ensure Flexbox for Images and Text */
+.section-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 400px;
+    padding-left: 400px;
+}
+
+.section-content img {
+    margin-right: 20px;
+}
+
+.section-content .left-text {
+    text-align: left;
+}
+
+.section-content .text-center {
+    width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
 }

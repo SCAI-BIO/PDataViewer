@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import * as d3 from 'd3';
+import { HttpClient } from '@angular/common/http';
 import { Node } from '../interfaces/node';
 import { Link } from '../interfaces/link';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -9,17 +11,28 @@ import { Link } from '../interfaces/link';
 export class ChordDiagramService {
   private colorScale: d3.ScaleOrdinal<string, string>;
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
   }
 
-  // Initialize the color scale based on all unique groups
+  loadColors(): Observable<{ [key: string]: string }> {
+    return this.http.get<{ [key: string]: string }>('/assets/colors.json');
+  }
+
+  setColors(colors: { [key: string]: string }): void {
+    this.colorScale = d3
+      .scaleOrdinal<string, string>()
+      .domain(Object.keys(colors))
+      .range(Object.values(colors));
+  }
+
   initializeColorScale(data: any): void {
-    const allGroups = Array.from(new Set(data.nodes.map((node: Node) => node.group)) as Set<string>);
+    const allGroups = Array.from(
+      new Set(data.nodes.map((node: Node) => node.group)) as Set<string>
+    );
     this.colorScale.domain(allGroups);
   }
 
-  // Chunk the data into smaller parts for easier processing
   chunkData(data: any, chunkSize: number): any[] {
     const chunks = [];
     for (let i = 0; i < data.nodes.length; i += chunkSize) {
@@ -38,14 +51,12 @@ export class ChordDiagramService {
     return chunks;
   }
 
-  // Create chord diagrams for each chunk of data
   createChordDiagrams(dataChunks: any[]): void {
     dataChunks.forEach((chunk, index) => {
       setTimeout(() => this.createChordDiagram(chunk, index), 0);
     });
   }
 
-  // Create a single chord diagram for a given chunk of data
   private createChordDiagram(data: any, index: number): void {
     const svgElement = d3.selectAll('.chord-diagram').nodes()[index];
     const svg = d3.select(svgElement).select('svg');
@@ -174,8 +185,9 @@ export class ChordDiagramService {
       .attr('class', 'ribbon')
       .attr('d', ribbon as unknown as (d: any) => string);
 
-    // Add legend for existing groups
-    const existingGroups = Array.from(new Set(nodes.map(node => node.group))).sort();
+    const existingGroups = Array.from(
+      new Set(nodes.map((node) => node.group))
+    ).sort();
     const legend = d3.select(svgElement).append('div').attr('class', 'legend');
 
     existingGroups.forEach((group) => {

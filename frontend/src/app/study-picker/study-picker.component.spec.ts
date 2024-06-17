@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -48,8 +51,20 @@ describe('StudyPickerComponent', () => {
     fixture.detectChanges();
 
     // Mock initial feature fetch request
-    const req = httpMock.expectOne(`${environment.API_URL}/cdm/features`);
-    req.flush({ Feature: ['feature1', 'feature2'] });
+    const req1 = httpMock.expectOne(`${environment.API_URL}/cdm/features`);
+    req1.flush({ Feature: ['feature1', 'feature2'] });
+
+    // Mock initial colors fetch request
+    const req2 = httpMock.expectOne('/assets/colors.json');
+    req2.flush({
+      PPMI: '#1f77b4',
+      BIOFIND: '#ff7f0e',
+      LuxPARK: '#2ca02c',
+      LCC: '#d62728',
+      'Fox Insight': '#9467bd',
+      PRoBaND: '#8c564b',
+      OPDC: '#e377c2',
+    });
   });
 
   afterEach(() => {
@@ -62,6 +77,18 @@ describe('StudyPickerComponent', () => {
 
   it('should fetch features on init', () => {
     expect(component.features).toEqual(['feature1', 'feature2']);
+  });
+
+  it('should fetch colors on init', () => {
+    expect(component.cohortColors).toEqual({
+      PPMI: '#1f77b4',
+      BIOFIND: '#ff7f0e',
+      LuxPARK: '#2ca02c',
+      LCC: '#d62728',
+      'Fox Insight': '#9467bd',
+      PRoBaND: '#8c564b',
+      OPDC: '#e377c2',
+    });
   });
 
   it('should add a feature', () => {

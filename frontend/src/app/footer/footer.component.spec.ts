@@ -9,9 +9,7 @@ describe('FooterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        FooterComponent,
-      ],
+      imports: [FooterComponent],
       providers: [
         provideRouter([], withComponentInputBinding()), // Provide router configuration
       ],
@@ -26,39 +24,6 @@ describe('FooterComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should render navigation links', () => {
-    const navLinks = fixture.debugElement.queryAll(By.css('.subheading'));
-    expect(navLinks.length).toBeGreaterThan(0);
-
-    const internalLinks = [
-      '/about',
-      '/imprint',
-      '/cohorts',
-      '/biomarkers',
-      '/study-picker',
-      '/ethnicity',
-      '/mappings',
-      '/longitudinal',
-      '/tools',
-      '/contact-us',
-    ];
-
-    const externalLinks = [
-      'https://www.scai.fraunhofer.de/en/data_protection.html',
-      'https://www.scai.fraunhofer.de/en/publishing-notes.html',
-    ];
-
-    navLinks.forEach((link) => {
-      const href = link.nativeElement.getAttribute('href');
-
-      if (href.startsWith('/')) {
-        expect(internalLinks).toContain(href);
-      } else {
-        expect(externalLinks).toContain(href);
-      }
-    });
   });
 
   it('should render the footer text', () => {

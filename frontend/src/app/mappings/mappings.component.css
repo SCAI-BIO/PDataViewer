@@ -128,3 +128,8 @@ button:hover {
     font-weight: bold;
     margin-left: 10px;
 }
+
+.selected-modality {
+    background-color: #004a99;
+    color: white;
+}

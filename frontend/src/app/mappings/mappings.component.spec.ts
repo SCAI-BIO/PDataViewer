@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { By } from '@angular/platform-browser';
-
 import { of } from 'rxjs';
 
 import { MappingsComponent } from './mappings.component';
@@ -15,7 +17,7 @@ describe('MappingsComponent', () => {
   let httpMock: HttpTestingController;
   let chordService: ChordDiagramService;
 
-  const mockModalities = ['Modality1', 'Modality2'];
+  const mockModalities = ['Modality1', 'Modality2', 'datscan', 'apoe'];
   const mockCohorts = ['Cohort1', 'Cohort2'];
   const mockData = {
     nodes: [
@@ -27,6 +29,10 @@ describe('MappingsComponent', () => {
   const emptyData = {
     nodes: [],
     links: [],
+  };
+  const mockColors = {
+    Group1: '#ff0000',
+    Group2: '#00ff00',
   };
 
   beforeEach(async () => {
@@ -45,6 +51,9 @@ describe('MappingsComponent', () => {
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
     chordService = TestBed.inject(ChordDiagramService);
+
+    // Mock loadColors to return mockColors
+    spyOn(chordService, 'loadColors').and.returnValue(of(mockColors));
   });
 
   beforeEach(() => {
@@ -67,6 +76,15 @@ describe('MappingsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should fetch colors on init and set the color scale', () => {
+    expect(chordService['colorScale'].domain()).toEqual(
+      Object.keys(mockColors)
+    );
+    expect(chordService['colorScale'].range()).toEqual(
+      Object.values(mockColors)
+    );
   });
 
   it('should fetch modalities on init', () => {
@@ -168,5 +186,56 @@ describe('MappingsComponent', () => {
       'Error fetching chord data:',
       jasmine.any(Object)
     );
+  });
+
+  it('should display modality buttons with correct formatting', () => {
+    component['modalities'] = mockModalities;
+    fixture.detectChanges();
+
+    const buttons = fixture.debugElement.queryAll(
+      By.css('.modality-buttons button')
+    );
+
+    expect(buttons.length).toBe(mockModalities.length);
+    expect(buttons[0].nativeElement.textContent.trim()).toBe('Modality1');
+    expect(buttons[1].nativeElement.textContent.trim()).toBe('Modality2');
+    expect(buttons[2].nativeElement.textContent.trim()).toBe('DaT Scan');
+    expect(buttons[3].nativeElement.textContent.trim()).toBe('APOE');
+  });
+
+  it('should highlight the selected modality button', () => {
+    component['modalities'] = mockModalities;
+    fixture.detectChanges();
+
+    const buttons = fixture.debugElement.queryAll(
+      By.css('.modality-buttons button')
+    );
+
+    buttons[0].triggerEventHandler('click', null);
+
+    let req = httpMock.expectOne(
+      `${environment.API_URL}/visualization/chords/`
+    );
+    req.flush(mockData);
+
+    fixture.detectChanges();
+
+    expect(
+      buttons[0].nativeElement.classList.contains('selected-modality')
+    ).toBeTrue();
+
+    buttons[1].triggerEventHandler('click', null);
+
+    req = httpMock.expectOne(`${environment.API_URL}/visualization/chords/`);
+    req.flush(mockData);
+
+    fixture.detectChanges();
+
+    expect(
+      buttons[0].nativeElement.classList.contains('selected-modality')
+    ).toBeFalse();
+    expect(
+      buttons[1].nativeElement.classList.contains('selected-modality')
+    ).toBeTrue();
   });
 });

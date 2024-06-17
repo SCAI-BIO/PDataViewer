@@ -53,19 +53,25 @@
   <section class="counter padding-section">
     <div class="content">
       <div class="container">
-        <div class="row text-center content-header">
-          <div class="left-heading">
-            <h2 class="section-title">Content</h2>
+        <div class="row justify-content-center">
+          <div class="col text-center">
+            <div class="left-heading">
+              <h2 class="section-title">Content</h2>
+            </div>
           </div>
         </div>
         <div class="row justify-content-center">
-          <div class="count-item decoration-bottom">
-            <strong>{{ cohortNumber }}</strong>
-            <span>Cohorts</span>
+          <div class="col-md-4 text-center">
+            <div class="count-item decoration-bottom">
+              <strong>{{ cohortNumber }}</strong>
+              <span>Cohorts</span>
+            </div>
           </div>
-          <div class="count-item">
-            <strong>Over 1,000</strong>
-            <span>Variables Mapped</span>
+          <div class="col-md-4 text-center">
+            <div class="count-item">
+              <strong>Over 1,000</strong>
+              <span>Variables Mapped</span>
+            </div>
           </div>
         </div>
       </div>
@@ -78,25 +84,28 @@
   <!-- ***** Cohorts Start ***** -->
   <section class="padding-top-70 padding-bottom-0 padding-section" id="cohorts">
     <div class="container">
-      <div class="row">
-        <div class="col-lg-6">
-          <img
-            src="assets/home/comparison_cohorts.png"
-            class="rounded img-fluid d-block float-left-img"
-            alt="Cohort Comparison"
-          />
+      <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
           <div class="left-heading">
             <h2 class="section-title">Cohorts</h2>
           </div>
-          <div class="left-text">
-            <p>
-              Here you can find an overview on the investigated cohorts,
-              references to the study design and links for data access
-              application. Additionally, there are summary statistics on key
-              Parkinson's disease biomarkers displayed.
-            </p>
-            <div class="text-center">
-              <a routerLink="/cohorts" class="main-button">Explore</a>
+          <div class="section-content">
+            <img
+              src="assets/home/comparison_cohorts.png"
+              class="rounded img-fluid d-block float-left-img"
+              alt="Cohort Comparison"
+            />
+
+            <div class="left-text">
+              <p>
+                Here you can find an overview on the investigated cohorts,
+                references to the study design and links for data access
+                application. Additionally, there are summary statistics on key
+                Parkinson's disease biomarkers displayed.
+              </p>
+              <div class="text-center">
+                <a routerLink="/cohorts" class="main-button">Explore</a>
+              </div>
             </div>
           </div>
         </div>
@@ -108,22 +117,20 @@
   <!-- ***** Cohorts End ***** -->
 
   <!-- ***** Biomarker Start ***** -->
-  <section
-    id="biomarker"
-    class="padding-section biomarker"
-  >
-    <div>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6">
+  <section id="biomarker" class="padding-section biomarker">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+          <div class="left-heading">
+            <h2 class="section-title">Biomarker Overview</h2>
+          </div>
+          <div class="section-content">
             <img
               src="assets/home/biomarkers.png"
               class="rounded img-fluid d-block float-left-img"
               alt="Heatmap Screenshot"
             />
-            <div class="left-heading">
-              <h2 class="section-title">Biomarker Overview</h2>
-            </div>
+
             <div class="left-text">
               <p>Explore and compare variable distributions across cohorts.</p>
               <div class="text-center">
@@ -139,30 +146,33 @@
   <mat-divider></mat-divider>
   <!-- ***** Biomarker End ***** -->
 
-  <!-- ***** Study Picker ***** -->
+  <!-- ***** Study Picker Start ***** -->
   <section
     class="padding-top-70 padding-bottom-0 padding-section"
     id="study-picker"
   >
     <div class="container">
-      <div class="row">
-        <div class="col-lg-6">
-          <img
-            src="assets/home/StudyPicker.png"
-            class="rounded img-fluid d-block float-left-img"
-            alt="StudyPicker"
-          />
+      <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
           <div class="left-heading">
             <h2 class="section-title">StudyPicker</h2>
           </div>
-          <div class="left-text">
-            <p>
-              The StudyPicker assists you in identifying suited PD data
-              resources for your research plans. Rank cohorts based on their
-              available variables and investigate further properties.
-            </p>
-            <div class="text-center">
-              <a routerLink="/study-picker" class="main-button">Explore</a>
+          <div class="section-content">
+            <img
+              src="assets/home/StudyPicker.png"
+              class="rounded img-fluid d-block float-left-img"
+              alt="StudyPicker"
+            />
+
+            <div class="left-text">
+              <p>
+                The StudyPicker assists you in identifying suited PD data
+                resources for your research plans. Rank cohorts based on their
+                available variables and investigate further properties.
+              </p>
+              <div class="text-center">
+                <a routerLink="/study-picker" class="main-button">Explore</a>
+              </div>
             </div>
           </div>
         </div>
@@ -176,24 +186,27 @@
   <!-- ***** Ethnicity Start ***** -->
   <section class="padding-bottom-100 padding-section ethnicity" id="ethnicity">
     <div class="container">
-      <div class="row">
-        <div class="col-lg-6">
-          <img
-            src="assets/home/StudyPicker.png"
-            class="rounded img-fluid d-block float-left-img"
-            alt="Ethnicity"
-          />
+      <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
           <div class="left-heading">
             <h2 class="section-title">Ethnoracial Diversity</h2>
           </div>
-          <div class="left-text">
-            <p>
-              The displayed chart visualizes the ethnoracial diversity across
-              the investigated cohorts. Following the link, you can find
-              individual charts per cohort illustrating their diversity.
-            </p>
-            <div class="text-center">
-              <a routerLink="/ethnicity" class="main-button">Explore</a>
+          <div class="section-content">
+            <img
+              src="assets/home/StudyPicker.png"
+              class="rounded img-fluid d-block float-left-img"
+              alt="Ethnicity"
+            />
+
+            <div class="left-text">
+              <p>
+                The displayed chart visualizes the ethnoracial diversity across
+                the investigated cohorts. Following the link, you can find
+                individual charts per cohort illustrating their diversity.
+              </p>
+              <div class="text-center">
+                <a routerLink="/study-picker" class="main-button">Explore</a>
+              </div>
             </div>
           </div>
         </div>
@@ -210,24 +223,27 @@
     id="mappings"
   >
     <div class="container">
-      <div class="row">
-        <div class="col-lg-6">
-          <img
-            src="assets/home/circle-viz.png"
-            class="rounded img-fluid d-block float-left-img"
-            alt="Feature Mapping"
-          />
+      <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
           <div class="left-heading">
             <h2 class="section-title">Feature Mappings</h2>
           </div>
-          <div class="left-text">
-            <p>
-              Following the link, you will find semantic mappings between
-              variables of the investigated datasets. Equivalent features have
-              been connected and highlight semantic interoperability.
-            </p>
-            <div class="text-center">
-              <a routerLink="/mappings" class="main-button">Explore</a>
+          <div class="section-content">
+            <img
+              src="assets/home/circle-viz.png"
+              class="rounded img-fluid d-block float-left-img"
+              alt="Feature Mapping"
+            />
+
+            <div class="left-text">
+              <p>
+                Following the link, you will find semantic mappings between
+                variables of the investigated datasets. Equivalent features have
+                been connected and highlight semantic interoperability.
+              </p>
+              <div class="text-center">
+                <a routerLink="/mappings" class="main-button">Explore</a>
+              </div>
             </div>
           </div>
         </div>
@@ -240,18 +256,19 @@
 
   <!-- ***** Longitudinal Start ***** -->
   <section id="longitudinal" class="padding-section longitudinal">
-    <div>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+          <div class="left-heading">
+            <h2 class="section-title">Longitudinal Follow-up</h2>
+          </div>
+          <div class="section-content">
             <img
               src="assets/home/longitudinal.png"
               class="rounded img-fluid d-block float-left-img"
-              alt="Cohort Comparison"
+              alt="Longitudinal"
             />
-            <div class="left-heading">
-              <h2 class="section-title">Longitudinal Follow-up</h2>
-            </div>
+
             <div class="left-text">
               <p>
                 This section lets you explore interactive visualizations of the
@@ -274,18 +291,19 @@
 
   <!-- ***** Tools Start ***** -->
   <section id="tools" class="padding-section">
-    <div>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+          <div class="left-heading">
+            <h2 class="section-title">Tools</h2>
+          </div>
+          <div class="section-content">
             <img
               src="assets/home/circle-viz.png"
               class="rounded img-fluid d-block float-left-img"
               alt="Tools"
             />
-            <div class="left-heading">
-              <h2 class="section-title">Tools</h2>
-            </div>
+
             <div class="left-text">
               <p>
                 Following the link, you will find tools that enables automatic
@@ -303,4 +321,31 @@
 
   <mat-divider></mat-divider>
   <!-- ***** Tools End ***** -->
+
+  <!-- ***** Citation Start ***** -->
+  <section id="citation" class="padding-section citation-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="left-heading text-center">
+            <h2 class="section-title">How to Cite Us</h2>
+          </div>
+          <div class="left-text text-center">
+            <strong>
+              Yasamin Salimi, Tim Adams, Mehmet Can Ay et al. On the Utility of
+              Large Language Model Embeddings for Revolutionizing Semantic Data
+              Harmonization in Alzheimer's and Parkinson's Disease, 01 April
+              2024, PREPRINT (Version 1) available at Research Square [<a
+                href="https://doi.org/10.21203/rs.3.rs-4108029/v1"
+                >https://doi.org/10.21203/rs.3.rs-4108029/v1</a
+              >]
+            </strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+  <!-- ***** Citation End ***** -->
 </body>
