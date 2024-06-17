@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import * as d3 from 'd3';
 import { HttpClient } from '@angular/common/http';
-import { Node } from '../interfaces/node';
-import { Link } from '../interfaces/link';
 import { Observable } from 'rxjs';
+import * as d3 from 'd3';
+import { ChordNode } from '../interfaces/chord-node';
+import { ChordLink } from '../interfaces/chord-link';
+import { ChordData } from '../interfaces/chord-data';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChordDiagramService {
   private colorScale: d3.ScaleOrdinal<string, string>;
+  private dataChunks: ChordData[] = [];
 
   constructor(private http: HttpClient) {
     this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -26,38 +28,42 @@ export class ChordDiagramService {
       .range(Object.values(colors));
   }
 
-  initializeColorScale(data: any): void {
+  initializeColorScale(data: ChordData): void {
     const allGroups = Array.from(
-      new Set(data.nodes.map((node: Node) => node.group)) as Set<string>
+      new Set(data.nodes.map((node: ChordNode) => node.group)) as Set<string>
     );
     this.colorScale.domain(allGroups);
   }
 
-  chunkData(data: any, chunkSize: number): any[] {
-    const chunks = [];
+  // Chunk the data into smaller parts for easier processing
+  chunkData(data: ChordData, chunkSize: number): ChordData[] {
+    const chunks: ChordData[] = [];
     for (let i = 0; i < data.nodes.length; i += chunkSize) {
       chunks.push({
         nodes: data.nodes.slice(i, i + chunkSize),
-        links: data.links.filter((link: any) =>
+        links: data.links.filter((link: ChordLink) =>
           data.nodes
             .slice(i, i + chunkSize)
             .some(
-              (node: any) =>
+              (node: ChordNode) =>
                 node.name === link.source || node.name === link.target
             )
         ),
       });
     }
+    this.dataChunks = chunks;
     return chunks;
   }
 
-  createChordDiagrams(dataChunks: any[]): void {
+  // Create chord diagrams for each chunk of data
+  createChordDiagrams(dataChunks: ChordData[]): void {
     dataChunks.forEach((chunk, index) => {
       setTimeout(() => this.createChordDiagram(chunk, index), 0);
     });
   }
 
-  private createChordDiagram(data: any, index: number): void {
+  // Create a single chord diagram for a given chunk of data
+  private createChordDiagram(data: ChordData, index: number): void {
     const svgElement = d3.selectAll('.chord-diagram').nodes()[index];
     const svg = d3.select(svgElement).select('svg');
     svg.selectAll('*').remove();
@@ -67,28 +73,28 @@ export class ChordDiagramService {
     const outerRadius = Math.min(width, height) * 0.5 - 60;
     const innerRadius = outerRadius - 30;
 
-    let nodes: Node[] = data.nodes.map((node: Node) => ({
+    let nodes: ChordNode[] = data.nodes.map((node: ChordNode) => ({
       ...node,
       id: `${node.name}_${node.group}`,
     }));
-    const links: Link[] = data.links;
+    const links: ChordLink[] = data.links;
 
     nodes = nodes.sort((a, b) => a.group.localeCompare(b.group));
 
     const nodeIndex = new Map(
-      nodes.map((node: Node, i: number) => [node.id, i])
+      nodes.map((node: ChordNode, i: number) => [node.id, i])
     );
 
     const matrix = Array(nodes.length)
       .fill(0)
       .map(() => Array(nodes.length).fill(0));
 
-    links.forEach((link: Link) => {
+    links.forEach((link: ChordLink) => {
       const sourceNodes = nodes.filter(
-        (node: Node) => node.name === link.source
+        (node: ChordNode) => node.name === link.source
       );
       const targetNodes = nodes.filter(
-        (node: Node) => node.name === link.target
+        (node: ChordNode) => node.name === link.target
       );
 
       sourceNodes.forEach((sourceNode) => {

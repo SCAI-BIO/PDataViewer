@@ -24,7 +24,8 @@
   <br />
 
   <strong
-    >You can find all of the mappings in our Parkinson's Disease Common Data Model (PASSIONATE) on
+    >You can find all of the mappings in our Parkinson's Disease Common Data
+    Model (PASSIONATE) on
     <a href="https://zenodo.org/records/10218362" target="_blank"
       >Zenodo</a
     ></strong
@@ -44,7 +45,7 @@
       [ngClass]="{ 'selected-modality': modality === selectedModality }"
     >
       <!-- Interpolate modality name -->
-      {{ formatModality(modality) }}
+      {{ modality }}
     </button>
   </div>
 
@@ -62,8 +63,13 @@
       </label>
       <span class="featureNumber">{{ maxFeatures }}</span>
     </div>
-    <mat-slider min="10" max="200" step="5" (input)="onSliderChange($event)">
-      <input matSliderThumb value="50" />
+    <mat-slider
+      [min]="minFeatures"
+      [max]="totalFeatures"
+      step="10"
+      (input)="onSliderChange($event)"
+    >
+      <input matSliderThumb [value]="maxFeatures" />
     </mat-slider>
   </div>
 

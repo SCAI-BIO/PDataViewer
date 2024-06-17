@@ -1,11 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatSliderModule } from '@angular/material/slider';
 import { Subscription, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ChordDiagramService } from '../services/chord-diagram.service';
-import { MatSliderModule } from '@angular/material/slider';
+import { ChordData } from '../interfaces/chord-data';
 
 @Component({
   selector: 'app-mappings',
@@ -15,12 +16,16 @@ import { MatSliderModule } from '@angular/material/slider';
   styleUrl: './mappings.component.css',
 })
 export class MappingsComponent implements OnInit, OnDestroy {
-  modalitiesToCapitalize: string[] = ['apoe', 'csf', 'dti', 'pet'];
-  public dataChunks: any[] = [];
-  public maxFeatures: number = 50;
-  public modalities: string[] = [];
-  public noData: boolean = false;
+  dataChunks: ChordData[] = [];
+  // Maximum amount of features to display in a single chords diagram
+  maxFeatures: number = 50;
+  // Minimum amount of features for the min variable of the slider
+  minFeatures: number = 20;
+  modalities: string[] = [];
+  noData: boolean = false;
   selectedModality: string = '';
+  // Total number of features in the modality
+  totalFeatures: number = 0;
   private API_URL = environment.API_URL;
   private cohorts: string[] = [];
   private modality: string = '';
@@ -31,16 +36,6 @@ export class MappingsComponent implements OnInit, OnDestroy {
     private chordService: ChordDiagramService,
     private http: HttpClient
   ) {}
-
-  formatModality(modality: string): string {
-    if (modality.toLowerCase() === 'datscan') {
-      return 'DaT Scan';
-    } else if (this.shouldCapitalize(modality)) {
-      return modality.toUpperCase();
-    } else {
-      return this.toTitleCase(modality);
-    }
-  }
 
   ngOnInit(): void {
     this.fetchModalities();
@@ -74,16 +69,13 @@ export class MappingsComponent implements OnInit, OnDestroy {
   onModalityClick(modality: string): void {
     this.selectedModality = modality;
     this.modality = modality;
+    this.maxFeatures = 50;
     this.fetchData();
   }
 
   onSliderChange(event: any): void {
     const value = Number((event.target as HTMLInputElement).value);
     this.sliderChange$.next(value);
-  }
-
-  shouldCapitalize(modality: string): boolean {
-    return this.modalitiesToCapitalize.includes(modality.toLowerCase());
   }
 
   toTitleCase(modality: string): string {
@@ -116,7 +108,19 @@ export class MappingsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (v) => {
           this.chordService.initializeColorScale(v);
+          // Adjust the maximum value of the slider
+          if (v['nodes'].length > 100) {
+            this.totalFeatures = 100;
+          } else {
+            // Round up totalFeatures for smooth scaling in the slider
+            this.totalFeatures = Math.max(
+              this.minFeatures,
+              Math.ceil(v['nodes'].length / 10) * 10
+            );
+          }
+          // Chunk the data based on the user adjusted value of the slider
           this.dataChunks = this.chordService.chunkData(v, this.maxFeatures);
+          // Return no data message if all the chunks are empty
           this.noData = this.dataChunks.every(
             (chunk) => chunk.nodes.length === 0
           );
