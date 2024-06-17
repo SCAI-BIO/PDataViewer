@@ -1,4 +1,4 @@
-export interface Link {
+export interface ChordLink {
   source: string;
   target: string;
 }

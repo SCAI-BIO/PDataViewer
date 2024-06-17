@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as d3 from 'd3';
-import { Node } from '../interfaces/node';
-import { Link } from '../interfaces/link';
+import { ChordNode } from '../interfaces/node';
+import { ChordLink } from '../interfaces/link';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +15,9 @@ export class ChordDiagramService {
 
   // Initialize the color scale based on all unique groups
   initializeColorScale(data: any): void {
-    const allGroups = Array.from(new Set(data.nodes.map((node: Node) => node.group)) as Set<string>);
+    const allGroups = Array.from(
+      new Set(data.nodes.map((node: ChordNode) => node.group)) as Set<string>
+    );
     this.colorScale.domain(allGroups);
   }
 
@@ -56,28 +58,28 @@ export class ChordDiagramService {
     const outerRadius = Math.min(width, height) * 0.5 - 60;
     const innerRadius = outerRadius - 30;
 
-    let nodes: Node[] = data.nodes.map((node: Node) => ({
+    let nodes: ChordNode[] = data.nodes.map((node: ChordNode) => ({
       ...node,
       id: `${node.name}_${node.group}`,
     }));
-    const links: Link[] = data.links;
+    const links: ChordLink[] = data.links;
 
     nodes = nodes.sort((a, b) => a.group.localeCompare(b.group));
 
     const nodeIndex = new Map(
-      nodes.map((node: Node, i: number) => [node.id, i])
+      nodes.map((node: ChordNode, i: number) => [node.id, i])
     );
 
     const matrix = Array(nodes.length)
       .fill(0)
       .map(() => Array(nodes.length).fill(0));
 
-    links.forEach((link: Link) => {
+    links.forEach((link: ChordLink) => {
       const sourceNodes = nodes.filter(
-        (node: Node) => node.name === link.source
+        (node: ChordNode) => node.name === link.source
       );
       const targetNodes = nodes.filter(
-        (node: Node) => node.name === link.target
+        (node: ChordNode) => node.name === link.target
       );
 
       sourceNodes.forEach((sourceNode) => {
