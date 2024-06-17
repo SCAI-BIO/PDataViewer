@@ -38,7 +38,7 @@ describe('ContactUsComponent', () => {
 
   it('should have 6 contact cards', () => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelectorAll('.team-member').length).toBe(6);
+    expect(compiled.querySelectorAll('.card-container').length).toBe(6);
   });
 
   it('should contain correct social media links for "Prof. Dr. Martin Hofmann-Apitius"', () => {

@@ -47,5 +47,11 @@ export class ContactUsComponent {
         'assets/social-media/stack-overflow.svg'
       )
     );
+    this.matIconRegistry.addSvgIcon(
+      'github',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        'assets/social-media/github.svg'
+      )
+    );
   }
 }

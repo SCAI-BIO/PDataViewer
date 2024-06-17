@@ -195,3 +195,9 @@
     vertical-align: middle;
     margin-top: 12px;
 }
+
+a.disable {
+    pointer-events: none;
+    cursor: default;
+    color: red !important;
+}

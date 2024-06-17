@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import * as d3 from 'd3';
 import { ChordNode } from '../interfaces/chord-node';
 import { ChordLink } from '../interfaces/chord-link';
 import { ChordData } from '../interfaces/chord-data';
+
 
 @Injectable({
   providedIn: 'root',
@@ -11,11 +14,21 @@ export class ChordDiagramService {
   private colorScale: d3.ScaleOrdinal<string, string>;
   private dataChunks: ChordData[] = [];
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
   }
+  
+  loadColors(): Observable<{ [key: string]: string }> {
+    return this.http.get<{ [key: string]: string }>('/assets/colors.json');
+  }
 
-  // Initialize the color scale based on all unique groups
+  setColors(colors: { [key: string]: string }): void {
+    this.colorScale = d3
+      .scaleOrdinal<string, string>()
+      .domain(Object.keys(colors))
+      .range(Object.values(colors));
+  }
+
   initializeColorScale(data: ChordData): void {
     const allGroups = Array.from(
       new Set(data.nodes.map((node: ChordNode) => node.group)) as Set<string>
@@ -179,8 +192,9 @@ export class ChordDiagramService {
       .attr('class', 'ribbon')
       .attr('d', ribbon as unknown as (d: any) => string);
 
-    // Add legend for existing groups
-    const existingGroups = Array.from(new Set(nodes.map(node => node.group))).sort();
+    const existingGroups = Array.from(
+      new Set(nodes.map((node) => node.group))
+    ).sort();
     const legend = d3.select(svgElement).append('div').attr('class', 'legend');
 
     existingGroups.forEach((group) => {

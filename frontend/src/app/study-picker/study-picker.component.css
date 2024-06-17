@@ -1,3 +1,7 @@
+.component-container {
+  padding: 0 20px;
+}
+
 .full-width, .mat-form-field, .mat-form-field-infix, table {
   width: 100%;
 }
@@ -65,4 +69,13 @@ tbody tr:hover {
 
 body {
   padding: 40px 20px;
+}
+
+.color-circle {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  border-radius: 50%;
+  vertical-align: middle;
 }

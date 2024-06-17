@@ -37,9 +37,29 @@ export class MappingsComponent implements OnInit, OnDestroy {
     private http: HttpClient
   ) {}
 
+  formatModality(modality: string): string {
+    if (modality.toLowerCase() === 'datscan') {
+      return 'DaT Scan';
+    } else if (this.shouldCapitalize(modality)) {
+      return modality.toUpperCase();
+    } else {
+      return this.toTitleCase(modality);
+    }
+  }
+
   ngOnInit(): void {
     this.fetchModalities();
     this.fetchCohorts();
+
+    // Load colors and set them
+    this.chordService.loadColors().subscribe(
+      (colors) => {
+        this.chordService.setColors(colors);
+      },
+      (error) => {
+        console.error('Error loading colors:', error);
+      }
+    );
 
     // Debounce slider changes
     this.subscriptions.push(
@@ -57,6 +77,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
   }
 
   onModalityClick(modality: string): void {
+    this.selectedModality = modality;
     this.modality = modality;
     this.maxFeatures = 50;
     this.fetchData();
@@ -65,6 +86,17 @@ export class MappingsComponent implements OnInit, OnDestroy {
   onSliderChange(event: any): void {
     const value = Number((event.target as HTMLInputElement).value);
     this.sliderChange$.next(value);
+  }
+
+  shouldCapitalize(modality: string): boolean {
+    return this.modalitiesToCapitalize.includes(modality.toLowerCase());
+  }
+
+  toTitleCase(modality: string): string {
+    return modality.replace(
+      /\w\S*/g,
+      (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase()
+    );
   }
 
   private fetchCohorts(): void {
