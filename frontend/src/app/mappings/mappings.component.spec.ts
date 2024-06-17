@@ -17,7 +17,7 @@ describe('MappingsComponent', () => {
   let httpMock: HttpTestingController;
   let chordService: ChordDiagramService;
 
-  const mockModalities = ['Modality1', 'Modality2', 'datscan', 'apoe'];
+  const mockModalities = ['Modality1', 'Modality2'];
   const mockCohorts = ['Cohort1', 'Cohort2'];
   const mockData = {
     nodes: [
@@ -199,8 +199,6 @@ describe('MappingsComponent', () => {
     expect(buttons.length).toBe(mockModalities.length);
     expect(buttons[0].nativeElement.textContent.trim()).toBe('Modality1');
     expect(buttons[1].nativeElement.textContent.trim()).toBe('Modality2');
-    expect(buttons[2].nativeElement.textContent.trim()).toBe('DaT Scan');
-    expect(buttons[3].nativeElement.textContent.trim()).toBe('APOE');
   });
 
   it('should highlight the selected modality button', () => {

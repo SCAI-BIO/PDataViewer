@@ -37,16 +37,6 @@ export class MappingsComponent implements OnInit, OnDestroy {
     private http: HttpClient
   ) {}
 
-  formatModality(modality: string): string {
-    if (modality.toLowerCase() === 'datscan') {
-      return 'DaT Scan';
-    } else if (this.shouldCapitalize(modality)) {
-      return modality.toUpperCase();
-    } else {
-      return this.toTitleCase(modality);
-    }
-  }
-
   ngOnInit(): void {
     this.fetchModalities();
     this.fetchCohorts();
@@ -86,10 +76,6 @@ export class MappingsComponent implements OnInit, OnDestroy {
   onSliderChange(event: any): void {
     const value = Number((event.target as HTMLInputElement).value);
     this.sliderChange$.next(value);
-  }
-
-  shouldCapitalize(modality: string): boolean {
-    return this.modalitiesToCapitalize.includes(modality.toLowerCase());
   }
 
   toTitleCase(modality: string): string {
