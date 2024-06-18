@@ -30,6 +30,7 @@ jobs:
 
     - name: Update Angular App Version
       run: |
+        cd frontend
         npm --no-git-tag-version version from-git
 
     - name: Docker Login
