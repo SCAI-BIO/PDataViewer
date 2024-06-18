@@ -19,7 +19,19 @@ jobs:
 
     - name: Get Version Tag
       id: version
-      run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> "$GITHUB_OUTPUT"
+      run: |
+        CURRENT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+        VERSION=$(echo $CURRENT_TAG | grep -oP "(?<=v)[\d.]+")
+        echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+    - name: Update API Version
+      run: |
+        sed -i "s/version=\"[^\"]*\"/version=\"$VERSION\"/" backend/api/routes.py
+
+    - name: Update Angular App Version
+      run: |
+        cd frontend
+        npm --no-git-tag-version version from-git
 
     - name: Docker Login
       uses: docker/login-action@v3
