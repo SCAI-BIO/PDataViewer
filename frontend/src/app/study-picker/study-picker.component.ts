@@ -6,14 +6,14 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
-import { MatFormFieldModule } from '@angular/material/form-field';
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
-import { MatInputModule } from '@angular/material/input';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 
 import { environment } from '../../environments/environment';
@@ -35,8 +35,10 @@ import { environment } from '../../environments/environment';
   styleUrl: './study-picker.component.css',
 })
 export class StudyPickerComponent implements OnInit, OnDestroy {
+  cohortColors: any = {};
+  cohortLinks: any = {};
   cohortRankings: any = [];
-  displayedColumns: string[] = ['cohort', 'found', 'missing'];
+  displayedColumns: string[] = ['cohort', 'found', 'missing', 'dataAccess'];
   featureCtrl = new FormControl();
   features: string[] = [];
   filteredFeatures: Observable<string[]> | null = null;
@@ -44,7 +46,6 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   suggestions$: Observable<string[]> | null = null;
   private API_URL = environment.API_URL;
   private subscriptions: Subscription[] = [];
-  cohortColors: any = {};
 
   constructor(private http: HttpClient) {}
 
@@ -66,8 +67,26 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     return feature ? feature : '';
   }
 
+  fetchColors(): void {
+    const sub = this.http
+      .get<any>('/assets/colors.json')
+      .subscribe((colors) => {
+        this.cohortColors = colors;
+      });
+    this.subscriptions.push(sub);
+  }
+
   fetchFeatures(): Observable<{ Feature: string[] }> {
     return this.http.get<{ Feature: string[] }>(`${this.API_URL}/cdm/features`);
+  }
+
+  fetchLinks(): void {
+    const sub = this.http
+      .get<any>('assets/application-links.json')
+      .subscribe((links) => {
+        this.cohortLinks = links;
+      });
+    this.subscriptions.push(sub);
   }
 
   getRankings(features: string[]) {
@@ -81,12 +100,6 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
-  fetchColors(): void {
-    this.http.get<any>('/assets/colors.json').subscribe((colors) => {
-      this.cohortColors = colors;
-    });
-  }
-
   ngOnInit() {
     const sub = this.fetchFeatures().subscribe((features) => {
       this.features = features.Feature;
@@ -97,10 +110,15 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(sub);
     this.fetchColors();
+    this.fetchLinks();
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
+  }
+
+  openLink(url: string): void {
+    window.open(url, '_blank');
   }
 
   optionSelected(event: MatAutocompleteSelectedEvent): void {
