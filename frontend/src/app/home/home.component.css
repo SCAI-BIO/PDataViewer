@@ -112,7 +112,6 @@
 .counter {
     overflow: hidden;
     position: relative;
-    padding: 70px 0;
 }
 
 .counter:before {
@@ -192,18 +191,6 @@
     padding: 70px 0;
 }
 
-.padding-top-70 {
-    padding-top: 70px;
-}
-
-.padding-bottom-0 {
-    padding-bottom: 0;
-}
-
-.padding-bottom-100 {
-    padding-bottom: 100px;
-}
-
 /* Background for Biomarker, Longitudinal, and Ethnicity Sections */
 .biomarker,
 .longitudinal,
@@ -222,7 +209,6 @@
 }
 
 .citation-section {
-    text-align: center;
     padding-left: 400px;
     padding-right: 400px;
 }
@@ -233,14 +219,7 @@
 
 .section-title {
     font-size: 28px;
-    font-weight: 500;
     margin-bottom: 20px;
-}
-
-.count-item {
-    margin-bottom: 20px;
-    margin-left: 20px;
-    margin-right: 20px;
 }
 
 /* New Styles for Centering Sections */
