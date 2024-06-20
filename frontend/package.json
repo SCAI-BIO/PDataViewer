@@ -25,9 +25,6 @@
     "@angular/ssr": "^17.3.6",
     "d3": "^7.9.0",
     "express": "^4.18.2",
-    "material": "^0.9.11",
-    "materials": "^1.0.0",
-    "ngx-page-scroll-core": "^12.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
