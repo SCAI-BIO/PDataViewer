@@ -42,7 +42,7 @@ describe('NavBarComponent', () => {
   });
 
   it('should render the logo with correct src and alt attributes', () => {
-    const logoElement = fixture.debugElement.query(By.css('.logo img'));
+    const logoElement = fixture.debugElement.query(By.css('.img-fluid'));
     expect(logoElement.nativeElement.src).toContain('assets/logos/logo.png');
     expect(logoElement.nativeElement.alt).toBe('pdataviewer-logo');
   });
