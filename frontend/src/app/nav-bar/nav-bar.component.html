@@ -5,7 +5,7 @@
         <nav class="main-nav">
           <!-- ***** Logo Start ***** -->
           <!-- Router Link to home page with logo -->
-          <a class="logo" [routerLink]="['/']">
+          <a [routerLink]="['/']">
             <img
               class="img-fluid"
               src="assets/logos/logo.png"
@@ -20,9 +20,7 @@
           <ul class="nav">
             <!-- Router links to different sections of the application -->
             <li>
-              <a routerLink="/cohorts" class="button fancy-button"
-                >Cohorts</a
-              >
+              <a routerLink="/cohorts" class="button fancy-button">Cohorts</a>
             </li>
             <li>
               <a routerLink="/biomarkers" class="button fancy-button disable"
@@ -58,11 +56,6 @@
               >
             </li>
           </ul>
-
-          <!-- Menu trigger for mobile view -->
-          <a class="menu-trigger" aria-label="Open Menu">
-            <span>Menu</span>
-          </a>
           <!-- ***** Menu End ***** -->
         </nav>
       </div>
