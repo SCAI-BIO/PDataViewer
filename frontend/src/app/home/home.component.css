@@ -1,11 +1,19 @@
 /* Welcome Area */
 .welcome-area {
-    overflow: hidden;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 50vh;
+    height: 40vh;
+}
+
+.mat-divider {
+    border-style: hidden;
+}
+
+.banner {
+    max-height: 100vh;
+    width: 100%;
 }
 
 .welcome-area .header-text {
@@ -17,64 +25,8 @@
 }
 
 .welcome-area .header-text h1 {
-    font-weight: 500;
-    font-size: 40px;
-    line-height: 54px;
-    letter-spacing: 1.4px;
-    margin-bottom: 30px;
+    font-size: 2vw;
     color: #fff;
-}
-
-.welcome-area .header-text p {
-    font-weight: 400;
-    font-size: 15px;
-    color: #fff;
-    line-height: 28px;
-    letter-spacing: 0.25px;
-    margin-bottom: 40px;
-}
-
-@media (max-width: 991px) {
-    .welcome-area .header-text {
-        top: 65%;
-        transform: translateY(-60%);
-    }
-
-    .welcome-area .header-text h1,
-    .welcome-area .header-text p {
-        margin-bottom: 15px;
-    }
-
-    .content-header {
-        flex-direction: column;
-    }
-}
-
-@media (max-width: 820px) {
-    .welcome-area .header-text h1 {
-        font-size: 22px;
-        line-height: 30px;
-    }
-
-    .welcome-area .header-text p {
-        margin-bottom: 20px;
-    }
-}
-
-@media (max-width: 765px) {
-    .welcome-area {
-        margin-bottom: 100px;
-    }
-
-    .welcome-area .header-text h1 {
-        font-weight: 600;
-        font-size: 24px;
-    }
-
-    .welcome-area .header-text p {
-        font-size: 14px;
-        line-height: 22px;
-    }
 }
 
 /* About */
@@ -89,7 +41,7 @@
     background: #fff;
     box-shadow: 0 2px 48px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
-    padding: 30px;
+    padding: 1%;
     text-align: center;
     transition: 0.3s ease;
     width: 50%;
@@ -97,42 +49,28 @@
 }
 
 .about-small-item .about-title {
-    font-size: 24px;
+    font-size: 1.2vw;
     color: #1e1e1e;
-    letter-spacing: 0.7px;
     margin-bottom: 15px;
 }
 
 .about-small-item p {
-    font-weight: 400;
-    font-size: 16px;
+    font-size: 1vw;
     color: #777;
-    letter-spacing: 0.5px;
-    line-height: 25px;
     margin-bottom: 20px;
 }
 
 /* Counter */
 .counter {
     overflow: hidden;
-    position: relative;
-}
-
-.counter:before {
-    content: '';
-    position: absolute;
-    width: 140%;
-    height: 120%;
-    opacity: 0.9;
-    background: url('../../assets/home/background-stats.png') center center / cover no-repeat;
-    z-index: 2;
-    top: -20%;
-    left: -20%;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    background: url('../../assets/home/background-applications.png') center center / cover no-repeat;
+    height: 30vh;
 }
 
 .counter .content {
-    position: relative;
-    z-index: 3;
     width: 100%;
 }
 
@@ -140,16 +78,13 @@
     height: auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 20px 0;
 }
 
 .counter .content .count-item strong {
     display: block;
     text-align: center;
     font-weight: 600;
-    font-size: 36px;
+    font-size: 2vw;
     margin: 10px 0;
     color: #fff;
     transition: 0.3s ease;
@@ -160,39 +95,31 @@
     text-align: center;
     color: #fff;
     font-weight: 500;
-    font-size: 17px;
+    font-size: 1vw;
 }
 
-@media (max-width: 991px) {
-    .counter .content .count-item {
-        padding: 20px 0;
-    }
-}
-
-.img-fluid {
-    max-width: 100%;
-    height: auto;
-    margin: 0 auto;
-}
-
-.d-block {
-    display: block;
-}
-
-/* Custom Styles for Floating Images and Wrapping Text */
-.float-left-img {
-    float: left;
-    margin-right: 20px;
-    display: block;
-    max-width: 200px;
-    max-height: 200px;
+/* Images */
+.img {
+    max-width: 25%;
+    max-height: 25%;
     width: auto;
     height: auto;
 }
 
+.left-img {
+    margin-right: 20px;
+}
+
+.right-img {
+    margin-left: 20px;
+}
+
 /* Padding for Sections */
 .padding-section {
-    padding: 70px 0;
+    padding: 5% 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Background for Biomarker, Longitudinal, and Ethnicity Sections */
@@ -213,24 +140,16 @@
 }
 
 .citation-section {
-    padding-left: 400px;
-    padding-right: 400px;
+    padding: 0 25%;
 }
 
 .citation-section .left-text {
-    margin: 0 auto;
+    margin-bottom: 30px;
 }
 
 .section-title {
-    font-size: 28px;
-    margin-bottom: 20px;
-}
-
-/* New Styles for Centering Sections */
-.padding-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    font-size: 1.4vw;
+    margin-bottom: 2%;
 }
 
 .left-heading, .left-text {
@@ -242,8 +161,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-right: 400px;
-    padding-left: 400px;
+    padding-right: 25%;
+    padding-left: 25%;
 }
 
 .section-content img {
@@ -251,7 +170,7 @@
 }
 
 .section-content .left-text {
-    text-align: left;
+    font-size: 1vw;
 }
 
 .section-content .text-center {

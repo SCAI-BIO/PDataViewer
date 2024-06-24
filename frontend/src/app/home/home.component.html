@@ -1,7 +1,11 @@
 <body>
   <!-- ***** Welcome Area Start ***** -->
   <div class="welcome-area" id="welcome">
-    <img src="assets/home/banner-bg.png" alt="Welcome Background" />
+    <img
+      src="assets/home/banner-bg.png"
+      class="banner"
+      alt="Welcome Background"
+    />
     <!-- ***** Header Text Start ***** -->
     <div class="header-text">
       <div class="container">
@@ -24,7 +28,7 @@
   <section class="about padding-section">
     <div class="container">
       <div class="row">
-        <div class="col">
+        <div class="col text-center">
           <div class="about-small-item">
             <h3 class="about-title">ABOUT</h3>
             <p>
@@ -48,6 +52,33 @@
 
   <mat-divider></mat-divider>
   <!-- ***** About End ***** -->
+
+  <!-- ***** Citation Start ***** -->
+  <section id="citation" class="padding-section citation-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <div class="left-heading">
+            <h2 class="section-title">How to Cite Us</h2>
+          </div>
+          <div class="left-text">
+            <strong>
+              Yasamin Salimi, Tim Adams, Mehmet Can Ay et al. On the Utility of
+              Large Language Model Embeddings for Revolutionizing Semantic Data
+              Harmonization in Alzheimer's and Parkinson's Disease, 01 April
+              2024, PREPRINT (Version 1) available at Research Square [<a
+                href="https://doi.org/10.21203/rs.3.rs-4108029/v1"
+                >https://doi.org/10.21203/rs.3.rs-4108029/v1</a
+              >]
+            </strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+  <!-- ***** Citation End ***** -->
 
   <!-- ***** Content Start ***** -->
   <section class="counter padding-section">
@@ -85,18 +116,10 @@
   <section class="padding-section" id="cohorts">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-6 text-center">
-          <div class="left-heading">
-            <h2 class="section-title">Cohorts</h2>
-          </div>
+        <div class="col-lg-8">
           <div class="section-content">
-            <img
-              src="assets/home/cohorts.png"
-              class="rounded img-fluid d-block float-left-img"
-              alt="Cohort Comparison"
-            />
-
             <div class="left-text">
+              <h2 class="section-title">Cohorts</h2>
               <p>
                 Here you can find an overview on the investigated cohorts,
                 references to the study design and links for data access
@@ -107,6 +130,11 @@
                 <a routerLink="/cohorts" class="main-button">Explore</a>
               </div>
             </div>
+            <img
+              src="assets/home/cohorts.png"
+              class="img right-img"
+              alt="Cohort Comparison"
+            />
           </div>
         </div>
       </div>
@@ -120,18 +148,15 @@
   <section id="biomarker" class="padding-section biomarker">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-6 text-center">
-          <div class="left-heading">
-            <h2 class="section-title">Biomarker Overview</h2>
-          </div>
+        <div class="col-lg-8">
           <div class="section-content">
             <img
               src="assets/home/biomarkers.png"
-              class="rounded img-fluid d-block float-left-img"
+              class="img left-img"
               alt="Heatmap Screenshot"
             />
-
             <div class="left-text">
+              <h2 class="section-title">Biomarker Overview</h2>
               <p>Explore and compare variable distributions across cohorts.</p>
               <div class="text-center">
                 <a routerLink="/biomarkers" class="main-button">Explore</a>
@@ -150,18 +175,10 @@
   <section class="padding-section" id="study-picker">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-6 text-center">
-          <div class="left-heading">
-            <h2 class="section-title">StudyPicker</h2>
-          </div>
+        <div class="col-lg-8">
           <div class="section-content">
-            <img
-              src="assets/home/study-picker.png"
-              class="rounded img-fluid d-block float-left-img"
-              alt="StudyPicker"
-            />
-
             <div class="left-text">
+              <h2 class="section-title">StudyPicker</h2>
               <p>
                 The StudyPicker assists you in identifying suited PD data
                 resources for your research plans. Rank cohorts based on their
@@ -171,6 +188,11 @@
                 <a routerLink="/study-picker" class="main-button">Explore</a>
               </div>
             </div>
+            <img
+              src="assets/home/study-picker.png"
+              class="img right-img"
+              alt="StudyPicker"
+            />
           </div>
         </div>
       </div>
@@ -184,18 +206,15 @@
   <section class="padding-section ethnicity" id="ethnicity">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-6 text-center">
-          <div class="left-heading">
-            <h2 class="section-title">Ethnoracial Diversity</h2>
-          </div>
+        <div class="col-lg-8">
           <div class="section-content">
             <img
               src="assets/home/ethnoracial.png"
-              class="rounded img-fluid d-block float-left-img"
+              class="img left-img"
               alt="Ethnicity"
             />
-
             <div class="left-text">
+              <h2 class="section-title">Ethnoracial Diversity</h2>
               <p>
                 The displayed chart visualizes the ethnoracial diversity across
                 the investigated cohorts. Following the link, you can find
@@ -218,18 +237,10 @@
   <section class="padding-section" id="mappings">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-6 text-center">
-          <div class="left-heading">
-            <h2 class="section-title">Feature Mappings</h2>
-          </div>
+        <div class="col-lg-8">
           <div class="section-content">
-            <img
-              src="assets/home/mappings.png"
-              class="rounded img-fluid d-block float-left-img"
-              alt="Feature Mapping"
-            />
-
             <div class="left-text">
+              <h2 class="section-title">Feature Mappings</h2>
               <p>
                 Following the link, you will find semantic mappings between
                 variables of the investigated datasets. Equivalent features have
@@ -239,6 +250,11 @@
                 <a routerLink="/mappings" class="main-button">Explore</a>
               </div>
             </div>
+            <img
+              src="assets/home/mappings.png"
+              class="img right-img"
+              alt="Feature Mapping"
+            />
           </div>
         </div>
       </div>
@@ -252,18 +268,15 @@
   <section id="longitudinal" class="padding-section longitudinal">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-6 text-center">
-          <div class="left-heading">
-            <h2 class="section-title">Longitudinal Follow-up</h2>
-          </div>
+        <div class="col-lg-8">
           <div class="section-content">
             <img
               src="assets/home/longitudinal.png"
-              class="rounded img-fluid d-block float-left-img"
+              class="img left-img"
               alt="Longitudinal"
             />
-
             <div class="left-text">
+              <h2 class="section-title">Longitudinal Follow-up</h2>
               <p>
                 This section lets you explore interactive visualizations of the
                 longitudinal follow-up and participant drop-out encountered in
@@ -287,18 +300,10 @@
   <section id="tools" class="padding-section">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-6 text-center">
-          <div class="left-heading">
-            <h2 class="section-title">Tools</h2>
-          </div>
+        <div class="col-lg-8">
           <div class="section-content">
-            <img
-              src="assets/home/tools.png"
-              class="rounded img-fluid d-block float-left-img"
-              alt="Tools"
-            />
-
             <div class="left-text">
+              <h2 class="section-title">Tools</h2>
               <p>
                 Following the link, you will find tools that enables automatic
                 semantic variable harmonization between cohorts of interest.
@@ -307,6 +312,11 @@
                 <a routerLink="/tools" class="main-button">Explore</a>
               </div>
             </div>
+            <img
+              src="assets/home/tools.png"
+              class="img right-img"
+              alt="Tools"
+            />
           </div>
         </div>
       </div>
@@ -315,31 +325,4 @@
 
   <mat-divider></mat-divider>
   <!-- ***** Tools End ***** -->
-
-  <!-- ***** Citation Start ***** -->
-  <section id="citation" class="padding-section citation-section">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="left-heading text-center">
-            <h2 class="section-title">How to Cite Us</h2>
-          </div>
-          <div class="left-text text-center">
-            <strong>
-              Yasamin Salimi, Tim Adams, Mehmet Can Ay et al. On the Utility of
-              Large Language Model Embeddings for Revolutionizing Semantic Data
-              Harmonization in Alzheimer's and Parkinson's Disease, 01 April
-              2024, PREPRINT (Version 1) available at Research Square [<a
-                href="https://doi.org/10.21203/rs.3.rs-4108029/v1"
-                >https://doi.org/10.21203/rs.3.rs-4108029/v1</a
-              >]
-            </strong>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <mat-divider></mat-divider>
-  <!-- ***** Citation End ***** -->
 </body>
