@@ -35,6 +35,7 @@ import { environment } from '../../environments/environment';
   styleUrl: './study-picker.component.css',
 })
 export class StudyPickerComponent implements OnInit, OnDestroy {
+  cohortData: any = {};
   cohortColors: any = {};
   cohortLinks: any = {};
   cohortRankings: any = [];
@@ -67,26 +68,21 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     return feature ? feature : '';
   }
 
-  fetchColors(): void {
-    const sub = this.http
-      .get<any>('/assets/colors.json')
-      .subscribe((colors) => {
-        this.cohortColors = colors;
-      });
+  fetchCohortData(): void {
+    const sub = this.http.get<any>('/assets/cohorts.json').subscribe((data) => {
+      this.cohortData = data;
+      for (const cohort in data) {
+        if (data.hasOwnProperty(cohort)) {
+          this.cohortColors[cohort] = data[cohort].Color;
+          this.cohortLinks[cohort] = data[cohort].Link;
+        }
+      }
+    });
     this.subscriptions.push(sub);
   }
 
   fetchFeatures(): Observable<{ Feature: string[] }> {
     return this.http.get<{ Feature: string[] }>(`${this.API_URL}/cdm/features`);
-  }
-
-  fetchLinks(): void {
-    const sub = this.http
-      .get<any>('assets/application-links.json')
-      .subscribe((links) => {
-        this.cohortLinks = links;
-      });
-    this.subscriptions.push(sub);
   }
 
   getRankings(features: string[]) {
@@ -109,8 +105,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
       );
     });
     this.subscriptions.push(sub);
-    this.fetchColors();
-    this.fetchLinks();
+    this.fetchCohortData();
   }
 
   ngOnDestroy(): void {

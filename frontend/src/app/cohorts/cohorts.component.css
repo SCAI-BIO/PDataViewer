@@ -1,0 +1,55 @@
+.component-container {
+  margin: 20px;
+  display: block;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.table-container {
+  overflow: auto;
+  max-height: 600px;
+  max-width: 100%;
+  margin-top: 20px;
+}
+
+.color-circle {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.cohort-name {
+  font-weight: bold;
+}
+
+/* Styles for buttons */
+button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Add vertical lines between table columns */
+.mat-table th,
+.mat-table td {
+  border-right: 1px solid #e0e0e0;
+}
+
+.mat-table th:last-child,
+.mat-table td:last-child {
+  border-right: none;
+}

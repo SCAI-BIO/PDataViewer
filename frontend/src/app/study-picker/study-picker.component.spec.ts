@@ -6,16 +6,8 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatInputModule } from '@angular/material/input';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-
 import { StudyPickerComponent } from './study-picker.component';
 import { environment } from '../../environments/environment';
-import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
 
 describe('StudyPickerComponent', () => {
   let component: StudyPickerComponent;
@@ -28,20 +20,7 @@ describe('StudyPickerComponent', () => {
         StudyPickerComponent,
         HttpClientTestingModule,
         ReactiveFormsModule,
-        MatFormFieldModule,
-        MatAutocompleteModule,
-        MatInputModule,
-        MatChipsModule,
-        MatIconModule,
         NoopAnimationsModule,
-      ],
-      providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            params: of({}), // Mock ActivatedRoute with empty params
-          },
-        },
       ],
     }).compileComponents();
 
@@ -54,28 +33,33 @@ describe('StudyPickerComponent', () => {
     const req1 = httpMock.expectOne(`${environment.API_URL}/cdm/features`);
     req1.flush({ Feature: ['feature1', 'feature2'] });
 
-    // Mock initial colors fetch request
-    const req2 = httpMock.expectOne('/assets/colors.json');
+    // Mock initial cohort data fetch request
+    const req2 = httpMock.expectOne('/assets/cohorts.json');
     req2.flush({
-      PPMI: '#1f77b4',
-      BIOFIND: '#ff7f0e',
-      LuxPARK: '#2ca02c',
-      LCC: '#d62728',
-      'Fox Insight': '#9467bd',
-      PRoBaND: '#8c564b',
-      OPDC: '#e377c2',
-    });
-
-    // Mock initial links fetch request
-    const req3 = httpMock.expectOne('assets/application-links.json');
-    req3.flush({
-      PPMI: 'https://ida.loni.usc.edu/login.jsp',
-      BIOFIND: 'https://ida.loni.usc.edu/login.jsp',
-      LuxPARK: 'Shared by consortium',
-      LCC: 'https://www.michaeljfox.org/news/lrrk2-cohort-consortium',
-      'Fox Insight': 'https://www.michaeljfox.org/fox-insight',
-      PRoBaND: 'https://www.trackingparkinsons.org.uk/',
-      OPDC: 'https://portal.dementiasplatform.uk/CohortDirectory/Item?fingerPrintID=OPDC%20Discovery',
+      PPMI: {
+        Participants: 1758,
+        HealthyControls: 237,
+        ProdromalPatients: 1239,
+        PDPatients: 902,
+        LongitudinalPatients: 1244,
+        FollowUpInterval: '6 Months',
+        Location: 'USA, Europe',
+        DOI: 'https://doi.org/10.1016/j.pneurobio.2011.09.005',
+        Link: 'https://ida.loni.usc.edu/login.jsp',
+        Color: '#1f77b4',
+      },
+      BIOFIND: {
+        Participants: 215,
+        HealthyControls: 96,
+        ProdromalPatients: 0,
+        PDPatients: 119,
+        LongitudinalPatients: 0,
+        FollowUpInterval: '14 Days',
+        Location: 'USA',
+        DOI: 'https://doi.org/10.1002/mds.26613',
+        Link: 'https://ida.loni.usc.edu/login.jsp',
+        Color: '#ff7f0e',
+      },
     });
   });
 
@@ -91,27 +75,42 @@ describe('StudyPickerComponent', () => {
     expect(component.features).toEqual(['feature1', 'feature2']);
   });
 
-  it('should fetch colors on init', () => {
+  it('should fetch cohort data on init', () => {
+    expect(component.cohortData).toEqual({
+      PPMI: {
+        Participants: 1758,
+        HealthyControls: 237,
+        ProdromalPatients: 1239,
+        PDPatients: 902,
+        LongitudinalPatients: 1244,
+        FollowUpInterval: '6 Months',
+        Location: 'USA, Europe',
+        DOI: 'https://doi.org/10.1016/j.pneurobio.2011.09.005',
+        Link: 'https://ida.loni.usc.edu/login.jsp',
+        Color: '#1f77b4',
+      },
+      BIOFIND: {
+        Participants: 215,
+        HealthyControls: 96,
+        ProdromalPatients: 0,
+        PDPatients: 119,
+        LongitudinalPatients: 0,
+        FollowUpInterval: '14 Days',
+        Location: 'USA',
+        DOI: 'https://doi.org/10.1002/mds.26613',
+        Link: 'https://ida.loni.usc.edu/login.jsp',
+        Color: '#ff7f0e',
+      },
+    });
+
     expect(component.cohortColors).toEqual({
       PPMI: '#1f77b4',
       BIOFIND: '#ff7f0e',
-      LuxPARK: '#2ca02c',
-      LCC: '#d62728',
-      'Fox Insight': '#9467bd',
-      PRoBaND: '#8c564b',
-      OPDC: '#e377c2',
     });
-  });
 
-  it('should fetch links on init', () => {
     expect(component.cohortLinks).toEqual({
       PPMI: 'https://ida.loni.usc.edu/login.jsp',
       BIOFIND: 'https://ida.loni.usc.edu/login.jsp',
-      LuxPARK: 'Shared by consortium',
-      LCC: 'https://www.michaeljfox.org/news/lrrk2-cohort-consortium',
-      'Fox Insight': 'https://www.michaeljfox.org/fox-insight',
-      PRoBaND: 'https://www.trackingparkinsons.org.uk/',
-      OPDC: 'https://portal.dementiasplatform.uk/CohortDirectory/Item?fingerPrintID=OPDC%20Discovery',
     });
   });
 

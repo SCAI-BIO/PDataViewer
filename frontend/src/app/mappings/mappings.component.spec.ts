@@ -30,9 +30,31 @@ describe('MappingsComponent', () => {
     nodes: [],
     links: [],
   };
-  const mockColors = {
-    Group1: '#ff0000',
-    Group2: '#00ff00',
+  const mockCohortData = {
+    PPMI: {
+      Participants: 1758,
+      HealthyControls: 237,
+      ProdromalPatients: 1239,
+      PDPatients: 902,
+      LongitudinalPatients: 1244,
+      FollowUpInterval: '6 Months',
+      Location: 'USA, Europe',
+      DOI: 'https://doi.org/10.1016/j.pneurobio.2011.09.005',
+      Link: 'https://ida.loni.usc.edu/login.jsp',
+      Color: '#1f77b4',
+    },
+    BIOFIND: {
+      Participants: 215,
+      HealthyControls: 96,
+      ProdromalPatients: 0,
+      PDPatients: 119,
+      LongitudinalPatients: 0,
+      FollowUpInterval: '14 Days',
+      Location: 'USA',
+      DOI: 'https://doi.org/10.1002/mds.26613',
+      Link: 'https://ida.loni.usc.edu/login.jsp',
+      Color: '#ff7f0e',
+    },
   };
 
   beforeEach(async () => {
@@ -52,8 +74,8 @@ describe('MappingsComponent', () => {
     httpMock = TestBed.inject(HttpTestingController);
     chordService = TestBed.inject(ChordDiagramService);
 
-    // Mock loadColors to return mockColors
-    spyOn(chordService, 'loadColors').and.returnValue(of(mockColors));
+    // Mock loadCohortData to return mockCohortData
+    spyOn(chordService, 'loadCohortData').and.returnValue(of(mockCohortData));
   });
 
   beforeEach(() => {
@@ -78,12 +100,16 @@ describe('MappingsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch colors on init and set the color scale', () => {
+  it('should fetch cohort data on init and set the color scale', () => {
+    const expectedColors = {
+      PPMI: '#1f77b4',
+      BIOFIND: '#ff7f0e',
+    };
     expect(chordService['colorScale'].domain()).toEqual(
-      Object.keys(mockColors)
+      Object.keys(expectedColors)
     );
     expect(chordService['colorScale'].range()).toEqual(
-      Object.values(mockColors)
+      Object.values(expectedColors)
     );
   });
 
