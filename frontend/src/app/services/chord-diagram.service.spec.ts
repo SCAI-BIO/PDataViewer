@@ -19,9 +19,31 @@ describe('ChordDiagramService', () => {
     links: [{ source: 'Node1', target: 'Node2' }],
   };
 
-  const mockColors = {
-    Group1: '#ff0000',
-    Group2: '#00ff00',
+  const mockCohortData = {
+    PPMI: {
+      Participants: 1758,
+      HealthyControls: 237,
+      ProdromalPatients: 1239,
+      PDPatients: 902,
+      LongitudinalPatients: 1244,
+      FollowUpInterval: '6 Months',
+      Location: 'USA, Europe',
+      DOI: 'https://doi.org/10.1016/j.pneurobio.2011.09.005',
+      Link: 'https://ida.loni.usc.edu/login.jsp',
+      Color: '#1f77b4',
+    },
+    BIOFIND: {
+      Participants: 215,
+      HealthyControls: 96,
+      ProdromalPatients: 0,
+      PDPatients: 119,
+      LongitudinalPatients: 0,
+      FollowUpInterval: '14 Days',
+      Location: 'USA',
+      DOI: 'https://doi.org/10.1002/mds.26613',
+      Link: 'https://ida.loni.usc.edu/login.jsp',
+      Color: '#ff7f0e',
+    },
   };
 
   // Set up the testing module and inject the service
@@ -44,17 +66,25 @@ describe('ChordDiagramService', () => {
     expect(service).toBeTruthy();
   });
 
-  // Test to ensure colors are loaded correctly
+  // Test to ensure cohort data is loaded and colors are set correctly
   it('should load and set colors correctly', () => {
-    service.loadColors().subscribe((colors) => {
-      service.setColors(colors);
-      expect(service['colorScale'].domain()).toEqual(Object.keys(colors));
-      expect(service['colorScale'].range()).toEqual(Object.values(colors));
+    service.loadCohortData().subscribe((cohortData) => {
+      service.setColors(cohortData);
+      const expectedColors = {
+        PPMI: '#1f77b4',
+        BIOFIND: '#ff7f0e',
+      };
+      expect(service['colorScale'].domain()).toEqual(
+        Object.keys(expectedColors)
+      );
+      expect(service['colorScale'].range()).toEqual(
+        Object.values(expectedColors)
+      );
     });
 
-    const req = httpMock.expectOne('/assets/colors.json');
+    const req = httpMock.expectOne('/assets/cohort.json');
     expect(req.request.method).toBe('GET');
-    req.flush(mockColors);
+    req.flush(mockCohortData);
   });
 
   describe('chunkData', () => {
@@ -115,7 +145,7 @@ describe('ChordDiagramService', () => {
       d3.select(svgElement).append('svg');
 
       // Set mock colors
-      service.setColors(mockColors);
+      service.setColors(mockCohortData);
 
       // Get a chunk of data and create a chord diagram
       const dataChunk = service.chunkData(mockData, 2)[0];
@@ -132,8 +162,8 @@ describe('ChordDiagramService', () => {
       });
 
       expect(groupArcs.length).toBe(2); // Should be exactly 2 groups
-      expect(d3.select(groupArcs[0]).style('fill')).toBe('rgb(255, 0, 0)'); // Group1 color
-      expect(d3.select(groupArcs[1]).style('fill')).toBe('rgb(0, 255, 0)'); // Group2 color
+      expect(d3.select(groupArcs[0]).style('fill')).toBe('rgb(31, 119, 180)'); // PPMI color
+      expect(d3.select(groupArcs[1]).style('fill')).toBe('rgb(255, 127, 14)'); // BIOFIND color
 
       // Clean up by removing the container
       document.body.removeChild(svgElement);

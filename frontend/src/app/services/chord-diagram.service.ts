@@ -17,20 +17,28 @@ export class ChordDiagramService {
     this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
   }
 
-  loadColors(): Observable<{ [key: string]: string }> {
-    return this.http.get<{ [key: string]: string }>('/assets/colors.json');
+  loadCohortData(): Observable<{ [key: string]: any }> {
+    return this.http.get<{ [key: string]: any }>('/assets/cohort.json');
   }
 
-  setColors(colors: { [key: string]: string }): void {
+  setColors(cohortData: { [key: string]: any }): void {
+    const colors = Object.fromEntries(
+      Object.entries(cohortData).map(([key, value]) => [key, value.Color])
+    );
+
     this.colorScale = d3
       .scaleOrdinal<string, string>()
       .domain(Object.keys(colors))
       .range(Object.values(colors));
   }
 
+  getColorScale(): d3.ScaleOrdinal<string, string> {
+    return this.colorScale;
+  }
+
   initializeColorScale(data: ChordData): void {
     const allGroups = Array.from(
-      new Set(data.nodes.map((node: ChordNode) => node.group)) as Set<string>
+      new Set(data.nodes.map((node: ChordNode) => node.group))
     );
     this.colorScale.domain(allGroups);
   }
