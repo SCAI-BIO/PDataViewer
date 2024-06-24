@@ -1,3 +1,7 @@
+.mat-divider {
+    border-style: hidden;
+}
+
 /* Welcome Area */
 .welcome-area {
     position: relative;
@@ -5,10 +9,6 @@
     align-items: center;
     justify-content: center;
     height: 40vh;
-}
-
-.mat-divider {
-    border-style: hidden;
 }
 
 .banner {
@@ -36,8 +36,7 @@
     align-items: center;
 }
 
-.about-small-item {
-    display: block;
+.about-item {
     background: #fff;
     box-shadow: 0 2px 48px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
@@ -48,41 +47,50 @@
     margin: 0 auto;
 }
 
-.about-small-item .about-title {
+.about-title {
     font-size: 1.2vw;
     color: #1e1e1e;
     margin-bottom: 15px;
 }
 
-.about-small-item p {
+.about-item p {
     font-size: 1vw;
     color: #777;
     margin-bottom: 20px;
 }
 
+
 /* Counter */
 .counter {
     overflow: hidden;
+    display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
+    margin: 30px 0;
     background: url('../../assets/home/background-applications.png') center center / cover no-repeat;
     height: 30vh;
 }
 
 .counter .content {
     width: 100%;
+    text-align: center;
 }
 
-.counter .content .count-item {
-    height: auto;
+.counts-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.counter .count-item {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    width: 200px;
 }
 
-.counter .content .count-item strong {
-    display: block;
-    text-align: center;
+.counter .count-item strong {
     font-weight: 600;
     font-size: 2vw;
     margin: 10px 0;
@@ -90,9 +98,7 @@
     transition: 0.3s ease;
 }
 
-.counter .content .count-item span {
-    display: block;
-    text-align: center;
+.counter .count-item span {
     color: #fff;
     font-weight: 500;
     font-size: 1vw;
@@ -102,8 +108,6 @@
 .img {
     max-width: 25%;
     max-height: 25%;
-    width: auto;
-    height: auto;
 }
 
 .left-img {
@@ -124,24 +128,24 @@
 .biomarker p,
 .longitudinal p,
 .ethnicity p,
-.content h2,
 .biomarker h2,
+.counter h2,
 .longitudinal h2,
 .ethnicity h2 {
     color: #fff;
 }
 
+/* Citation Section */
 .citation-section {
     padding: 0 25%;
 }
 
-/* Ensure Flexbox for Images and Text */
+/* Section Content */
 .section-content {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-right: 25%;
-    padding-left: 25%;
+    padding: 0 25%;
 }
 
 .section-content img {
@@ -164,7 +168,6 @@ a.button {
     color: white;
     padding: 10px 20px;
     display: inline-block;
-    font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
     border-radius: 5px;

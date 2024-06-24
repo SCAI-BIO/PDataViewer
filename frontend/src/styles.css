@@ -1,62 +1,9 @@
 /* Reset and Global Styles */
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-font,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-figure,
-header,
-nav,
-section,
-article,
-aside,
-footer,
-figcaption {
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p,
+blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em,
+font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var,
+b, u, i, center, dl, dt, dd, ol, ul, li, figure, header, nav, section, article,
+aside, footer, figcaption {
     margin: 0;
     padding: 0;
     border: 0;
@@ -65,8 +12,7 @@ figcaption {
     box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
     font-weight: 400;
     background-color: #fff;
@@ -81,19 +27,12 @@ a {
     text-decoration: none;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-ul {
+h1, h2, h3, h4, h5, h6, ul {
     margin-top: 0;
     margin-bottom: 0;
 }
 
-::selection,
-::-moz-selection {
+::selection, ::-moz-selection {
     background: #1cacd7;
     color: #fff;
 }
@@ -111,36 +50,33 @@ ul {
 .section-title {
     color: #1e1e1e;
     margin-bottom: 30px;
-    position: relative;
     font-size: 1.4vw;
     text-align: center;
 }
 
-.center-text, .center-text p,
-.text, .text p {
+.text-center, .text, .text-center p, .text p {
     text-align: center;
     font-size: 1vw;
     color: #777;
     margin-bottom: 30px;
 }
 
-/* Styles for buttons */
 button {
     background-color: #007bff;
     border: none;
     color: white;
     padding: 10px 20px;
     display: inline-block;
-    font-size: 16px;
+    font-size: 0.8vw;
     margin: 4px 2px;
     cursor: pointer;
     border-radius: 5px;
     transition: all 0.3s ease;
     text-align: center;
 }
-  
+
 button:hover {
-background-color: #0056b3;
+    background-color: #0056b3;
 }
 
 .container {
@@ -150,7 +86,7 @@ background-color: #0056b3;
 
 .nav-bar {
     padding: 0 20%;
-    width: 100%
+    width: 100%;
 }
 
 .body {
