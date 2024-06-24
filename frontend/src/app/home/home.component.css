@@ -5,7 +5,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    height: 50vh;
 }
 
 .welcome-area .header-text {
@@ -78,6 +78,12 @@
 }
 
 /* About */
+.about .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .about-small-item {
     display: block;
     background: #fff;
@@ -86,11 +92,11 @@
     padding: 30px;
     text-align: center;
     transition: 0.3s ease;
-    margin-bottom: 30px;
+    width: 50%;
+    margin: 0 auto;
 }
 
 .about-small-item .about-title {
-    font-weight: 500;
     font-size: 24px;
     color: #1e1e1e;
     letter-spacing: 0.7px;
@@ -104,8 +110,6 @@
     letter-spacing: 0.5px;
     line-height: 25px;
     margin-bottom: 20px;
-    padding-left: 400px;
-    padding-right: 400px;
 }
 
 /* Counter */
