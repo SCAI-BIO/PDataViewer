@@ -68,11 +68,13 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   }
 
   fetchColors(): void {
-    const sub = this.http
-      .get<any>('/assets/colors.json')
-      .subscribe((colors) => {
-        this.cohortColors = colors;
-      });
+    const sub = this.http.get<any>('/assets/cohorts.json').subscribe((data) => {
+      for (const cohort in data) {
+        if (data.hasOwnProperty(cohort)) {
+          this.cohortColors[cohort] = data[cohort].Color;
+        }
+      }
+    });
     this.subscriptions.push(sub);
   }
 
@@ -81,11 +83,13 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   }
 
   fetchLinks(): void {
-    const sub = this.http
-      .get<any>('assets/application-links.json')
-      .subscribe((links) => {
-        this.cohortLinks = links;
-      });
+    const sub = this.http.get<any>('assets/cohorts.json').subscribe((data) => {
+      for (const cohort in data) {
+        if (data.hasOwnProperty(cohort)) {
+          this.cohortLinks[cohort] = data[cohort].Link;
+        }
+      }
+    });
     this.subscriptions.push(sub);
   }
 
