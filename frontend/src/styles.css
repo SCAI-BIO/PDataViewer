@@ -108,59 +108,39 @@ ul {
     background: #f9f9f9;
 }
 
-.left-heading .section-title {
-    font-weight: 500;
+.section-title {
     color: #1e1e1e;
     margin-bottom: 30px;
     position: relative;
-    font-size: 24px;
-    line-height: 42px;
-    letter-spacing: 0.25px;
-}
-
-.center-text,
-.left-text {
-    font-weight: 400;
-    font-size: 16px;
-    color: #777;
-    line-height: 28px;
-    letter-spacing: 1px;
-}
-
-.center-text {
+    font-size: 1.4vw;
     text-align: center;
-    margin-bottom: 50px;
 }
 
-.center-text p,
-.left-text p {
-    font-size: 15px;
+.center-text, .center-text p,
+.text, .text p {
+    text-align: center;
+    font-size: 1vw;
     color: #777;
     margin-bottom: 30px;
 }
 
-a.main-button,
-button.main-button {
-    font-size: 13px;
-    border-radius: 20px;
-    padding: 12px 20px;
-    background-color: #1cacd7;
-    text-transform: uppercase;
-    color: #fff;
-    letter-spacing: 0.25px;
-    transition: all 0.3s ease 0s;
-}
-
-a.main-button:hover,
-button.main-button:hover {
-    background-color: #5fb9e9;
-    color: #fff;
-}
-
-button.main-button {
-    outline: none;
+/* Styles for buttons */
+button {
+    background-color: #007bff;
     border: none;
+    color: white;
+    padding: 10px 20px;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
     cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+  
+button:hover {
+background-color: #0056b3;
 }
 
 .container {

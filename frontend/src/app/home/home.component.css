@@ -114,14 +114,6 @@
     margin-left: 20px;
 }
 
-/* Padding for Sections */
-.padding-section {
-    padding: 5% 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 /* Background for Biomarker, Longitudinal, and Ethnicity Sections */
 .biomarker,
 .longitudinal,
@@ -143,19 +135,6 @@
     padding: 0 25%;
 }
 
-.citation-section .left-text {
-    margin-bottom: 30px;
-}
-
-.section-title {
-    font-size: 1.4vw;
-    margin-bottom: 2%;
-}
-
-.left-heading, .left-text {
-    text-align: center;
-}
-
 /* Ensure Flexbox for Images and Text */
 .section-content {
     display: flex;
@@ -169,7 +148,7 @@
     margin-right: 20px;
 }
 
-.section-content .left-text {
+.section-content .text {
     font-size: 1vw;
 }
 
@@ -177,4 +156,22 @@
     width: 100%;
     display: flex;
     justify-content: center;
+}
+
+a.button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+a.button:hover {
+    background-color: #0056b3;
 }
