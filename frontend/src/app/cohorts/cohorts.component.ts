@@ -1,16 +1,17 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
 import { HttpClient } from '@angular/common/http';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cohorts',
   standalone: true,
-  imports: [CommonModule, MatSortModule, MatTableModule],
+  imports: [CommonModule, MatTableModule, MatSortModule],
   templateUrl: './cohorts.component.html',
-  styleUrl: './cohorts.component.css',
+  styleUrls: ['./cohorts.component.css'],
 })
 export class CohortsComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = [
@@ -26,9 +27,10 @@ export class CohortsComponent implements OnInit, OnDestroy {
     'Link',
   ];
   dataSource = new MatTableDataSource<any>();
-  subscriptions: Subscription[] = [];
 
   @ViewChild(MatSort) sort!: MatSort;
+
+  private destroy$ = new Subject<void>();
 
   constructor(private http: HttpClient) {}
 
@@ -37,22 +39,27 @@ export class CohortsComponent implements OnInit, OnDestroy {
   }
 
   fetchData(): void {
-    const sub = this.http.get<any>('/assets/cohorts.json').subscribe((data) => {
-      const transformedData = Object.keys(data).map((key) => {
-        return {
-          cohort: key,
-          ...data[key],
-        };
-      });
-      this.dataSource.data = transformedData;
-      this.dataSource.sort = this.sort;
+    this.http
+      .get<any>('/assets/cohorts.json')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          const transformedData = Object.keys(data).map((key) => ({
+            cohort: key,
+            ...data[key],
+          }));
+          this.dataSource.data = transformedData;
+          this.dataSource.sort = this.sort;
 
-      const initialSortState: Sort = { active: 'cohort', direction: 'asc' };
-      this.sort.active = initialSortState.active;
-      this.sort.direction = initialSortState.direction;
-      this.sort.sortChange.emit(initialSortState);
-    });
-    this.subscriptions.push(sub);
+          const initialSortState: Sort = { active: 'cohort', direction: 'asc' };
+          this.sort.active = initialSortState.active;
+          this.sort.direction = initialSortState.direction;
+          this.sort.sortChange.emit(initialSortState);
+        },
+        error: (err) => {
+          console.error('Error fetching data', err);
+        },
+      });
   }
 
   openLink(link: string) {
@@ -60,6 +67,7 @@ export class CohortsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
