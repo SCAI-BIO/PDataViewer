@@ -1,39 +1,30 @@
-import os
-
 import pandas as pd
 import numpy as np
+from functions.preprocessing import clean_extra_columns
+from repository.sqllite import CDMRepository
 
-from functions.preprocessing import merge_modalities, clean_extra_columns
-
-def rank_cohorts(features: list[str], folder: str="./cdm") -> pd.DataFrame:
+def rank_cohorts(features: list[str]) -> pd.DataFrame:
     """Ranks cohorts based on the availability of requested features.
 
     Args:
         features (list[str]): A list of features user interested in
-        folder (str, optional): Path to folder containing modalities. Defaults to "./cdm".
     
     Raises:
-        FileNotFoundError: The folder does not exist
-        FileNotFoundError: The folder is empty
         ValueError: features list cannot be empty
 
     Returns:
         ranked_cohorts (pd.DataFrame): A dataframe showcasing ranked cohorts
     """
-    # Check if the folder exists
-    if not os.path.exists(folder):
-        raise FileNotFoundError(f"the folder '{folder}' does not exist.")
-    # Check if the folder is empty
-    if not bool(os.listdir(folder)):
-        raise FileNotFoundError(f"the folder '{folder}' is empty.")
     # Check if the features list is empty
     if not features:
         raise ValueError("The 'features' list cannot be empty")
+    
+    cdm_repo = CDMRepository()
     total_features = len(features)
     # Initialize an empty data frame
     ranked_cohorts = pd.DataFrame(columns=["cohort", "found", "missing"])
-    # Merge the modalities together
-    cdm = merge_modalities(folder=folder)
+    # Get CDM from the SQL repository
+    cdm = cdm_repo.get_cdm()
     # Use NaN for missing values
     cdm.replace({"": np.nan}, inplace=True)
     # Set Feature column as the index and drop non-cohort columns

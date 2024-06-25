@@ -1,9 +1,9 @@
 import re
 from thefuzz import process, fuzz
-from functions.preprocessing import merge_modalities
+from repository.sqllite import CDMRepository
 
 
-def autocomplete(text: str, folder="./cdm", threshold=80, limit=10):
+def autocomplete(text: str, threshold=80, limit=10):
     """Gives autocomplete suggestions based on the given query.
 
     Args:
@@ -13,10 +13,12 @@ def autocomplete(text: str, folder="./cdm", threshold=80, limit=10):
     Returns:
         suggestions (list[str]): A list of suggestions
     """
+    cdm_repo = CDMRepository()
     # Remove special characters that have syntactic meaning in regex
     text = re.sub(r'[.*+?^${}()|[\]\\]', '', text)
     # Get features and convert them into a list
-    features = merge_modalities(usecols=["Feature"], folder=folder)
+    features = cdm_repo.get_columns(columns=["Feature"])
+    features.replace({"No total score.": ""}, inplace=True)
     features = features["Feature"].to_list()
     # Compile the regex pattern
     pattern = re.compile(r'^' + text, re.IGNORECASE)

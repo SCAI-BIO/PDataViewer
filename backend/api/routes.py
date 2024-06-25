@@ -1,17 +1,18 @@
 import logging
-import os
 
 from functions.visualization import generate_chords
-from functions.preprocessing import merge_modalities, clean_extra_columns
+from functions.preprocessing import clean_extra_columns
 from functions.studypicker import rank_cohorts
 from functions.autocomplete import autocomplete
 
+from repository.sqllite import CDMRepository
+
 from contextlib import asynccontextmanager
 
-import pandas as pd
+import numpy as np
 
 from pydantic import BaseModel
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
 from starlette.middleware.cors import CORSMiddleware
@@ -56,6 +57,8 @@ app.add_middleware(
 
 logger = logging.getLogger("uvicorn.info")
 
+cdm_repo = CDMRepository()
+
 
 class ChordsRequest(BaseModel):
     modality: str
@@ -74,7 +77,8 @@ def get_current_version():
 
 @app.get("/cdm", tags=["info"], description="Gets PASSIONATE CDM")
 def get_cdm():
-    cdm = merge_modalities()
+    cdm = cdm_repo.get_cdm()
+    cdm.replace({np.nan: "", "No total score.": ""}, inplace=True)
     return cdm.to_dict()
 
 
@@ -83,8 +87,11 @@ def get_cohorts():
     """
     Get all cohorts available in PASSIONATE.
     """
-    cdm = merge_modalities()
-    cdm = clean_extra_columns(cdm, extra_columns=["Feature", "CURIE", "Definition", "Synonyms", "OMOP"])
+    cdm = cdm_repo.get_cdm()
+    cdm.replace({np.nan: "", "No total score.": ""}, inplace=True)
+    cdm = clean_extra_columns(
+        cdm, extra_columns=["Feature", "CURIE", "Definition", "Synonyms", "OMOP"]
+    )
     return cdm.columns.to_list()
 
 
@@ -93,7 +100,7 @@ def get_features():
     """
     Get all features available in PASSIONATE.
     """
-    features = merge_modalities(usecols=["Feature"])
+    features = cdm_repo.get_columns(columns=["Feature"])
     return features.to_dict("list")
 
 
@@ -102,7 +109,7 @@ def get_modalities():
     """
     Get all modalities available in PASSIONATE.
     """
-    files = [file.replace(".csv", "") for file in os.listdir("./cdm") if file.endswith(".csv")]
+    files = cdm_repo.get_table_names()
     return files
 
 
@@ -111,9 +118,8 @@ def get_modality(modality: str):
     """
     Get all features of a modality.
     """
-    if not os.path.exists(f"./cdm/{modality}.csv"):
-        raise HTTPException(status_code=404, detail="Modality not found")
-    mappings = pd.read_csv(f"./cdm/{modality}.csv", keep_default_na=False)
+    mappings = cdm_repo.retrieve_table(table_name=modality)
+    mappings.replace({np.nan: ""}, inplace=True)
     return mappings.to_dict()
 
 
@@ -124,8 +130,6 @@ def get_chords(request: ChordsRequest):
     """
     modality = request.modality
     cohorts = request.cohorts
-    if not os.path.exists(f"./cdm/{modality}.csv"):
-        raise HTTPException(status_code=404, detail="Modality not found")
     data = generate_chords(modality, cohorts)
     return data
 
