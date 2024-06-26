@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from functions.preprocessing import clean_extra_columns
 from repository.sqllite import CDMRepository
 
 def rank_cohorts(features: list[str]) -> pd.DataFrame:
@@ -29,7 +28,7 @@ def rank_cohorts(features: list[str]) -> pd.DataFrame:
     cdm.replace({"": np.nan}, inplace=True)
     # Set Feature column as the index and drop non-cohort columns
     cdm.set_index("Feature", inplace=True)
-    cdm = clean_extra_columns(cdm)
+    cdm.drop(["CURIE", "Definition", "Synonyms", "OMOP"], axis=1, inplace=True)
     # Filter the CDM based on requested features
     mappings = cdm.loc[features, :]
     for column in mappings.columns:

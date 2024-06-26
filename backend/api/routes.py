@@ -1,7 +1,6 @@
 import logging
 
 from functions.visualization import generate_chords
-from functions.preprocessing import clean_extra_columns
 from functions.studypicker import rank_cohorts
 from functions.autocomplete import autocomplete
 
@@ -89,9 +88,7 @@ def get_cohorts():
     """
     cdm = cdm_repo.get_cdm()
     cdm.replace({np.nan: "", "No total score.": ""}, inplace=True)
-    cdm = clean_extra_columns(
-        cdm, extra_columns=["Feature", "CURIE", "Definition", "Synonyms", "OMOP"]
-    )
+    cdm.drop(["Feature", "CURIE", "Definition", "Synonyms", "OMOP"], axis=1, inplace=True)
     return cdm.columns.to_list()
 
 
