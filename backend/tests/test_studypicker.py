@@ -3,7 +3,7 @@ from functions.studypicker import rank_cohorts
 
 def test_rank_cohorts():
     features = ["age", "height", "bmi"]
-    ranked_cohorts = rank_cohorts(features=features, folder="./backend/tests/resources")
+    ranked_cohorts = rank_cohorts(features=features, path="backend/tests/resources/test.db", colums_to_drop=None)
 
     rank_cohorts_result = {
         "cohort": {0: "cohort_x", 1: "cohort_y", 2: "cohort_z"},
@@ -11,6 +11,7 @@ def test_rank_cohorts():
         "missing": {0: "bmi", 1: "bmi", 2: "age, bmi"},
     }
 
+    print(ranked_cohorts)
     # Assert the shape of the DataFrame
     assert ranked_cohorts.shape == (3, 3)
     # Assert the column data types

@@ -6,7 +6,7 @@ def test_generate_chords():
     modality = "test_mappings"
     cohorts = ["cohort_x", "cohort_y", "cohort_z"]
 
-    result = generate_chords(modality, cohorts, folder="./backend/tests/resources")
+    result = generate_chords(modality, cohorts, path="backend/tests/resources/test.db")
 
     expected_result = {
         "nodes": [
