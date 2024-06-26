@@ -3,17 +3,17 @@ from thefuzz import process, fuzz
 from repository.sqllite import CDMRepository
 
 
-def autocomplete(text: str, threshold=80, limit=10):
+def autocomplete(text: str, path: str = "./db/cdm.db", threshold=80, limit=10):
     """Gives autocomplete suggestions based on the given query.
 
     Args:
         text (str): Query given by the user
-        folder (str, optional): Path to folder containing the modalities. Defaults to "./cdm".
+        path (str, optional): Path to SQL database containing the modalities. Defaults to "./db/cdm.db".
 
     Returns:
         suggestions (list[str]): A list of suggestions
     """
-    cdm_repo = CDMRepository()
+    cdm_repo = CDMRepository(path=path)
     # Remove special characters that have syntactic meaning in regex
     text = re.sub(r'[.*+?^${}()|[\]\\]', '', text)
     # Get features and convert them into a list

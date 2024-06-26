@@ -2,7 +2,7 @@ import pandas as pd
 from repository.sqllite import CDMRepository
 
 
-def generate_chords(modality: str, cohorts: list[str]):
+def generate_chords(modality: str, cohorts: list[str], path: str = "./db/cdm.db"):
     """Generate linkage information for cohorts in a specified modality.
 
     This function retrieves the table of specified modality from an SQL database,
@@ -12,6 +12,7 @@ def generate_chords(modality: str, cohorts: list[str]):
     Args:
         modality (str): Name of the modality, used to identify the CSV file in the folder.
         cohorts (list[str]): List of cohort names to be included in the mappings.
+        path (str, optional): Path to SQL database containing the modalities. Defaults to "./db/cdm.db".
 
     Raises:
         ValueError: If the cohorts list is empty
@@ -25,7 +26,7 @@ def generate_chords(modality: str, cohorts: list[str]):
     if not cohorts:
         raise ValueError("The 'cohorts' list cannot be empty.")
     
-    cdm_repo = CDMRepository()
+    cdm_repo = CDMRepository(path=path)
     data = {}
     nodes = []
     links = []

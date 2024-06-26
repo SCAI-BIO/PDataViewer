@@ -2,11 +2,14 @@ import pandas as pd
 import numpy as np
 from repository.sqllite import CDMRepository
 
-def rank_cohorts(features: list[str]) -> pd.DataFrame:
+def rank_cohorts(features: list[str], path: str = "./db/cdm.db", colums_to_drop: list[str] | None = ["CURIE", "Definition", "Synonyms", "OMOP"]) -> pd.DataFrame:
     """Ranks cohorts based on the availability of requested features.
 
     Args:
-        features (list[str]): A list of features user interested in
+        features (list[str]): A list of features user interested in.
+        path (str, optional): Path to SQL database containing the modalities. Defaults to "./db/cdm.db".
+        columns_to_drop (list[str] | None, optional): Columns that should not be in the ranking list.
+        Defaults to ["CURIE", "Definition", "Synonyms", "OMOP"].
     
     Raises:
         ValueError: features list cannot be empty
@@ -18,7 +21,7 @@ def rank_cohorts(features: list[str]) -> pd.DataFrame:
     if not features:
         raise ValueError("The 'features' list cannot be empty")
     
-    cdm_repo = CDMRepository()
+    cdm_repo = CDMRepository(path=path)
     total_features = len(features)
     # Initialize an empty data frame
     ranked_cohorts = pd.DataFrame(columns=["cohort", "found", "missing"])
@@ -28,7 +31,8 @@ def rank_cohorts(features: list[str]) -> pd.DataFrame:
     cdm.replace({"": np.nan}, inplace=True)
     # Set Feature column as the index and drop non-cohort columns
     cdm.set_index("Feature", inplace=True)
-    cdm.drop(["CURIE", "Definition", "Synonyms", "OMOP"], axis=1, inplace=True)
+    if colums_to_drop:
+        cdm.drop(colums_to_drop, axis=1, inplace=True)
     # Filter the CDM based on requested features
     mappings = cdm.loc[features, :]
     for column in mappings.columns:
