@@ -11,8 +11,7 @@ class SQLLiteRepository(BaseRepository):
         Session = sessionmaker(bind=self.engine, autoflush=False)
         self.session = Session()
 
-    def store(self, path: str):
-        """Store CSV files from the specified path into the database"""
+    def store(self, path: str):      
         for filename in os.listdir(path):
             if filename.endswith(".csv"):
                 file_path = os.path.join(path, filename)
@@ -27,7 +26,7 @@ class SQLLiteRepository(BaseRepository):
             data = pd.read_sql(table_name, self.engine)
         return data
 
-    def get_table_names(self):
+    def get_table_names(self):     
         inspector = inspect(self.engine)
         table_names = inspector.get_table_names()
         return table_names
@@ -41,6 +40,11 @@ class CDMRepository(SQLLiteRepository):
         super().__init__(path=path)
 
     def get_cdm(self) -> pd.DataFrame:
+        """Merges all available modality tables in the CDM database into PASSIONATE CDM.
+
+        Returns:
+            pd.DataFrame: PASSIONATE CDM that comprises all modalities.
+        """        
         table_names = self.get_table_names()
         frames = []
         for table in table_names:
@@ -50,6 +54,14 @@ class CDMRepository(SQLLiteRepository):
         return cdm
 
     def get_columns(self, columns: list[str]) -> pd.DataFrame:
+        """Generates the PASSIONATE CDM with only the specified column(s).
+
+        Args:
+            columns (list[str]): A list of columns to include in PASSIONATE CDM.
+
+        Returns:
+            pd.DataFrame: PASSIONATE CDM with the selected column(s).
+        """        
         table_names = self.get_table_names()
         frames = []
         for table in table_names:
