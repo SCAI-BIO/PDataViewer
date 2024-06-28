@@ -8,11 +8,11 @@ def autocomplete(text: str, repo: CDMRepository, threshold=80, limit=10):
     """Gives autocomplete suggestions based on the given query.
 
     Args:
-        text (str): Query given by the user
-        path (str, optional): Path to SQL database containing the modalities. Defaults to "./db/cdm.db".
+        text (str): Query given by the user.
+        repo (CDMRepository): CDMRepository instance to interact with the database containing the modalities.
 
     Returns:
-        suggestions (list[str]): A list of suggestions
+        suggestions (list[str]): A list of suggestions.
     """
     # Remove special characters that have syntactic meaning in regex
     text = re.sub(r"[.*+?^${}()|[\]\\]", "", text)
