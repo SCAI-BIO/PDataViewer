@@ -64,6 +64,10 @@ class ChordsRequest(BaseModel):
     cohorts: list[str]
 
 
+class PathModel(BaseModel):
+    path: str
+
+
 @app.get("/", include_in_schema=False)
 def swagger_redirect():
     return RedirectResponse(url="/docs")
@@ -88,7 +92,9 @@ def get_cohorts():
     """
     cdm = cdm_repo.get_cdm()
     cdm.replace({np.nan: "", "No total score.": ""}, inplace=True)
-    cdm.drop(["Feature", "CURIE", "Definition", "Synonyms", "OMOP"], axis=1, inplace=True)
+    cdm.drop(
+        ["Feature", "CURIE", "Definition", "Synonyms", "OMOP"], axis=1, inplace=True
+    )
     return cdm.columns.to_list()
 
 
@@ -146,3 +152,31 @@ def autocompletion(text: str):
     Autocomplete user's query.
     """
     return autocomplete(text)
+
+
+@app.put("/database/cdm", tags=["database"])
+def update_cdm_db(path_model: PathModel):
+    """
+    Update the database from the specified CSV folder path.
+    """
+    path = path_model.path
+    cdm_repo.store(path)
+    return {"message": "Database updated successfully!"}
+
+
+@app.delete("/database/cdm", tags=["database"])
+def delete_cdm_db():
+    """
+    Delete the database.
+    """
+    cdm_repo.delete_database()
+    return {"message": "Database deleted successfully!"}
+
+
+@app.delete("/database/cdm/{table}", tags=["database"])
+def delete_cdm_modality(table: str):
+    """
+    Delete a modality from CDM database.
+    """
+    cdm_repo.delete_table(table)
+    return {"message": "Table deleted successfully!"}
