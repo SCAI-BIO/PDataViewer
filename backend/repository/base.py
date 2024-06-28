@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import pandas as pd
 
+
 class BaseRepository(ABC):
     @abstractmethod
     def store(self, path):
@@ -8,7 +9,7 @@ class BaseRepository(ABC):
 
         Args:
             path (str): A path to the folder containing the CSV files.
-        """  
+        """
         pass
 
     @abstractmethod
@@ -30,7 +31,7 @@ class BaseRepository(ABC):
 
         Returns:
             list[str]: A list of table names.
-        """   
+        """
         pass
 
     @abstractmethod

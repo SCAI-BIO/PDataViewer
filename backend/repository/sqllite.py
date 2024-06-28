@@ -11,7 +11,7 @@ class SQLLiteRepository(BaseRepository):
         Session = sessionmaker(bind=self.engine, autoflush=False)
         self.session = Session()
 
-    def store(self, path: str):      
+    def store(self, path: str):
         for filename in os.listdir(path):
             if filename.endswith(".csv"):
                 file_path = os.path.join(path, filename)
@@ -26,7 +26,7 @@ class SQLLiteRepository(BaseRepository):
             data = pd.read_sql(table_name, self.engine)
         return data
 
-    def get_table_names(self):     
+    def get_table_names(self):
         inspector = inspect(self.engine)
         table_names = inspector.get_table_names()
         return table_names
@@ -44,7 +44,7 @@ class CDMRepository(SQLLiteRepository):
 
         Returns:
             pd.DataFrame: PASSIONATE CDM that comprises all modalities.
-        """        
+        """
         table_names = self.get_table_names()
         frames = []
         for table in table_names:
@@ -61,7 +61,7 @@ class CDMRepository(SQLLiteRepository):
 
         Returns:
             pd.DataFrame: PASSIONATE CDM with the selected column(s).
-        """        
+        """
         table_names = self.get_table_names()
         frames = []
         for table in table_names:
