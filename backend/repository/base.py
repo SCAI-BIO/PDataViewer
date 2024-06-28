@@ -35,6 +35,24 @@ class BaseRepository(ABC):
         pass
 
     @abstractmethod
-    def close():
-        """Close the session."""
+    def delete_database(self):
+        """
+        Deletes the database.
+        """
+        pass
+    
+    @abstractmethod
+    def delete_table(self, table_name):
+        """
+        Deletes the specified table.
+
+        Args:
+            table_name (str): The name of the table to be dropped.
+        """
+
+    @abstractmethod
+    def close(self):
+        """
+        Close the session.
+        """
         pass

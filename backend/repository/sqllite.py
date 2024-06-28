@@ -1,12 +1,16 @@
 import os
+from typing import Optional, List
+from repository.base import BaseRepository
 import pandas as pd
+
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
-from repository.base import BaseRepository
+import sqlite3
 
 
 class SQLLiteRepository(BaseRepository):
     def __init__(self, path: str):
+        self.db_path = path
         self.engine = create_engine(f"sqlite:///{path}")
         Session = sessionmaker(bind=self.engine, autoflush=False)
         self.session = Session()
@@ -19,9 +23,10 @@ class SQLLiteRepository(BaseRepository):
                 table_name = filename[:-4]
                 data.to_sql(table_name, self.engine, if_exists="replace", index=False)
 
-    def retrieve_table(self, table_name: str, columns: None | list[str] = None):
+    def retrieve_table(self, table_name: str, columns: Optional[List[str]] = None):
         if columns:
-            data = pd.read_sql(table_name, self.engine, columns=columns)
+            query = f"SELECT {', '.join(columns)} FROM {table_name}"
+            data = pd.read_sql(query, self.engine)
         else:
             data = pd.read_sql(table_name, self.engine)
         return data
@@ -31,8 +36,26 @@ class SQLLiteRepository(BaseRepository):
         table_names = inspector.get_table_names()
         return table_names
 
+    def delete_database(self):
+        os.remove(self.db_path)
+        print(f"Database '{self.db_path}' deleted successfully!")
+
+    def delete_table(self, table_name: str):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        try:
+            cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+            conn.commit()
+            print(f"Table '{table_name}' deleted successfully!")
+        except sqlite3.Error as e:
+            print(f"Error deleting table: {e}")
+        finally:
+            cursor.close()
+            conn.close()
+
     def close(self):
         self.session.close()
+        print("Database closed successfully!")
 
 
 class CDMRepository(SQLLiteRepository):
