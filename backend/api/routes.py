@@ -131,7 +131,7 @@ def get_chords(request: ChordsRequest):
     """
     modality = request.modality
     cohorts = request.cohorts
-    data = generate_chords(modality, cohorts)
+    data = generate_chords(modality, cohorts, repo=cdm_repo)
     return data
 
 
