@@ -26,7 +26,9 @@ class SQLLiteRepository(BaseRepository):
 
     def retrieve_table(self, table_name: str, columns: Optional[List[str]] = None):
         if columns:
-            query = f"SELECT {', '.join(columns)} FROM {table_name}"
+            # Quote each column name to handle spaces or special characters
+            quoted_columns = [f'"{col}"' for col in columns]
+            query = f"SELECT {', '.join(quoted_columns)} FROM {table_name}"
             data = pd.read_sql(query, self.engine)
         else:
             data = pd.read_sql(table_name, self.engine)
