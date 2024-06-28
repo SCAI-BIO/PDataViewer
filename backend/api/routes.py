@@ -140,7 +140,7 @@ def get_ranked_cohorts(features: list[str]):
     """
     Ranks cohorts based on the availability of given features.
     """
-    ranked_cohorts = rank_cohorts(features)
+    ranked_cohorts = rank_cohorts(features, repo=cdm_repo)
     return ranked_cohorts.to_dict(orient="records")
 
 
