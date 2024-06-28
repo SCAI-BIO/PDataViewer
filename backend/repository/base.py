@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 import pandas as pd
 
 
@@ -40,7 +41,7 @@ class BaseRepository(ABC):
         Deletes the database.
         """
         pass
-    
+
     @abstractmethod
     def delete_table(self, table_name):
         """

@@ -149,7 +149,7 @@ def autocompletion(text: str):
     """
     Autocomplete user's query.
     """
-    return autocomplete(text)
+    return autocomplete(text, repo=cdm_repo)
 
 
 @app.post("/database/cdm/import", tags=["database"])

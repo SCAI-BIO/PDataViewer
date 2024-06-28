@@ -1,7 +1,8 @@
-from dotenv import load_dotenv
-from fastapi import HTTPException, Depends
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import os
+
+from dotenv import load_dotenv
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 security = HTTPBasic()
 

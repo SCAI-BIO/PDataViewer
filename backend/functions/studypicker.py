@@ -1,6 +1,7 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 from repository.sqllite import CDMRepository
+
 
 def rank_cohorts(features: list[str], path: str = "./db/cdm.db", colums_to_drop: list[str] | None = ["CURIE", "Definition", "Synonyms", "OMOP"]) -> pd.DataFrame:
     """Ranks cohorts based on the availability of requested features.

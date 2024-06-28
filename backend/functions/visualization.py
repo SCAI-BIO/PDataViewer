@@ -25,7 +25,7 @@ def generate_chords(modality: str, cohorts: list[str], path: str = "./db/cdm.db"
     # Check if the cohorts list is empty
     if not cohorts:
         raise ValueError("The 'cohorts' list cannot be empty.")
-    
+
     cdm_repo = CDMRepository(path=path)
     data = {}
     nodes = []
@@ -39,8 +39,8 @@ def generate_chords(modality: str, cohorts: list[str], path: str = "./db/cdm.db"
     mappings.dropna(how="all", axis=1, inplace=True)
     # For comma separated multiple mappings, create a new row for each mapping
     for column in mappings.columns:
-        if mappings[column].apply(lambda x: isinstance(x, str) and ', ' in x).any():
-            mappings[column] = mappings[column].str.split(', ')
+        if mappings[column].apply(lambda x: isinstance(x, str) and ", " in x).any():
+            mappings[column] = mappings[column].str.split(", ")
             mappings = mappings.explode(column)
     filtered_cohorts = mappings.columns
 

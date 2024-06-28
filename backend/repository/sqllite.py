@@ -1,11 +1,12 @@
 import os
-from typing import Optional, List
-from repository.base import BaseRepository
-import pandas as pd
+import sqlite3
+from typing import List, Optional
 
+import pandas as pd
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
-import sqlite3
+
+from repository.base import BaseRepository
 
 
 class SQLLiteRepository(BaseRepository):
