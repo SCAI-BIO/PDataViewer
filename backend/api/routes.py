@@ -1,21 +1,18 @@
 import logging
-
-from functions.visualization import generate_chords
-from functions.studypicker import rank_cohorts
-from functions.autocomplete import autocomplete
-
-from repository.sqllite import CDMRepository
-
 from contextlib import asynccontextmanager
 
 import numpy as np
-
-from pydantic import BaseModel
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, File, UploadFile
 from fastapi.responses import RedirectResponse
-
+from fastapi.security import HTTPBasicCredentials
+from functions.autocomplete import autocomplete
+from functions.studypicker import rank_cohorts
+from functions.visualization import generate_chords
+from pydantic import BaseModel
+from repository.sqllite import CDMRepository
 from starlette.middleware.cors import CORSMiddleware
 
+from api.auth import authenticate_user, init_credentials
 
 resources = {}
 
@@ -23,6 +20,7 @@ resources = {}
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # On startup
+    init_credentials()
     resources["msg"] = "Successfully initialized credentials"
     yield
     # On shutdown
@@ -54,10 +52,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-logger = logging.getLogger("uvicorn.info")
-
-cdm_repo = CDMRepository()
-
 
 class ChordsRequest(BaseModel):
     modality: str
@@ -66,6 +60,10 @@ class ChordsRequest(BaseModel):
 
 class PathModel(BaseModel):
     path: str
+
+
+logger = logging.getLogger("uvicorn.info")
+cdm_repo = CDMRepository()
 
 
 @app.get("/", include_in_schema=False)
@@ -154,18 +152,17 @@ def autocompletion(text: str):
     return autocomplete(text)
 
 
-@app.put("/database/cdm", tags=["database"])
-def update_cdm_db(path_model: PathModel):
+@app.post("/database/cdm/import", tags=["database"])
+def update_cdm_db(file: UploadFile = File(...), credentials: HTTPBasicCredentials = Depends(authenticate_user)):
     """
     Update the database from the specified CSV folder path.
     """
-    path = path_model.path
-    cdm_repo.store(path)
-    return {"message": "Database updated successfully!"}
+    # TODO: Write a function that can directly work with the uploaded file.
+    pass
 
 
 @app.delete("/database/cdm", tags=["database"])
-def delete_cdm_db():
+def delete_cdm_db(credentials: HTTPBasicCredentials = Depends(authenticate_user)):
     """
     Delete the database.
     """
@@ -174,7 +171,7 @@ def delete_cdm_db():
 
 
 @app.delete("/database/cdm/{table}", tags=["database"])
-def delete_cdm_modality(table: str):
+def delete_cdm_modality(table: str, credentials: HTTPBasicCredentials = Depends(authenticate_user)):
     """
     Delete a modality from CDM database.
     """
