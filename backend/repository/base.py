@@ -14,6 +14,16 @@ class BaseRepository(ABC):
         pass
 
     @abstractmethod
+    def store_upload(self, content, table_name):
+        """Stores a CSV file uploaded via API to the database.
+
+        Args:
+            content (bytes): The contents of the uploaded CSV file as bytes.
+            table_name (str): The name of the table.
+        """
+        pass
+
+    @abstractmethod
     def retrieve_table(self, table_name, columns=None) -> pd.DataFrame:
         """Retrieves table with given table_name from the SQL database and returns a Pandas DataFrame.
 

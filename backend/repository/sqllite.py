@@ -1,7 +1,9 @@
 import os
+from io import BytesIO
 import sqlite3
 from typing import List, Optional
 
+from fastapi import UploadFile
 import pandas as pd
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
@@ -24,14 +26,18 @@ class SQLLiteRepository(BaseRepository):
                 table_name = filename[:-4]
                 data.to_sql(table_name, self.engine, if_exists="replace", index=False)
 
+    def store_upload(self, content: bytes, table_name: str):
+        data = pd.read_csv(BytesIO(content))
+        data.to_sql(table_name, self.engine, if_exists="replace", index=False)
+
     def retrieve_table(self, table_name: str, columns: Optional[List[str]] = None):
         if columns:
             # Quote each column name to handle spaces or special characters
             quoted_columns = [f'"{col}"' for col in columns]
             query = f"SELECT {', '.join(quoted_columns)} FROM {table_name}"
-            data = pd.read_sql(query, self.engine)
+            data = pd.read_sql(sql=query, con=self.engine)
         else:
-            data = pd.read_sql(table_name, self.engine)
+            data = pd.read_sql(sql=table_name, con=self.engine)
         return data
 
     def get_table_names(self):

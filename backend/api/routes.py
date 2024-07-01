@@ -2,7 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 
 import numpy as np
-from fastapi import Depends, FastAPI, File, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPBasicCredentials
 from functions.autocomplete import autocomplete
@@ -119,6 +119,8 @@ def get_modality(modality: str):
     """
     Get all features of a modality.
     """
+    if modality not in cdm_repo.get_table_names():
+        raise HTTPException(status_code=404, detail="Table not found.")
     mappings = cdm_repo.retrieve_table(table_name=modality)
     mappings.replace({np.nan: ""}, inplace=True)
     return mappings.to_dict()
@@ -152,13 +154,36 @@ def autocompletion(text: str):
     return autocomplete(text, repo=cdm_repo)
 
 
+@app.get("/database/table_names", tags=["database"])
+def table_names():
+    return cdm_repo.get_table_names()
+
+
+@app.get("/database/{table_name}", tags=["database"])
+def table(table_name: str):
+    if table_name not in cdm_repo.get_table_names():
+        raise HTTPException(status_code=404, detail="Table not found.")
+
+    data = cdm_repo.retrieve_table(table_name)
+    data.replace({np.nan: ""}, inplace=True)
+    return data.to_dict()
+
+
 @app.post("/database/cdm/import", tags=["database"])
-def update_cdm_db(file: UploadFile = File(...), credentials: HTTPBasicCredentials = Depends(authenticate_user)):
+async def update_cdm_db(file: UploadFile = File(...), credentials: HTTPBasicCredentials = Depends(authenticate_user)):
     """
     Update the database from the specified CSV folder path.
     """
-    # TODO: Write a function that can directly work with the uploaded file.
-    pass
+    # Check if the file is a csv file
+    if not file.filename.endswith(".csv"):
+        raise HTTPException(
+            status_code=400, detail="Invalid file type. Only .csv files are accepted."
+        )
+
+    table_name = file.filename[:-4]
+    contents = await file.read()
+    cdm_repo.store_upload(contents, table_name)
+    return {"message": "Data imported successfully!"}
 
 
 @app.delete("/database/cdm", tags=["database"])
@@ -175,5 +200,7 @@ def delete_cdm_modality(table: str, credentials: HTTPBasicCredentials = Depends(
     """
     Delete a modality from CDM database.
     """
+    if table not in cdm_repo.get_table_names():
+        raise HTTPException(status_code=404, detail="Table not found.")
     cdm_repo.delete_table(table)
     return {"message": "Table deleted successfully!"}
