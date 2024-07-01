@@ -71,19 +71,19 @@ def swagger_redirect():
     return RedirectResponse(url="/docs")
 
 
-@app.get("/version", tags=["info"], description="Gets API version")
+@app.get("/version", tags=["cdm"], description="Gets API version")
 def get_current_version():
     return app.version
 
 
-@app.get("/cdm", tags=["info"], description="Gets PASSIONATE CDM")
+@app.get("/cdm", tags=["cdm"], description="Gets PASSIONATE CDM")
 def get_cdm():
     cdm = cdm_repo.get_cdm()
     cdm.replace({np.nan: "", "No total score.": ""}, inplace=True)
     return cdm.to_dict()
 
 
-@app.get("/cdm/cohorts", tags=["info"])
+@app.get("/cdm/cohorts", tags=["cdm"])
 def get_cohorts():
     """
     Get all cohorts available in PASSIONATE.
@@ -96,7 +96,7 @@ def get_cohorts():
     return cdm.columns.to_list()
 
 
-@app.get("/cdm/features", tags=["info"])
+@app.get("/cdm/features", tags=["cdm"])
 def get_features():
     """
     Get all features available in PASSIONATE.
@@ -105,7 +105,7 @@ def get_features():
     return features.to_dict("list")
 
 
-@app.get("/cdm/modalities", tags=["info"])
+@app.get("/cdm/modalities", tags=["cdm"])
 def get_modalities():
     """
     Get all modalities available in PASSIONATE.
@@ -114,7 +114,7 @@ def get_modalities():
     return files
 
 
-@app.get("/cdm/modalities/{modality}", tags=["search"])
+@app.get("/cdm/modalities/{modality}", tags=["cdm"])
 def get_modality(modality: str):
     """
     Get all features of a modality.
