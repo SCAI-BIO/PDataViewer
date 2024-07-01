@@ -147,7 +147,7 @@ def get_ranked_cohorts(features: list[str]):
 
 
 @app.get("/autocompletion", tags=["autocompletion"])
-def autocompletion(text: str):
+def get_autocompletion(text: str):
     """
     Autocomplete user's query.
     """
@@ -155,12 +155,18 @@ def autocompletion(text: str):
 
 
 @app.get("/database/table_names", tags=["database"])
-def table_names():
+def get_table_names():
+    """
+    Get all table names available in the database.
+    """
     return cdm_repo.get_table_names()
 
 
 @app.get("/database/{table_name}", tags=["database"])
-def table(table_name: str):
+def get_table(table_name: str):
+    """
+    Get the content of a table by its name
+    """
     if table_name not in cdm_repo.get_table_names():
         raise HTTPException(status_code=404, detail="Table not found.")
 
@@ -169,10 +175,10 @@ def table(table_name: str):
     return data.to_dict()
 
 
-@app.post("/database/cdm/import", tags=["database"])
-async def update_cdm_db(file: UploadFile = File(...), credentials: HTTPBasicCredentials = Depends(authenticate_user)):
+@app.post("/database/import", tags=["database"])
+async def import_data(file: UploadFile = File(...), credentials: HTTPBasicCredentials = Depends(authenticate_user)):
     """
-    Update the database from the specified CSV folder path.
+    Import a CSV file to the database.
     """
     # Check if the file is a csv file
     if not file.filename.endswith(".csv"):
@@ -186,8 +192,8 @@ async def update_cdm_db(file: UploadFile = File(...), credentials: HTTPBasicCred
     return {"message": "Data imported successfully!"}
 
 
-@app.delete("/database/cdm", tags=["database"])
-def delete_cdm_db(credentials: HTTPBasicCredentials = Depends(authenticate_user)):
+@app.delete("/database/delete/database", tags=["database"])
+def delete_database(credentials: HTTPBasicCredentials = Depends(authenticate_user)):
     """
     Delete the database.
     """
@@ -195,12 +201,12 @@ def delete_cdm_db(credentials: HTTPBasicCredentials = Depends(authenticate_user)
     return {"message": "Database deleted successfully!"}
 
 
-@app.delete("/database/cdm/{table}", tags=["database"])
-def delete_cdm_modality(table: str, credentials: HTTPBasicCredentials = Depends(authenticate_user)):
+@app.delete("/database/delete/{table_name}", tags=["database"])
+def delete_table(table_name: str, credentials: HTTPBasicCredentials = Depends(authenticate_user)):
     """
-    Delete a modality from CDM database.
+    Delete a table from the database.
     """
-    if table not in cdm_repo.get_table_names():
+    if table_name not in cdm_repo.get_table_names():
         raise HTTPException(status_code=404, detail="Table not found.")
-    cdm_repo.delete_table(table)
+    cdm_repo.delete_table(table_name)
     return {"message": "Table deleted successfully!"}
