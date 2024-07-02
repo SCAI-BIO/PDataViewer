@@ -1,0 +1,8 @@
+Cohort,Participants,HealthyControls,ProdromalPatients,PDPatients,LongitudinalPatients,FollowUpInterval,Location,DOI,Link,Color
+PPMI,1578,237,1239,902,1244,6 Months,"USA, Europe",https://doi.org/10.1016/j.pneurobio.2011.09.005,https://ida.loni.usc.edu/login.jsp,#1f77b4
+BIOFIND,215,96,0,119,0,14 Days,USA,https://doi.org/10.1002/mds.26613,https://ida.loni.usc.edu/login.jsp,#ff7f0e
+LuxPARK,1018,520,0,498,229,1 Year,Luxembourg,https://doi.org/10.3389/fnagi.2018.00326,Shared by consortium,#2ca02c
+LCC,1305,508,0,797,178,not reported,not reported,https://www.michaeljfox.org/news/lrrk2-cohort-consortium,https://www.michaeljfox.org/form/lrrk2-data-use-e-consent,#d62728
+Fox Insight,30436,8231,0,22205,13264,3 Months,Online Data Collection,https://doi.org/10.1038/s41597-020-0401-2,https://www.michaeljfox.org/fox-insight,#9467bd
+PRoBaND,2247,0,0,2247,not reported,6 Months,UK,https://doi.org/10.3233/JPD-150662,https://www.trackingparkinsons.org.uk/,#8c564b
+OPDC,1379,297,0,1082,not reported,not reported,not reported,ttps://doi.org/10.48532/036000,https://portal.dementiasplatform.uk/CohortDirectory/Item?fingerPrintID=OPDC%20Discovery,#e377c2
