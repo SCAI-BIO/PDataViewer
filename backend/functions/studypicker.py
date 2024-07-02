@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
-from repository.sqllite import CDMRepository
+from repository.sqllite import SQLLiteRepository
 
 
-def rank_cohorts(features: list[str], repo: CDMRepository, columns_to_drop: list[str] | None = ["CURIE", "Definition", "Synonyms", "OMOP"]) -> pd.DataFrame:
+def rank_cohorts(features: list[str], repo: SQLLiteRepository, columns_to_drop: list[str] | None = ["CURIE", "Definition", "Synonyms", "OMOP", "Rank"]) -> pd.DataFrame:
     """Ranks cohorts based on the availability of requested features.
 
     Args:

@@ -1,10 +1,10 @@
 import re
 
-from repository.sqllite import CDMRepository
+from repository.sqllite import SQLLiteRepository
 from thefuzz import fuzz, process
 
 
-def autocomplete(text: str, repo: CDMRepository, threshold=80, limit=10):
+def autocomplete(text: str, repo: SQLLiteRepository, threshold=80, limit=10):
     """Gives autocomplete suggestions based on the given query.
 
     Args:
@@ -17,7 +17,7 @@ def autocomplete(text: str, repo: CDMRepository, threshold=80, limit=10):
     # Remove special characters that have syntactic meaning in regex
     text = re.sub(r"[.*+?^${}()|[\]\\]", "", text)
     # Get features and convert them into a list
-    features = repo.get_columns(columns=["Feature"])
+    features = repo.get_cdm(columns=["Feature"])
     features.replace({"No total score.": ""}, inplace=True)
     features = features["Feature"].to_list()
     # Compile the regex pattern

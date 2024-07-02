@@ -1,20 +1,22 @@
 import pandas as pd
 import numpy as np
-from random import sample
 from pathlib import Path
 
 
 def extract_features(
     df_dict: dict[str, pd.DataFrame], mapping_df: pd.DataFrame
-) -> dict[str, dict[str, int | float]]:
-    """Generates a nested dictionary that contains all available measurements for mapped features per cohort.
+) -> dict[str, dict[str, list[dict[str, int | float | str]]]]:
+    """Generates a nested dictionary that contains all available measurements for mapped features per cohort,
+    including diagnosis.
 
     Args:
         df_dict (dict[str, pd.DataFrame]): Dictionary of data frames containing cohort data.
         feature_df (pd.DataFrame): Data frame of mapped features.
 
     Returns:
-        result_dict (dict[str, dict[str, int  |  float]]): A nested dictionary. Outer dictionary is the available features, inner dictionary is the measurements for each cohort study.
+        result_dict (dict[str, dict[str, list[dict[str, int | float | str]]]]): A nested dictionary. 
+        Outer dictionary is the available features, inner dictionary is the measurements for each cohort study,
+        including diagnosis.
     """
 
     result_dict = {}
@@ -39,9 +41,20 @@ def extract_features(
             exact_match = next((col for col in target_cols if col == feat), None)
             selected_col = exact_match if exact_match else target_cols[0]
 
-            measurements = df_dict[cohort][selected_col].dropna().tolist()
-            if measurements:
-                result_dict.setdefault(feature, {})[cohort] = sample(measurements, len(measurements))
+            # Filter rows where both measurement and diagnosis are valid
+            valid_rows = df_dict[cohort][(df_dict[cohort][selected_col] != 0) & (df_dict[cohort]["Diagnosis"] != 0)]
+
+            if not valid_rows.empty:
+                if feature not in result_dict:
+                    result_dict[feature] = {}
+                if cohort not in result_dict[feature]:
+                    result_dict[feature][cohort] = []
+
+                for _, row in valid_rows.iterrows():
+                    result_dict[feature][cohort].append({
+                        "Measurement": row[selected_col],
+                        "Diagnosis": row["Diagnosis"]
+                    })
 
     return result_dict
 
@@ -101,10 +114,24 @@ output_path.mkdir(parents=True, exist_ok=True)
 for feature, feature_data in result.items():
     if feature in {"Age", "Education"}:
         for cohort in feature_data:
-            feature_data[cohort] = list(map(int, feature_data[cohort]))
+            feature_data[cohort] = [{"Measurement": int(d["Measurement"]) if not pd.isna(d["Measurement"]) else 0, "Diagnosis": d["Diagnosis"]} for d in feature_data[cohort]]
 
-    df = pd.DataFrame.from_dict(feature_data, orient="index").transpose()
-    df.index.name = "Participant number"
-    df.dropna(how="all", axis=1, inplace=True)
+    # Create a list to store the data
+    data = []
+    for cohort, measurements in feature_data.items():
+        for i, measurement in enumerate(measurements):
+            data.append({
+                "Participant number": i,
+                "Cohort": cohort,
+                "Measurement": measurement["Measurement"],
+                "Diagnosis": measurement["Diagnosis"]
+            })
+
+    # Create the DataFrame
+    df = pd.DataFrame(data)
+
+    # Check if DataFrame is empty before saving
     if not df.empty:
-        df.to_csv(output_path / f"biomarkers_{feature.lower()}.csv", index_label="Participant number")
+        df = df.sample(frac=1)
+        df.set_index(["Participant number", "Cohort"], inplace=True)
+        df.to_csv(output_path / f"biomarkers_{feature.lower()}.csv")

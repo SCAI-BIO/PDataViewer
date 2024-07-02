@@ -1,8 +1,8 @@
 import pandas as pd
-from repository.sqllite import CDMRepository
+from repository.sqllite import SQLLiteRepository
 
 
-def generate_chords(modality: str, cohorts: list[str], repo: CDMRepository):
+def generate_chords(modality: str, cohorts: list[str], repo: SQLLiteRepository):
     """Generate linkage information for cohorts in a specified modality.
 
     This function retrieves the table of specified modality from an SQL database,
