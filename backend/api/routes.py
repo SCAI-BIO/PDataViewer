@@ -70,6 +70,12 @@ database = SQLLiteRepository(replace_if_exists=True)
 def swagger_redirect():
     return RedirectResponse(url="/docs")
 
+@app.get("/biomarkers", tags=["biomarkers"])
+def get_biomarkers():
+    """
+    Get all available biomarkers tables
+    """
+    return database.get_table_names(starts_with="biomarkers_")
 
 @app.get("/version", tags=["cdm"], description="Gets API version")
 def get_current_version():
@@ -166,7 +172,7 @@ def get_autocompletion(text: str):
     return autocomplete(text, repo=database)
 
 
-@app.get("/database/table_names", tags=["database"])
+@app.get("/database/tables", tags=["database"])
 def get_table_names():
     """
     Get all table names available in the database.
@@ -174,7 +180,7 @@ def get_table_names():
     return database.get_table_names()
 
 
-@app.get("/database/{table_name}", tags=["database"])
+@app.get("/database/tables/{table_name}", tags=["database"])
 def get_table(table_name: str):
     """
     Get the content of a table by its name
@@ -207,7 +213,7 @@ async def import_data(
     return {"message": "Data imported successfully!"}
 
 
-@app.delete("/database/delete/database", tags=["database"])
+@app.delete("/database/delete/", tags=["database"])
 def delete_database(credentials: HTTPBasicCredentials = Depends(authenticate_user)):
     """
     Delete the database.

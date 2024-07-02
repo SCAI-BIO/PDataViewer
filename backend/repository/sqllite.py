@@ -84,14 +84,19 @@ class SQLLiteRepository:
 
         return cdm
 
-    def get_table_names(self) -> List[str]:
+    def get_table_names(self, starts_with: Optional[str] = None) -> List[str]:
         """Get all the table names available in the SQL database.
 
         Returns:
             list[str]: A list of table names.
         """
         inspector = inspect(self.engine)
-        return inspector.get_table_names()
+        table_names = inspector.get_table_names()
+        if starts_with:
+            filtered_table_names = [name for name in table_names if name.startswith(starts_with)]
+            return filtered_table_names
+
+        return table_names
 
     def retrieve_table(
         self, table_name: str, columns: Optional[List[str]] = None
