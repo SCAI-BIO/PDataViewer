@@ -6,10 +6,10 @@ from functions.visualization import generate_chords
 
 
 @pytest.fixture
-def mock_cdm_repository():
-    with patch("functions.visualization.CDMRepository") as MockRepo:
-        mock_repo = MockRepo.return_value
-        mock_repo.retrieve_table.return_value = pd.DataFrame(
+def mock_database():
+    with patch("functions.visualization.SQLLiteRepository") as MockDatabase:
+        mock_database = MockDatabase.return_value
+        mock_database.retrieve_table.return_value = pd.DataFrame(
             {
                 "cohort_x": ["age_x", "height_x", "weight_x"],
                 "cohort_y": ["age_y", "height_y", None],
@@ -17,14 +17,14 @@ def mock_cdm_repository():
             },
             index=["age", "height", "weight"],
         )
-        yield mock_repo
+        yield mock_database
 
 
-def test_generate_chords(mock_cdm_repository):
+def test_generate_chords(mock_database):
     modality = "test_mappings"
     cohorts = ["cohort_x", "cohort_y", "cohort_z"]
 
-    result = generate_chords(modality, cohorts, repo=mock_cdm_repository)
+    result = generate_chords(modality, cohorts, repo=mock_database)
 
     expected_result = {
         "nodes": [
@@ -72,9 +72,9 @@ def test_generate_chords(mock_cdm_repository):
     pd.testing.assert_frame_equal(result_links, expected_links)
 
 
-def test_generate_chords_empty_cohorts(mock_cdm_repository):
+def test_generate_chords_empty_cohorts(mock_database):
     modality = "test_mappings"
     cohorts = []
 
     with pytest.raises(ValueError, match="The 'cohorts' list cannot be empty."):
-        generate_chords(modality, cohorts, repo=mock_cdm_repository)
+        generate_chords(modality, cohorts, repo=mock_database)

@@ -3,12 +3,13 @@ from unittest.mock import MagicMock
 import pandas as pd
 import pytest
 from functions.autocomplete import autocomplete
+from repository.sqllite import SQLLiteRepository
 
 
 @pytest.fixture
-def mock_cdm_repository():
-    mock_repo = MagicMock()
-    mock_repo.get_columns.return_value = pd.DataFrame(
+def mock_database():
+    mock_database = MagicMock(spec=SQLLiteRepository)
+    mock_database.get_cdm.return_value = pd.DataFrame(
         {
             "Feature": [
                 "Age",
@@ -24,7 +25,7 @@ def mock_cdm_repository():
             ]
         }
     )
-    return mock_repo
+    return mock_database
 
 
 @pytest.mark.parametrize(
@@ -57,8 +58,8 @@ def mock_cdm_repository():
         ("xsdsxa", []),
     ],
 )
-def test_autocomplete(mock_cdm_repository, query, expected_result):
-    suggestions = autocomplete(query, repo=mock_cdm_repository)
+def test_autocomplete(mock_database, query, expected_result):
+    suggestions = autocomplete(query, repo=mock_database)
     assert len(suggestions) <= 10
     assert suggestions == expected_result
 
@@ -69,7 +70,7 @@ def test_autocomplete(mock_cdm_repository, query, expected_result):
         ("ag\\s\\s", "agss"),
     ],
 )
-def test_autocomplete_remove_special_characters(mock_cdm_repository, query1, query2):
-    suggestions1 = autocomplete(query1, repo=mock_cdm_repository)
-    suggestions2 = autocomplete(query2, repo=mock_cdm_repository)
+def test_autocomplete_remove_special_characters(mock_database, query1, query2):
+    suggestions1 = autocomplete(query1, repo=mock_database)
+    suggestions2 = autocomplete(query2, repo=mock_database)
     assert suggestions1 == suggestions2
