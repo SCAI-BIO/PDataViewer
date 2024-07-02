@@ -9,7 +9,7 @@ from functions.autocomplete import autocomplete
 from functions.studypicker import rank_cohorts
 from functions.visualization import generate_chords
 from pydantic import BaseModel
-from repository.sqllite import CDMRepository
+from repository.sqllite import SQLLiteRepository
 from starlette.middleware.cors import CORSMiddleware
 
 from api.auth import authenticate_user, init_credentials
@@ -63,7 +63,7 @@ class PathModel(BaseModel):
 
 
 logger = logging.getLogger("uvicorn.info")
-cdm_repo = CDMRepository()
+database = SQLLiteRepository(replace_if_exists=True)
 
 
 @app.get("/", include_in_schema=False)
@@ -78,7 +78,7 @@ def get_current_version():
 
 @app.get("/cdm", tags=["cdm"], description="Gets PASSIONATE CDM")
 def get_cdm():
-    cdm = cdm_repo.get_cdm()
+    cdm = database.get_cdm()
     cdm.replace({np.nan: "", "No total score.": ""}, inplace=True)
     return cdm.to_dict()
 
@@ -88,10 +88,12 @@ def get_cohorts():
     """
     Get all cohorts available in PASSIONATE.
     """
-    cdm = cdm_repo.get_cdm()
+    cdm = database.get_cdm()
     cdm.replace({np.nan: "", "No total score.": ""}, inplace=True)
     cdm.drop(
-        ["Feature", "CURIE", "Definition", "Synonyms", "OMOP"], axis=1, inplace=True
+        ["Feature", "CURIE", "Definition", "Synonyms", "OMOP", "Rank"],
+        axis=1,
+        inplace=True,
     )
     return cdm.columns.to_list()
 
@@ -101,7 +103,7 @@ def get_features():
     """
     Get all features available in PASSIONATE.
     """
-    features = cdm_repo.get_columns(columns=["Feature"])
+    features = database.get_cdm(columns=["Feature"])
     return features.to_dict("list")
 
 
@@ -110,8 +112,8 @@ def get_modalities():
     """
     Get all modalities available in PASSIONATE.
     """
-    files = cdm_repo.get_table_names()
-    return files
+    modalities = database.retrieve_table("modality", columns=["Modality"])["Modality"]
+    return modalities.to_list()
 
 
 @app.get("/cdm/modalities/{modality}", tags=["cdm"])
@@ -119,11 +121,21 @@ def get_modality(modality: str):
     """
     Get all features of a modality.
     """
-    if modality not in cdm_repo.get_table_names():
+    if modality not in database.get_table_names():
         raise HTTPException(status_code=404, detail="Table not found.")
-    mappings = cdm_repo.retrieve_table(table_name=modality)
+    mappings = database.retrieve_table(table_name=modality)
     mappings.replace({np.nan: ""}, inplace=True)
     return mappings.to_dict()
+
+
+@app.get("/cohorts/metadata", tags=["cohorts"])
+def get_metadata():
+    """
+    Get all features of a modality.
+    """
+    metadata = database.retrieve_table("metadata")
+    metadata.set_index("Cohort", inplace=True)
+    return metadata.to_dict(orient="index")
 
 
 @app.post("/visualization/chords/", tags=["visualization"])
@@ -133,7 +145,7 @@ def get_chords(request: ChordsRequest):
     """
     modality = request.modality
     cohorts = request.cohorts
-    data = generate_chords(modality, cohorts, repo=cdm_repo)
+    data = generate_chords(modality, cohorts, repo=database)
     return data
 
 
@@ -142,7 +154,7 @@ def get_ranked_cohorts(features: list[str]):
     """
     Ranks cohorts based on the availability of given features.
     """
-    ranked_cohorts = rank_cohorts(features, repo=cdm_repo)
+    ranked_cohorts = rank_cohorts(features, repo=database)
     return ranked_cohorts.to_dict(orient="records")
 
 
@@ -151,7 +163,7 @@ def get_autocompletion(text: str):
     """
     Autocomplete user's query.
     """
-    return autocomplete(text, repo=cdm_repo)
+    return autocomplete(text, repo=database)
 
 
 @app.get("/database/table_names", tags=["database"])
@@ -159,7 +171,7 @@ def get_table_names():
     """
     Get all table names available in the database.
     """
-    return cdm_repo.get_table_names()
+    return database.get_table_names()
 
 
 @app.get("/database/{table_name}", tags=["database"])
@@ -167,16 +179,19 @@ def get_table(table_name: str):
     """
     Get the content of a table by its name
     """
-    if table_name not in cdm_repo.get_table_names():
+    if table_name not in database.get_table_names():
         raise HTTPException(status_code=404, detail="Table not found.")
 
-    data = cdm_repo.retrieve_table(table_name)
+    data = database.retrieve_table(table_name)
     data.replace({np.nan: ""}, inplace=True)
     return data.to_dict()
 
 
 @app.post("/database/import", tags=["database"])
-async def import_data(file: UploadFile = File(...), credentials: HTTPBasicCredentials = Depends(authenticate_user)):
+async def import_data(
+    file: UploadFile = File(...),
+    credentials: HTTPBasicCredentials = Depends(authenticate_user),
+):
     """
     Import a CSV file to the database.
     """
@@ -188,7 +203,7 @@ async def import_data(file: UploadFile = File(...), credentials: HTTPBasicCreden
 
     table_name = file.filename[:-4]
     contents = await file.read()
-    cdm_repo.store_upload(contents, table_name)
+    database.store_upload(contents, table_name)
     return {"message": "Data imported successfully!"}
 
 
@@ -197,16 +212,18 @@ def delete_database(credentials: HTTPBasicCredentials = Depends(authenticate_use
     """
     Delete the database.
     """
-    cdm_repo.delete_database()
+    database.delete_database()
     return {"message": "Database deleted successfully!"}
 
 
 @app.delete("/database/delete/{table_name}", tags=["database"])
-def delete_table(table_name: str, credentials: HTTPBasicCredentials = Depends(authenticate_user)):
+def delete_table(
+    table_name: str, credentials: HTTPBasicCredentials = Depends(authenticate_user)
+):
     """
     Delete a table from the database.
     """
-    if table_name not in cdm_repo.get_table_names():
+    if table_name not in database.get_table_names():
         raise HTTPException(status_code=404, detail="Table not found.")
-    cdm_repo.delete_table(table_name)
+    database.delete_table(table_name)
     return {"message": "Table deleted successfully!"}
