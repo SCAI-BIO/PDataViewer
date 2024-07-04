@@ -73,9 +73,60 @@ def swagger_redirect():
 @app.get("/biomarkers", tags=["biomarkers"])
 def get_biomarkers():
     """
-    Get all available biomarkers tables
+    Get all available biomarker tables.
     """
     return database.get_table_names(starts_with="biomarkers_")
+
+@app.get("/biomarkers/{biomarker}", tags=["biomarkers"])
+def get_biomarker(biomarker: str):
+    """
+    Retrieve a biomarker table.
+    """
+    table_name = "biomarkers_" + biomarker
+    data = database.retrieve_table(table_name=table_name)
+    return data.to_dict(orient="records")
+
+@app.get("/biomarkers/{biomarker}/cohorts", tags=["biomarkers"])
+def get_biomarker_cohorts(biomarker: str):
+    """
+    Retrieve the list of available cohorts for a biomarker table.
+    """
+    table_name = "biomarkers_" + biomarker
+    data = database.retrieve_table(table_name=table_name)
+    return list(data.Cohort.unique())
+
+@app.get("/biomarkers/{biomarker}/diagnoses", tags=["biomarkers"])
+def get_cohort_biomarkers(biomarker: str):
+    """
+    Retrieve the measurements of chosen biomarker for the specified cohort.
+    """
+    diagnoses = {}
+    table_name = "biomarkers_" + biomarker
+    data = database.retrieve_table(table_name=table_name)
+    for cohort in data.Cohort.unique():
+        diagnoses[cohort] = list(data.Diagnosis.unique())
+    return diagnoses
+
+@app.get("/biomarkers/{biomarker}/cohorts/{cohort}/diagnoses", tags=["biomarkers"])
+def get_biomarker_diagnosis(biomarker: str, cohort: str):
+    """
+    Get unique diagnoses from a biomarker table.
+    """
+    table_name = "biomarkers_" + biomarker
+    data = database.retrieve_table(table_name=table_name)
+    data = data.loc[data["Cohort"] == cohort]
+    return list(data.Diagnosis.unique())
+
+@app.get("/biomarkers/{biomarker}/cohorts/{cohort}/diagnoses/{diagnosis}", tags=["biomarkers"])
+def get_filtered_data(biomarker: str, cohort: str, diagnosis: str):
+    """
+    Filter biomarker data based on the chosen diagnosis type
+    """
+    table_name = "biomarkers_" + biomarker
+    data = database.retrieve_table(table_name=table_name)
+    data = data.loc[data["Cohort"] == cohort]
+    data = data.loc[data["Diagnosis"] == diagnosis]
+    return data.Measurement.to_list()
 
 @app.get("/version", tags=["cdm"], description="Gets API version")
 def get_current_version():
