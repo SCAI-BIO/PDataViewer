@@ -5,6 +5,7 @@ import { MappingsComponent } from './mappings/mappings.component';
 import { ImprintComponent } from './imprint/imprint.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { CohortsComponent } from './cohorts/cohorts.component';
+import { BiomarkersComponent } from './biomarkers/biomarkers.component';
 
 export const routes: Routes = [
   {
@@ -15,6 +16,10 @@ export const routes: Routes = [
   {
     path: 'cohorts',
     component: CohortsComponent,
+  },
+  {
+    path: 'biomarkers',
+    component: BiomarkersComponent,
   },
   {
     path: 'study-picker',
