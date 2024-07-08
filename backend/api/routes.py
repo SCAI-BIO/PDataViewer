@@ -70,12 +70,19 @@ database = SQLLiteRepository(replace_if_exists=True)
 def swagger_redirect():
     return RedirectResponse(url="/docs")
 
+
+@app.get("/version", description="Gets API version")
+def get_current_version():
+    return app.version
+
+
 @app.get("/biomarkers", tags=["biomarkers"])
 def get_biomarkers():
     """
     Get all available biomarker tables.
     """
     return database.get_table_names(starts_with="biomarkers_")
+
 
 @app.get("/biomarkers/{biomarker}", tags=["biomarkers"])
 def get_biomarker(biomarker: str):
@@ -86,6 +93,7 @@ def get_biomarker(biomarker: str):
     data = database.retrieve_table(table_name=table_name)
     return data.to_dict(orient="records")
 
+
 @app.get("/biomarkers/{biomarker}/cohorts", tags=["biomarkers"])
 def get_biomarker_cohorts(biomarker: str):
     """
@@ -94,6 +102,7 @@ def get_biomarker_cohorts(biomarker: str):
     table_name = "biomarkers_" + biomarker
     data = database.retrieve_table(table_name=table_name)
     return list(data.Cohort.unique())
+
 
 @app.get("/biomarkers/{biomarker}/diagnoses", tags=["biomarkers"])
 def get_cohort_biomarkers(biomarker: str):
@@ -107,6 +116,7 @@ def get_cohort_biomarkers(biomarker: str):
         diagnoses[cohort] = list(data.Diagnosis.unique())
     return diagnoses
 
+
 @app.get("/biomarkers/{biomarker}/cohorts/{cohort}/diagnoses", tags=["biomarkers"])
 def get_biomarker_diagnosis(biomarker: str, cohort: str):
     """
@@ -117,7 +127,11 @@ def get_biomarker_diagnosis(biomarker: str, cohort: str):
     data = data.loc[data["Cohort"] == cohort]
     return list(data.Diagnosis.unique())
 
-@app.get("/biomarkers/{biomarker}/cohorts/{cohort}/diagnoses/{diagnosis}", tags=["biomarkers"])
+
+@app.get(
+    "/biomarkers/{biomarker}/cohorts/{cohort}/diagnoses/{diagnosis}",
+    tags=["biomarkers"],
+)
 def get_filtered_data(biomarker: str, cohort: str, diagnosis: str):
     """
     Filter biomarker data based on the chosen diagnosis type
@@ -128,9 +142,23 @@ def get_filtered_data(biomarker: str, cohort: str, diagnosis: str):
     data = data.loc[data["Diagnosis"] == diagnosis]
     return data.Measurement.to_list()
 
-@app.get("/version", tags=["cdm"], description="Gets API version")
-def get_current_version():
-    return app.version
+
+@app.get("/longitudinal", tags=["longitudinal"])
+def get_longitudinal_tables():
+    """
+    Get all available longitudinal tables.
+    """
+    return database.get_table_names(starts_with="longitudinal_")
+
+
+@app.get("/longitudinal/{longitudinal}", tags=["longitudinal"])
+def get_longitudinal_table(longitudinal: str):
+    """
+    Retrieve a longitudinal table.
+    """
+    table_name = "longitudinal_" + longitudinal
+    data = database.retrieve_table(table_name=table_name)
+    return data.to_dict(orient="records")
 
 
 @app.get("/cdm", tags=["cdm"], description="Gets PASSIONATE CDM")
