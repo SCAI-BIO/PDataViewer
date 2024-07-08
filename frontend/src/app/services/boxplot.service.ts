@@ -12,8 +12,6 @@ export class BoxplotService {
     data: { [key: string]: number[] },
     colors: { [key: string]: string }
   ): void {
-    console.log('Creating boxplot with data:', data);
-
     const margin = { top: 20, right: 150, bottom: 40, left: 40 };
     const width = 800 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
@@ -37,8 +35,6 @@ export class BoxplotService {
         .sort(d3.ascending);
       allData.push({ label, values });
     });
-
-    console.log('Processed data for boxplot:', allData);
 
     const x = d3.scaleBand().range([0, width]).domain(labels).padding(0.2);
 
