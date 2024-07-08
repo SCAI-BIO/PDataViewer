@@ -6,6 +6,7 @@ import { ImprintComponent } from './imprint/imprint.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { CohortsComponent } from './cohorts/cohorts.component';
 import { BiomarkersComponent } from './biomarkers/biomarkers.component';
+import { LongitudinalComponent } from './longitudinal/longitudinal.component';
 
 export const routes: Routes = [
   {
@@ -36,6 +37,10 @@ export const routes: Routes = [
   {
     path: 'contact-us',
     component: ContactUsComponent,
+  },
+  {
+    path: 'longitudinal',
+    component: LongitudinalComponent,
   },
   {
     path: '**',
