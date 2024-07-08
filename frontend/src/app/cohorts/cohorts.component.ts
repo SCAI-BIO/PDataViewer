@@ -6,6 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { environment } from '../../environments/environment';
+
 @Component({
   selector: 'app-cohorts',
   standalone: true,
@@ -27,9 +29,8 @@ export class CohortsComponent implements OnInit, OnDestroy {
     'Link',
   ];
   dataSource = new MatTableDataSource<any>();
-
   @ViewChild(MatSort) sort!: MatSort;
-
+  private API_URL = environment.API_URL
   private destroy$ = new Subject<void>();
 
   constructor(private http: HttpClient) {}
@@ -40,7 +41,7 @@ export class CohortsComponent implements OnInit, OnDestroy {
 
   fetchData(): void {
     this.http
-      .get<any>('/assets/cohorts.json')
+      .get<any>(`${this.API_URL}/cohorts/metadata`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
