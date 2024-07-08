@@ -5,11 +5,13 @@ import * as d3 from 'd3';
 import { ChordNode } from '../interfaces/chord-node';
 import { ChordLink } from '../interfaces/chord-link';
 import { ChordData } from '../interfaces/chord-data';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChordDiagramService {
+  private API_URL = environment.API_URL
   private colorScale: d3.ScaleOrdinal<string, string>;
   private dataChunks: ChordData[] = [];
 
@@ -18,7 +20,7 @@ export class ChordDiagramService {
   }
 
   loadCohortData(): Observable<{ [key: string]: any }> {
-    return this.http.get<{ [key: string]: any }>('/assets/cohort.json');
+    return this.http.get<{ [key: string]: any }>(`${this.API_URL}/cohorts/metadata`);
   }
 
   setColors(cohortData: { [key: string]: any }): void {
