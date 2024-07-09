@@ -1,6 +1,6 @@
 export interface LongitudinalData {
-    Months: number;
-    Cohort: string;
-    PatientCount: number;
-    TotalPatientCount: number;
-  }
+  Months: number;
+  Cohort: string;
+  PatientCount: number;
+  TotalPatientCount: number;
+}
