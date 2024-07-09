@@ -104,7 +104,6 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
         complete: () => console.info('complete'),
       });
     this.subscriptions.push(sub);
-    console.log(this.data);
   }
 
   fetchLongitudinalTables(): void {
