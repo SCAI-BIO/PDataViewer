@@ -90,7 +90,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
         error: (e) => {
           console.error('Error fetching colors:', e);
         },
-        complete: () => console.info('complete'),
+        complete: () => console.info('Colors successfully fetched'),
       });
     this.subscriptions.push(sub);
   }
@@ -115,7 +115,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
             this._transformLongitudinalName(longitudinal)
           )),
         error: (e) => console.error(e),
-        complete: () => console.info('complete'),
+        complete: () => console.info('Longitudinal data tables successfully fetched'),
       });
     this.subscriptions.push(sub);
   }
