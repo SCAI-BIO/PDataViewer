@@ -58,9 +58,10 @@ export class CohortsComponent implements OnInit, OnDestroy {
           this.sort.direction = initialSortState.direction;
           this.sort.sortChange.emit(initialSortState);
         },
-        error: (err) => {
-          console.error('Error fetching data', err);
+        error: (e) => {
+          console.error('Error fetching metadata', e);
         },
+        complete: () => console.info('Metadata successfully fetched'),
       });
   }
 
