@@ -90,7 +90,6 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
       this.selectedCohorts.push(cohort);
       this.cohortCtrl.setValue('');
       this.fetchBiomarkerData(cohort);
-      console.log(this.biomarkerData);
     }
   }
 
@@ -108,7 +107,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (v) => (this.biomarkerData[cohort_and_diagnosis] = v),
         error: (e) => console.error(e),
-        complete: () => console.info('complete'),
+        complete: () => console.info('Biomarker data successfully fetched.'),
       });
     this.subscriptions.push(sub);
   }
@@ -122,7 +121,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
             this._transformBiomarkerName(biomarker)
           )),
         error: (e) => console.error(e),
-        complete: () => console.info('complete'),
+        complete: () => console.info('Biomarkers successfully fetched.'),
       });
     this.subscriptions.push(sub);
   }
@@ -134,7 +133,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (v) => (this.cohorts = v),
         error: (e) => console.error(e),
-        complete: () => console.info('complete'),
+        complete: () => console.info('Cohort data successfully fetched.'),
       });
     this.subscriptions.push(sub);
   }
@@ -156,12 +155,11 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (v) => {
           this.colors = v;
-          console.log('Fetched colors:', this.colors);
         },
         error: (e) => {
           console.error('Error fetching colors:', e);
         },
-        complete: () => console.info('complete'),
+        complete: () => console.info('Colors successfully fetched.'),
       });
     this.subscriptions.push(sub);
   }
@@ -181,7 +179,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
           ))
         ),
         error: (e) => console.error(e),
-        complete: () => console.info('complete'),
+        complete: () => console.info('Diagnoses successfully fetched.'),
       });
     this.subscriptions.push(sub);
   }
@@ -201,7 +199,6 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.fetchBiomarkers();
     this.fetchColors();
-    console.log(this.colors);
     this.filteredBiomarkers = this.biomarkerCtrl.valueChanges.pipe(
       startWith(''),
       map((value) => this._filterBiomarkers(value || ''))
