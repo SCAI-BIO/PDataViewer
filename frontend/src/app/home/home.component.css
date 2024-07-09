@@ -163,7 +163,7 @@
 }
 
 a.button {
-    background-color: #007bff;
+    background-color: #99004f;
     border: none;
     color: white;
     padding: 10px 20px;
@@ -176,5 +176,5 @@ a.button {
 }
 
 a.button:hover {
-    background-color: #0056b3;
+    background-color: #660035;
 }
