@@ -95,7 +95,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (v) => (this.cohortRankings = v),
         error: (e) => console.error(e),
-        complete: () => console.info('complete'),
+        complete: () => console.info('Rankings fetched successfully.'),
       });
     this.subscriptions.push(sub);
   }
