@@ -98,7 +98,8 @@ describe('LineplotService', () => {
 
     service.createLineplot(elementRef, data, colors);
 
-    const legendItems = elementRef.nativeElement.querySelectorAll('g rect');
+    const legend = elementRef.nativeElement.querySelector('.legend');
+    const legendItems = legend.querySelectorAll('rect');
     expect(legendItems.length).toBe(2);
   });
 
@@ -136,7 +137,8 @@ describe('LineplotService', () => {
 
     service.createLineplot(elementRef, data, colors);
 
-    const legendRects = elementRef.nativeElement.querySelectorAll('g rect');
+    const legend = elementRef.nativeElement.querySelector('.legend');
+    const legendRects = legend.querySelectorAll('rect');
     expect((legendRects[0] as SVGRectElement).getAttribute('fill')).toBe(
       '#ff0000'
     );
@@ -193,5 +195,58 @@ describe('LineplotService', () => {
 
     const tooltip = document.querySelector('.tooltip') as HTMLElement;
     expect(tooltip).toBeTruthy();
+    expect(tooltip.style.visibility).toBe('visible');
+  }));
+
+  it('should show vertical line when tooltip is visible', fakeAsync(() => {
+    const data: LongitudinalData[] = [
+      {
+        Months: 1,
+        Cohort: 'cohort1',
+        PatientCount: 10,
+        TotalPatientCount: 100,
+      },
+      {
+        Months: 2,
+        Cohort: 'cohort1',
+        PatientCount: 15,
+        TotalPatientCount: 100,
+      },
+      {
+        Months: 1,
+        Cohort: 'cohort2',
+        PatientCount: 20,
+        TotalPatientCount: 200,
+      },
+      {
+        Months: 2,
+        Cohort: 'cohort2',
+        PatientCount: 25,
+        TotalPatientCount: 200,
+      },
+    ];
+    const colors = {
+      cohort1: '#ff0000',
+      cohort2: '#00ff00',
+    };
+
+    service.createLineplot(elementRef, data, colors);
+
+    const circles = elementRef.nativeElement.querySelectorAll('circle');
+    expect(circles.length).toBe(4);
+
+    const event = new MouseEvent('mouseover', {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+    });
+    circles[0].dispatchEvent(event);
+
+    tick();
+
+    const verticalLine =
+      elementRef.nativeElement.querySelector('.vertical-line');
+    expect(verticalLine).toBeTruthy();
+    expect(verticalLine.getAttribute('visibility')).toBe('visible');
   }));
 });
