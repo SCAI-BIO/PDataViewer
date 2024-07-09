@@ -27,11 +27,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   private fetchCohorts(): void {
-    const sub = this.http.get<any[]>(`${this.API_URL}/cdm/cohorts`).subscribe({
-      next: (v) => (this.cohortNumber = v.length),
-      error: (e) => console.error(e),
-      complete: () => console.info('complete'),
-    });
+    const sub = this.http
+      .get<string[]>(`${this.API_URL}/cdm/cohorts`)
+      .subscribe({
+        next: (v) => (this.cohortNumber = v.length),
+        error: (e) => console.error(e),
+        complete: () => console.info('Cohorts successfully fetched'),
+      });
     this.subscriptions.push(sub);
   }
 }
