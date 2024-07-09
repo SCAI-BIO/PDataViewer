@@ -14,9 +14,9 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class ChordDiagramService {
+  dataChunks: ChordData[] = [];
   private API_URL = environment.API_URL;
   private colorScale: d3.ScaleOrdinal<string, string>;
-  dataChunks: ChordData[] = [];
 
   constructor(private http: HttpClient) {
     this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -159,7 +159,7 @@ export class ChordDiagramService {
       })
       .attr('d', arc as any);
 
-    const texts = group
+    group
       .append('text')
       .each((d: any) => {
         d.angle = (d.startAngle + d.endAngle) / 2;
