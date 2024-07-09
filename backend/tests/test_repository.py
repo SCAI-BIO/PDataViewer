@@ -3,21 +3,13 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-from repository.sqllite import CDMRepository, SQLLiteRepository
+from repository.sqllite import SQLLiteRepository
 
 
 @pytest.fixture
 def sqlite_repo(tmp_path: Path):
     db_path = tmp_path / "test.db"
     repo = SQLLiteRepository(str(db_path))
-    yield repo
-    repo.close()
-
-
-@pytest.fixture
-def cdm_repo(tmp_path: Path):
-    db_path = tmp_path / "test_cdm.db"
-    repo = CDMRepository(str(db_path))
     yield repo
     repo.close()
 
@@ -85,7 +77,7 @@ def test_delete_database(sqlite_repo: SQLLiteRepository, tmp_path: Path):
     assert not os.path.exists(db_path)
 
 
-def test_cdm_get_cdm(cdm_repo: CDMRepository, tmp_path: Path):
+def test_cdm_get_cdm(sqlite_repo: SQLLiteRepository, tmp_path: Path):
     # Create sample CSV files
     data1 = pd.DataFrame({"col1": [1, 2], "col2": [3, 4]})
     csv_path1 = tmp_path / "sample1.csv"
@@ -96,31 +88,10 @@ def test_cdm_get_cdm(cdm_repo: CDMRepository, tmp_path: Path):
     data2.to_csv(csv_path2, index=False)
 
     # Store the CSVs into the database
-    cdm_repo.store(str(tmp_path))
+    sqlite_repo.store(str(tmp_path))
 
     # Retrieve the combined CDM
-    cdm = cdm_repo.get_cdm()
+    cdm = sqlite_repo.get_cdm()
 
     expected_data = pd.concat([data1, data2], ignore_index=True)
-    pd.testing.assert_frame_equal(expected_data, cdm)
-
-
-def test_cdm_get_columns(cdm_repo: CDMRepository, tmp_path: Path):
-    # Create sample CSV files
-    data1 = pd.DataFrame({"col1": [1, 2], "col2": [3, 4]})
-    csv_path1 = tmp_path / "sample1.csv"
-    data1.to_csv(csv_path1, index=False)
-
-    data2 = pd.DataFrame({"col1": [5, 6], "col2": [7, 8]})
-    csv_path2 = tmp_path / "sample2.csv"
-    data2.to_csv(csv_path2, index=False)
-
-    # Store the CSVs into the database
-    cdm_repo.store(str(tmp_path))
-
-    # Retrieve specific columns from the combined CDM
-    columns = ["col1"]
-    cdm = cdm_repo.get_columns(columns)
-
-    expected_data = pd.concat([data1[columns], data2[columns]], ignore_index=True)
     pd.testing.assert_frame_equal(expected_data, cdm)

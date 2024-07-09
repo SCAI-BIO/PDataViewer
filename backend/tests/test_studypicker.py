@@ -4,12 +4,12 @@ import numpy as np
 import pandas as pd
 import pytest
 from functions.studypicker import rank_cohorts
-from repository.sqllite import CDMRepository
+from repository.sqllite import SQLLiteRepository
 
 
 @pytest.fixture
 def mock_cdm_repository():
-    mock_repo = MagicMock(spec=CDMRepository)
+    mock_repo = MagicMock(spec=SQLLiteRepository)
     mock_repo.get_cdm.return_value = pd.DataFrame(
         {
             "Feature": ["age", "height", "bmi"],
