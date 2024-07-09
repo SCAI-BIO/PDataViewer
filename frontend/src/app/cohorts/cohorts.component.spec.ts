@@ -97,7 +97,7 @@ describe('CohortsComponent', () => {
     req.flush('Error', { status: 500, statusText: 'Server Error' });
     fixture.detectChanges();
     expect(consoleSpy).toHaveBeenCalledWith(
-      'Error fetching data',
+      'Error fetching metadata',
       jasmine.anything()
     );
   });
