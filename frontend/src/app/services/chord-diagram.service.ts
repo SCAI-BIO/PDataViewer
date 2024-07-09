@@ -1,29 +1,32 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+
 import * as d3 from 'd3';
-import { ChordNode } from '../interfaces/chord-node';
-import { ChordLink } from '../interfaces/chord-link';
+import { Observable } from 'rxjs';
+
 import { ChordData } from '../interfaces/chord-data';
+import { ChordLink } from '../interfaces/chord-link';
+import { ChordNode } from '../interfaces/chord-node';
+import { Metadata } from '../interfaces/metadata';
 import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChordDiagramService {
-  private API_URL = environment.API_URL
+  private API_URL = environment.API_URL;
   private colorScale: d3.ScaleOrdinal<string, string>;
-  private dataChunks: ChordData[] = [];
+  dataChunks: ChordData[] = [];
 
   constructor(private http: HttpClient) {
     this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
   }
 
-  loadCohortData(): Observable<{ [key: string]: any }> {
-    return this.http.get<{ [key: string]: any }>(`${this.API_URL}/cohorts/metadata`);
+  loadCohortData(): Observable<Metadata> {
+    return this.http.get<Metadata>(`${this.API_URL}/cohorts/metadata`);
   }
 
-  setColors(cohortData: { [key: string]: any }): void {
+  setColors(cohortData: Metadata): void {
     const colors = Object.fromEntries(
       Object.entries(cohortData).map(([key, value]) => [key, value.Color])
     );
@@ -146,15 +149,15 @@ export class ChordDiagramService {
 
     group
       .append('path')
-      .style('fill', (d: any) => {
+      .style('fill', (d: d3.ChordGroup) => {
         const feature = nodes[d.index];
         return this.colorScale(feature.group);
       })
-      .style('stroke', (d: any) => {
+      .style('stroke', (d: d3.ChordGroup) => {
         const feature = nodes[d.index];
         return d3.rgb(this.colorScale(feature.group)).darker().toString();
       })
-      .attr('d', arc as unknown as (d: any) => string);
+      .attr('d', arc as any);
 
     const texts = group
       .append('text')
@@ -171,8 +174,8 @@ export class ChordDiagramService {
             `
       )
       .style('text-anchor', (d: any) => (d.angle > Math.PI ? 'end' : null))
-      .text((d: any) => nodes[d.index].name)
-      .on('mouseover', function (event: any, d: any) {
+      .text((d: d3.ChordGroup) => nodes[d.index].name)
+      .on('mouseover', function (event: MouseEvent, d: d3.ChordGroup) {
         const index = d.index;
         svgGroup
           .selectAll('.ribbon')
@@ -199,7 +202,7 @@ export class ChordDiagramService {
       .enter()
       .append('path')
       .attr('class', 'ribbon')
-      .attr('d', ribbon as unknown as (d: any) => string);
+      .attr('d', ribbon as any);
 
     const existingGroups = Array.from(
       new Set(nodes.map((node) => node.group))
