@@ -104,7 +104,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
       modality: this.modality,
     };
     const sub = this.http
-      .post<any>(`${this.API_URL}/visualization/chords/`, request)
+      .post<ChordData>(`${this.API_URL}/visualization/chords/`, request)
       .subscribe({
         next: (v) => {
           this.chordService.initializeColorScale(v);
