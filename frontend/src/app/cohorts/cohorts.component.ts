@@ -1,13 +1,18 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
-import { HttpClient } from '@angular/common/http';
+
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { Metadata, CohortMetadata } from '../interfaces/metadata';
 import { environment } from '../../environments/environment';
 
+interface CohortData extends CohortMetadata {
+  cohort: string;
+}
 @Component({
   selector: 'app-cohorts',
   standalone: true,
@@ -28,20 +33,16 @@ export class CohortsComponent implements OnInit, OnDestroy {
     'DOI',
     'Link',
   ];
-  dataSource = new MatTableDataSource<any>();
+  dataSource = new MatTableDataSource<CohortData>();
   @ViewChild(MatSort) sort!: MatSort;
-  private API_URL = environment.API_URL
+  private API_URL = environment.API_URL;
   private destroy$ = new Subject<void>();
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit() {
-    this.fetchData();
-  }
-
-  fetchData(): void {
+  fetchMetadata(): void {
     this.http
-      .get<any>(`${this.API_URL}/cohorts/metadata`)
+      .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
@@ -70,5 +71,9 @@ export class CohortsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  ngOnInit() {
+    this.fetchMetadata();
   }
 }
