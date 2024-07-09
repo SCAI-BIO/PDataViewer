@@ -75,7 +75,80 @@ export class LineplotService {
       .style('visibility', 'hidden')
       .style('pointer-events', 'none');
 
-    // Add circles for data points and tooltips
+    // Add vertical hover areas for tooltips
+    const uniqueMonths = Array.from(new Set(data.map((d) => d.Months)));
+
+    const verticalLine = svg
+      .append('line')
+      .attr('class', 'vertical-line')
+      .attr('y1', 0)
+      .attr('y2', height)
+      .attr('stroke', 'grey')
+      .attr('stroke-width', 1)
+      .attr('visibility', 'hidden');
+
+    svg
+      .selectAll('.hover-area')
+      .data(uniqueMonths)
+      .enter()
+      .append('rect')
+      .attr('class', 'hover-area')
+      .attr('x', (d) => x(d) - width / uniqueMonths.length / 2)
+      .attr('width', width / uniqueMonths.length)
+      .attr('y', 0)
+      .attr('height', height)
+      .attr('fill', 'none')
+      .attr('pointer-events', 'all')
+      .on('mouseover', (event, month) => {
+        // Find all data points for the same month
+        const monthData = data.filter((md) => md.Months === month);
+        let tableContent = `
+          <table style="border-collapse: collapse;">
+            <tr>
+              <th style="border: 1px solid #ccc; padding: 4px;">Cohort</th>
+              <th style="border: 1px solid #ccc; padding: 4px;">Percentage</th>
+            </tr>`;
+        monthData.forEach((md) => {
+          const percentage = (md.PatientCount / md.TotalPatientCount) * 100;
+          tableContent += `
+            <tr>
+              <td style="border: 1px solid #ccc; padding: 4px;">
+                <svg width="10" height="10">
+                  <circle cx="5" cy="5" r="5" fill="${
+                    colors[md.Cohort] || 'steelblue'
+                  }"></circle>
+                </svg>
+                ${md.Cohort}
+              </td>
+              <td style="border: 1px solid #ccc; padding: 4px;">${percentage.toFixed(
+                1
+              )}% (${md.PatientCount} patients)</td>
+            </tr>
+          `;
+        });
+        tableContent += '</table>';
+
+        tooltip.style('visibility', 'visible').html(`
+            <strong>% of Participants at Month ${month}:</strong><br>
+            ${tableContent}
+          `);
+
+        verticalLine
+          .attr('x1', x(month))
+          .attr('x2', x(month))
+          .attr('visibility', 'visible');
+      })
+      .on('mousemove', (event) => {
+        tooltip
+          .style('top', `${event.pageY - 10}px`)
+          .style('left', `${event.pageX + 10}px`);
+      })
+      .on('mouseout', () => {
+        tooltip.style('visibility', 'hidden');
+        verticalLine.attr('visibility', 'hidden');
+      });
+
+    // Add circles for data points
     data.forEach((d) => {
       svg
         .append('circle')
@@ -91,21 +164,22 @@ export class LineplotService {
               <tr>
                 <th style="border: 1px solid #ccc; padding: 4px;">Cohort</th>
                 <th style="border: 1px solid #ccc; padding: 4px;">Percentage</th>
-                <th style="border: 1px solid #ccc; padding: 4px;">Patients</th>
               </tr>`;
           monthData.forEach((md) => {
             const percentage = (md.PatientCount / md.TotalPatientCount) * 100;
             tableContent += `
               <tr>
-                <td style="border: 1px solid #ccc; padding: 4px;">${
-                  md.Cohort
-                }</td>
+                <td style="border: 1px solid #ccc; padding: 4px;">
+                  <svg width="10" height="10">
+                    <circle cx="5" cy="5" r="5" fill="${
+                      colors[md.Cohort] || 'steelblue'
+                    }"></circle>
+                  </svg>
+                  ${md.Cohort}
+                </td>
                 <td style="border: 1px solid #ccc; padding: 4px;">${percentage.toFixed(
                   1
-                )}%</td>
-                <td style="border: 1px solid #ccc; padding: 4px;">${
-                  md.PatientCount
-                } patients</td>
+                )}% (${md.PatientCount} patients)</td>
               </tr>
             `;
           });
@@ -115,6 +189,11 @@ export class LineplotService {
               <strong>% of Participants at Month ${d.Months}:</strong><br>
               ${tableContent}
             `);
+
+          verticalLine
+            .attr('x1', x(d.Months))
+            .attr('x2', x(d.Months))
+            .attr('visibility', 'visible');
         })
         .on('mousemove', (event) => {
           tooltip
@@ -123,12 +202,14 @@ export class LineplotService {
         })
         .on('mouseout', () => {
           tooltip.style('visibility', 'hidden');
+          verticalLine.attr('visibility', 'hidden');
         });
     });
 
     // Add legend
     const legend = svg
       .append('g')
+      .attr('class', 'legend')
       .attr('transform', `translate(${width + 20}, 0)`);
 
     let legendIndex = 0;
