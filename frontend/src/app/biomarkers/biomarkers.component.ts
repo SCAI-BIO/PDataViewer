@@ -20,9 +20,9 @@ import { MatInputModule } from '@angular/material/input';
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
-import { environment } from '../../environments/environment';
 import { Metadata } from '../interfaces/metadata';
 import { BoxplotService } from '../services/boxplot.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-biomarkers',
@@ -169,7 +169,9 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   fetchDiagnoses(): void {
     const biomarker = this.selectedBiomarker.toLowerCase();
     const sub = this.http
-      .get<any>(`${this.API_URL}/biomarkers/${biomarker}/diagnoses`)
+      .get<{ [key: string]: string[] }>(
+        `${this.API_URL}/biomarkers/${biomarker}/diagnoses`
+      )
       .subscribe({
         next: (v) => (
           (this.diagnoses = v),
