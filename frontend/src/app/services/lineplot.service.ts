@@ -13,7 +13,7 @@ export class LineplotService {
     data: LongitudinalData[],
     colors: { [key: string]: string }
   ): void {
-    const margin = { top: 20, right: 150, bottom: 40, left: 40 };
+    const margin = { top: 20, right: 150, bottom: 60, left: 60 };
     const width = 800 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
@@ -28,22 +28,145 @@ export class LineplotService {
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     const x = d3.scaleLinear().range([0, width]);
-
     const y = d3.scaleLinear().range([height, 0]);
 
-    svg.append('g').call(d3.axisLeft(y));
-
-    const line = d3
-      .line<any>()
-      .x((d) => x(d.Months))
-      .y((d) => y(d.PatientCount));
+    // Set the domains for the scales
+    x.domain(d3.extent(data, (d) => d.Months) as [number, number]);
+    y.domain([0, 100]); // Y-axis from 0 to 100 percent
 
     svg
-      .append('path')
-      .datum(data)
-      .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
-      .attr('stroke-width', 1.5)
-      .attr('d', line);
+      .append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x));
+
+    svg.append('g').call(d3.axisLeft(y).ticks(10));
+
+    const line = d3
+      .line<LongitudinalData>()
+      .x((d) => x(d.Months))
+      .y((d) => y((d.PatientCount / d.TotalPatientCount) * 100));
+
+    // Group data by cohort
+    const cohorts = d3.group(data, (d) => d.Cohort);
+
+    // Draw a line for each cohort
+    cohorts.forEach((values, cohort) => {
+      svg
+        .append('path')
+        .datum(values)
+        .attr('fill', 'none')
+        .attr('stroke', colors[cohort] || 'steelblue') // Use the color from the colors object
+        .attr('stroke-width', 1.5)
+        .attr('d', line);
+    });
+
+    // Add tooltip element
+    const tooltip = d3
+      .select('body')
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('position', 'absolute')
+      .style('padding', '8px')
+      .style('background', 'rgba(255, 255, 255, 0.9)')
+      .style('border-radius', '4px')
+      .style('border', '1px solid #ccc')
+      .style('color', '#000')
+      .style('visibility', 'hidden')
+      .style('pointer-events', 'none');
+
+    // Add circles for data points and tooltips
+    data.forEach((d) => {
+      svg
+        .append('circle')
+        .attr('cx', x(d.Months))
+        .attr('cy', y((d.PatientCount / d.TotalPatientCount) * 100))
+        .attr('r', 5)
+        .attr('fill', colors[d.Cohort] || 'steelblue')
+        .on('mouseover', (event) => {
+          // Find all data points for the same month
+          const monthData = data.filter((md) => md.Months === d.Months);
+          let tableContent = `
+            <table style="border-collapse: collapse;">
+              <tr>
+                <th style="border: 1px solid #ccc; padding: 4px;">Cohort</th>
+                <th style="border: 1px solid #ccc; padding: 4px;">Percentage</th>
+                <th style="border: 1px solid #ccc; padding: 4px;">Patients</th>
+              </tr>`;
+          monthData.forEach((md) => {
+            const percentage = (md.PatientCount / md.TotalPatientCount) * 100;
+            tableContent += `
+              <tr>
+                <td style="border: 1px solid #ccc; padding: 4px;">${
+                  md.Cohort
+                }</td>
+                <td style="border: 1px solid #ccc; padding: 4px;">${percentage.toFixed(
+                  1
+                )}%</td>
+                <td style="border: 1px solid #ccc; padding: 4px;">${
+                  md.PatientCount
+                } patients</td>
+              </tr>
+            `;
+          });
+          tableContent += '</table>';
+
+          tooltip.style('visibility', 'visible').html(`
+              <strong>% of Participants at Month ${d.Months}:</strong><br>
+              ${tableContent}
+            `);
+        })
+        .on('mousemove', (event) => {
+          tooltip
+            .style('top', `${event.pageY - 10}px`)
+            .style('left', `${event.pageX + 10}px`);
+        })
+        .on('mouseout', () => {
+          tooltip.style('visibility', 'hidden');
+        });
+    });
+
+    // Optionally, add a legend
+    const legend = svg
+      .append('g')
+      .attr('transform', `translate(${width + 20}, 0)`);
+
+    let legendIndex = 0;
+    cohorts.forEach((_, cohort) => {
+      const legendRow = legend
+        .append('g')
+        .attr('transform', `translate(0, ${legendIndex * 20})`);
+
+      legendRow
+        .append('rect')
+        .attr('width', 10)
+        .attr('height', 10)
+        .attr('fill', colors[cohort] || 'steelblue');
+
+      legendRow.append('text').attr('x', 15).attr('y', 10).text(cohort);
+
+      legendIndex++;
+    });
+
+    // Add label for the y-axis
+    svg
+      .append('text')
+      .attr('class', 'y axis-label')
+      .attr('text-anchor', 'middle')
+      .attr(
+        'transform',
+        `translate(${-margin.left / 1.5}, ${height / 2})rotate(-90)`
+      )
+      .text('Patients (% baseline patients)');
+
+    // Add label for the x-axis
+    svg
+      .append('text')
+      .attr('class', 'x axis-label')
+      .attr('text-anchor', 'middle')
+      .attr(
+        'transform',
+        `translate(${width / 2}, ${height + margin.bottom / 1.5})`
+      )
+      .text('Months');
   }
 }
