@@ -3,7 +3,7 @@ export interface CohortMetadata {
   HealthyControls: number;
   ProdromalPatients: number;
   PDPatients: number;
-  LongitudinalPatients: string;
+  LongitudinalPatients: number;
   FollowUpInterval: string;
   Location: string;
   DOI: string;
