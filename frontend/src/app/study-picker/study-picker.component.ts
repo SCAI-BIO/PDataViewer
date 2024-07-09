@@ -16,6 +16,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 
+import { Metadata } from '../interfaces/metadata';
+import { RankData } from '../interfaces/rankdata';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -35,10 +37,10 @@ import { environment } from '../../environments/environment';
   styleUrl: './study-picker.component.css',
 })
 export class StudyPickerComponent implements OnInit, OnDestroy {
-  cohortData: any = {};
-  cohortColors: any = {};
-  cohortLinks: any = {};
-  cohortRankings: any = [];
+  cohortData: Metadata = {};
+  cohortColors: { [key: string]: string } = {};
+  cohortLinks: { [key: string]: string } = {};
+  cohortRankings: RankData[] = [];
   displayedColumns: string[] = ['cohort', 'found', 'missing', 'dataAccess'];
   featureCtrl = new FormControl();
   features: string[] = [];
@@ -68,16 +70,18 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     return feature ? feature : '';
   }
 
-  fetchCohortData(): void {
-    const sub = this.http.get<any>('/assets/cohorts.json').subscribe((data) => {
-      this.cohortData = data;
-      for (const cohort in data) {
-        if (data.hasOwnProperty(cohort)) {
-          this.cohortColors[cohort] = data[cohort].Color;
-          this.cohortLinks[cohort] = data[cohort].Link;
+  fetchMetadata(): void {
+    const sub = this.http
+      .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
+      .subscribe((data) => {
+        this.cohortData = data;
+        for (const cohort in data) {
+          if (data.hasOwnProperty(cohort)) {
+            this.cohortColors[cohort] = data[cohort].Color;
+            this.cohortLinks[cohort] = data[cohort].Link;
+          }
         }
-      }
-    });
+      });
     this.subscriptions.push(sub);
   }
 
@@ -87,7 +91,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
 
   getRankings(features: string[]) {
     const sub = this.http
-      .post<any[]>(`${this.API_URL}/studypicker/rank`, features)
+      .post<RankData[]>(`${this.API_URL}/studypicker/rank`, features)
       .subscribe({
         next: (v) => (this.cohortRankings = v),
         error: (e) => console.error(e),
@@ -105,7 +109,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
       );
     });
     this.subscriptions.push(sub);
-    this.fetchCohortData();
+    this.fetchMetadata();
   }
 
   ngOnDestroy(): void {
