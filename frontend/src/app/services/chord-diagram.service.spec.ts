@@ -5,10 +5,12 @@ import {
 } from '@angular/common/http/testing';
 import * as d3 from 'd3';
 import { ChordDiagramService } from './chord-diagram.service';
+import { environment } from '../../environments/environment';
 
 describe('ChordDiagramService', () => {
   let service: ChordDiagramService;
   let httpMock: HttpTestingController;
+  const API_URL = environment.API_URL
 
   // Mock data for testing
   const mockData = {
@@ -82,7 +84,7 @@ describe('ChordDiagramService', () => {
       );
     });
 
-    const req = httpMock.expectOne('/assets/cohort.json');
+    const req = httpMock.expectOne(`${API_URL}/cohorts/metadata`);
     expect(req.request.method).toBe('GET');
     req.flush(mockCohortData);
   });
