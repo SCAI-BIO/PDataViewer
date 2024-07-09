@@ -1,6 +1,7 @@
 <div class="component-container">
-  <h3>StudyPicker</h3>
+  <h1>StudyPicker</h1>
   <p>
+    <br />
     The StudyPicker helps you to find accessible cohort datasets and ranks them
     based on their fit to your requirements. Enter your features of interest
     below and submit.
@@ -55,7 +56,7 @@
   </div>
 
   <!-- Display cohort rankings if available -->
-  <ng-container *ngIf="cohortRankings?.length > 0">
+  <ng-container *ngIf="cohortRankings.length > 0">
     <div class="mat-elevation-z8 table-container">
       <table mat-table [dataSource]="cohortRankings" class="mat-table">
         <ng-container matColumnDef="cohort">
