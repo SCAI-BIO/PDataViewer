@@ -54,6 +54,7 @@ export class LineplotService {
       svg
         .append('path')
         .datum(values)
+        .attr('class', 'line-path')
         .attr('fill', 'none')
         .attr('stroke', colors[cohort] || 'steelblue') // Use the color from the colors object
         .attr('stroke-width', 1.5)
@@ -125,7 +126,7 @@ export class LineplotService {
         });
     });
 
-    // Optionally, add a legend
+    // Add legend
     const legend = svg
       .append('g')
       .attr('transform', `translate(${width + 20}, 0)`);
