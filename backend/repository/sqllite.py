@@ -153,6 +153,11 @@ class SQLLiteRepository:
         self.__store_bytes(content, table_name)
 
     def update_cdm_locally(self, path: str):
+        """Updates common data model (CDM) table from local files.
+
+        Args:
+            path (str): Path to folder containing CDM files.
+        """
         for filename in os.listdir(path):
             if filename.endswith(".csv"):
                 table_name = filename[:-4]
@@ -160,25 +165,55 @@ class SQLLiteRepository:
                 self.__add_modality(table_name)
 
     def update_cdm_upload(self, content: bytes, table_name: str):
+        """Updates common data model (CDM) table from the uploaded file.
+
+        Args:
+            content (bytes): File to be uploaded converted into bytes.
+            table_name (str): Table name to be stored in the SQL database.
+        """
         self.__store_bytes(content, table_name)
         self.__add_modality(table_name)
 
     def __add_modality(self, modality_name: str):
+        """Updates the modality table with the name of the uploaded CDM modality.
+
+        Args:
+            modality_name (str): Name of the modality to be added.
+        """
         new_modality = Modality(Modality=modality_name)
         self.session.add(new_modality)
         self.session.commit()
 
     def __initiate(self, metadata_path: str):
+        """Initializes the database with cohort metadata.
+
+        Args:
+            metadata_path (str): Path to the .csv file containing cohort metadata.
+        """
         # Create the modality table
         Base.metadata.create_all(self.engine)
         metadata = pd.read_csv(metadata_path)
         metadata.to_sql("metadata", self.engine, if_exists="replace", index=False)
 
     def __store_file(self, file_path: str):
+        """Stores the .csv file.
+
+        Generates a table name by removing .csv from file name,
+        and adds the data as a table to the SQL database.
+
+        Args:
+            file_path (str): Path to .csv file.
+        """
         data = pd.read_csv(file_path)
         table_name = os.path.basename(file_path).split(".")[0]
         data.to_sql(table_name, self.engine, if_exists="replace", index=False)
 
     def __store_bytes(self, content: bytes, table_name: str):
+        """Adds data stored as bytes to the SQL database.
+
+        Args:
+            content (bytes): Data stored as bytes.
+            table_name (str): Table name to be stored in the SQL database.
+        """        
         data = pd.read_csv(BytesIO(content))
         data.to_sql(table_name, self.engine, if_exists="replace", index=False)
