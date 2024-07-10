@@ -3,11 +3,10 @@ from io import BytesIO
 from typing import List, Optional
 
 import pandas as pd
-from sqlalchemy import Column, Integer, String, create_engine, inspect
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, Integer, String, create_engine, inspect, text
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Define the declarative base and the Modality class at the module level
+
 Base = declarative_base()
 
 
@@ -18,7 +17,13 @@ class Modality(Base):
 
 
 class SQLLiteRepository:
-    def __init__(self, db_path: str = "./db/cdm.db", cdm_path: str = "./data/cdm", initiate_with_data: bool = True, replace_if_exists: bool = False):
+    def __init__(
+        self,
+        db_path: str = "./db/cdm.db",
+        data_path: str = "./data",
+        initiate_with_data: bool = True,
+        replace_if_exists: bool = False,
+    ):
         self.db_path = db_path
         if replace_if_exists and os.path.exists(self.db_path):
             os.remove(self.db_path)
@@ -26,8 +31,9 @@ class SQLLiteRepository:
         Session = sessionmaker(bind=self.engine, autoflush=False)
         self.session = Session()
         if initiate_with_data:
-            self.__initiate()
-            self.update_cdm_locally(cdm_path)
+            self.data_path = data_path
+            self.__initiate(data_path + "/metadata.csv")
+            self.update_cdm_locally(data_path + "/cdm")
 
     def close(self):
         """
@@ -53,7 +59,8 @@ class SQLLiteRepository:
         """
         with self.engine.connect() as connection:
             try:
-                connection.execute(f"DROP TABLE IF EXISTS {table_name}")
+                connection.execute(text(f"DROP TABLE IF EXISTS {table_name}"))
+                connection.commit()
                 print(f"Table '{table_name}' deleted successfully!")
             except Exception as e:
                 print(f"Error deleting table: {e}")
@@ -94,7 +101,9 @@ class SQLLiteRepository:
         inspector = inspect(self.engine)
         table_names = inspector.get_table_names()
         if starts_with:
-            filtered_table_names = [name for name in table_names if name.startswith(starts_with)]
+            filtered_table_names = [
+                name for name in table_names if name.startswith(starts_with)
+            ]
             return filtered_table_names
 
         return table_names
@@ -159,10 +168,10 @@ class SQLLiteRepository:
         self.session.add(new_modality)
         self.session.commit()
 
-    def __initiate(self):
+    def __initiate(self, metadata_path: str):
         # Create the modality table
         Base.metadata.create_all(self.engine)
-        metadata = pd.read_csv("./data/metadata.csv")
+        metadata = pd.read_csv(metadata_path)
         metadata.to_sql("metadata", self.engine, if_exists="replace", index=False)
 
     def __store_file(self, file_path: str):
