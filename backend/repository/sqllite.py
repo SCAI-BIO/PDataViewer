@@ -18,15 +18,16 @@ class Modality(Base):
 
 
 class SQLLiteRepository:
-    def __init__(self, db_path: str = "./db/cdm.db", cdm_path: str = "./data/cdm", replace_if_exists: bool = False):
+    def __init__(self, db_path: str = "./db/cdm.db", cdm_path: str = "./data/cdm", initiate_with_data: bool = True, replace_if_exists: bool = False):
         self.db_path = db_path
         if replace_if_exists and os.path.exists(self.db_path):
             os.remove(self.db_path)
         self.engine = create_engine(f"sqlite:///{db_path}")
         Session = sessionmaker(bind=self.engine, autoflush=False)
         self.session = Session()
-        self.__initiate()
-        self.update_cdm_locally(cdm_path)
+        if initiate_with_data:
+            self.__initiate()
+            self.update_cdm_locally(cdm_path)
 
     def close(self):
         """

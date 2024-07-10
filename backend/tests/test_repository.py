@@ -9,7 +9,7 @@ from repository.sqllite import SQLLiteRepository
 @pytest.fixture
 def sqlite_repo(tmp_path: Path):
     db_path = tmp_path / "test.db"
-    repo = SQLLiteRepository(str(db_path))
+    repo = SQLLiteRepository(str(db_path), initiate_with_data=False)
     yield repo
     repo.close()
 
