@@ -14,7 +14,7 @@ def extract_features(
         feature_df (pd.DataFrame): Data frame of mapped features.
 
     Returns:
-        result_dict (dict[str, dict[str, list[dict[str, int | float | str]]]]): A nested dictionary. 
+        result_dict (dict[str, dict[str, list[dict[str, int | float | str]]]]): A nested dictionary.
         Outer dictionary is the available features, inner dictionary is the measurements for each cohort study,
         including diagnosis.
     """
@@ -24,7 +24,7 @@ def extract_features(
     for feature in mapping_df.Feature:
         feature_row = mapping_df.loc[mapping_df["Feature"] == feature]
 
-        for cohort in mapping_df.columns.intersection(df_dict.keys()):
+        for cohort in mapping_df.columns.intersection(list(df_dict.keys())):
             feat = feature_row[cohort].item()
 
             if feat == 0:
@@ -42,7 +42,10 @@ def extract_features(
             selected_col = exact_match if exact_match else target_cols[0]
 
             # Filter rows where both measurement and diagnosis are valid
-            valid_rows = df_dict[cohort][(df_dict[cohort][selected_col] != 0) & (df_dict[cohort]["Diagnosis"] != 0)]
+            valid_rows = df_dict[cohort][
+                (df_dict[cohort][selected_col] != 0)
+                & (df_dict[cohort]["Diagnosis"] != 0)
+            ]
 
             if not valid_rows.empty:
                 if feature not in result_dict:
@@ -51,10 +54,12 @@ def extract_features(
                     result_dict[feature][cohort] = []
 
                 for _, row in valid_rows.iterrows():
-                    result_dict[feature][cohort].append({
-                        "Measurement": row[selected_col],
-                        "Diagnosis": row["Diagnosis"]
-                    })
+                    result_dict[feature][cohort].append(
+                        {
+                            "Measurement": row[selected_col],
+                            "Diagnosis": row["Diagnosis"],
+                        }
+                    )
 
     return result_dict
 
@@ -114,18 +119,28 @@ output_path.mkdir(parents=True, exist_ok=True)
 for feature, feature_data in result.items():
     if feature in {"Age", "Education"}:
         for cohort in feature_data:
-            feature_data[cohort] = [{"Measurement": int(d["Measurement"]) if not pd.isna(d["Measurement"]) else 0, "Diagnosis": d["Diagnosis"]} for d in feature_data[cohort]]
+            feature_data[cohort] = [
+                {
+                    "Measurement": (
+                        int(d["Measurement"]) if not pd.isna(d["Measurement"]) else 0
+                    ),
+                    "Diagnosis": d["Diagnosis"],
+                }
+                for d in feature_data[cohort]
+            ]
 
     # Create a list to store the data
     data = []
     for cohort, measurements in feature_data.items():
         for i, measurement in enumerate(measurements):
-            data.append({
-                "Participant number": i,
-                "Cohort": cohort,
-                "Measurement": measurement["Measurement"],
-                "Diagnosis": measurement["Diagnosis"]
-            })
+            data.append(
+                {
+                    "Participant number": i,
+                    "Cohort": cohort,
+                    "Measurement": measurement["Measurement"],
+                    "Diagnosis": measurement["Diagnosis"],
+                }
+            )
 
     # Create the DataFrame
     df = pd.DataFrame(data)
