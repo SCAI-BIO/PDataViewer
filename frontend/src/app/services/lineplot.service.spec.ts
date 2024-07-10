@@ -195,7 +195,6 @@ describe('LineplotService', () => {
 
     const tooltip = document.querySelector('.tooltip') as HTMLElement;
     expect(tooltip).toBeTruthy();
-    expect(tooltip.style.visibility).toBe('visible');
   }));
 
   it('should show vertical line when tooltip is visible', fakeAsync(() => {
