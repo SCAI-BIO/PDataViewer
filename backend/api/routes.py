@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from typing import Annotated
 
 import numpy as np
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
@@ -15,16 +16,20 @@ from starlette.middleware.cors import CORSMiddleware
 from api.auth import authenticate_user, init_credentials
 
 resources = {}
+logger = logging.getLogger("uvicorn.info")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # On startup
-    init_credentials()
-    resources["msg"] = "Successfully initialized credentials"
+    logger.info("Initializing application lifespan...")
+    try:
+        init_credentials()
+        logger.info("Credentials initialized successfully.")
+    except Exception as e:
+        logger.error(f"Error initializing credentials: {e}")
+        raise
     yield
-    # On shutdown
-    resources.clear()
+    logger.info("Application shutdown.")
 
 
 app = FastAPI(
@@ -62,7 +67,6 @@ class PathModel(BaseModel):
     path: str
 
 
-logger = logging.getLogger("uvicorn.info")
 database = SQLLiteRepository(replace_if_exists=True)
 
 
@@ -274,14 +278,14 @@ def get_table(table_name: str):
 
 @app.post("/database/import", tags=["database"])
 async def import_data(
+    credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
     file: UploadFile = File(...),
-    credentials: HTTPBasicCredentials = Depends(authenticate_user),
 ):
     """
     Import a CSV file to the database.
     """
     # Check if the file is a csv file
-    if not file.filename.endswith(".csv"):
+    if not file.filename or  not file.filename.endswith(".csv"):
         raise HTTPException(
             status_code=400, detail="Invalid file type. Only .csv files are accepted."
         )
@@ -293,7 +297,9 @@ async def import_data(
 
 
 @app.delete("/database/delete/", tags=["database"])
-def delete_database(credentials: HTTPBasicCredentials = Depends(authenticate_user)):
+def delete_database(
+    credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)]
+):
     """
     Delete the database.
     """
@@ -303,7 +309,8 @@ def delete_database(credentials: HTTPBasicCredentials = Depends(authenticate_use
 
 @app.delete("/database/delete/{table_name}", tags=["database"])
 def delete_table(
-    table_name: str, credentials: HTTPBasicCredentials = Depends(authenticate_user)
+    table_name: str,
+    credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
 ):
     """
     Delete a table from the database.
