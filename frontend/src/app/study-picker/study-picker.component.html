@@ -82,6 +82,18 @@
           </td>
         </ng-container>
 
+        <ng-container matColumnDef="plot">
+          <th mat-header-cell *matHeaderCellDef>Longitudinal</th>
+          <td mat-cell *matCellDef="let cohort" class="plot-longitudinal-cell">
+            <button
+              mat-button
+              (click)="redirectToPlot(cohort.cohort, cohort.missing)"
+            >
+              Plot
+            </button>
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="dataAccess">
           <th mat-header-cell *matHeaderCellDef>Data access</th>
           <td mat-cell *matCellDef="let cohort">

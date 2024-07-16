@@ -2,6 +2,7 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -41,7 +42,13 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   cohortColors: { [key: string]: string } = {};
   cohortLinks: { [key: string]: string } = {};
   cohortRankings: RankData[] = [];
-  displayedColumns: string[] = ['cohort', 'found', 'missing', 'dataAccess'];
+  displayedColumns: string[] = [
+    'cohort',
+    'found',
+    'missing',
+    'plot',
+    'dataAccess',
+  ];
   featureCtrl = new FormControl();
   features: string[] = [];
   filteredFeatures: Observable<string[]> | null = null;
@@ -50,7 +57,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   private API_URL = environment.API_URL;
   private subscriptions: Subscription[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   addFeature(event: MatChipInputEvent): void {
     let feature = event.value;
@@ -135,10 +142,37 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     }
   }
 
+  redirectToPlot(cohort: string, missing: string) {
+    const availableFeatures = this._availableFeatures(missing);
+    this.router.navigate(['plot-longitudinal'], {
+      queryParams: {
+        cohort: cohort,
+        features: availableFeatures,
+      },
+    });
+  }
+
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.features.filter((feature) =>
       feature.toLowerCase().includes(filterValue)
+    );
+  }
+
+  private _availableFeatures(missingFeatures: string): string[] {
+    const availableFeatures = [...this.selectedFeatures];
+    const missingList = missingFeatures.split(', ');
+
+    for (const missing of missingList) {
+      const indexToRemove = availableFeatures.indexOf(missing);
+
+      if (indexToRemove !== -1) {
+        availableFeatures.splice(indexToRemove, 1);
+      }
+    }
+
+    return availableFeatures.map((feature) =>
+      feature.toLowerCase().replace(/\s+/g, '_')
     );
   }
 }

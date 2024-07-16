@@ -7,6 +7,7 @@ import { ContactUsComponent } from './contact-us/contact-us.component';
 import { CohortsComponent } from './cohorts/cohorts.component';
 import { BiomarkersComponent } from './biomarkers/biomarkers.component';
 import { LongitudinalComponent } from './longitudinal/longitudinal.component';
+import { PlotLongitudinalComponent } from './plot-longitudinal/plot-longitudinal.component';
 
 export const routes: Routes = [
   {
@@ -41,6 +42,10 @@ export const routes: Routes = [
   {
     path: 'longitudinal',
     component: LongitudinalComponent,
+  },
+  {
+    path: 'plot-longitudinal',
+    component: PlotLongitudinalComponent,
   },
   {
     path: '**',
