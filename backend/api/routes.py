@@ -164,6 +164,16 @@ def get_longitudinal_table(longitudinal: str):
     data = database.retrieve_table(table_name=table_name)
     return data.to_dict(orient="records")
 
+@app.get("/longitudinal/{longitudinal}/{cohort}", tags=["longitudinal"])
+def get_longitudinal_table_for_cohort(longitudinal: str, cohort: str):
+    """
+    Retrieve a longitudinal table.
+    """
+    table_name = "longitudinal_" + longitudinal
+    data = database.retrieve_table(table_name=table_name)
+    data = data.loc[data.Cohort == cohort]
+    return data.to_dict(orient="records")
+
 
 @app.get("/cdm", tags=["cdm"], description="Gets PASSIONATE CDM")
 def get_cdm():
