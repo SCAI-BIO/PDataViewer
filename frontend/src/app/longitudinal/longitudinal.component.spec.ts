@@ -204,7 +204,8 @@ describe('LongitudinalComponent', () => {
     expect(lineplotService.createLineplot).toHaveBeenCalledWith(
       component['chartContainer'],
       component.data,
-      component.colors
+      component.colors,
+      'Longitudinal data for '
     );
   });
 });

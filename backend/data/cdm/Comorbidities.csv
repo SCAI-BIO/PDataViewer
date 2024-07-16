@@ -22,7 +22,7 @@ Fall - Hospitilization,,Fall resulted in hospitalization,,FLLHOSP,,,,,,436583,FI
 Fall - Institutionalization,,Fall resulted in institutionalization,,FLLINST,,,,,,436583,FIVEFalls63,,,1
 Fall - Surgery,,Fall resulted in surgery,,FLLSURG,,,,,,436583,FIVEFalls65,,,1
 Fall - Not Freezing,,Participant currently experiencing falls not related to freezing,,FLNFR1W,,,,,,436583,FIVEFalls64,F2000_17,,1
-Freezing of Gait ,HP:0031825,"Freezing of gait is defined as a brief, episodic absence or marked reduction of forward progression of the feet despite the intention to walk.",Freezing gait,FRZGT1W,NP3FRZGT,gaitlab_q11,HXFRZERL,,,40481965,"FIVEFalls1,FIVEFalls3",F2000_18,,1
+Freezing of Gait,HP:0031825,"Freezing of gait is defined as a brief, episodic absence or marked reduction of forward progression of the feet despite the intention to walk.",Freezing gait,FRZGT1W,NP3FRZGT,gaitlab_q11,HXFRZERL,,,40481965,"FIVEFalls1,FIVEFalls3",F2000_18,,1
 Hip/Limb Fracture,NCIT:C27002,"A traumatic break in one or more of the bones in the hip, thigh, leg, or foot.",Lower Extremity Fracture,INJFRHIP,,,,,,4187096,FIVEFalls51,,,1
 Skull Fracture,NCIT:C50745,A traumatic or pathologic injury to the bones of the skull in which the continuity of the bones of the skull is broken.,"Skull Fracture, Fracture of Skull",INJFRSKL,,,,,,4324690,FIVEFalls53,,,1
 Upper Extremity Fracture,NCIT:C27782,"A traumatic break in one or more of the bones in the arm, forearm, or hand.","Upper Limb Fracture, Upper Extremity Fracture",INJFRUE,,,,,,4050747,FIVEFalls52,,,1

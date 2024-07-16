@@ -115,16 +115,19 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
             this._transformLongitudinalName(longitudinal)
           )),
         error: (e) => console.error(e),
-        complete: () => console.info('Longitudinal data tables successfully fetched'),
+        complete: () =>
+          console.info('Longitudinal data tables successfully fetched'),
       });
     this.subscriptions.push(sub);
   }
 
   generateLineplot(): void {
+    const title = `Longitudinal data for ${this.selectedFeature}`;
     this.lineplotService.createLineplot(
       this.chartContainer,
       this.data,
-      this.colors
+      this.colors,
+      title
     );
   }
 
