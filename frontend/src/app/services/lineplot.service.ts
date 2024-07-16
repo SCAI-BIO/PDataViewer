@@ -11,9 +11,10 @@ export class LineplotService {
   createLineplot(
     element: ElementRef,
     data: LongitudinalData[],
-    colors: { [key: string]: string }
+    colors: { [key: string]: string } = {}, // Default parameter
+    title: string = '' // New optional title parameter
   ): void {
-    const margin = { top: 20, right: 150, bottom: 60, left: 60 };
+    const margin = { top: 40, right: 150, bottom: 60, left: 60 }; // Increase top margin for the title
     const width = 800 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
@@ -34,6 +35,17 @@ export class LineplotService {
     x.domain(d3.extent(data, (d) => d.Months) as [number, number]);
     y.domain([0, 100]); // Y-axis from 0 to 100 percent
 
+    // Add the title
+    if (title) {
+      svg
+        .append('text')
+        .attr('x', width / 2)
+        .attr('y', -margin.top / 2)
+        .attr('text-anchor', 'middle')
+        .attr('class', 'title')
+        .text(title);
+    }
+
     svg
       .append('g')
       .attr('transform', `translate(0,${height})`)
@@ -49,14 +61,23 @@ export class LineplotService {
     // Group data by cohort
     const cohorts = d3.group(data, (d) => d.Cohort);
 
+    // Create a color scale using D3's schemeCategory10
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    const cohortColors = new Map<string, string>();
+    let colorIndex = 0;
+
     // Draw a line for each cohort
     cohorts.forEach((values, cohort) => {
+      const cohortColor = colors[cohort] || colorScale(colorIndex.toString());
+      cohortColors.set(cohort, cohortColor);
+      colorIndex++;
+
       svg
         .append('path')
         .datum(values)
         .attr('class', 'line-path')
         .attr('fill', 'none')
-        .attr('stroke', colors[cohort] || 'steelblue') // Use the color from the colors object
+        .attr('stroke', cohortColor) // Use the color from the colors object or the color scale
         .attr('stroke-width', 1.5)
         .attr('d', line);
     });
@@ -115,7 +136,7 @@ export class LineplotService {
               <td style="border: 1px solid #ccc; padding: 4px;">
                 <svg width="10" height="10">
                   <circle cx="5" cy="5" r="5" fill="${
-                    colors[md.Cohort] || 'steelblue'
+                    cohortColors.get(md.Cohort) || 'steelblue'
                   }"></circle>
                 </svg>
                 ${md.Cohort}
@@ -155,7 +176,7 @@ export class LineplotService {
         .attr('cx', x(d.Months))
         .attr('cy', y((d.PatientCount / d.TotalPatientCount) * 100))
         .attr('r', 5)
-        .attr('fill', colors[d.Cohort] || 'steelblue')
+        .attr('fill', cohortColors.get(d.Cohort) || 'steelblue')
         .on('mouseover', (event) => {
           // Find all data points for the same month
           const monthData = data.filter((md) => md.Months === d.Months);
@@ -172,7 +193,7 @@ export class LineplotService {
                 <td style="border: 1px solid #ccc; padding: 4px;">
                   <svg width="10" height="10">
                     <circle cx="5" cy="5" r="5" fill="${
-                      colors[md.Cohort] || 'steelblue'
+                      cohortColors.get(md.Cohort) || 'steelblue'
                     }"></circle>
                   </svg>
                   ${md.Cohort}
@@ -222,7 +243,7 @@ export class LineplotService {
         .append('rect')
         .attr('width', 10)
         .attr('height', 10)
-        .attr('fill', colors[cohort] || 'steelblue');
+        .attr('fill', cohortColors.get(cohort) || 'steelblue');
 
       legendRow.append('text').attr('x', 15).attr('y', 10).text(cohort);
 
