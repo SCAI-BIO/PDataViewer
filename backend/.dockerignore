@@ -2,3 +2,6 @@ __pycache__
 .pytest_cache
 .venv
 .venv/*
+./data/processed
+./db
+.env
