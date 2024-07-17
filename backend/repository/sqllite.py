@@ -19,18 +19,26 @@ class Modality(Base):
 class SQLLiteRepository:
     def __init__(
         self,
-        db_path: str = "./db/cdm.db",
-        data_path: str = "./data",
-        initiate_with_data: bool = True,
+        db_path: str | None = None,
+        data_path: str | None = None,
+        initiate_with_data: bool = False,
         replace_if_exists: bool = False,
     ):
-        self.db_path = db_path
-        if replace_if_exists and os.path.exists(self.db_path):
-            os.remove(self.db_path)
-        self.engine = create_engine(f"sqlite:///{db_path}")
+
+        if db_path:
+            self.engine = create_engine(f"sqlite:///{db_path}")
+            self.db_path = db_path
+            if replace_if_exists and os.path.exists(self.db_path):
+                os.remove(self.db_path)
+        else:
+            self.engine = create_engine("sqlite:///database.db")
+            self.db_path = "database.db"
         Session = sessionmaker(bind=self.engine, autoflush=False)
         self.session = Session()
-        if initiate_with_data:
+
+        # Create empty modality table
+        Base.metadata.create_all(self.engine)
+        if initiate_with_data and data_path:
             self.data_path = data_path
             self.__initiate(data_path + "/metadata.csv")
             self.update_cdm_locally(data_path + "/cdm")
@@ -190,8 +198,6 @@ class SQLLiteRepository:
         Args:
             metadata_path (str): Path to the .csv file containing cohort metadata.
         """
-        # Create the modality table
-        Base.metadata.create_all(self.engine)
         metadata = pd.read_csv(metadata_path)
         metadata.to_sql("metadata", self.engine, if_exists="replace", index=False)
 
@@ -214,6 +220,6 @@ class SQLLiteRepository:
         Args:
             content (bytes): Data stored as bytes.
             table_name (str): Table name to be stored in the SQL database.
-        """        
+        """
         data = pd.read_csv(BytesIO(content))
         data.to_sql(table_name, self.engine, if_exists="replace", index=False)
