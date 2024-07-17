@@ -67,7 +67,7 @@ class PathModel(BaseModel):
     path: str
 
 
-database = SQLLiteRepository(replace_if_exists=True)
+database = SQLLiteRepository()
 
 
 @app.get("/", include_in_schema=False)
@@ -163,6 +163,7 @@ def get_longitudinal_table(longitudinal: str):
     table_name = "longitudinal_" + longitudinal
     data = database.retrieve_table(table_name=table_name)
     return data.to_dict(orient="records")
+
 
 @app.get("/longitudinal/{longitudinal}/{cohort}", tags=["longitudinal"])
 def get_longitudinal_table_for_cohort(longitudinal: str, cohort: str):
@@ -295,14 +296,22 @@ async def import_data(
     Import a CSV file to the database.
     """
     # Check if the file is a csv file
-    if not file.filename or  not file.filename.endswith(".csv"):
+    if not file.filename or not file.filename.endswith(".csv"):
         raise HTTPException(
             status_code=400, detail="Invalid file type. Only .csv files are accepted."
         )
 
     table_name = file.filename[:-4]
     contents = await file.read()
-    database.store_upload(contents, table_name)
+    if (
+        file.filename.startswith("longitudinal_")
+        or file.filename.startswith("biomarkers_")
+        or file.filename == "metadata"
+    ):
+        database.store_upload(contents, table_name)
+
+    else:
+        database.update_cdm_upload(contents, table_name)
     return {"message": "Data imported successfully!"}
 
 
