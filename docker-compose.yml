@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+
+  frontend:
+    image: ghcr.io/scai-bio/pdataviewer/frontend:latest
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  backend:
+    image: ghcr.io/scai-bio/pdataviewer/backend:latest
+    ports:
+      - "5000:80"

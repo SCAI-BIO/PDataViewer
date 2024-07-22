@@ -1,19 +1,19 @@
-import { CommonModule } from '@angular/common';
 import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+
 import { CohortsComponent } from './cohorts.component';
+import { environment } from '../../environments/environment';
 
 describe('CohortsComponent', () => {
   let component: CohortsComponent;
   let fixture: ComponentFixture<CohortsComponent>;
   let httpMock: HttpTestingController;
+  const API_URL = environment.API_URL;
 
   const mockData = {
     cohort1: {
@@ -44,10 +44,7 @@ describe('CohortsComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         CohortsComponent,
-        CommonModule,
         HttpClientTestingModule,
-        MatTableModule,
-        MatSortModule,
         NoopAnimationsModule,
       ],
     }).compileComponents();
@@ -65,7 +62,7 @@ describe('CohortsComponent', () => {
 
   function setupTest(mockResponseData?: any) {
     fixture.detectChanges();
-    const req = httpMock.expectOne('/assets/cohorts.json');
+    const req = httpMock.expectOne(`${API_URL}/cohorts/metadata`);
     if (mockResponseData) {
       req.flush(mockResponseData);
     } else {
@@ -96,11 +93,11 @@ describe('CohortsComponent', () => {
   it('should handle HTTP error gracefully', () => {
     const consoleSpy = spyOn(console, 'error');
     fixture.detectChanges();
-    const req = httpMock.expectOne('/assets/cohorts.json');
+    const req = httpMock.expectOne(`${API_URL}/cohorts/metadata`);
     req.flush('Error', { status: 500, statusText: 'Server Error' });
     fixture.detectChanges();
     expect(consoleSpy).toHaveBeenCalledWith(
-      'Error fetching data',
+      'Error fetching metadata',
       jasmine.anything()
     );
   });

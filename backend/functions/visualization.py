@@ -1,22 +1,20 @@
-import os
 import pandas as pd
+from repository.sqllite import SQLLiteRepository
 
 
-def generate_chords(modality: str, cohorts: list[str], folder: str='./cdm'):
+def generate_chords(modality: str, cohorts: list[str], repo: SQLLiteRepository):
     """Generate linkage information for cohorts in a specified modality.
 
-    This function reads a CSV file corresponding to the given modality from the specified folder,
+    This function retrieves the table of specified modality from an SQL database,
     processes the data to filter out rows and columns based on the presence of mappings,
     and constructs linkage information in the form of nodes and links between the cohorts.
 
     Args:
         modality (str): Name of the modality, used to identify the CSV file in the folder.
         cohorts (list[str]): List of cohort names to be included in the mappings.
-        folder (str, optional): Path to the folder containing the modality CSV file. Defaults to './cdm'.
+        repo (CDMRepository): CDMRepository instance to interact with the database containing the modalities.
 
     Raises:
-        FileNotFoundError: If the specified folder does not exist.
-        FileNotFoundError: If the specified folder is empty.
         ValueError: If the cohorts list is empty
 
     Returns:
@@ -24,30 +22,24 @@ def generate_chords(modality: str, cohorts: list[str], folder: str='./cdm'):
             - 'nodes': A list of dictionaries, each representing a node with 'name' and 'group'.
             - 'links': A list of dictionaries, each representing a link with 'source' and 'target'.
     """
-    # Check if the folder exists
-    if not os.path.exists(folder):
-        raise FileNotFoundError(f"the folder '{folder}' does not exist.")
-    # Check if the folder is empty
-    if not bool(os.listdir(folder)):
-        raise FileNotFoundError(f"the folder '{folder}' is empty.")
     # Check if the cohorts list is empty
     if not cohorts:
         raise ValueError("The 'cohorts' list cannot be empty.")
-    
+
     data = {}
     nodes = []
     links = []
 
-    # Read the .csv file
-    mappings = pd.read_csv(f"{folder}/{modality}.csv", usecols=cohorts)
+    # Get the table
+    mappings = repo.retrieve_table(modality, columns=cohorts)
     # Filter out rows with only 1 mapping
     mappings = mappings[mappings.notna().sum(axis=1) > 1]
     # Filter out empty columns
     mappings.dropna(how="all", axis=1, inplace=True)
     # For comma separated multiple mappings, create a new row for each mapping
     for column in mappings.columns:
-        if mappings[column].apply(lambda x: isinstance(x, str) and ', ' in x).any():
-            mappings[column] = mappings[column].str.split(', ')
+        if mappings[column].apply(lambda x: isinstance(x, str) and ", " in x).any():
+            mappings[column] = mappings[column].str.split(", ")
             mappings = mappings.explode(column)
     filtered_cohorts = mappings.columns
 

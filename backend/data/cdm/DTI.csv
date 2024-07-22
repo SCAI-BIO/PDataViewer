@@ -1,0 +1,7 @@
+Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,Fox Insight,DATATOP,PINE
+DTI - Left Rostral,,Diffusion tensor imaging - Left rostral,,ROI1,,,,,,,,,
+DTI - Right Rostral,,Diffusion tensor imaging - Right rostral,,ROI4,,,,,,,,,
+DTI - Left Middle,,Diffusion tensor imaging - Left middle,,ROI2,,,,,,,,,
+DTI - Right Middle,,Diffusion tensor imaging - Right middle,,ROI5,,,,,,,,,
+DTI - Left Caudal,,Diffusion tensor imaging - Left caudal,,ROI3,,,,,,,,,
+DTI - Right Caudal,,Diffusion tensor imaging - Right caudal,,ROI6,,,,,,,,,

@@ -1,5 +1,8 @@
 .component-container {
   padding: 0 20px;
+  display: block;
+  padding: 20px;
+  background-color: #f9f9f9;
 }
 
 .full-width, .mat-form-field, .mat-form-field-infix, table {
@@ -14,7 +17,7 @@ mat-chip-listbox {
 mat-chip-option {
   margin: 5px;
   background-color: #d1c4e9;
-  color: #4a148c;
+  color: #99004f;
 }
 
 .table-container, .button-container, .input-container {
@@ -54,7 +57,7 @@ th, td {
 }
 
 thead, th {
-  background-color: #673ab7 !important;
+  background-color: #99004f !important;
   color: white !important;
 }
 

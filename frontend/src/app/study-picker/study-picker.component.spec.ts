@@ -8,6 +8,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { StudyPickerComponent } from './study-picker.component';
 import { environment } from '../../environments/environment';
+import { RankData } from '../interfaces/rankdata';
 
 describe('StudyPickerComponent', () => {
   let component: StudyPickerComponent;
@@ -34,7 +35,7 @@ describe('StudyPickerComponent', () => {
     req1.flush({ Feature: ['feature1', 'feature2'] });
 
     // Mock initial cohort data fetch request
-    const req2 = httpMock.expectOne('/assets/cohorts.json');
+    const req2 = httpMock.expectOne(`${environment.API_URL}/cohorts/metadata`);
     req2.flush({
       PPMI: {
         Participants: 1758,
@@ -138,7 +139,9 @@ describe('StudyPickerComponent', () => {
   });
 
   it('should get rankings', () => {
-    const mockRankings = [{ cohort: 'cohort1', found: 10, missing: 5 }];
+    const mockRankings: RankData[] = [
+      { cohort: 'cohort1', found: '10', missing: '5' },
+    ];
     component.getRankings(['feature1']);
     const req = httpMock.expectOne(`${environment.API_URL}/studypicker/rank`);
     expect(req.request.method).toBe('POST');

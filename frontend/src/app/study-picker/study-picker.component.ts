@@ -2,6 +2,7 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -16,6 +17,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 
+import { Metadata } from '../interfaces/metadata';
+import { RankData } from '../interfaces/rankdata';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -35,11 +38,17 @@ import { environment } from '../../environments/environment';
   styleUrl: './study-picker.component.css',
 })
 export class StudyPickerComponent implements OnInit, OnDestroy {
-  cohortData: any = {};
-  cohortColors: any = {};
-  cohortLinks: any = {};
-  cohortRankings: any = [];
-  displayedColumns: string[] = ['cohort', 'found', 'missing', 'dataAccess'];
+  cohortData: Metadata = {};
+  cohortColors: { [key: string]: string } = {};
+  cohortLinks: { [key: string]: string } = {};
+  cohortRankings: RankData[] = [];
+  displayedColumns: string[] = [
+    'cohort',
+    'found',
+    'missing',
+    'plot',
+    'dataAccess',
+  ];
   featureCtrl = new FormControl();
   features: string[] = [];
   filteredFeatures: Observable<string[]> | null = null;
@@ -48,7 +57,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   private API_URL = environment.API_URL;
   private subscriptions: Subscription[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   addFeature(event: MatChipInputEvent): void {
     let feature = event.value;
@@ -68,16 +77,18 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     return feature ? feature : '';
   }
 
-  fetchCohortData(): void {
-    const sub = this.http.get<any>('/assets/cohorts.json').subscribe((data) => {
-      this.cohortData = data;
-      for (const cohort in data) {
-        if (data.hasOwnProperty(cohort)) {
-          this.cohortColors[cohort] = data[cohort].Color;
-          this.cohortLinks[cohort] = data[cohort].Link;
+  fetchMetadata(): void {
+    const sub = this.http
+      .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
+      .subscribe((data) => {
+        this.cohortData = data;
+        for (const cohort in data) {
+          if (data.hasOwnProperty(cohort)) {
+            this.cohortColors[cohort] = data[cohort].Color;
+            this.cohortLinks[cohort] = data[cohort].Link;
+          }
         }
-      }
-    });
+      });
     this.subscriptions.push(sub);
   }
 
@@ -87,11 +98,11 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
 
   getRankings(features: string[]) {
     const sub = this.http
-      .post<any[]>(`${this.API_URL}/studypicker/rank`, features)
+      .post<RankData[]>(`${this.API_URL}/studypicker/rank`, features)
       .subscribe({
         next: (v) => (this.cohortRankings = v),
         error: (e) => console.error(e),
-        complete: () => console.info('complete'),
+        complete: () => console.info('Rankings fetched successfully.'),
       });
     this.subscriptions.push(sub);
   }
@@ -105,7 +116,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
       );
     });
     this.subscriptions.push(sub);
-    this.fetchCohortData();
+    this.fetchMetadata();
   }
 
   ngOnDestroy(): void {
@@ -131,10 +142,37 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     }
   }
 
+  redirectToPlot(cohort: string, missing: string) {
+    const availableFeatures = this._availableFeatures(missing);
+    this.router.navigate(['plot-longitudinal'], {
+      queryParams: {
+        cohort: cohort,
+        features: availableFeatures,
+      },
+    });
+  }
+
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.features.filter((feature) =>
       feature.toLowerCase().includes(filterValue)
+    );
+  }
+
+  private _availableFeatures(missingFeatures: string): string[] {
+    const availableFeatures = [...this.selectedFeatures];
+    const missingList = missingFeatures.split(', ');
+
+    for (const missing of missingList) {
+      const indexToRemove = availableFeatures.indexOf(missing);
+
+      if (indexToRemove !== -1) {
+        availableFeatures.splice(indexToRemove, 1);
+      }
+    }
+
+    return availableFeatures.map((feature) =>
+      feature.toLowerCase().replace(/\s+/g, '_')
     );
   }
 }
