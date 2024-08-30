@@ -5,7 +5,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 @Injectable({
   providedIn: 'root',
 })
-export class MyErrorStateMatcher implements ErrorStateMatcher {
+export class MyErrorStateMatcherService implements ErrorStateMatcher {
   isErrorState(
     control: FormControl | null,
     form: FormGroupDirective | NgForm | null
