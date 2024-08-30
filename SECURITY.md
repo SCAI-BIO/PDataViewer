@@ -28,6 +28,7 @@ To stay informed about security updates and patches, please watch this repositor
 ## Additional Resources
 
 For more information on securing your contributions and understanding common vulnerabilities, please refer to:
+
 - [OWASP Top Ten](https://owasp.org/www-project-top-ten/)
 - [CWE - Common Weakness Enumeration](https://cwe.mitre.org/)
 
