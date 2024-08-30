@@ -32,7 +32,9 @@ pip install -r requirements.txt
 ## Usage
 
 ### Starting the Backend Locally
-You can access the backend functionalities by accessing the provided REST API. <br>
+
+You can access the backend functionalities by accessing the provided REST API.
+
 Run the Backend API on port 5000:
 
 ```bash
@@ -40,7 +42,9 @@ uvicorn api.routes:app --reload --port 5000
 ```
 
 ### Run the Backend via Docker
-The API can also be run via docker. <br>
+
+The API can also be run via docker.
+
 You can either build the docker container locally or download the latest build from the PDataViewer GitHub package registry.
 
 To build the Docker container locally:
@@ -50,6 +54,7 @@ docker build -t ghcr.io/scai-bio/pdataviewer/backend:latest .
 ```
 
 To download the latest build:
+
 ```bash
 docker pull ghcr.io/scai-bio/pdataviewer/backend:latest
 ```
