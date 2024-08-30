@@ -375,8 +375,8 @@ async def get_closest_mappings(
                 }
             )
 
-            os.remove(tmp_file_path)
-            return response
+        os.remove(tmp_file_path)
+        return response
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
