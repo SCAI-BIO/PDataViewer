@@ -1,0 +1,77 @@
+.header-container {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.component-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.form-upload-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.form-container {
+  margin-right: 20px;
+  flex-direction: column;
+  max-width: 20%;
+}
+
+.file-upload-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.file-input {
+  display: none;
+}
+
+.button-container {
+  margin-top: 20px;
+}
+
+.progress {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 50%;
+}
+
+.form-field {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.table-container {
+  overflow: auto;
+  max-height: 600px;
+  max-width: 100%;
+  margin-top: 20px;
+}
+
+/* Add vertical lines between table columns */
+.mat-table th,
+.mat-table td {
+  border-right: 1px solid #e0e0e0;
+}
+
+.mat-table th:last-child,
+.mat-table td:last-child {
+  border-right: none;
+}

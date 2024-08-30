@@ -45,10 +45,16 @@
                 >Longitudinal</a
               >
             </li>
-            <li>
-              <a routerLink="/tools" class="button fancy-button disable"
-                >Tools</a
-              >
+            <li
+              class="tools-menu"
+              (mouseenter)="openToolsMenu()"
+              (mouseleave)="closeToolsMenu()"
+            >
+              <a class="button fancy-button">Tools</a>
+              <div class="dropdown-menu" [class.show]="isToolsMenuOpen">
+                <a routerLink="/auto-harmonizer" class="dropdown-item">Auto-Harmonizer</a>
+                <a routerLink="/tsne" class="dropdown-item">tSNE</a>
+              </div>
             </li>
             <li>
               <a routerLink="/contact-us" class="button fancy-button"

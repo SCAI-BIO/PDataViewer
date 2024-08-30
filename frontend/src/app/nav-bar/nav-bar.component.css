@@ -38,6 +38,7 @@
     line-height: 40px;
     border: transparent;
     letter-spacing: 1px;
+    transition: color 0.3s ease;
 }
 
 .header-area .main-nav .nav li a:hover {
@@ -55,4 +56,49 @@ a.disable {
     pointer-events: none;
     cursor: default;
     color: red !important;
+}
+
+.tools-menu {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    display: none;
+    flex-direction: column;
+    padding: 10px 20px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    min-width: 200px;
+}
+
+.dropdown-menu.show {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    padding: 0 10px;
+    color: #1e1e1e;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    white-space: nowrap;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+    color: #0081bf;
+}
+
+.dropdown-item:not(:last-child) {
+    border-bottom: 1px solid #eaeaea;
 }
