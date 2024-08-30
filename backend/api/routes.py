@@ -384,7 +384,7 @@ async def get_closest_mappings(
 
 @app.post("/database/import", tags=["database"])
 async def import_data(
-    # credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
+    credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
     file: UploadFile = File(...),
 ):
     """
