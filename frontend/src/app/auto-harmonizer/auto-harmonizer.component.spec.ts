@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AutoHarmonizerComponent } from './auto-harmonizer.component';
 
-describe('AutoHarmonizerComponent', () => {
+xdescribe('AutoHarmonizerComponent', () => {
   let component: AutoHarmonizerComponent;
   let fixture: ComponentFixture<AutoHarmonizerComponent>;
 

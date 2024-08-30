@@ -22,7 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { environment } from '../../environments/environment';
 import { Response } from '../interfaces/mapping';
-import { MyErrorStateMatcher } from '../services/my-error-state-matcher.service';
+import { MyErrorStateMatcherService } from '../services/my-error-state-matcher.service';
 
 @Component({
   selector: 'app-auto-harmonizer',
@@ -59,7 +59,7 @@ export class AutoHarmonizerComponent implements OnInit {
   fileToUpload: File | null = null;
   fileName: string = '';
   formData = new FormData();
-  matcher = new MyErrorStateMatcher();
+  matcher = new MyErrorStateMatcherService();
   uploadProgress: number | null = null;
   requiredFileType: string =
     '.csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
