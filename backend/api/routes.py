@@ -24,12 +24,7 @@ from api.auth import authenticate_user, init_credentials
 
 resources = {}
 logger = logging.getLogger("uvicorn.info")
-database = SQLLiteRepository(
-    db_path="./db/cdm.db",
-    data_path="./data",
-    initiate_with_data=True,
-    replace_if_exists=True,
-)
+database = SQLLiteRepository()
 weaviate = WeaviateRepository(
     mode="remote", path="http://ww8.index.k8s.bio.scai.fraunhofer.de"
 )
@@ -414,7 +409,7 @@ async def import_data(
                 if (
                     filename.startswith("longitudinal_")
                     or filename.startswith("biomarkers_")
-                    or filename == "metadata"
+                    or filename.startswith("metadata")
                 ):
                     database.store_upload(csv_data, table_name)
 
