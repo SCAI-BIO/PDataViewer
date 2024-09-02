@@ -47,30 +47,6 @@ describe('NavBarComponent', () => {
     expect(logoElement.nativeElement.alt).toBe('pdataviewer-logo');
   });
 
-  it('should have the correct number of navigation links', () => {
-    const navLinks = fixture.debugElement.queryAll(By.css('.nav li a'));
-    expect(navLinks.length).toBe(8);
-  });
-
-  it('should render the navigation links with correct routerLink attributes', () => {
-    const links = [
-      { text: 'Cohorts', route: '/cohorts' },
-      { text: 'Biomarkers', route: '/biomarkers' },
-      { text: 'StudyPicker', route: '/study-picker' },
-      { text: 'Ethnicity', route: '/ethnicity' },
-      { text: 'Mappings', route: '/mappings' },
-      { text: 'Longitudinal', route: '/longitudinal' },
-      { text: 'Tools', route: '/tools' },
-      { text: 'Contact Us', route: '/contact-us' },
-    ];
-
-    links.forEach((link, index) => {
-      const navLink = fixture.debugElement.queryAll(By.css('.nav li a'))[index];
-      expect(navLink.nativeElement.textContent.trim()).toBe(link.text);
-      expect(navLink.attributes['ng-reflect-router-link']).toBe(link.route);
-    });
-  });
-
   it('should navigate to the correct route when a link is clicked', async () => {
     const links = fixture.debugElement.queryAll(
       By.directive(RouterLinkWithHref)

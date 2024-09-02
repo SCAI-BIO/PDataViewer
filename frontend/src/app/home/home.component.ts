@@ -13,6 +13,7 @@ import { MatDividerModule } from '@angular/material/divider';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   cohortNumber: number = 0;
+  featureNumber: number = 0;
   private API_URL = environment.API_URL;
   private subscriptions: Subscription[] = [];
 
@@ -20,6 +21,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.fetchCohorts();
+    this.fetchFeatures();
   }
 
   ngOnDestroy(): void {
@@ -33,6 +35,17 @@ export class HomeComponent implements OnInit, OnDestroy {
         next: (v) => (this.cohortNumber = v.length),
         error: (e) => console.error(e),
         complete: () => console.info('Cohorts successfully fetched'),
+      });
+    this.subscriptions.push(sub);
+  }
+
+  private fetchFeatures(): void {
+    const sub = this.http
+      .get<{ Feature: string[] }>(`${this.API_URL}/cdm/features`)
+      .subscribe({
+        next: (v) => (this.featureNumber = v.Feature.length),
+        error: (e) => console.error(e),
+        complete: () => console.info('Features successfully fetched'),
       });
     this.subscriptions.push(sub);
   }

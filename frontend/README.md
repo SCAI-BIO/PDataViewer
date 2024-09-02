@@ -34,7 +34,9 @@ npm install
 ## Usage
 
 ### Starting the Frontend Locally
-You can deploy a local version of the web application via Angular <br>
+
+You can deploy a local version of the web application via Angular
+
 You can access the web application on [localhost:4200](http://localhost:4200):
 
 ```bash
@@ -42,7 +44,9 @@ ng serve
 ```
 
 ### Run the Frontend via Docker
-You can deploy a local version of the web application via docker. <br>
+
+You can deploy a local version of the web application via docker.
+
 You can either build the docker container locally or download the latest build from the PDataViewer GitHub package registry.
 
 To build the Docker container locally:

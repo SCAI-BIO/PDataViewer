@@ -1,9 +1,16 @@
+import io
 import logging
+import os
+import tempfile
+import zipfile
 from contextlib import asynccontextmanager
 from typing import Annotated
 
 import numpy as np
-from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
+from datastew import DataDictionarySource
+from datastew.embedding import GPT4Adapter, MPNetAdapter
+from datastew.repository.weaviate import WeaviateRepository
+from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPBasicCredentials
 from functions.autocomplete import autocomplete
@@ -17,6 +24,15 @@ from api.auth import authenticate_user, init_credentials
 
 resources = {}
 logger = logging.getLogger("uvicorn.info")
+database = SQLLiteRepository(
+    db_path="./db/cdm.db",
+    data_path="./data",
+    initiate_with_data=True,
+    replace_if_exists=True,
+)
+weaviate = WeaviateRepository(
+    mode="remote", path="http://ww8.index.k8s.bio.scai.fraunhofer.de"
+)
 
 
 @asynccontextmanager
@@ -67,16 +83,16 @@ class PathModel(BaseModel):
     path: str
 
 
-database = SQLLiteRepository()
-
-
 @app.get("/", include_in_schema=False)
 def swagger_redirect():
     return RedirectResponse(url="/docs")
 
 
-@app.get("/version", description="Gets API version")
+@app.get("/version", tags=["info"])
 def get_current_version():
+    """
+    Current API version.
+    """
     return app.version
 
 
@@ -266,25 +282,104 @@ def get_autocompletion(text: str):
     return autocomplete(text, repo=database)
 
 
-@app.get("/database/tables", tags=["database"])
-def get_table_names():
+@app.get("/terminologies", tags=["embeddings"])
+def get_terminologies():
     """
-    Get all table names available in the database.
+    Terminologies stored in the Weaviate vector database.
     """
-    return database.get_table_names()
+    terminologies = weaviate.get_all_terminologies()
+    data = [terminology.name for terminology in terminologies]
+    return data
 
 
-@app.get("/database/tables/{table_name}", tags=["database"])
-def get_table(table_name: str):
+@app.get("/embedding-models", tags=["embeddings"])
+def get_embedding_models():
     """
-    Get the content of a table by its name
+    Embedding models that can be used for sentence similarity.
     """
-    if table_name not in database.get_table_names():
-        raise HTTPException(status_code=404, detail="Table not found.")
+    return weaviate.get_all_sentence_embedders()
 
-    data = database.retrieve_table(table_name)
-    data.replace({np.nan: ""}, inplace=True)
-    return data.to_dict()
+
+@app.post("/closest-mappings", tags=["embeddings"])
+async def get_closest_mappings(
+    file: UploadFile = File(...),
+    description_field: str = Form(...),
+    variable_field: str = Form(...),
+    selected_model: str = Form(...),
+    selected_terminology: str = Form(...),
+):
+    """
+    Get closest mappings in the selected terminology for the given variable based on its
+    description embedded by the chosen embedding model
+    """
+    try:
+        if selected_model == "text-embedding-ada-002":
+            embedding_model = GPT4Adapter(selected_model)
+        elif selected_model == "sentence-transformers/all-mpnet-base-v2":
+            embedding_model = MPNetAdapter(selected_model)
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported embedding model")
+
+        if file.filename is not None:
+            file_extension = os.path.splitext(file.filename)[1].lower()
+        else:
+            file_extension = None
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=file_extension
+        ) as tmp_file:
+            tmp_file.write(await file.read())
+            tmp_file_path = tmp_file.name
+
+        data_dict_source = DataDictionarySource(
+            file_path=tmp_file_path,
+            variable_field=variable_field,
+            description_field=description_field,
+        )
+
+        df = data_dict_source.to_dataframe()
+        response = []
+
+        for _, row in df.iterrows():
+            variable = row["variable"]
+            description = row["description"]
+            embedding = embedding_model.get_embedding(description)
+            closest_mappings = (
+                weaviate.get_terminology_and_model_specific_closest_mappings(
+                    embedding, selected_terminology, selected_model, limit=5
+                )
+            )
+
+            mappings_list = []
+            for mapping, similarity in closest_mappings:
+                concept = mapping.concept
+                terminology = concept.terminology
+                mappings_list.append(
+                    {
+                        "concept": {
+                            "id": concept.concept_identifier,
+                            "name": concept.pref_label,
+                            "terminology": {
+                                "id": terminology.id,
+                                "name": terminology.name,
+                            },
+                        },
+                        "text": mapping.text,
+                        "similarity": similarity,
+                    }
+                )
+            response.append(
+                {
+                    "variable": variable,
+                    "description": description,
+                    "mappings": mappings_list,
+                }
+            )
+
+        os.remove(tmp_file_path)
+        return response
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/database/import", tags=["database"])
@@ -293,37 +388,44 @@ async def import_data(
     file: UploadFile = File(...),
 ):
     """
-    Import a CSV file to the database.
+    Import data from a ZIP file containing CSV files to the database.
     """
-    # Check if the file is a csv file
-    if not file.filename or not file.filename.endswith(".csv"):
+    # Check if the file is a zip file
+    if not file.filename or not file.filename.endswith(".zip"):
         raise HTTPException(
-            status_code=400, detail="Invalid file type. Only .csv files are accepted."
+            status_code=400, detail="Invalid file type. Only .zip files are accepted."
         )
 
-    table_name = file.filename[:-4]
+    # Read the zip file
     contents = await file.read()
-    if (
-        file.filename.startswith("longitudinal_")
-        or file.filename.startswith("biomarkers_")
-        or file.filename == "metadata"
-    ):
-        database.store_upload(contents, table_name)
+    with zipfile.ZipFile(io.BytesIO(contents)) as z:
+        # Iterate over each file in the zip
+        for filename in z.namelist():
+            if filename.endswith(".csv"):
+                # Read the CSV file
+                with z.open(filename) as csv_file:
+                    # Read the CSV content into a pandas DataFrame
+                    csv_data = csv_file.read()
 
-    else:
-        database.update_cdm_upload(contents, table_name)
+                table_name = filename[:-4]  # Remove the .csv extension
+
+                # Process the DataFrame
+
+                if (
+                    filename.startswith("longitudinal_")
+                    or filename.startswith("biomarkers_")
+                    or filename == "metadata"
+                ):
+                    database.store_upload(csv_data, table_name)
+
+                else:
+                    database.update_cdm_upload(csv_data, table_name)
+            else:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Invalid file type in ZIP. Only CSV files are accepted.",
+                )
     return {"message": "Data imported successfully!"}
-
-
-@app.delete("/database/delete/", tags=["database"])
-def delete_database(
-    credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)]
-):
-    """
-    Delete the database.
-    """
-    database.delete_database()
-    return {"message": "Database deleted successfully!"}
 
 
 @app.delete("/database/delete/{table_name}", tags=["database"])
