@@ -9,6 +9,7 @@ import { MappingsComponent } from './mappings/mappings.component';
 import { ImprintComponent } from './imprint/imprint.component';
 import { PlotLongitudinalComponent } from './plot-longitudinal/plot-longitudinal.component';
 import { StudyPickerComponent } from './study-picker/study-picker.component';
+import { TsneComponent } from './tsne/tsne.component';
 
 export const routes: Routes = [
   {
@@ -51,6 +52,10 @@ export const routes: Routes = [
   {
     path: 'study-picker',
     component: StudyPickerComponent,
+  },
+  {
+    path: 't-sne',
+    component: TsneComponent,
   },
   {
     path: '**',

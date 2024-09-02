@@ -1,0 +1,7 @@
+<div class="component-container">
+  <h1>t-SNE Visualization</h1>
+  <div *ngIf="apiErrorMessage">
+    <p>{{ apiErrorMessage }}></p>
+  </div>
+  <div [innerHTML]="tsneHtml"></div>
+</div>
