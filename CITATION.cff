@@ -10,14 +10,29 @@ type: software
 authors:
   - given-names: Mehmet Can
     family-names: Ay
+    email: mehmet.ay@scai.fraunhofer.de
+    affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
+    orcid: https://orcid.org/0000-0002-2977-7695
   - given-names: Tim
     family-names: Adams
+    email: tim.adams@scai.fraunhofer.de
+    affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
+    orcid: https://orcid.org/0000-0002-2823-0102
   - given-names: Yasamin
     family-names: Salimi
+    email: yasamin.salimi@scai.fraunhofer.de
+    affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
+    orcid: https://orcid.org/0000-0002-7773-7786
   - given-names: Marjan
     family-names: Niazpoor
+    email: marjan.niazpoor@scai-extern.fraunhofer.de
+    affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
+    orcid: https://orcid.org/0009-0000-1455-6569
   - given-names: Marc
     family-names: Jacobs
+    email: marc.jacobs@scai.fraunhofer.de
+    affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
+    orcid: https://orcid.org/0000-0003-4153-3930
 identifiers:
   - type: doi
     value: 10.5281/zenodo.13629128
@@ -33,7 +48,7 @@ keywords:
   - Interoperability
   - FAIR principles
 license: Apache-2.0
-version: 0.0.8
+version: 0.0.9
 date-released: "2024-09-02"
 preferred-citation:
   title: On the Utility of Large Language Model Embeddings for Revolutionizing Semantic Data Harmonization in Alzheimer's and Parkinson's Disease

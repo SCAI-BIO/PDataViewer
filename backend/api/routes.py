@@ -10,6 +10,7 @@ import numpy as np
 from datastew import DataDictionarySource
 from datastew.embedding import GPT4Adapter, MPNetAdapter
 from datastew.repository.weaviate import WeaviateRepository
+from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPBasicCredentials
@@ -22,12 +23,13 @@ from starlette.middleware.cors import CORSMiddleware
 
 from api.auth import authenticate_user, init_credentials
 
+load_dotenv()
+
 resources = {}
 logger = logging.getLogger("uvicorn.info")
+weaviate_url = os.getenv("WEAVIATE_URL", "http://weaviate:8080")
 database = SQLLiteRepository()
-weaviate = WeaviateRepository(
-    mode="remote", path="http://ww8.index.k8s.bio.scai.fraunhofer.de"
-)
+weaviate = WeaviateRepository(mode="remote", path=weaviate_url)
 
 
 @asynccontextmanager
