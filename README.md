@@ -2,7 +2,7 @@
 
 <img src="./frontend/src/assets/logos/logo.png" width="200" alt="logo"/>
 
-![tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/test.yml/badge.svg) ![version](https://img.shields.io/github/v/release/SCAI-BIO/PDataViewer) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![DOI](https://zenodo.org/badge/785700235.svg)](https://zenodo.org/doi/10.5281/zenodo.13629127) [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8B%20%20%E2%97%8B-orange)](https://fair-software.eu)
+![tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/test.yml/badge.svg) ![version](https://img.shields.io/github/v/release/SCAI-BIO/PDataViewer) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![DOI](https://zenodo.org/badge/785700235.svg)](https://zenodo.org/doi/10.5281/zenodo.13629127) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9409/badge)](https://www.bestpractices.dev/projects/9409) [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8B%20%20%E2%97%8B-orange)](https://fair-software.eu)
 
 PDataViewer is a web application that lets you explore the PD data landscape and identify cohort datasets that suit your research needs.
 
@@ -26,7 +26,7 @@ Data collected in cohort studies lay the groundwork for a plethora of Parkinsonâ
 
 1) characterizing their underlying data
 2) assessing the quantity and availability of data
-3) evaluating the interoperability across these distinct cohort datasets. 
+3) evaluating the interoperability across these distinct cohort datasets.
 
 ## Requirements
 
