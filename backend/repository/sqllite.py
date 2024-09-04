@@ -1,11 +1,17 @@
-import os
 from io import BytesIO
 from typing import List, Optional
 
 import pandas as pd
-from sqlalchemy import Column, Integer, String, create_engine, inspect, text
-from sqlalchemy.orm import sessionmaker, declarative_base
-
+from sqlalchemy import (
+    Column,
+    Integer,
+    MetaData,
+    String,
+    create_engine,
+    inspect,
+    text,
+)
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 Base = declarative_base()
 
@@ -17,46 +23,35 @@ class Modality(Base):
 
 
 class SQLLiteRepository:
-    def __init__(
-        self,
-        db_path: str | None = None,
-        data_path: str | None = None,
-        initiate_with_data: bool = False,
-        replace_if_exists: bool = False,
-    ):
-
-        if db_path:
-            self.engine = create_engine(f"sqlite:///{db_path}")
-            self.db_path = db_path
-            if replace_if_exists and os.path.exists(self.db_path):
-                os.remove(self.db_path)
-        else:
-            self.engine = create_engine("sqlite:///database.db")
-            self.db_path = "database.db"
+    def __init__(self):
+        self.engine = create_engine("sqlite:///database.db")
+        self.db_path = "database.db"
         Session = sessionmaker(bind=self.engine, autoflush=False)
         self.session = Session()
 
         # Create empty modality table
         Base.metadata.create_all(self.engine)
-        if initiate_with_data and data_path:
-            self.data_path = data_path
-            self.__initiate(data_path + "/metadata.csv")
-            self.update_cdm_locally(data_path + "/cdm")
-
-    def close(self):
-        """
-        Close the session.
-        """
-        self.session.close()
-        print("Database closed successfully!")
 
     def delete_database(self):
         """
-        Deletes the database.
+        Delete all tables in the database.
         """
-        self.close()
-        os.remove(self.db_path)
-        print(f"Database '{self.db_path}' deleted successfully!")
+        try:
+            metadata = MetaData()
+            metadata.reflect(bind=self.engine)
+
+            with self.engine.connect() as connection:
+                for table in reversed(metadata.sorted_tables):
+                    print(f"Dropping table '{table.name}' ...")
+                    table.drop(connection)
+
+                connection.commit()
+                print("All tables deleted successfully!")
+
+            # Create modality table back as is required
+            Base.metadata.create_all(self.engine)
+        except Exception as e:
+            print(f"Error deleting tables: {e}")
 
     def delete_table(self, table_name: str):
         """
@@ -65,9 +60,18 @@ class SQLLiteRepository:
         Args:
             table_name (str): The name of the table to be dropped.
         """
+        allowed_tables = self.get_table_names()
+
+        if table_name not in allowed_tables:
+            raise ValueError("Invalid table name")
+
+        # Quote table name to handle spaces or special characters
+        quoted_table_name = f'"{table_name}"'
+
         with self.engine.connect() as connection:
             try:
-                connection.execute(text(f"DROP TABLE IF EXISTS {table_name}"))
+                query = text(f"DROP TABLE IF EXISTS {quoted_table_name}")
+                connection.execute(query)
                 connection.commit()
                 print(f"Table '{table_name}' deleted successfully!")
             except Exception as e:
@@ -129,27 +133,20 @@ class SQLLiteRepository:
             pd.DataFrame: Pandas DataFrame instance of the SQL table.
         """
         try:
+            # Quote table name to handle spaces or special characters
+            quoted_table_name = f'"{table_name}"'
             if columns:
                 # Quote each column name to handle spaces or special characters
                 quoted_columns = [f'"{col}"' for col in columns]
-                query = f"SELECT {', '.join(quoted_columns)} FROM {table_name}"
+                columns_str = ", ".join(quoted_columns)
             else:
-                query = f"SELECT * FROM {table_name}"
+                columns_str = "*"
+            query = f"SELECT {columns_str} FROM {quoted_table_name}"
 
             return pd.read_sql(sql=query, con=self.engine)
         except Exception as e:
             print(f"Error retrieving table {table_name}: {e}")
             return pd.DataFrame()
-
-    def store(self, path: str):
-        """Adds all available CSV files in the given folder path to the database.
-
-        Args:
-            path (str): A path to the folder containing the CSV files.
-        """
-        for filename in os.listdir(path):
-            if filename.endswith(".csv"):
-                self.__store_file(os.path.join(path, filename))
 
     def store_upload(self, content: bytes, table_name: str):
         """Stores a CSV file uploaded via API to the database.
@@ -159,18 +156,6 @@ class SQLLiteRepository:
             table_name (str): The name of the table.
         """
         self.__store_bytes(content, table_name)
-
-    def update_cdm_locally(self, path: str):
-        """Updates common data model (CDM) table from local files.
-
-        Args:
-            path (str): Path to folder containing CDM files.
-        """
-        for filename in os.listdir(path):
-            if filename.endswith(".csv"):
-                table_name = filename[:-4]
-                self.__store_file(os.path.join(path, filename))
-                self.__add_modality(table_name)
 
     def update_cdm_upload(self, content: bytes, table_name: str):
         """Updates common data model (CDM) table from the uploaded file.
@@ -191,28 +176,6 @@ class SQLLiteRepository:
         new_modality = Modality(Modality=modality_name)
         self.session.add(new_modality)
         self.session.commit()
-
-    def __initiate(self, metadata_path: str):
-        """Initializes the database with cohort metadata.
-
-        Args:
-            metadata_path (str): Path to the .csv file containing cohort metadata.
-        """
-        metadata = pd.read_csv(metadata_path)
-        metadata.to_sql("metadata", self.engine, if_exists="replace", index=False)
-
-    def __store_file(self, file_path: str):
-        """Stores the .csv file.
-
-        Generates a table name by removing .csv from file name,
-        and adds the data as a table to the SQL database.
-
-        Args:
-            file_path (str): Path to .csv file.
-        """
-        data = pd.read_csv(file_path)
-        table_name = os.path.basename(file_path).split(".")[0]
-        data.to_sql(table_name, self.engine, if_exists="replace", index=False)
 
     def __store_bytes(self, content: bytes, table_name: str):
         """Adds data stored as bytes to the SQL database.
