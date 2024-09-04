@@ -70,7 +70,7 @@ class SQLLiteRepository:
 
         with self.engine.connect() as connection:
             try:
-                query = text(f"DROP TABLE IF EXISTS {quoted_table_name}")
+                query = text("DROP TABLE IF EXISTS %s" % quoted_table_name)
                 connection.execute(query)
                 connection.commit()
                 print(f"Table '{table_name}' deleted successfully!")
