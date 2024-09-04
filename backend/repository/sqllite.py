@@ -2,15 +2,7 @@ from io import BytesIO
 from typing import List, Optional
 
 import pandas as pd
-from sqlalchemy import (
-    Column,
-    Integer,
-    MetaData,
-    String,
-    create_engine,
-    inspect,
-    text,
-)
+from sqlalchemy import Column, Integer, MetaData, String, Table, create_engine, inspect
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 Base = declarative_base()
@@ -62,20 +54,18 @@ class SQLLiteRepository:
         """
         allowed_tables = self.get_table_names()
 
-        if table_name not in allowed_tables:
-            raise ValueError("Invalid table name")
-
-        # Quote table name to handle spaces or special characters
-        quoted_table_name = f'"{table_name}"'
-
-        with self.engine.connect() as connection:
+        if table_name in allowed_tables:
             try:
-                query = text("DROP TABLE IF EXISTS %s" % quoted_table_name)
-                connection.execute(query)
-                connection.commit()
-                print(f"Table '{table_name}' deleted successfully!")
+                metadata = MetaData()
+                metadata.reflect(bind=self.engine)
+                table = Table(table_name, metadata, autoload_with=self.engine)
+
+                with self.engine.connect() as connection:
+                    table.drop(connection)
             except Exception as e:
                 print(f"Error deleting table: {e}")
+        else:
+            raise ValueError("Invalid table name")
 
     def get_cdm(self, columns: Optional[List[str]] = None) -> pd.DataFrame:
         modalities = pd.read_sql(sql="SELECT Modality FROM modality", con=self.engine)[
