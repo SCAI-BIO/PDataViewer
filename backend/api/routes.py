@@ -379,6 +379,15 @@ async def get_closest_mappings(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/database", tags=["database"])
+async def table_names():
+    """
+    Get all table names.
+    """
+    tables = database.get_table_names()
+    return tables
+
+
 @app.post("/database/import", tags=["database"])
 async def import_data(
     credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
@@ -423,6 +432,17 @@ async def import_data(
                     detail="Invalid file type in ZIP. Only CSV files are accepted.",
                 )
     return {"message": "Data imported successfully!"}
+
+
+@app.delete("/database/delete", tags=["database"])
+def delete_database(
+    credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
+):
+    """
+    Delete all tables from the database.
+    """
+    database.delete_database()
+    return {"message": "All tables deleted successfully!"}
 
 
 @app.delete("/database/delete/{table_name}", tags=["database"])

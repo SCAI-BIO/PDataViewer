@@ -1,0 +1,15 @@
+Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,Fox Insight,DATATOP,PINE,UK Biobank,PostCEPT,SPARX,Rank
+Vaccinated for Chickenpox,VO:0000669,A Herpesvirus vaccine that is used against Varicella-zoster virus infection.,,VAX_CHICKENPOX,,,,,,36712679,,,,,,,1
+Vaccinated for SARS-CoV-2 First,VO:0004908,A coronavirus vaccine against the infection of SARS-CoV-2 (cause of COVID-19),,VAX_COVID1,,covid19_vaccine_yn,,,,,,,,"27983-0.0, 27983-1.0",,,1
+Vaccinated for SARS-CoV-2 Second,VO:0004908,A coronavirus vaccine against the infection of SARS-CoV-2 (cause of COVID-19),,VAX_COVID2,,,,,,,,,,"27985-0.0, 27985-1.0",,,1
+Vaccinated for SARS-CoV-2 Booster,VO:0004908,A coronavirus vaccine against the infection of SARS-CoV-2 (cause of COVID-19),,VAX_COVIDB,,,,,,,,,,,,,1
+Vaccinated for Diphtheria,VO:0000508,A diphtheria vaccine that uses diphtheria toxoid,,VAX_DIPTHERIA,,,,,,,,,,,,,1
+Vaccinated for Influenza,VO:0003495,An influeanza vaccine that protect against infection by influenza viruses.,,VAX_FLU,,,,,,36716979,,,,,,,1
+Vaccinated for Hepatitis A,VO:0000646,A viral vaccine that protects against infection with Hepatitis A virus.,,VAX_HEPA,,,,,,36717321,,,,,,,1
+Vaccinated for Hepatitis B,VO:0000644,A viral vaccine that protects against infection with Hepatitis B virus.,,VAX_HEPB,,,,,,36717309,,,,,,,1
+Vaccinated for MMR,VO:0000731,A Measles-Mumps vaccine that also protects against infection with Rubella virus.,,VAX_MMR,,,,,,37016201,,,,,,,1
+Vaccinated for Shingles,VO:0000669,A Herpesvirus vaccine that is used against Varicella-zoster virus infection.,,VAX_SHINGLES,,,,,,,,,,,,,1
+Vaccinated for Tuberculosis (BCG),VO:0000771,BCG Vaccine is a Mycobacterium tuberculosis vaccine that is a live attenuated strain of Mycobacterium bovis (Bacillus Calmette Guerin; BCG).,,VAX_TB,,,,,,,,,,,,,1
+Vaccinated for Pertussis (Tdap),VO:0003180,"A vaccine that protects adolescents and adults from tetanus, diphtheria, and pertussis.",,VAX_TDAP,,,,,,37207723,,,,,,,1
+Vaccinated for Tetanus,VO:0003396,A clostridium tetani vaccine that consists of formaldehyde inactivated tetanospasmin (aka tetanus toxoid).,,VAX_TETANUS,,,,,,36712922,,,,,,,1
+Vaccinated for Yellow Fever,VO:0000123,A viral vaccine that protects against infection with Yellow fever virus.,,VAX_YELLOWFEVER,,,,,,37207732,,,,,,,1

@@ -21,7 +21,7 @@ def autocomplete(text: str, repo: SQLLiteRepository, threshold=80, limit=10):
     features.replace({"No total score.": ""}, inplace=True)
     features = features["Feature"].to_list()
     # Compile the regex pattern
-    pattern = re.compile(r"^" + text, re.IGNORECASE)
+    pattern = re.compile(r"^" + re.escape(text), re.IGNORECASE)
     # Perform regex pattern matching
     suggestions = [suggestion for suggestion in features if pattern.match(suggestion)]
     # Limit the list of suggestions to a length of 10
