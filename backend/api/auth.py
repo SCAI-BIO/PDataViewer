@@ -33,10 +33,10 @@ def init_credentials():
     # If not set, load the environment file. Then, check if the values are set in the environment file
     if not admin_username or not admin_password:
         load_dotenv()
-        if os.getenv("PDATAVIEWER_ADMIN_USERNAME") and os.getenv(
-            "PDATAVIEWER_ADMIN_PASSWORD"
-        ):
-            return True
+    if os.getenv("PDATAVIEWER_ADMIN_USERNAME") and os.getenv(
+        "PDATAVIEWER_ADMIN_PASSWORD"
+    ):
+        return True
     else:
         raise HTTPException(status_code=500, detail="Missing admin credentials")
 
