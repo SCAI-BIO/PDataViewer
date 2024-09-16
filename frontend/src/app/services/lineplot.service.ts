@@ -143,7 +143,7 @@ export class LineplotService {
               </td>
               <td style="border: 1px solid #ccc; padding: 4px;">${percentage.toFixed(
                 1
-              )}% (${md.PatientCount} patients)</td>
+              )}% (${md.PatientCount} participants)</td>
             </tr>
           `;
         });
@@ -259,7 +259,7 @@ export class LineplotService {
         'transform',
         `translate(${-margin.left / 1.5}, ${height / 2})rotate(-90)`
       )
-      .text('Patients (% baseline patients)');
+      .text('Participants (% baseline participants)');
 
     // Add label for the x-axis
     svg

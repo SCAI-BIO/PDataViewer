@@ -13,49 +13,19 @@
     padding: 20px;
 }
 
-.biomarker-container {
+.longitudinal-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 20%;
 }
 
-.cohort-selection-container, .button-container {
+.button-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 40%;
     padding: 50 0;
-}
-
-.cohort-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-top: 50;
-    margin-bottom: 50;
-}
-
-.cohort-list {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 20%;
-    margin-top: 50;
-    margin-bottom: 50;
-}
-
-.color-circle {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-right: 8px;
-}
-
-.cohort-name {
-    font-weight: bold;
 }
 
 .full-width, .mat-form-field, .mat-form-field-infix, table {
@@ -73,7 +43,6 @@ mat-chip-option {
     color: #4a148c;
 }
 
-.cohort-list {
-    width: 5%;
-    float: left;
+.lineplot {
+    display: flex;
 }
