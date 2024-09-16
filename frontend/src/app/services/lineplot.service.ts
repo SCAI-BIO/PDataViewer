@@ -15,8 +15,8 @@ export class LineplotService {
     title: string = '' // New optional title parameter
   ): void {
     const margin = { top: 40, right: 150, bottom: 60, left: 60 }; // Increase top margin for the title
-    const width = 800 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    const width = 1200 - margin.left - margin.right;
+    const height = 500 - margin.top - margin.bottom;
 
     d3.select(element.nativeElement).selectAll('*').remove();
 
@@ -143,7 +143,7 @@ export class LineplotService {
               </td>
               <td style="border: 1px solid #ccc; padding: 4px;">${percentage.toFixed(
                 1
-              )}% (${md.PatientCount} patients)</td>
+              )}% (${md.PatientCount} participants)</td>
             </tr>
           `;
         });
@@ -231,7 +231,7 @@ export class LineplotService {
     const legend = svg
       .append('g')
       .attr('class', 'legend')
-      .attr('transform', `translate(${width + 20}, 0)`);
+      .attr('transform', `translate(${width - 250}, 0)`);
 
     let legendIndex = 0;
     cohorts.forEach((_, cohort) => {
@@ -259,7 +259,7 @@ export class LineplotService {
         'transform',
         `translate(${-margin.left / 1.5}, ${height / 2})rotate(-90)`
       )
-      .text('Patients (% baseline patients)');
+      .text('Participants (% baseline participants)');
 
     // Add label for the x-axis
     svg

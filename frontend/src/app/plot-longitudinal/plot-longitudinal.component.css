@@ -24,3 +24,7 @@
 .full-width, .mat-form-field, .mat-form-field-infix, table {
     width: 100%;
 }
+
+.lineplot {
+    display: flex;
+}
