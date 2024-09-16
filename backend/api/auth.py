@@ -1,11 +1,12 @@
 import os
-from hashlib import sha3_512
-
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 from dotenv import load_dotenv
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 security = HTTPBasic()
+ph = PasswordHasher()
 
 
 def init_credentials():
@@ -54,8 +55,19 @@ def authenticate_user(credentials: HTTPBasicCredentials = Depends(security)):
     """
     username = os.getenv("PDATAVIEWER_ADMIN_USERNAME")
     password = os.getenv("PDATAVIEWER_ADMIN_PASSWORD")
-    hashed_password = sha3_512(credentials.password.encode("utf-8")).hexdigest()
-    if credentials.username != username or hashed_password != password:
-        raise HTTPException(status_code=401, detail="Incorrect credentials")
-    else:
-        return True
+
+    if username is None or password is None:
+        raise HTTPException(
+            status_code=500, detail="Admin credentials are not configured"
+        )
+
+    if credentials.username != username:
+        raise HTTPException(status_code=401, detail="Incorrect username")
+
+    try:
+        print(password)
+        ph.verify(password, credentials.password)
+    except VerifyMismatchError:
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
+    return True
