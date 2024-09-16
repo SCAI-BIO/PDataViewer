@@ -103,3 +103,4 @@ watchfiles==0.21.0
 weaviate-client==4.6.7
 websockets==12.0
 yarl==1.9.4
+argon2-cffi==23.1.0

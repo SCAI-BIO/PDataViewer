@@ -1,11 +1,12 @@
 import os
-from hashlib import sha256
-
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 from dotenv import load_dotenv
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 security = HTTPBasic()
+ph = PasswordHasher()
 
 
 def init_credentials():
@@ -24,14 +25,18 @@ def init_credentials():
     Returns:
         bool: Returns True if the admin credentials are successfully initialized.
     """
+
+    # Check the admin username and password is already set in the environment
     admin_username = os.getenv("PDATAVIEWER_ADMIN_USERNAME")
     admin_password = os.getenv("PDATAVIEWER_ADMIN_PASSWORD")
+
+    # If not set, load the environment file. Then, check if the values are set in the environment file
     if not admin_username or not admin_password:
         load_dotenv()
-    if os.getenv("PDATAVIEWER_ADMIN_USERNAME") and os.getenv(
-        "PDATAVIEWER_ADMIN_PASSWORD"
-    ):
-        return True
+        if os.getenv("PDATAVIEWER_ADMIN_USERNAME") and os.getenv(
+            "PDATAVIEWER_ADMIN_PASSWORD"
+        ):
+            return True
     else:
         raise HTTPException(status_code=500, detail="Missing admin credentials")
 
@@ -52,10 +57,25 @@ def authenticate_user(credentials: HTTPBasicCredentials = Depends(security)):
     Returns:
         bool: Returns True if the authentication is successful.
     """
+
+    # Get the username and password from the environment
     username = os.getenv("PDATAVIEWER_ADMIN_USERNAME")
     password = os.getenv("PDATAVIEWER_ADMIN_PASSWORD")
-    hashed_password = sha256(credentials.password.encode("utf-8")).hexdigest()
-    if credentials.username != username or hashed_password != password:
-        raise HTTPException(status_code=401, detail="Incorrect credentials")
-    else:
-        return True
+
+    # If they are not set, raise exception
+    if username is None or password is None:
+        raise HTTPException(
+            status_code=500, detail="Admin credentials are not configured"
+        )
+
+    # Check if the user supplied username is correct
+    if credentials.username != username:
+        raise HTTPException(status_code=401, detail="Incorrect username")
+
+    # Check if the user supplied password is correct
+    try:
+        ph.verify(password, credentials.password)
+    except VerifyMismatchError:
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
+    return True
