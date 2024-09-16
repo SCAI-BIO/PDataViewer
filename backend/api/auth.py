@@ -1,5 +1,5 @@
 import os
-from hashlib import sha256
+from hashlib import sha3_512
 
 from dotenv import load_dotenv
 from fastapi import Depends, HTTPException
@@ -54,7 +54,7 @@ def authenticate_user(credentials: HTTPBasicCredentials = Depends(security)):
     """
     username = os.getenv("PDATAVIEWER_ADMIN_USERNAME")
     password = os.getenv("PDATAVIEWER_ADMIN_PASSWORD")
-    hashed_password = sha256(credentials.password.encode("utf-8")).hexdigest()
+    hashed_password = sha3_512(credentials.password.encode("utf-8")).hexdigest()
     if credentials.username != username or hashed_password != password:
         raise HTTPException(status_code=401, detail="Incorrect credentials")
     else:
