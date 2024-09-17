@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11
+FROM python:3.12
 
 ENV PDATAVIEWER_ADMIN_USERNAME=foo
 ENV PDATAVIEWER_ADMIN_PASSWORD=bar
