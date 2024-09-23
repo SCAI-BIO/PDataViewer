@@ -11,6 +11,11 @@ export interface Mapping {
   };
 }
 
+export interface Terminology {
+  name: string;
+  id: string;
+}
+
 export interface Response {
   variable: string;
   description: string;

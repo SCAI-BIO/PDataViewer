@@ -21,7 +21,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { environment } from '../../environments/environment';
-import { Response } from '../interfaces/mapping';
+import { Terminology, Response } from '../interfaces/mapping';
 import { MyErrorStateMatcherService } from '../services/my-error-state-matcher.service';
 
 @Component({
@@ -64,20 +64,24 @@ export class AutoHarmonizerComponent implements OnInit {
   requiredFileType: string =
     '.csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   terminologies: string[] = [];
-  private API_URL = environment.API_URL;
+  private API_URL = environment.INDEX_API_URL;
 
   constructor(private http: HttpClient, private fb: FormBuilder) {}
 
   fetchTerminologies(): void {
-    this.http.get<string[]>(`${this.API_URL}/terminologies`).subscribe({
-      next: (v) => (this.terminologies = v),
+    this.http.get<Terminology[]>(`${this.API_URL}/terminologies`).subscribe({
+      next: (terminologies) => {
+        this.terminologies = terminologies.map(
+          (terminology) => terminology.name
+        );
+      },
       error: (error) => console.error('Fetch error:', error),
       complete: () => console.info('Terminologies successfully fetched'),
     });
   }
 
   fetchEmbeddingModels(): void {
-    this.http.get<string[]>(`${this.API_URL}/embedding-models`).subscribe({
+    this.http.get<string[]>(`${this.API_URL}/models`).subscribe({
       next: (v) => (this.embeddingModels = v),
       error: (error) => console.error('Fetch error:', error),
       complete: () => console.info('Embedding models successfully fetched'),
@@ -86,7 +90,7 @@ export class AutoHarmonizerComponent implements OnInit {
 
   fetchClosestMappings(formData: FormData): void {
     this.http
-      .post<Response[]>(`${this.API_URL}/closest-mappings/`, formData, {
+      .post<Response[]>(`${this.API_URL}/mappings/dict/`, formData, {
         headers: new HttpHeaders({
           Accept: 'application/json',
         }),
@@ -154,11 +158,11 @@ export class AutoHarmonizerComponent implements OnInit {
       this.autoHarmonizerForm.value.descriptionField
     );
     this.formData.set(
-      'selected_model',
+      'model',
       this.autoHarmonizerForm.value.selectedEmbeddingModel
     );
     this.formData.set(
-      'selected_terminology',
+      'terminology_name',
       this.autoHarmonizerForm.value.selectedTerminology
     );
     this.fetchClosestMappings(this.formData);
