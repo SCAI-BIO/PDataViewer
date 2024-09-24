@@ -19,9 +19,9 @@ For a detailed guide on using Angular, refer to the official [Angular Tutorial](
 
 ## Requirements
 
-- [Angular = 17.1.0](https://angular.io/guide/setup-local)
-- [Node.js (LTS) >= 18.13](https://nodejs.org/en/download/package-manager)
-- TypeScript >= 5.2.0 < 5.4.0
+- [Angular = 18.2.x](https://angular.io/guide/setup-local)
+- [Node.js >= 18.19.1](https://nodejs.org/en/download/package-manager)
+- TypeScript >= 5.4.0 < 5.6.0
 
 ## Installation
 
