@@ -6,13 +6,13 @@
 | ------- | ------------------ |
 | 0.x   | :white_check_mark: |
 
-Please report any security vulnerabilities to [mehmet.ay@scai.fraunhofer.de](mailto:mehmet.ay@scai.fraunhofer.de). We will review and address all reports promptly.
+Please report any security vulnerabilities to [pdataviewer@scai.fraunhofer.de](mailto:pdataviewer@scai.fraunhofer.de). We will review and address all reports promptly.
 
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability in this project, please report it to us as soon as possible. We take security seriously and will respond promptly to any reports.
 
-1. **Contact Us**: Send an email to [mehmet.ay@scai.fraunhofer.de](mailto:mehmet.ay@scai.fraunhofer.de) with the details of the vulnerability. Please include:
+1. **Contact Us**: Send an email to [pdataviewer@scai.fraunhofer.de](mailto:pdataviewer@scai.fraunhofer.de) with the details of the vulnerability. Please include:
    - A detailed description of the issue
    - Steps to reproduce the vulnerability
    - Any potential impact or exploit details
