@@ -30,17 +30,19 @@ export class BoxplotService {
       cohort: string;
       diagnosisGroup: string;
       values: number[];
+      participantCount: number; // New field to hold the count of participants
     }[] = [];
     const labels = Object.keys(data);
 
     labels.forEach((label) => {
       const cohort = label.split(' (')[0]; // Get the cohort name
-      const diagnosisGroup = label.match(/\(([^)]+)\)/)?.[1] || ''; // Extract the diagnosis group from parentheses (e.g., 'CU')
+      const diagnosisGroup = label.match(/\(([^)]+)\)/)?.[1] || ''; // Extract the diagnosis group from parentheses
       const values = data[label]
         .filter((d): d is number => d !== undefined)
         .sort(d3.ascending);
+      const participantCount = values.length; // Count of participants
 
-      allData.push({ cohort, diagnosisGroup, values });
+      allData.push({ cohort, diagnosisGroup, values, participantCount });
     });
 
     // Create x scale with unique keys for each position
@@ -59,14 +61,16 @@ export class BoxplotService {
       .nice()
       .range([height, 0]);
 
-    // Create the x-axis with custom ticks to show only the diagnosis group code
+    // Create the x-axis with custom ticks to show both the diagnosis group and the number of participants
     svg
       .append('g')
       .attr('transform', `translate(0,${height})`)
       .call(
         d3.axisBottom(x).tickFormat((d) => {
-          const diagnosisGroup = d.split('-')[0]; // Extract only the diagnosis group code
-          return diagnosisGroup.replace(/ Group$/, ''); // Remove " Group" if it exists
+          const index = parseInt(d.split('-')[1], 10); // Extract the index from the unique key
+          const diagnosisGroup = d.split('-')[0].replace(' Group', ''); // Extract the diagnosis group code
+          const participantCount = allData[index]?.participantCount || 0; // Get the participant count
+          return `${diagnosisGroup} | n=${participantCount}`; // Format tick with participant count
         })
       );
 
