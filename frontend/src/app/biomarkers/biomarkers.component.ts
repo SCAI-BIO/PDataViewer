@@ -16,6 +16,7 @@ import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -34,6 +35,7 @@ import { environment } from '../../environments/environment';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatSlideToggleModule,
     ReactiveFormsModule,
   ],
   templateUrl: './biomarkers.component.html',
@@ -51,6 +53,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   filteredDiagnoses: Observable<string[]> | null = null;
   selectedBiomarker: string = '';
   selectedCohorts: string[] = [];
+  showDataPoints: boolean = false;
   private API_URL = environment.API_URL;
   @ViewChild('boxplot') private chartContainer!: ElementRef;
   private subscriptions: Subscription[] = [];
@@ -188,7 +191,8 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
     this.boxplotService.createBoxplot(
       this.chartContainer,
       this.biomarkerData,
-      this.colors
+      this.colors,
+      this.showDataPoints
     );
   }
 
@@ -205,8 +209,13 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
     );
   }
 
+  onToggleDataPoints(isChecked: boolean): void {
+    this.showDataPoints = isChecked;
+  }
+
   removeBiomarker(): void {
     this.selectedBiomarker = '';
+    this.selectedCohorts = [];
   }
 
   removeCohort(cohort: string): void {

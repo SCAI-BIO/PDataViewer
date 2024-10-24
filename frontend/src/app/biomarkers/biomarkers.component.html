@@ -104,6 +104,9 @@
 
     <!-- Button container for ranking cohorts -->
     <div class="button-container" *ngIf="selectedCohorts.length > 0">
+      <mat-slide-toggle (change)="onToggleDataPoints($event.checked)">
+        Show Data Points
+      </mat-slide-toggle>
       <button mat-raised-button color="primary" (click)="generateBoxplot()">
         Visualize feature distribution
       </button>
