@@ -149,7 +149,8 @@ def get_filtered_data(biomarker: str, cohort: str, diagnosis: str):
     table_name = "biomarkers_" + biomarker
     data = database.retrieve_table(table_name=table_name)
     data = data.loc[data["Cohort"] == cohort]
-    data = data.loc[data["Diagnosis"] == diagnosis]
+    if diagnosis != "Complete":
+        data = data.loc[data["Diagnosis"] == diagnosis]
     return data.Measurement.to_list()
 
 
