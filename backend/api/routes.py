@@ -123,7 +123,11 @@ def get_cohort_biomarkers(biomarker: str):
     table_name = "biomarkers_" + biomarker
     data = database.retrieve_table(table_name=table_name)
     for cohort in data.Cohort.unique():
-        diagnoses[cohort] = list(data.Diagnosis.unique())
+        cohort_data = data.loc[data["Cohort"] == cohort]
+        unique_diagnoses = list(cohort_data.Diagnosis.unique())
+        if len(unique_diagnoses) > 1:
+            unique_diagnoses.append("Complete")
+        diagnoses[cohort] = unique_diagnoses
     return diagnoses
 
 
