@@ -171,25 +171,18 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
         `${this.API_URL}/biomarkers/${biomarker}/diagnoses`
       )
       .subscribe({
-        next: (v) => {
-          this.diagnoses = v;
-          // Add "Complete" diagnosis to each cohort
-          for (const cohort in v) {
-            if (v.hasOwnProperty(cohort)) {
-              v[cohort].push('Complete'); // Add "Complete" to the diagnoses array
-            }
-          }
-          this.filteredDiagnoses = this.cohortCtrl.valueChanges.pipe(
+        next: (v) => (
+          (this.diagnoses = v),
+          (this.filteredDiagnoses = this.cohortCtrl.valueChanges.pipe(
             startWith(''),
             map((value) => this._filterDiagnoses(value || '', v))
-          );
-        },
+          ))
+        ),
         error: (e) => console.error(e),
         complete: () => console.info('Diagnoses successfully fetched.'),
       });
     this.subscriptions.push(sub);
-}
-
+  }
 
   generateBoxplot(): void {
     this.boxplotService.createBoxplot(
@@ -254,7 +247,11 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   }): string[] {
     const transformedDiagnoses = Object.entries(diagnoses).flatMap(
       ([cohort, diagnoses]) =>
-        diagnoses.map((diagnosis) => `${cohort} (${diagnosis} Group)`)
+        diagnoses.map((diagnosis) =>
+          diagnosis === 'Complete'
+            ? `${cohort} (${diagnosis})`
+            : `${cohort} (${diagnosis} Group)`
+        )
     );
     return transformedDiagnoses;
   }
