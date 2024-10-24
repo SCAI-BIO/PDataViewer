@@ -38,14 +38,14 @@
 }
 
 .cohort-list {
-    display: flex; /* Changed to flex for horizontal layout */
-    flex-wrap: wrap; /* Allows items to wrap to the next line */
-    justify-content: center; /* Center the cohorts */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     margin-top: 20px;
 }
 
 .cohort-list p {
-    margin: 0 10px; /* Space out cohort items */
+    margin: 0 10px;
 }
 
 .color-circle {
@@ -56,11 +56,7 @@
     margin-right: 2px;
 }
 
-.cohort-name {
-    font-weight: bold;
-}
-
-.full-width, .mat-form-field, .mat-form-field-infix, table {
+.full-width, .mat-form-field {
     width: 100%;
 }
 
