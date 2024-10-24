@@ -26,17 +26,29 @@ export class BoxplotService {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    const allData: { label: string; values: number[] }[] = [];
+    const allData: {
+      cohort: string;
+      diagnosisGroup: string;
+      values: number[];
+    }[] = [];
     const labels = Object.keys(data);
 
     labels.forEach((label) => {
+      const cohort = label.split(' (')[0]; // Get the cohort name
+      const diagnosisGroup = label.match(/\(([^)]+)\)/)?.[1] || ''; // Extract the diagnosis group from parentheses (e.g., 'CU')
       const values = data[label]
         .filter((d): d is number => d !== undefined)
         .sort(d3.ascending);
-      allData.push({ label, values });
+
+      allData.push({ cohort, diagnosisGroup, values });
     });
 
-    const x = d3.scaleBand().range([0, width]).domain(labels).padding(0.2);
+    // Create x scale with unique keys for each position
+    const x = d3
+      .scaleBand()
+      .range([0, width])
+      .domain(allData.map((d, i) => `${d.diagnosisGroup}-${i}`)) // Unique key for each position
+      .padding(0.2);
 
     const y = d3
       .scaleLinear()
@@ -47,16 +59,22 @@ export class BoxplotService {
       .nice()
       .range([height, 0]);
 
+    // Create the x-axis with custom ticks to show only the diagnosis group code
     svg
       .append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x));
+      .call(
+        d3.axisBottom(x).tickFormat((d) => {
+          const diagnosisGroup = d.split('-')[0]; // Extract only the diagnosis group code
+          return diagnosisGroup.replace(/ Group$/, ''); // Remove " Group" if it exists
+        })
+      );
 
     svg.append('g').call(d3.axisLeft(y));
 
     const boxWidth = x.bandwidth() * 0.5;
 
-    allData.forEach((d) => {
+    allData.forEach((d, i) => {
       const q1 = d3.quantile(d.values, 0.25) as number;
       const median = d3.quantile(d.values, 0.5) as number;
       const q3 = d3.quantile(d.values, 0.75) as number;
@@ -70,27 +88,31 @@ export class BoxplotService {
         q3 + 1.5 * interQuantileRange
       );
 
-      // Determine the color based on the group name
+      // Determine the color based on the cohort name, keeping original logic
       let boxColor = '#69b3a2'; // Default color
       for (const key in colors) {
-        if (d.label.includes(key)) {
+        if (d.cohort.includes(key)) {
+          // Check if the cohort matches the color key
           boxColor = colors[key];
           break;
         }
       }
 
-      if (x(d.label) !== undefined) {
+      if (x(`${d.diagnosisGroup}-${i}`) !== undefined) {
         svg
           .append('line')
-          .attr('x1', x(d.label)! + x.bandwidth() / 2)
-          .attr('x2', x(d.label)! + x.bandwidth() / 2)
+          .attr('x1', x(`${d.diagnosisGroup}-${i}`)! + x.bandwidth() / 2)
+          .attr('x2', x(`${d.diagnosisGroup}-${i}`)! + x.bandwidth() / 2)
           .attr('y1', y(min))
           .attr('y2', y(max))
           .attr('stroke', 'black');
 
         svg
           .append('rect')
-          .attr('x', x(d.label)! + (x.bandwidth() - boxWidth) / 2)
+          .attr(
+            'x',
+            x(`${d.diagnosisGroup}-${i}`)! + (x.bandwidth() - boxWidth) / 2
+          )
           .attr('y', y(q3))
           .attr('height', y(q1) - y(q3))
           .attr('width', boxWidth)
@@ -99,24 +121,42 @@ export class BoxplotService {
 
         svg
           .append('line')
-          .attr('x1', x(d.label)! + (x.bandwidth() - boxWidth) / 2)
-          .attr('x2', x(d.label)! + (x.bandwidth() + boxWidth) / 2)
+          .attr(
+            'x1',
+            x(`${d.diagnosisGroup}-${i}`)! + (x.bandwidth() - boxWidth) / 2
+          )
+          .attr(
+            'x2',
+            x(`${d.diagnosisGroup}-${i}`)! + (x.bandwidth() + boxWidth) / 2
+          )
           .attr('y1', y(median))
           .attr('y2', y(median))
           .attr('stroke', 'black');
 
         svg
           .append('line')
-          .attr('x1', x(d.label)! + (x.bandwidth() - boxWidth) / 2)
-          .attr('x2', x(d.label)! + (x.bandwidth() + boxWidth) / 2)
+          .attr(
+            'x1',
+            x(`${d.diagnosisGroup}-${i}`)! + (x.bandwidth() - boxWidth) / 2
+          )
+          .attr(
+            'x2',
+            x(`${d.diagnosisGroup}-${i}`)! + (x.bandwidth() + boxWidth) / 2
+          )
           .attr('y1', y(min))
           .attr('y2', y(min))
           .attr('stroke', 'black');
 
         svg
           .append('line')
-          .attr('x1', x(d.label)! + (x.bandwidth() - boxWidth) / 2)
-          .attr('x2', x(d.label)! + (x.bandwidth() + boxWidth) / 2)
+          .attr(
+            'x1',
+            x(`${d.diagnosisGroup}-${i}`)! + (x.bandwidth() - boxWidth) / 2
+          )
+          .attr(
+            'x2',
+            x(`${d.diagnosisGroup}-${i}`)! + (x.bandwidth() + boxWidth) / 2
+          )
           .attr('y1', y(max))
           .attr('y2', y(max))
           .attr('stroke', 'black');
@@ -128,7 +168,6 @@ export class BoxplotService {
       .append('g')
       .attr('transform', `translate(${width + 20}, 0)`);
 
-    // Extract unique cohort names from the labels
     const usedCohorts = Array.from(
       new Set(
         labels
