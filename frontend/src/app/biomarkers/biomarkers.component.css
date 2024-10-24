@@ -25,7 +25,7 @@
     flex-direction: column;
     align-items: center;
     width: 40%;
-    padding: 50 0;
+    padding: 10px 0;
 }
 
 .cohort-container {
@@ -33,17 +33,19 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    margin-top: 50;
-    margin-bottom: 50;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .cohort-list {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 20%;
-    margin-top: 50;
-    margin-bottom: 50;
+    display: flex; /* Changed to flex for horizontal layout */
+    flex-wrap: wrap; /* Allows items to wrap to the next line */
+    justify-content: center; /* Center the cohorts */
+    margin-top: 20px;
+}
+
+.cohort-list p {
+    margin: 0 10px; /* Space out cohort items */
 }
 
 .color-circle {
@@ -51,7 +53,7 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    margin-right: 8px;
+    margin-right: 2px;
 }
 
 .cohort-name {
@@ -71,9 +73,4 @@ mat-chip-option {
     margin: 5px;
     background-color: #d1c4e9;
     color: #4a148c;
-}
-
-.cohort-list {
-    width: 5%;
-    float: left;
 }

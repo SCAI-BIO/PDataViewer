@@ -54,14 +54,16 @@
     <div class="cohort-container" *ngIf="selectedBiomarker">
       <h4>Available Cohorts for {{ selectedBiomarker }}:</h4>
       <br />
-      <div class="cohort-list" *ngFor="let cohort of cohorts">
-        <p>
-          <span
-            class="color-circle"
-            [style.background-color]="colors[cohort]"
-          ></span
-          >{{ cohort }}
-        </p>
+      <div class="cohort-list">
+        <div *ngFor="let cohort of cohorts">
+          <p>
+            <span
+              class="color-circle"
+              [style.background-color]="colors[cohort]"
+            ></span>
+            {{ cohort }}
+          </p>
+        </div>
       </div>
     </div>
 
