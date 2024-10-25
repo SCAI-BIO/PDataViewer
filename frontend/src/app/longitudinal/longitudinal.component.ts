@@ -46,6 +46,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   featureCtrl = new FormControl();
   filteredFeatures: Observable<string[]> | null = null;
   longitudinalTables: string[] = [];
+  originalVariableNameMappings: { [key: string]: string } = {};
   selectedFeature: string = '';
   private API_URL = environment.API_URL;
   @ViewChild('lineplot') private chartContainer!: ElementRef;
@@ -131,11 +132,30 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
     );
   }
 
+  loadOriginalCaseMappings(): void {
+    this.http
+      .get<{ [key: string]: string }>('./assets/lower_to_original_case.json')
+      .subscribe({
+        next: (data) => {
+          this.originalVariableNameMappings = data;
+          console.info(
+            'Lowercase to original case mappings successfully loaded'
+          );
+        },
+        error: (e) =>
+          console.error(
+            'Error loading lowercase to original case mappings:',
+            e
+          ),
+      });
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   ngOnInit() {
+    this.loadOriginalCaseMappings();
     this.fetchLongitudinalTables();
     this.fetchColors();
     this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
@@ -157,7 +177,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
 
   private _transformFeatureName(feature: string): string {
     feature = feature.toLowerCase();
-    return feature.split(' ').join('_');
+    return feature.split(' ').join('_').replace('/', '_');
   }
 
   private _transformLongitudinalName(longitudinal: string): string {
@@ -165,6 +185,9 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
       longitudinal = longitudinal.substring(13);
     }
     longitudinal = longitudinal.split('_').join(' ');
-    return longitudinal.charAt(0).toUpperCase() + longitudinal.slice(1);
+    const mappedValue = this.originalVariableNameMappings[longitudinal];
+    return mappedValue
+      ? mappedValue
+      : longitudinal.charAt(0).toUpperCase() + longitudinal.slice(1);
   }
 }

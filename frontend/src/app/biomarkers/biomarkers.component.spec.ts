@@ -1,5 +1,6 @@
+import { provideHttpClient } from '@angular/common/http';
 import {
-  HttpClientTestingModule,
+  provideHttpClientTesting,
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -23,12 +24,12 @@ describe('BiomarkersComponent', () => {
     ]);
 
     await TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule,
-        BrowserAnimationsModule,
-        BiomarkersComponent,
+      imports: [BrowserAnimationsModule, BiomarkersComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: BoxplotService, useValue: boxplotSpy },
       ],
-      providers: [{ provide: BoxplotService, useValue: boxplotSpy }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BiomarkersComponent);
@@ -60,6 +61,13 @@ describe('BiomarkersComponent', () => {
       cohort1: { Color: '#FF0000' },
       cohort2: { Color: '#00FF00' },
     });
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
+    });
 
     expect(component).toBeTruthy();
   });
@@ -82,6 +90,13 @@ describe('BiomarkersComponent', () => {
     colorsRequest.flush({
       cohort1: { Color: '#FF0000' },
       cohort2: { Color: '#00FF00' },
+    });
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
     });
 
     // Verify the component's state
@@ -106,6 +121,13 @@ describe('BiomarkersComponent', () => {
       cohort1: { Color: '#FF0000' },
       cohort2: { Color: '#00FF00' },
     });
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
+    });
 
     const event = {
       value: 'New Cohort',
@@ -128,6 +150,13 @@ describe('BiomarkersComponent', () => {
     colorsRequest.flush({
       cohort1: { Color: '#FF0000' },
       cohort2: { Color: '#00FF00' },
+    });
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
     });
 
     const event = {
@@ -155,6 +184,13 @@ describe('BiomarkersComponent', () => {
       cohort1: { Color: '#FF0000' },
       cohort2: { Color: '#00FF00' },
     });
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
+    });
 
     const event = {
       option: { value: 'Cohort' },
@@ -178,6 +214,13 @@ describe('BiomarkersComponent', () => {
     colorsRequest.flush({
       cohort1: { Color: '#FF0000' },
       cohort2: { Color: '#00FF00' },
+    });
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
     });
 
     component.selectedCohorts = ['Cohort1', 'Cohort2'];
@@ -210,6 +253,13 @@ describe('BiomarkersComponent', () => {
     colorsRequest.flush({
       cohort1: { Color: '#FF0000' },
       cohort2: { Color: '#00FF00' },
+    });
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
     });
 
     component.generateBoxplot();
