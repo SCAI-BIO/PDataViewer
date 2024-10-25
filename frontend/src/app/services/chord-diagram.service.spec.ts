@@ -1,16 +1,19 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
 import {
-  HttpClientTestingModule,
+  provideHttpClientTesting,
   HttpTestingController,
 } from '@angular/common/http/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+
 import * as d3 from 'd3';
+
 import { ChordDiagramService } from './chord-diagram.service';
 import { environment } from '../../environments/environment';
 
 describe('ChordDiagramService', () => {
   let service: ChordDiagramService;
   let httpMock: HttpTestingController;
-  const API_URL = environment.API_URL
+  const API_URL = environment.API_URL;
 
   // Mock data for testing
   const mockData = {
@@ -51,8 +54,11 @@ describe('ChordDiagramService', () => {
   // Set up the testing module and inject the service
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [ChordDiagramService],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        ChordDiagramService,
+      ],
     });
     service = TestBed.inject(ChordDiagramService);
     httpMock = TestBed.inject(HttpTestingController);

@@ -1,5 +1,10 @@
+import { provideHttpClient } from '@angular/common/http';
+import {
+  provideHttpClientTesting,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+
 import { AutocompleteService } from './autocomplete.service';
 import { environment } from '../../environments/environment';
 
@@ -10,8 +15,11 @@ describe('AutocompleteService', () => {
   // Setup the testing module and inject the necessary services
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [AutocompleteService],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        AutocompleteService,
+      ],
     });
     service = TestBed.inject(AutocompleteService);
     httpMock = TestBed.inject(HttpTestingController);
