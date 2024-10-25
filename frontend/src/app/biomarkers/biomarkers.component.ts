@@ -51,6 +51,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   diagnoses: { [key: string]: string[] } = {};
   filteredBiomarkers: Observable<string[]> | null = null;
   filteredDiagnoses: Observable<string[]> | null = null;
+  originalVariableNameMappings: { [key: string]: string } = {};
   selectedBiomarker: string = '';
   selectedCohorts: string[] = [];
   showDataPoints: boolean = false;
@@ -196,11 +197,30 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
     );
   }
 
+  loadOriginalCaseMappings(): void {
+    this.http
+      .get<{ [key: string]: string }>('./assets/lower_to_original_case.json')
+      .subscribe({
+        next: (data) => {
+          this.originalVariableNameMappings = data;
+          console.info(
+            'Lowercase to original case mappings successfully loaded'
+          );
+        },
+        error: (e) =>
+          console.error(
+            'Error loading lowercase to original case mappings:',
+            e
+          ),
+      });
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   ngOnInit() {
+    this.loadOriginalCaseMappings();
     this.fetchBiomarkers();
     this.fetchColors();
     this.filteredBiomarkers = this.biomarkerCtrl.valueChanges.pipe(
@@ -216,6 +236,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   removeBiomarker(): void {
     this.selectedBiomarker = '';
     this.selectedCohorts = [];
+    this.biomarkerData = {};
   }
 
   removeCohort(cohort: string): void {
@@ -248,7 +269,10 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
     if (biomarker.startsWith('biomarkers_')) {
       biomarker = biomarker.substring(11);
     }
-    return biomarker.charAt(0).toUpperCase() + biomarker.slice(1);
+    const mappedValue = this.originalVariableNameMappings[biomarker];
+    return mappedValue
+      ? mappedValue
+      : biomarker.charAt(0).toUpperCase() + biomarker.slice(1);
   }
 
   private _transformDiagnoses(diagnoses: {
