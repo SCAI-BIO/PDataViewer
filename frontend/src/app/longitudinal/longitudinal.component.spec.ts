@@ -1,5 +1,6 @@
+import { provideHttpClient } from '@angular/common/http';
 import {
-  HttpClientTestingModule,
+  provideHttpClientTesting,
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -21,8 +22,12 @@ describe('LongitudinalComponent', () => {
     const spy = jasmine.createSpyObj('LineplotService', ['createLineplot']);
 
     await TestBed.configureTestingModule({
-      imports: [BrowserAnimationsModule, HttpClientTestingModule],
-      providers: [{ provide: LineplotService, useValue: spy }],
+      imports: [BrowserAnimationsModule],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: LineplotService, useValue: spy },
+      ],
     }).compileComponents();
 
     httpMock = TestBed.inject(HttpTestingController);
@@ -75,6 +80,14 @@ describe('LongitudinalComponent', () => {
     const reqTables = httpMock.expectOne(`${environment.API_URL}/longitudinal`);
     reqTables.flush(['longitudinal_table1', 'longitudinal_table2']);
 
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
+    });
+
     expect(component).toBeTruthy();
   });
 
@@ -115,6 +128,14 @@ describe('LongitudinalComponent', () => {
 
     const reqTables = httpMock.expectOne(`${environment.API_URL}/longitudinal`);
     reqTables.flush(['longitudinal_table1', 'longitudinal_table2']);
+
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
+    });
 
     expect(component.colors).toEqual({
       cohort1: '#ff0000',
@@ -160,6 +181,14 @@ describe('LongitudinalComponent', () => {
     const reqTables = httpMock.expectOne(`${environment.API_URL}/longitudinal`);
     expect(reqTables.request.method).toBe('GET');
     reqTables.flush(mockTables);
+
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
+    });
 
     expect(component.longitudinalTables).toEqual(['Table1', 'Table2']);
   });
