@@ -107,7 +107,6 @@ export class MappingsComponent implements OnInit, OnDestroy {
       .post<ChordData>(`${this.API_URL}/visualization/chords/`, request)
       .subscribe({
         next: (v) => {
-          this.chordService.initializeColorScale(v);
           // Adjust the maximum value of the slider
           if (v['nodes'].length > 100) {
             this.totalFeatures = 100;
