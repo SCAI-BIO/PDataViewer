@@ -2,11 +2,6 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
-import { Observable, Subscription } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
@@ -16,6 +11,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
+import { Router } from '@angular/router';
+
+import { Observable, Subscription } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 import { Metadata } from '../interfaces/metadata';
 import { RankData } from '../interfaces/rankdata';
@@ -42,6 +41,20 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   cohortColors: { [key: string]: string } = {};
   cohortLinks: { [key: string]: string } = {};
   cohortRankings: RankData[] = [];
+  dataAvailability: { [key: string]: boolean } = {
+    PPMI: true,
+    BIOFIND: true,
+    LuxPARK: false,
+    LCC: true,
+    PRoBaND: false,
+    OPDC: false,
+    'Fox Insight': true,
+    DATATOP: true,
+    PINE: true,
+    'UK Biobank': false,
+    PostCEPT: true,
+    SPARX: true,
+  };
   displayedColumns: string[] = [
     'cohort',
     'found',
@@ -107,6 +120,10 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  isDataAvailable(cohort: string): boolean {
+    return this.dataAvailability[cohort] || false;
+  }
+
   ngOnInit() {
     const sub = this.fetchFeatures().subscribe((features) => {
       this.features = features.Feature;
@@ -144,12 +161,15 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
 
   redirectToPlot(cohort: string, missing: string) {
     const availableFeatures = this._availableFeatures(missing);
-    this.router.navigate(['plot-longitudinal'], {
-      queryParams: {
-        cohort: cohort,
-        features: availableFeatures,
-      },
-    });
+    const url = this.router
+      .createUrlTree(['plot-longitudinal'], {
+        queryParams: {
+          cohort: cohort,
+          features: availableFeatures,
+        },
+      })
+      .toString();
+    window.open(url, '_blank');
   }
 
   private _filter(value: string): string[] {

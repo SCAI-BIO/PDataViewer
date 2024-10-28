@@ -23,11 +23,11 @@ mat-chip-option {
 .table-container, .button-container, .input-container {
   display: flex;
   justify-content: center;
-  padding: 20px;
+  padding: 10px;
 }
 
 .table-container, .button-container {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .table-container {
@@ -37,6 +37,7 @@ mat-chip-option {
 .input-container {
   flex-direction: column;
   align-items: center;
+  margin-top: 20px;
 }
 
 table {
