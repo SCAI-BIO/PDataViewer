@@ -33,23 +33,22 @@ export class LineplotService {
 
     // Set the domains for the scales
     x.domain(d3.extent(data, (d) => d.Months) as [number, number]);
-    y.domain([0, 100]); // Y-axis from 0 to 100 percent
+    y.domain([0, 100]);
 
-    // Add the title
-    if (title) {
-      svg
-        .append('text')
-        .attr('x', width / 2)
-        .attr('y', -margin.top / 2)
-        .attr('text-anchor', 'middle')
-        .attr('class', 'title')
-        .text(title);
-    }
+    // Determine the maximum value of x (Months)
+    const maxMonths = Math.ceil(d3.max(data, (d) => d.Months) || 0);
 
-    svg
-      .append('g')
-      .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x));
+    // Generate tick values at intervals of 6
+    const tickValues = Array.from(
+      { length: Math.floor(maxMonths / 6) + 1 },
+      (_, i) => i * 6
+    ).filter((tick) => tick <= maxMonths);
+
+    // Create and configure the x-axis
+    const xAxis = d3.axisBottom(x).tickValues(tickValues);
+
+    // Append the x-axis to the SVG
+    svg.append('g').attr('transform', `translate(0,${height})`).call(xAxis);
 
     svg.append('g').call(d3.axisLeft(y).ticks(10));
 
@@ -77,7 +76,7 @@ export class LineplotService {
         .datum(values)
         .attr('class', 'line-path')
         .attr('fill', 'none')
-        .attr('stroke', cohortColor) // Use the color from the colors object or the color scale
+        .attr('stroke', cohortColor)
         .attr('stroke-width', 1.5)
         .attr('d', line);
     });
@@ -271,5 +270,13 @@ export class LineplotService {
         `translate(${width / 2}, ${height + margin.bottom / 1.5})`
       )
       .text('Months');
+
+    // Add the title
+    svg
+      .append('text')
+      .attr('x', width / 2)
+      .attr('y', -margin.top / 2)
+      .attr('text-anchor', 'middle')
+      .text(title);
   }
 }
