@@ -21,9 +21,9 @@ import { LineplotService } from '../services/lineplot.service';
 })
 export class PlotLongitudinalComponent implements OnInit, OnDestroy {
   cohort: string = '';
-  features: string[] = [];
+  variables: string[] = [];
   data: LongitudinalData[] = [];
-  originalData: LongitudinalData[] = [];
+  originalVariableNameMappings: { [key: string]: string } = {};
   private API_URL = environment.API_URL;
   @ViewChild('lineplot') private chartContainer!: ElementRef;
   private subscriptions: Subscription[] = [];
@@ -58,11 +58,17 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
   }
 
   generateLineplot(): void {
-    const features = [];
-    for (const feature of this.features) {
-      features.push(this._transformLongitudinalName(feature));
+    const variables = [];
+    for (const variable of this.variables) {
+      variables.push(this._transformLongitudinalName(variable));
     }
-    const features_string = features.map((item) => `${item}`).join(', ');
+    const features_string =
+      variables.length > 1
+        ? variables.slice(0, -1).join(', ') +
+          ' and ' +
+          variables[variables.length - 1]
+        : variables[0] || ''; // Handle single or empty features case
+
     const title = `Longitudinal follow-ups for ${features_string} in the ${this.cohort} cohort`;
     this.lineplotService.createLineplot(
       this.chartContainer,
@@ -72,28 +78,54 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
     );
   }
 
+  loadOriginalCaseMappings(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http
+        .get<{ [key: string]: string }>('./assets/lower_to_original_case.json')
+        .subscribe({
+          next: (data) => {
+            this.originalVariableNameMappings = data;
+            console.info(
+              'Lowercase to original case mappings successfully loaded'
+            );
+            resolve();
+          },
+          error: (e) => {
+            console.error(
+              'Error loading lowercase to original case mappings:',
+              e
+            );
+            reject(e);
+          },
+        });
+    });
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   ngOnInit(): void {
-    const sub = this.route.queryParams.subscribe((params) => {
-      this.cohort = params['cohort'] || '';
-      this.features = params['features'] || [];
+    this.loadOriginalCaseMappings().then(() => {
+      const sub = this.route.queryParams.subscribe((params) => {
+        this.cohort = params['cohort'] || '';
+        this.variables = params['features'] || [];
+      });
+      this.subscriptions.push(sub);
+
+      // Ensure features is an array
+      if (!Array.isArray(this.variables)) {
+        this.variables = [this.variables];
+      }
+
+      // Set the count of features to fetch data
+      this.dataFetchCount = this.variables.length;
+
+      // Fetch data for each variable
+      for (const variable of this.variables) {
+        this.fetchLongitudinalTable(variable);
+      }
     });
-    this.subscriptions.push(sub);
-
-    // Ensure features is an array
-    if (!Array.isArray(this.features)) {
-      this.features = [this.features];
-    }
-
-    // Set the count of features to fetch data
-    this.dataFetchCount = this.features.length;
-
-    for (const feature of this.features) {
-      this.fetchLongitudinalTable(feature);
-    }
   }
 
   private _transformLongitudinalName(longitudinal: string): string {
@@ -101,6 +133,9 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
       longitudinal = longitudinal.substring(13);
     }
     longitudinal = longitudinal.split('_').join(' ');
-    return longitudinal.charAt(0).toUpperCase() + longitudinal.slice(1);
+    const mappedValue = this.originalVariableNameMappings[longitudinal];
+    return mappedValue
+      ? mappedValue
+      : longitudinal.charAt(0).toUpperCase() + longitudinal.slice(1);
   }
 }
