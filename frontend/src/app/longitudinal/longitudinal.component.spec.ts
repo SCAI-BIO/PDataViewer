@@ -43,8 +43,21 @@ describe('LongitudinalComponent', () => {
     httpMock.verify();
   });
 
-  it('should create', () => {
+  it('should create', async () => {
     fixture.detectChanges();
+
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
+    });
+
+    // Wait for the ngOnInit to complete loading the mappings
+    await fixture.whenStable();
+    const reqTables = httpMock.expectOne(`${environment.API_URL}/longitudinal`);
+    reqTables.flush(['longitudinal_table1', 'longitudinal_table2']);
 
     // Handle the HTTP requests triggered by ngOnInit
     const reqMeta = httpMock.expectOne(
@@ -77,21 +90,10 @@ describe('LongitudinalComponent', () => {
       },
     });
 
-    const reqTables = httpMock.expectOne(`${environment.API_URL}/longitudinal`);
-    reqTables.flush(['longitudinal_table1', 'longitudinal_table2']);
-
-    const reqMappings = httpMock.expectOne(
-      './assets/lower_to_original_case.json'
-    );
-    reqMappings.flush({
-      'feature name': 'Feature Name',
-      'another feature': 'Another Feature',
-    });
-
     expect(component).toBeTruthy();
   });
 
-  it('should fetch colors on init', () => {
+  it('should fetch colors on init', async () => {
     const mockMetadata: Metadata = {
       cohort1: {
         Participants: 100,
@@ -121,13 +123,34 @@ describe('LongitudinalComponent', () => {
 
     fixture.detectChanges();
 
+    const reqMappings = httpMock.expectOne(
+      './assets/lower_to_original_case.json'
+    );
+    reqMappings.flush({
+      'feature name': 'Feature Name',
+      'another feature': 'Another Feature',
+    });
+    // Wait for the ngOnInit to complete loading the mappings
+    await fixture.whenStable();
+
+    const reqTables = httpMock.expectOne(`${environment.API_URL}/longitudinal`);
+    reqTables.flush(['longitudinal_table1', 'longitudinal_table2']);
+
     const reqMeta = httpMock.expectOne(
       `${environment.API_URL}/cohorts/metadata`
     );
     reqMeta.flush(mockMetadata);
 
-    const reqTables = httpMock.expectOne(`${environment.API_URL}/longitudinal`);
-    reqTables.flush(['longitudinal_table1', 'longitudinal_table2']);
+    expect(component.colors).toEqual({
+      cohort1: '#ff0000',
+      cohort2: '#00ff00',
+    });
+  });
+
+  it('should fetch longitudinal tables on init', async () => {
+    const mockTables = ['longitudinal_table1', 'longitudinal_table2'];
+
+    fixture.detectChanges();
 
     const reqMappings = httpMock.expectOne(
       './assets/lower_to_original_case.json'
@@ -136,17 +159,8 @@ describe('LongitudinalComponent', () => {
       'feature name': 'Feature Name',
       'another feature': 'Another Feature',
     });
-
-    expect(component.colors).toEqual({
-      cohort1: '#ff0000',
-      cohort2: '#00ff00',
-    });
-  });
-
-  it('should fetch longitudinal tables on init', () => {
-    const mockTables = ['longitudinal_table1', 'longitudinal_table2'];
-
-    fixture.detectChanges();
+    // Wait for the ngOnInit to complete loading the mappings
+    await fixture.whenStable();
 
     const reqMeta = httpMock.expectOne(
       `${environment.API_URL}/cohorts/metadata`
@@ -181,14 +195,6 @@ describe('LongitudinalComponent', () => {
     const reqTables = httpMock.expectOne(`${environment.API_URL}/longitudinal`);
     expect(reqTables.request.method).toBe('GET');
     reqTables.flush(mockTables);
-
-    const reqMappings = httpMock.expectOne(
-      './assets/lower_to_original_case.json'
-    );
-    reqMappings.flush({
-      'feature name': 'Feature Name',
-      'another feature': 'Another Feature',
-    });
 
     expect(component.longitudinalTables).toEqual(['Table1', 'Table2']);
   });

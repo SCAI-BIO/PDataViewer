@@ -132,22 +132,27 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
     );
   }
 
-  loadOriginalCaseMappings(): void {
-    this.http
-      .get<{ [key: string]: string }>('./assets/lower_to_original_case.json')
-      .subscribe({
-        next: (data) => {
-          this.originalVariableNameMappings = data;
-          console.info(
-            'Lowercase to original case mappings successfully loaded'
-          );
-        },
-        error: (e) =>
-          console.error(
-            'Error loading lowercase to original case mappings:',
-            e
-          ),
-      });
+  loadOriginalCaseMappings(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http
+        .get<{ [key: string]: string }>('./assets/lower_to_original_case.json')
+        .subscribe({
+          next: (data) => {
+            this.originalVariableNameMappings = data;
+            console.info(
+              'Lowercase to original case mappings successfully loaded'
+            );
+            resolve();
+          },
+          error: (e) => {
+            console.error(
+              'Error loading lowercase to original case mappings:',
+              e
+            );
+            reject(e);
+          },
+        });
+    });
   }
 
   ngOnDestroy(): void {
@@ -155,13 +160,14 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.loadOriginalCaseMappings();
-    this.fetchLongitudinalTables();
-    this.fetchColors();
-    this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
-      startWith(''),
-      map((value) => this._filterTableName(value || ''))
-    );
+    this.loadOriginalCaseMappings().then(() => {
+      this.fetchLongitudinalTables();
+      this.fetchColors();
+      this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
+        startWith(''),
+        map((value) => this._filterTableName(value || ''))
+      );
+    });
   }
 
   removeFeature(): void {
