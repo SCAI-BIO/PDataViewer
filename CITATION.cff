@@ -33,6 +33,11 @@ authors:
     email: marc.jacobs@scai.fraunhofer.de
     affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
     orcid: https://orcid.org/0000-0003-4153-3930
+  - given-names: Martin
+    family-names: Hofmann-Apitius
+    email: martin.hofmann-apitius@scai.fraunhofer.de
+    affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
+    orcid: https://orcid.org/0000-0001-9012-6720
 identifiers:
   - type: doi
     value: 10.5281/zenodo.13629128
