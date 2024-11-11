@@ -1,4 +1,5 @@
-import { ElementRef, Injectable } from '@angular/core';
+import { ElementRef, Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import * as d3 from 'd3';
 import { LongitudinalData } from '../interfaces/longitudinal-data';
 
@@ -6,7 +7,7 @@ import { LongitudinalData } from '../interfaces/longitudinal-data';
   providedIn: 'root',
 })
 export class LineplotService {
-  constructor() {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   createLineplot(
     element: ElementRef,
@@ -14,6 +15,12 @@ export class LineplotService {
     colors: { [key: string]: string } = {}, // Default parameter
     title: string = '' // New optional title parameter
   ): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      console.warn(
+        `D3 code skipped because it is running on the ${this.platformId}`
+      );
+      return;
+    }
     const margin = { top: 40, right: 150, bottom: 60, left: 60 }; // Increase top margin for the title
     const width = 1200 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
