@@ -1,21 +1,10 @@
-/* General layout and spacing */
-:host {
-    display: block;
+/* Header Container */
+.header-container {
     margin: 20px;
+    display: flex;
+    flex-direction: column;
     padding: 20px;
     background-color: #f9f9f9;
-}
-
-h1 {
-    margin-bottom: 20px;
-}
-
-p {
-    padding: 10px 20px;
-    line-height: 1.6;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
 }
 
 .content-container {
@@ -114,4 +103,78 @@ p {
 .selected-modality {
     background-color: #660035;
     color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .chord-diagram {
+        flex: 1 1 45%;
+        max-width: 500px;
+    }
+}
+
+@media (max-width: 992px) {
+    .chord-diagram {
+        flex: 1 1 48%;
+        max-width: 500px;
+    }
+
+    .header-container {
+        padding: 15px;
+    }
+
+    .content-container {
+        padding: 15px;
+    }
+
+    .modality-buttons {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .chord-diagram {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .header-container, .content-container {
+        padding: 10px;
+    }
+
+    .modality-buttons {
+        text-align: center;
+    }
+
+    ::ng-deep .legend-text {
+        font-size: 10px;
+    }
+
+    .max-features-wrapper {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .chord-diagram {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .header-container, .content-container {
+        padding: 5px;
+    }
+
+    .modality-buttons {
+        margin-bottom: 10px;
+    }
+
+    .featureNumber {
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+    ::ng-deep .legend-text {
+        font-size: 9px;
+    }
 }

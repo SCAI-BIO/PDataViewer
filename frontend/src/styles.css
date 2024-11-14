@@ -85,7 +85,7 @@ button:hover {
 }
 
 .nav-bar {
-    padding: 0 20%;
+    padding: 0 19%;
     width: 100%;
 }
 
@@ -97,4 +97,81 @@ button:hover {
     position: absolute;
     bottom: 0;
     width: 100%;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .nav-bar {
+        padding: 0 10%;
+    }
+
+    .section-title {
+        font-size: 1.8vw;
+    }
+
+    button {
+        font-size: 1vw;
+    }
+}
+
+@media (max-width: 992px) {
+    .nav-bar {
+        padding: 0 5%;
+    }
+
+    .section-title {
+        font-size: 2.2vw;
+    }
+
+    .text-center, .text, .text-center p, .text p {
+        font-size: 1.2vw;
+    }
+
+    button {
+        font-size: 1.2vw;
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-bar {
+        padding: 0 5%;
+    }
+
+    .section {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+
+    .section-title {
+        font-size: 3vw;
+    }
+
+    .text-center, .text, .text-center p, .text p {
+        font-size: 1.5vw;
+    }
+
+    button {
+        font-size: 1.5vw;
+        padding: 8px 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .section-title {
+        font-size: 16px;
+    }
+
+    .text-center, .text, .text-center p, .text p {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+
+    .nav-bar {
+        padding: 0 2%;
+    }
 }
