@@ -22,6 +22,7 @@
   text-transform: uppercase;
 }
 
+/* Main Headers */
 .main-headers {
   display: flex;
   justify-content: space-between;
@@ -34,4 +35,80 @@
 
 ::ng-deep .mat-mdc-list-item-unscoped-content {
   color: white !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+  :host {
+    padding-left: 30px;
+    font-size: 15px;
+  }
+
+  .main-headers {
+    font-size: 24px;
+  }
+
+  .copyright {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 992px) {
+  :host {
+    padding-left: 20px;
+    padding-top: 20px;
+    font-size: 14px;
+  }
+
+  .main-headers {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .main-headers .col-12 {
+    margin-bottom: 10px;
+  }
+
+  .copyright {
+    font-size: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  :host {
+    padding: 15px 10px;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .main-headers {
+    font-size: 18px;
+  }
+
+  .copyright {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 576px) {
+  :host {
+    padding: 10px 5px;
+    font-size: 12px;
+  }
+
+  .main-headers {
+    font-size: 16px;
+  }
+
+  .main-headers .col-12 {
+    margin-bottom: 5px;
+  }
+
+  .copyright {
+    font-size: 8px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
 }

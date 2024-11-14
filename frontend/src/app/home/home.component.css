@@ -178,3 +178,120 @@ a.button {
 a.button:hover {
     background-color: #660035;
 }
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .about-item {
+        width: 70%;
+    }
+
+    .section-content {
+        padding: 0 15%;
+    }
+
+    .counter .count-item {
+        width: 150px;
+    }
+}
+
+@media (max-width: 992px) {
+    .welcome-area {
+        height: 35vh
+    }
+
+    .welcome-area .header-text h1 {
+        font-size: 2.5vw;
+    }
+
+    .about-item {
+        width: 80%;
+    }
+
+    .counter .count-item strong {
+        font-size: 2.5vw;
+    }
+
+    .counter .count-item span {
+        font-size: 1.5vw;
+    }
+
+    .citation-section,
+    .section-content {
+        padding: 0 10%;
+    }
+
+    .section-content .text {
+        font-size: 1.2vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-area {
+        height: 30vh;
+    }
+
+    .welcome-area .header-text h1 {
+        font-size: 3.5vw;
+    }
+
+    .about-item {
+        width: 90%;
+    }
+
+    .counter .count-item strong {
+        font-size: 3vw;
+    }
+
+    .counter .count-item span {
+        font-size: 1.8vw;
+    }
+
+    .citation-section,
+    .section-content {
+        padding: 0 5%;
+    }
+
+    .section-content .text {
+        font-size: 1.5vw;
+    }
+}
+
+@media (max-width: 576px) {
+    .welcome-area {
+        height: 25vh;
+    }
+
+    .welcome-area .header-text h1 {
+        font-size: 4.5vw;
+    }
+
+    .about-title {
+        font-size: 4vw;
+    }
+
+    .about-item p {
+        font-size: 2vw;
+    }
+
+    .counter {
+        height: 25vh;
+    }
+
+    .counter .count-item strong {
+        font-size: 4vw;
+    }
+
+    .counter .count-item span {
+        font-size: 2.5vw;
+    }
+
+    .section-content .text {
+        font-size: 2vw;
+    }
+
+    .counts-wrapper {
+        /* Stack counters vertically on small screens */
+        flex-direction: column;
+        gap: 10px;
+    }
+}

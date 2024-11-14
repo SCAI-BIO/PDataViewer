@@ -1,3 +1,4 @@
+/* Header Area */
 .header-area {
     margin-top: 50px;
     height: 100px;
@@ -58,6 +59,7 @@ a.disable {
     color: red !important;
 }
 
+/* Tools Menu */
 .tools-menu {
     position: relative;
 }
@@ -101,4 +103,110 @@ a.disable {
 
 .dropdown-item:not(:last-child) {
     border-bottom: 1px solid #eaeaea;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .header-area {
+        margin-top: 30px;
+        height: 80px;
+    }
+
+    .header-area .main-nav {
+        padding: 0 15px;
+    }
+
+    .header-area .main-nav .nav li {
+        padding: 0 15px;
+    }
+
+    .header-area .main-nav .nav li a {
+        font-size: 1.2vw;
+    }
+}
+
+@media (max-width: 992px) {
+    .header-area {
+        margin-top: 20px;
+        height: 70px;
+    }
+
+    .header-area .main-nav {
+        padding: 0 10px;
+    }
+
+    .header-area .main-nav .nav li {
+        padding: 0 10px;
+    }
+
+    .header-area .main-nav .nav li a {
+        font-size: 1.5vw;
+    }
+
+    .img-fluid {
+        max-height: 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-area {
+        margin-top: 15px;
+        height: 60px;
+    }
+
+    .header-area .main-nav {
+        padding: 10px;
+        box-shadow: none;
+    }
+
+    .header-area .main-nav .nav {
+        width: 100%;
+        text-align: center;
+    }
+
+    .header-area .main-nav .nav li {
+        padding: 0 5px;
+        width: 100%;
+    }
+
+    .header-area .main-nav .nav li a {
+        font-size: 2vw;
+        height: auto;
+        line-height: normal;
+        padding: 0 10px;
+    }
+
+    .img-fluid {
+        max-height: 40px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-area {
+        margin-top: 10px;
+        height: 50px;
+    }
+
+    .header-area .main-nav {
+        padding: 5px;
+    }
+
+    .header-area .main-nav .nav li {
+        padding: 0 5px;
+    }
+
+    .header-area .main-nav .nav li a {
+        font-size: 3vw;
+        padding: 0 5px;
+    }
+
+    .img-fluid {
+        max-height: 30px;
+        padding-left: 0;
+    }
+
+    .dropdown-menu {
+        min-width: 100%;
+        position: relative;
+    }
 }
