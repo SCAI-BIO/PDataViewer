@@ -56,5 +56,5 @@ def test_rank_cohorts(
 
 
 def test_rank_cohorts_empty_features(mock_cdm_repository: MagicMock):
-    with pytest.raises(ValueError, match="The 'features' list cannot be empty"):
+    with pytest.raises(ValueError, match="The 'variables' list cannot be empty"):
         rank_cohorts(variables=[], repo=mock_cdm_repository, columns_to_drop=None)
