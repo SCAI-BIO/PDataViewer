@@ -2,25 +2,34 @@ import pandas as pd
 from repository.sqllite import SQLLiteRepository
 
 
-def generate_chords(modality: str, cohorts: list[str], repo: SQLLiteRepository):
+def generate_chords(
+    modality: str, cohorts: list[str], repo: SQLLiteRepository
+) -> dict[str, list[dict[str, str]]]:
     """Generate linkage information for cohorts in a specified modality.
 
-    This function retrieves the table of specified modality from an SQL database,
-    processes the data to filter out rows and columns based on the presence of mappings,
-    and constructs linkage information in the form of nodes and links between the cohorts.
+    This function retrieves data related to the specified modality from the SQL database, filters and processes
+    it to identify connections (links) between cohorts based on shared mappings, and constructs the data in
+    a format suitable for chord diagrams or other network visualizations.
 
     Args:
-        modality (str): Name of the modality, used to identify the CSV file in the folder.
-        cohorts (list[str]): List of cohort names to be included in the mappings.
-        repo (CDMRepository): CDMRepository instance to interact with the database containing the modalities.
+        modality (str): The name of the modality, used to identify the relevant table in the database.
+        cohorts (list[str]): A list of cohort names to include in the mappings. Only cohorts in this list are processed.
+        repo (SQLLiteRepository): An instance of `SQLLiteRepository` used to interact with the database.
 
     Raises:
-        ValueError: If the cohorts list is empty
+        ValueError: If the `cohorts` list is empty.
 
     Returns:
-        dict: A dictionary containing:
-            - 'nodes': A list of dictionaries, each representing a node with 'name' and 'group'.
-            - 'links': A list of dictionaries, each representing a link with 'source' and 'target'.
+        dict[str, list[dict[str, str]]]: A dictionary with two keys:
+            - 'nodes': A list of dictionaries, where each dictionary represents a node with the following keys:
+                - `name` (str): The identifier or name of the node (e.g., mapping or cohort name).
+                - `group` (str): The cohort name that the node belongs to.
+            - 'links': A list of dictionaries, where each dictionary represents a link with the following keys:
+                - `source` (str): The name of the source node.
+                - `target` (str): The name of the target node.
+
+        The 'nodes' represent individual mappings or entities, grouped by cohort, while the 'links' define the
+        connections between these nodes based on shared mappings across cohorts.
     """
     # Check if the cohorts list is empty
     if not cohorts:

@@ -1,4 +1,5 @@
 import os
+
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from dotenv import load_dotenv
@@ -12,18 +13,18 @@ ph = PasswordHasher()
 def init_credentials():
     """Initializes admin credentials from environment variables or a .env file.
 
-    This function checks for the presence of the `PDATAVIEWER_ADMIN_USERNAME`and
-    `PDATAVIEWER_ADMIN_PASSWORD`environment variables. If these variables are not found,
-    it loads them from a .env file. After loading, it checks for the presence of the
-    `PDATAVIEWER_ADMIN_USERNAME`and`PDATAVIEWER_ADMIN_PASSWORD`environment variables again.
-    If the credentials are still missing after attempting to load from the .env file, an HTTP
-    exception is raised.
+    This function attempts to load the admin username and password from the environment
+    variables `PDATAVIEWER_ADMIN_USERNAME`and `PDATAVIEWER_ADMIN_PASSWORD`. If these values
+    are not found, it loads them from a `.env` file using `dotenv`. After attempting to load
+    the credentials, it checks if they are set in the environment. If not, an HTTP exception is raise.
 
     Raises:
-        HTTPException: If the admin credentials are missing after attempting to load from the environment and .env file, an HTTP 500 Internal Server Error exception is raised.
+        HTTPException: If the admin credentials are missing after loading from the environment
+            and `.env` file, a 500 Internal Server Error is raised with a message indicating
+            missing credentials.
 
     Returns:
-        bool: Returns True if the admin credentials are successfully initialized.
+        bool: Returns `True` if the admin credentials are successfully initialized.
     """
 
     # Check the admin username and password is already set in the environment
@@ -42,20 +43,25 @@ def init_credentials():
 
 
 def authenticate_user(credentials: HTTPBasicCredentials = Depends(security)):
-    """Authenticates a user based on the provided credentials.
+    """Authenticates a user based on the provided HTTP Basic credentials.
 
-    This function compares the provided credentials with the environment variables
-    `PDATAVIEWER_ADMIN_USERNAME`and `PDATAVIEWER_ADMIN_PASSWORD`. If the credentials match,
-    the user is authenticated successfully. Otherwise, an HTTP exception is raised.
+    This function checks the username and password provided by the user against the
+    admin credentials stored in teh environment variables `PDATAVIEWER_ADMIN_USERNAME`
+    and `PDATAVIEWER_ADMIN_PASSWORD`. If the provided username and password match,
+    the user is authenticated successfully. If either the username or password is incorrect,
+    an HTTP 401 Unauthorized exception is raised.
 
     Args:
-        credentials (HTTPBasicCredentials, optional): The credentials provided by the user. Defaults to Depends(security).
+        credentials (HTTPBasicCredentials, optional): The HTTP Basic credentials provided
+            by the user (username and password). Defaults to Depends(security).
 
     Raises:
-        HTTPException: If the provided username or password is incorrect, an HTTP 401 Unauthorized exception is raised.
+        HTTPException: If the username or password is incorrect, an HTTP 401 Unauthorized
+            exception is raised with an appropriate detail message.
 
     Returns:
-        bool: Returns True if the authentication is successful.
+        bool: Returns `True` if the user is authenticated successfully. If authentication fails,
+            an exception is raised before this return.
     """
 
     # Get the username and password from the environment
