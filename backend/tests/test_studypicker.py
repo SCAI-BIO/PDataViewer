@@ -40,7 +40,7 @@ def test_rank_cohorts(
     expected_result: dict[str, dict[int, str]],
 ):
     ranked_cohorts = rank_cohorts(
-        features=features, repo=mock_cdm_repository, columns_to_drop=None
+        variables=features, repo=mock_cdm_repository, columns_to_drop=None
     )
 
     # Assert the shape of the DataFrame
@@ -56,5 +56,5 @@ def test_rank_cohorts(
 
 
 def test_rank_cohorts_empty_features(mock_cdm_repository: MagicMock):
-    with pytest.raises(ValueError, match="The 'features' list cannot be empty"):
-        rank_cohorts(features=[], repo=mock_cdm_repository, columns_to_drop=None)
+    with pytest.raises(ValueError, match="The 'variables' list cannot be empty"):
+        rank_cohorts(variables=[], repo=mock_cdm_repository, columns_to_drop=None)

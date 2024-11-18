@@ -4,41 +4,70 @@ import numpy as np
 import pandas as pd
 
 
-def extract_features(
+def extract_variables(
     df_dict: dict[str, pd.DataFrame], mapping_df: pd.DataFrame
 ) -> dict[str, dict[str, list[dict[str, int | float | str]]]]:
-    """Generates a nested dictionary that contains all available measurements for mapped features per cohort,
-    including diagnosis.
+    """Generates a nested dictionary containing measurements and diagnoses for mapped variables across cohorts.
+
+    This function process cohort data and variable mappings to extract relevant measurement and diagnoses
+    for each variable and cohort. The result is a nested dictionary with the following structure:
+
+    - Outer dictionary keys: Variable names.
+    - Inner dictionary keys: Cohort names.
+    - Inner list items: Dictionaries containing measurements and diagnoses.
 
     Args:
-        df_dict (dict[str, pd.DataFrame]): Dictionary of data frames containing cohort data.
-        mapping_df (pd.DataFrame): Data frame of mapped features.
+        df_dict (dict[str, pd.DataFrame]): A dictionary where keys are cohort names and values are data frames
+            containing participant-level data for each cohort.
+        mapping_df (pd.DataFrame): A data frame containing mappings of variables to their corresponding cohort terms.
 
     Returns:
-        result_dict (dict[str, dict[str, list[dict[str, int | float | str]]]]): A nested dictionary.
-        Outer dictionary is the available features, inner dictionary is the measurements for each cohort study,
-        including diagnosis.
+        dict[str, dict[str, list[dict[str, int | float | str]]]]: A nested dictionary structured as follows:
+            - Outer dictionary:
+                - Keys: Variable names.
+                - Values: Inner dictionaries for each cohort.
+            - Inner dictionary:
+                - Keys: Cohort names.
+                - Values: Lists of dictionaries containing:
+                    - "Measurement" (int | float | str): The measured value for the variable.
+                    - "Diagnoses" (str): The diagnosis associated with the measurement.
+
+    Example:
+        {
+            "VariableA": {
+                "Cohort1": [
+                    {"Measurement": 5.2, "Diagnosis": "DiseaseA"},
+                    {"Measurement": 3.1, "Diagnosis": "DiseaseB"}
+                ],
+                "Cohort2": [
+                    {"Measurement": 7.4, "Diagnosis": "DiseaseC"}
+                ]
+            },
+            "VariableB": {
+                ...
+            }
+        }
     """
 
     result_dict = {}
 
-    for feature in mapping_df.Feature:
+    for variable in mapping_df.Feature:
 
-        # Extract only feature column from PASSIONATE
-        feature_row = mapping_df.loc[mapping_df["Feature"] == feature]
+        # Extract only variable column from PASSIONATE
+        variable_row = mapping_df.loc[mapping_df["Feature"] == variable]
 
         for cohort in mapping_df.columns.intersection(list(df_dict.keys())):
-            feat = feature_row[cohort].item()
+            feat = variable_row[cohort].item()
 
             # If the mapping is empty continue
             if pd.isna(feat):
                 continue
 
-            # If the feature mapped to more than one term, take the first one
+            # If the variable mapped to more than one term, take the first one
             if ", " in feat:
                 feat = feat.split(", ")[0]
 
-            # The mapped feature might not contain valid measurements
+            # The mapped variable might not contain valid measurements
             # In this case drop the column
             if feat not in df_dict[cohort].columns:
                 continue
@@ -49,13 +78,13 @@ def extract_features(
             ]
 
             if not valid_rows.empty:
-                if feature not in result_dict:
-                    result_dict[feature] = {}
-                if cohort not in result_dict[feature]:
-                    result_dict[feature][cohort] = []
+                if variable not in result_dict:
+                    result_dict[variable] = {}
+                if cohort not in result_dict[variable]:
+                    result_dict[variable][cohort] = []
 
                 for _, row in valid_rows.iterrows():
-                    result_dict[feature][cohort].append(
+                    result_dict[variable][cohort].append(
                         {
                             "Measurement": row[feat],
                             "Diagnosis": row["Diagnosis"],
@@ -74,20 +103,20 @@ modalities = [file.stem for file in cdm_files]  # names of the data frames
 dataframes = [pd.read_csv(file) for file in cdm_files]  # the data frames
 
 # Create a dictionary with all modalities as dataframes
-all_features = {modality.lower(): df for modality, df in zip(modalities, dataframes)}
+all_variables = {modality.lower(): df for modality, df in zip(modalities, dataframes)}
 
 # Drop irrelevant columns
-for df in all_features.values():
+for df in all_variables.values():
     df.drop(columns=["CURIE", "Definition", "Synonyms"], inplace=True, errors="ignore")
 
 # Combine the modalities into a single dataframe
-merged_df = pd.concat(all_features.values(), ignore_index=True)
+merged_df = pd.concat(all_variables.values(), ignore_index=True)
 
 # Replace "No total score." as the test was performed but the total score was not reported
 merged_df.replace({"No total score.": np.nan}, inplace=True)
 
-# Filter numeric features
-numeric_features = merged_df.loc[merged_df.Rank == 2]
+# Filter numeric variables
+numeric_variables = merged_df.loc[merged_df.Rank == 2]
 
 ### READ PATIENT LEVEL DATA ###
 patient_level_files = sorted(base_path.glob("patient_level/*.csv"))
@@ -108,17 +137,17 @@ for cohort, _ in cohort_studies.items():
     # and set it as the index
     cohort_studies[cohort].dropna(axis=1, how="all", inplace=True)
 
-result = extract_features(cohort_studies, numeric_features)
+result = extract_variables(cohort_studies, numeric_variables)
 
-# Convert each feature dictionary into a dataframe and save it as csv file
+# Convert each variable dictionary into a dataframe and save it as csv file
 output_path = base_path / "processed/biomarker"
 output_path.mkdir(parents=True, exist_ok=True)
 
-for feature, feature_data in result.items():
+for variable, variable_data in result.items():
 
     # Create a list to store the data
     data = []
-    for cohort, measurements in feature_data.items():
+    for cohort, measurements in variable_data.items():
         for i, measurement in enumerate(measurements):
             data.append(
                 {
@@ -136,4 +165,4 @@ for feature, feature_data in result.items():
     if not df.empty:
         df = df.sample(frac=1)
         df.set_index(["Participant number", "Cohort"], inplace=True)
-        df.to_csv(output_path / f"biomarkers_{feature.lower()}.csv")
+        df.to_csv(output_path / f"biomarkers_{variable.lower()}.csv")
