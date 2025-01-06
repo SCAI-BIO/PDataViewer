@@ -1,2 +1,2 @@
-Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,Fox Insight,DATATOP,PINE,UK Biobank,PostCEPT,SPARX,Rank
-PET - Tau,,Positron emission tomography - Tau,,TAU_SUVR_CBM,,,,,,,PDMBCurrPet,,,,,,1
+Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,UMLS,Fox Insight,DATATOP,PINE,UK Biobank,PostCEPT,SPARX,Rank
+PET - Tau,,"PET Tau refers to positron emission tomography (PET) imaging used to detect and quantify tau protein deposits in the brain. Tau PET imaging involves the use of radiotracers that bind to aggregated tau, enabling the assessment of tau pathology associated with neurodegenerative diseases such as Alzheimer's disease.",,TAU_SUVR_CBM,,,,,,,,PDMBCurrPet,,,,,,1

@@ -11,6 +11,8 @@ def rank_cohorts(
         "Definition",
         "Synonyms",
         "OMOP",
+        "UMLS",
+        "UK Biobank",
         "Rank",
     ],
 ) -> pd.DataFrame:
@@ -20,7 +22,7 @@ def rank_cohorts(
         variables (list[str]): A list of variables that the user is interested in.
         repo (SQLLiteRepository): An instance of `SQLLiteRepository` used to interact with the database containing cohort data.
         columns_to_drop (list[str] | None, optional): A list of columns to exclude from the cohort ranking process.
-            Defaults to ["CURIE", "Definition", "Synonyms", "OMOP"].
+            Defaults to ["CURIE", "Definition", "Synonyms", "OMOP", "UMLS", "Rank"].
 
     Raises:
         ValueError: If the `variable` list is empty.

@@ -1,7 +1,7 @@
-Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,Fox Insight,DATATOP,PINE,UK Biobank,PostCEPT,SPARX,Rank
-DTI - Left Rostral,,Diffusion tensor imaging - Left rostral,,ROI1,,,,,,,,,,,,,1
-DTI - Right Rostral,,Diffusion tensor imaging - Right rostral,,ROI4,,,,,,,,,,,,,1
-DTI - Left Middle,,Diffusion tensor imaging - Left middle,,ROI2,,,,,,,,,,,,,1
-DTI - Right Middle,,Diffusion tensor imaging - Right middle,,ROI5,,,,,,,,,,,,,1
-DTI - Left Caudal,,Diffusion tensor imaging - Left caudal,,ROI3,,,,,,,,,,,,,1
-DTI - Right Caudal,,Diffusion tensor imaging - Right caudal,,ROI6,,,,,,,,,,,,,1
+Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,UMLS,Fox Insight,DATATOP,PINE,UK Biobank,PostCEPT,SPARX,Rank
+DTI - Left Rostral,,"DTI - Left Rostral refers to diffusion tensor imaging (DTI) metrics measured in the left rostral region of the brain. DTI is an MRI-based technique used to assess white matter integrity and directional water diffusion, providing insights into neural connectivity and microstructural changes in this specific brain area.",,ROI1,,,,,,,,,,,,,,1
+DTI - Right Rostral,,"DTI - Right Rostral refers to diffusion tensor imaging (DTI) metrics measured in the right rostral region of the brain. DTI is an MRI-based technique used to assess white matter integrity and directional water diffusion, providing insights into neural connectivity and microstructural changes in this specific brain area.",,ROI4,,,,,,,,,,,,,,1
+DTI - Left Middle,,"DTI - Left Middle refers to diffusion tensor imaging (DTI) metrics measured in the left middle region of the brain. DTI is an MRI-based technique used to assess white matter integrity and directional water diffusion, providing insights into neural connectivity and microstructural changes in this specific brain area.",,ROI2,,,,,,,,,,,,,,1
+DTI - Right Middle,,"DTI - Right Middle refers to diffusion tensor imaging (DTI) metrics measured in the right middle region of the brain. DTI is an MRI-based technique used to assess white matter integrity and directional water diffusion, providing insights into neural connectivity and microstructural changes in this specific brain area.",,ROI5,,,,,,,,,,,,,,1
+DTI - Left Caudal,,"DTI - Left Caudal refers to diffusion tensor imaging (DTI) metrics measured in the left caudal region of the brain. DTI is an MRI-based technique used to assess white matter integrity and directional water diffusion, providing insights into neural connectivity and microstructural changes in this specific brain area.",,ROI3,,,,,,,,,,,,,,1
+DTI - Right Caudal,,"DTI - Right Caudal refers to diffusion tensor imaging (DTI) metrics measured in the right caudal region of the brain. DTI is an MRI-based technique used to assess white matter integrity and directional water diffusion, providing insights into neural connectivity and microstructural changes in this specific brain area.",,ROI6,,,,,,,,,,,,,,1
