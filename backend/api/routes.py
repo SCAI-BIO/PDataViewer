@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 
 import numpy as np
+from api.auth import authenticate_user, init_credentials
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import RedirectResponse
@@ -15,8 +16,6 @@ from functions.visualization import generate_chords
 from pydantic import BaseModel
 from repository.sqllite import SQLLiteRepository
 from starlette.middleware.cors import CORSMiddleware
-
-from api.auth import authenticate_user, init_credentials
 
 load_dotenv()
 
@@ -202,7 +201,7 @@ def get_cohorts():
     cdm = database.get_cdm()
     cdm.replace({np.nan: "", "No total score.": ""}, inplace=True)
     cdm.drop(
-        ["Feature", "CURIE", "Definition", "Synonyms", "OMOP", "Rank"],
+        ["Feature", "CURIE", "Definition", "Synonyms", "OMOP", "UMLS", "Rank"],
         axis=1,
         inplace=True,
     )
