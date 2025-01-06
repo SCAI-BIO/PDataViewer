@@ -201,7 +201,16 @@ def get_cohorts():
     cdm = database.get_cdm()
     cdm.replace({np.nan: "", "No total score.": ""}, inplace=True)
     cdm.drop(
-        ["Feature", "CURIE", "Definition", "Synonyms", "OMOP", "UMLS", "Rank"],
+        [
+            "Feature",
+            "CURIE",
+            "Definition",
+            "Synonyms",
+            "OMOP",
+            "UMLS",
+            "UK Biobank",
+            "Rank",
+        ],
         axis=1,
         inplace=True,
     )

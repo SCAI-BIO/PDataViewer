@@ -12,6 +12,7 @@ def rank_cohorts(
         "Synonyms",
         "OMOP",
         "UMLS",
+        "UK Biobank",
         "Rank",
     ],
 ) -> pd.DataFrame:
