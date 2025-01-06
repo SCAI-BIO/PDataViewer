@@ -31,9 +31,9 @@ Data collected in cohort studies lay the groundwork for a plethora of Parkinsonâ
 ## Requirements
 
 - Python >= 3.10
-- [Angular = 18.2.x](https://angular.io/guide/setup-local)
+- [Angular == 19.x.x](https://angular.io/guide/setup-local)
 - [Node.js >= 18.19.1](https://nodejs.org/en/download/package-manager)
-- TypeScript >= 5.4.0 < 5.6.0
+- TypeScript >= 5.5.0
 
 ## Installation
 
