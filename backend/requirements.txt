@@ -3,7 +3,7 @@ fastapi==0.114.2
 numpy==2.1.1
 pandas==2.2.2
 python-dotenv==1.0.1
-python-multipart==0.0.9
+python-multipart==0.0.18
 SQLAlchemy==2.0.35
 thefuzz==0.22.1
 uvicorn==0.30.6
