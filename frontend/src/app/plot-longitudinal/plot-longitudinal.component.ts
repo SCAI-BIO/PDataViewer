@@ -13,11 +13,10 @@ import { LongitudinalData } from '../interfaces/longitudinal-data';
 import { LineplotService } from '../services/lineplot.service';
 
 @Component({
-  selector: 'app-plot-longitudinal',
-  standalone: true,
-  imports: [],
-  templateUrl: './plot-longitudinal.component.html',
-  styleUrl: './plot-longitudinal.component.css',
+    selector: 'app-plot-longitudinal',
+    imports: [],
+    templateUrl: './plot-longitudinal.component.html',
+    styleUrl: './plot-longitudinal.component.css'
 })
 export class PlotLongitudinalComponent implements OnInit, OnDestroy {
   cohort: string = '';

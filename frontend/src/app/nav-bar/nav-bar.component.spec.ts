@@ -64,5 +64,8 @@ describe('NavBarComponent', () => {
   });
 });
 
-@Component({ template: '' })
+@Component({
+    template: '',
+    standalone: false
+})
 class DummyComponent {}

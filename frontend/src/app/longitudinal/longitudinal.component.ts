@@ -26,19 +26,18 @@ import { LongitudinalData } from '../interfaces/longitudinal-data';
 import { LineplotService } from '../services/lineplot.service';
 
 @Component({
-  selector: 'app-longitudinal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatAutocompleteModule,
-    MatChipsModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './longitudinal.component.html',
-  styleUrl: './longitudinal.component.css',
+    selector: 'app-longitudinal',
+    imports: [
+        CommonModule,
+        MatAutocompleteModule,
+        MatChipsModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './longitudinal.component.html',
+    styleUrl: './longitudinal.component.css'
 })
 export class LongitudinalComponent implements OnInit, OnDestroy {
   colors: { [key: string]: string } = {};

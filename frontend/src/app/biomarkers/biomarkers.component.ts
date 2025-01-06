@@ -26,20 +26,19 @@ import { BoxplotService } from '../services/boxplot.service';
 import { environment } from '../../environments/environment';
 
 @Component({
-  selector: 'app-biomarkers',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatAutocompleteModule,
-    MatChipsModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatSlideToggleModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './biomarkers.component.html',
-  styleUrls: ['./biomarkers.component.css'],
+    selector: 'app-biomarkers',
+    imports: [
+        CommonModule,
+        MatAutocompleteModule,
+        MatChipsModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatSlideToggleModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './biomarkers.component.html',
+    styleUrls: ['./biomarkers.component.css']
 })
 export class BiomarkersComponent implements OnInit, OnDestroy {
   biomarkerCtrl = new FormControl();

@@ -25,22 +25,21 @@ import { Terminology, Response } from '../interfaces/mapping';
 import { MyErrorStateMatcherService } from '../services/my-error-state-matcher.service';
 
 @Component({
-  selector: 'app-auto-harmonizer',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatGridListModule,
-    MatIconModule,
-    MatInputModule,
-    MatPaginatorModule,
-    MatProgressBarModule,
-    MatSelectModule,
-    MatTableModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './auto-harmonizer.component.html',
-  styleUrl: './auto-harmonizer.component.css',
+    selector: 'app-auto-harmonizer',
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        MatGridListModule,
+        MatIconModule,
+        MatInputModule,
+        MatPaginatorModule,
+        MatProgressBarModule,
+        MatSelectModule,
+        MatTableModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './auto-harmonizer.component.html',
+    styleUrl: './auto-harmonizer.component.css'
 })
 export class AutoHarmonizerComponent implements OnInit {
   @ViewChild('paginator') paginator!: MatPaginator;

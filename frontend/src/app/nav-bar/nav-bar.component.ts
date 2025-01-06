@@ -4,11 +4,10 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'app-nav-bar',
-  standalone: true,
-  imports: [MatButtonModule, MatMenuModule, RouterModule],
-  templateUrl: './nav-bar.component.html',
-  styleUrl: './nav-bar.component.css',
+    selector: 'app-nav-bar',
+    imports: [MatButtonModule, MatMenuModule, RouterModule],
+    templateUrl: './nav-bar.component.html',
+    styleUrl: './nav-bar.component.css'
 })
 export class NavBarComponent {
   isToolsMenuOpen: boolean = false;
