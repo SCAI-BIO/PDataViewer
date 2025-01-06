@@ -6,11 +6,10 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-contact-us',
-  standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatIconModule],
-  templateUrl: './contact-us.component.html',
-  styleUrl: './contact-us.component.css',
+    selector: 'app-contact-us',
+    imports: [MatCardModule, MatButtonModule, MatIconModule],
+    templateUrl: './contact-us.component.html',
+    styleUrl: './contact-us.component.css'
 })
 export class ContactUsComponent {
   constructor(

@@ -14,11 +14,10 @@ interface CohortData extends CohortMetadata {
   cohort: string;
 }
 @Component({
-  selector: 'app-cohorts',
-  standalone: true,
-  imports: [CommonModule, MatTableModule, MatSortModule],
-  templateUrl: './cohorts.component.html',
-  styleUrls: ['./cohorts.component.css'],
+    selector: 'app-cohorts',
+    imports: [CommonModule, MatTableModule, MatSortModule],
+    templateUrl: './cohorts.component.html',
+    styleUrls: ['./cohorts.component.css']
 })
 export class CohortsComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = [

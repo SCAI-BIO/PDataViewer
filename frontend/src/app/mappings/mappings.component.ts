@@ -9,11 +9,10 @@ import { ChordDiagramService } from '../services/chord-diagram.service';
 import { ChordData } from '../interfaces/chord-data';
 
 @Component({
-  selector: 'app-mappings',
-  standalone: true,
-  imports: [CommonModule, MatSliderModule],
-  templateUrl: './mappings.component.html',
-  styleUrl: './mappings.component.css',
+    selector: 'app-mappings',
+    imports: [CommonModule, MatSliderModule],
+    templateUrl: './mappings.component.html',
+    styleUrl: './mappings.component.css'
 })
 export class MappingsComponent implements OnInit, OnDestroy {
   dataChunks: ChordData[] = [];

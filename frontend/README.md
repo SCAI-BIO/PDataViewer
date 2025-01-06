@@ -15,13 +15,13 @@ This repository contains the frontend code for the PDataViewer web application. 
 
 ## Tutorial
 
-For a detailed guide on using Angular, refer to the official [Angular Tutorial](https://angular.io/tutorial/).
+For a detailed guide on using Angular, refer to the official [Angular Tutorial](https://angular.dev/tutorials).
 
 ## Requirements
 
-- [Angular = 18.2.x](https://angular.io/guide/setup-local)
+- [Angular == 19.x.x](https://angular.dev/installation)
 - [Node.js >= 18.19.1](https://nodejs.org/en/download/package-manager)
-- TypeScript >= 5.4.0 < 5.6.0
+- TypeScript >= 5.5.0
 
 ## Installation
 

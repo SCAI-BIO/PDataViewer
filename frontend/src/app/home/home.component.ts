@@ -5,11 +5,10 @@ import { environment } from '../../environments/environment';
 import { Subscription } from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [RouterModule, MatDividerModule],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
+    selector: 'app-home',
+    imports: [RouterModule, MatDividerModule],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit, OnDestroy {
   cohortNumber: number = 0;
