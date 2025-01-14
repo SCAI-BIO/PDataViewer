@@ -1,19 +1,18 @@
-export interface Mapping {
-  concept: {
-    id: string;
-    name: string;
-    terminology: {
-      id: string;
-      name: string;
-    };
-    text: string;
-    similarity: number;
-  };
+export interface Terminology {
+  id: string;
+  name: string;
 }
 
-export interface Terminology {
-  name: string;
+export interface Concept {
   id: string;
+  name: string;
+  terminology: Terminology;
+}
+
+export interface Mapping {
+  concept: Concept;
+  text: string;
+  similarity: number;
 }
 
 export interface Response {
