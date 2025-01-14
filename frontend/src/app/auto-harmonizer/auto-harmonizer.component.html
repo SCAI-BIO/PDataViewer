@@ -31,6 +31,7 @@
               Please <strong>select</strong> a terminology
             </mat-error>
           </mat-form-field>
+
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Embedding Model</mat-label>
             <mat-select formControlName="selectedEmbeddingModel">
@@ -51,13 +52,10 @@
               Please <strong>select</strong> a model
             </mat-error>
           </mat-form-field>
+
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Variable Field</mat-label>
-            <input
-              matInput
-              formControlName="variableField"
-              [errorStateMatcher]="matcher"
-            />
+            <input matInput formControlName="variableField" />
             <mat-error
               *ngIf="
                 autoHarmonizerForm.get('variableField')?.hasError('required')
@@ -66,13 +64,10 @@
               Variable field is <strong>required</strong>
             </mat-error>
           </mat-form-field>
+
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Description Field</mat-label>
-            <input
-              matInput
-              formControlName="descriptionField"
-              [errorStateMatcher]="matcher"
-            />
+            <input matInput formControlName="descriptionField" />
             <mat-error
               *ngIf="
                 autoHarmonizerForm.get('descriptionField')?.hasError('required')
@@ -83,6 +78,7 @@
           </mat-form-field>
         </form>
       </div>
+
       <div class="file-upload-container">
         <input
           type="file"
@@ -104,20 +100,26 @@
         </div>
       </div>
     </div>
+
     <div class="button-container">
       <button mat-raised-button color="primary" (click)="onSubmit()">
         Harmonize
       </button>
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="downloadTableAsCSV()"
+        *ngIf="closestMappings.length > 0"
+      >
+        Download as CSV
+      </button>
     </div>
-    <div class="progress">
-      <mat-progress-bar
-        class="progress-bar"
-        mode="determinate"
-        [value]="uploadProgress"
-        *ngIf="uploadProgress !== null"
-      ></mat-progress-bar>
+
+    <div *ngIf="loading" class="loading-spinner">
+      <mat-spinner diameter="40"></mat-spinner>
     </div>
   </div>
+
   <div class="mat-elevation-z8 table-container">
     <table mat-table [dataSource]="dataSource" class="mat-table">
       <ng-container matColumnDef="variable">
