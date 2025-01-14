@@ -1,22 +1,22 @@
 export interface Terminology {
-  id: string;
-  name: string;
+  readonly id: string;
+  readonly name: string;
 }
 
 export interface Concept {
-  id: string;
-  name: string;
-  terminology: Terminology;
+  readonly id: string;
+  readonly name: string;
+  readonly terminology: Terminology;
 }
 
 export interface Mapping {
-  concept: Concept;
-  text: string;
-  similarity: number;
+  readonly concept: Concept;
+  readonly text: string;
+  readonly similarity: number;
 }
 
 export interface Response {
-  variable: string;
-  description: string;
-  mappings: Mapping[];
+  readonly variable: string;
+  readonly description: string;
+  readonly mappings: Mapping[];
 }
