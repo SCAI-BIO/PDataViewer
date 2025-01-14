@@ -1,5 +1,5 @@
 export interface RankData {
-  cohort: string;
-  found: string;
-  missing: string;
+  readonly cohort: string;
+  readonly found: string;
+  readonly missing: string;
 }
