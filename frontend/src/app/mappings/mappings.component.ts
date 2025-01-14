@@ -6,13 +6,13 @@ import { Subscription, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ChordDiagramService } from '../services/chord-diagram.service';
-import { ChordData } from '../interfaces/chord-data';
+import { ChordData } from '../interfaces/chord';
 
 @Component({
-    selector: 'app-mappings',
-    imports: [CommonModule, MatSliderModule],
-    templateUrl: './mappings.component.html',
-    styleUrl: './mappings.component.css'
+  selector: 'app-mappings',
+  imports: [CommonModule, MatSliderModule],
+  templateUrl: './mappings.component.html',
+  styleUrl: './mappings.component.css',
 })
 export class MappingsComponent implements OnInit, OnDestroy {
   dataChunks: ChordData[] = [];

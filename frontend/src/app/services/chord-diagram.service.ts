@@ -4,9 +4,7 @@ import { Injectable } from '@angular/core';
 import * as d3 from 'd3';
 import { Observable } from 'rxjs';
 
-import { ChordData } from '../interfaces/chord-data';
-import { ChordLink } from '../interfaces/chord-link';
-import { ChordNode } from '../interfaces/chord-node';
+import { ChordData, ChordLink, ChordNode } from '../interfaces/chord';
 import { Metadata } from '../interfaces/metadata';
 import { environment } from '../../environments/environment';
 
