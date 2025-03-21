@@ -1,4 +1,4 @@
-## Pull Request
+# Pull Request
 
 **Description**  
 A brief summary of the changes and their purpose.
@@ -7,6 +7,7 @@ A brief summary of the changes and their purpose.
 Link to the issue(s) this PR addresses (e.g., `#123`).
 
 **Type of Change**  
+
 - [ ] Bugfix
 - [ ] New Feature
 - [ ] Documentation
@@ -14,6 +15,7 @@ Link to the issue(s) this PR addresses (e.g., `#123`).
 - [ ] Other (please specify):
 
 **Proposed Changes**  
+
 - Bullet points outlining the main changes made in this PR.
 
 **How to Test**  
@@ -23,6 +25,7 @@ Instructions or steps to test the changes made.
 (If applicable) Add screenshots to help explain your changes.
 
 **Checklist**  
+
 - [ ] My code follows the project's coding style.
 - [ ] I have tested my changes locally.
 - [ ] I have updated the documentation (if applicable).
