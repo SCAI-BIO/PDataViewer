@@ -26,7 +26,7 @@ jobs:
 
     - name: Update API Version
       run: |
-        sed -i "s/version=\"[^\"]*\"/version=\"${{ steps.version.outputs.VERSION }}\"/" backend/api/routes.py
+        sed -i "s/version=\"[^\"]*\"/version=\"${{ steps.version.outputs.VERSION }}\"/" backend/api/main.py
 
     - name: Update Angular App Version
       run: |
