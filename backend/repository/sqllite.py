@@ -2,8 +2,7 @@ from io import BytesIO
 from typing import List, Optional
 
 import pandas as pd
-from sqlalchemy import (Column, Integer, MetaData, String, Table,
-                        create_engine, inspect)
+from sqlalchemy import Column, Integer, MetaData, String, Table, create_engine, inspect
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 Base = declarative_base()
@@ -24,6 +23,11 @@ class SQLLiteRepository:
 
         # Create empty modality table
         Base.metadata.create_all(self.engine)
+
+    def close(self):
+        """Closes the SQLAlchemy session."""
+        if self.session:
+            self.session.close()
 
     def delete_database(self):
         """
