@@ -69,7 +69,7 @@ Run the Backend API on port 5000:
 
 ```bash
 cd backend
-uvicorn api.routes:app --reload --port 5000
+uvicorn api.mapin:app --reload --port 5000
 ```
 
 ### Run the Backend via Docker

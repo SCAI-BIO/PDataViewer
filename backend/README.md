@@ -38,7 +38,7 @@ You can access the backend functionalities by accessing the provided REST API.
 Run the Backend API on port 5000:
 
 ```bash
-uvicorn api.routes:app --reload --port 5000
+uvicorn api.main:app --reload --port 5000
 ```
 
 ### Run the Backend via Docker
