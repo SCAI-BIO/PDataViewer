@@ -19,7 +19,7 @@ For a detailed guide on using FastAPI, refer to the official [FastAPI Tutorial](
 
 ## Requirements
 
-- Python >= 3.10
+- Python >= 3.11
 
 ## Installation
 

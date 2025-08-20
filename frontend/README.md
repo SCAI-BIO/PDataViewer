@@ -19,9 +19,9 @@ For a detailed guide on using Angular, refer to the official [Angular Tutorial](
 
 ## Requirements
 
-- [Angular == 19.x.x](https://angular.dev/installation)
-- [Node.js >= 18.19.1](https://nodejs.org/en/download/package-manager)
-- TypeScript >= 5.5.0
+- [Angular == 20.x.x](https://angular.dev/installation)
+- [Node.js >= 20.19.0](https://nodejs.org/en/download/package-manager)
+- TypeScript >= 5.9.0
 
 ## Installation
 
