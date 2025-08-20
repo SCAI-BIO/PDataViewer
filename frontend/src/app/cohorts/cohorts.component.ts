@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -15,7 +15,7 @@ interface CohortData extends CohortMetadata {
 }
 @Component({
     selector: 'app-cohorts',
-    imports: [CommonModule, MatTableModule, MatSortModule],
+    imports: [MatTableModule, MatSortModule],
     templateUrl: './cohorts.component.html',
     styleUrls: ['./cohorts.component.css']
 })

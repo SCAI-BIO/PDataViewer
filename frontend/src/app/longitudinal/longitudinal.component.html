@@ -13,34 +13,36 @@
         <mat-chip-listbox
           [multiple]="false"
           aria-label="Longitudinal selection"
-        >
-          <mat-chip-option
-            *ngIf="selectedFeature"
-            [removable]="true"
-            [selectable]="false"
-            (removed)="removeFeature()"
           >
-            {{ selectedFeature }}
-            <mat-icon matChipRemove>cancel</mat-icon>
-          </mat-chip-option>
+          @if (selectedFeature) {
+            <mat-chip-option
+              [removable]="true"
+              [selectable]="false"
+              (removed)="removeFeature()"
+              >
+              {{ selectedFeature }}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip-option>
+          }
           <input
             matInput
             placeholder="Enter a feature"
             [matAutocomplete]="autoLongitudinal"
             [formControl]="featureCtrl"
-          />
+            />
         </mat-chip-listbox>
         <mat-autocomplete
           #autoLongitudinal="matAutocomplete"
           [displayWith]="displayFn"
           (optionSelected)="featureSelected($event)"
-        >
-          <mat-option
-            *ngFor="let option of filteredFeatures | async"
-            [value]="option"
           >
-            {{ option }}
-          </mat-option>
+          @for (option of filteredFeatures | async; track option) {
+            <mat-option
+              [value]="option"
+              >
+              {{ option }}
+            </mat-option>
+          }
         </mat-autocomplete>
       </mat-form-field>
     </div>

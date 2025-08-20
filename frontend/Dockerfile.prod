@@ -1,14 +1,11 @@
 # FIRST STAGE: Build the Angular Application
-FROM node:22.12.0 as build
+FROM node:24.5.0 AS build
 
 # Set the working directory
 WORKDIR /app
 
 # Copy the current directory contents into the working directory
 COPY . .
-
-# Update lock file
-RUN npm install
 
 # Install dependencies
 RUN npm ci
@@ -20,7 +17,7 @@ RUN npm install -g @angular/cli
 RUN ng build --configuration=production
 
 # SECOND STAGE: Serve the application using Nginx
-FROM docker.io/library/nginx:1.26.0
+FROM nginx:1.29.1-alpine
 
 # Copy the built application from the previous stage
 COPY --from=build /app/dist/pdataviewer/browser /usr/share/nginx/html

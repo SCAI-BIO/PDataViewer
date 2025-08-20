@@ -14,67 +14,73 @@
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Terminology</mat-label>
             <mat-select formControlName="selectedTerminology">
-              <mat-option
-                *ngFor="let terminology of terminologies"
-                [value]="terminology"
-              >
-                {{ terminology }}
-              </mat-option>
+              @for (terminology of terminologies; track terminology) {
+                <mat-option
+                  [value]="terminology"
+                  >
+                  {{ terminology }}
+                </mat-option>
+              }
             </mat-select>
-            <mat-error
-              *ngIf="
-                autoHarmonizerForm
-                  .get('selectedTerminology')
-                  ?.hasError('required')
-              "
-            >
-              Please <strong>select</strong> a terminology
-            </mat-error>
+            @if (
+              autoHarmonizerForm
+              .get('selectedTerminology')
+              ?.hasError('required')
+              ) {
+              <mat-error
+                >
+                Please <strong>select</strong> a terminology
+              </mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Embedding Model</mat-label>
             <mat-select formControlName="selectedEmbeddingModel">
-              <mat-option
-                *ngFor="let embeddingModel of embeddingModels"
-                [value]="embeddingModel"
-              >
-                {{ embeddingModel }}
-              </mat-option>
+              @for (embeddingModel of embeddingModels; track embeddingModel) {
+                <mat-option
+                  [value]="embeddingModel"
+                  >
+                  {{ embeddingModel }}
+                </mat-option>
+              }
             </mat-select>
-            <mat-error
-              *ngIf="
-                autoHarmonizerForm
-                  .get('selectedEmbeddingModel')
-                  ?.hasError('required')
-              "
-            >
-              Please <strong>select</strong> a model
-            </mat-error>
+            @if (
+              autoHarmonizerForm
+              .get('selectedEmbeddingModel')
+              ?.hasError('required')
+              ) {
+              <mat-error
+                >
+                Please <strong>select</strong> a model
+              </mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Variable Field</mat-label>
             <input matInput formControlName="variableField" />
-            <mat-error
-              *ngIf="
-                autoHarmonizerForm.get('variableField')?.hasError('required')
-              "
-            >
-              Variable field is <strong>required</strong>
-            </mat-error>
+            @if (
+              autoHarmonizerForm.get('variableField')?.hasError('required')
+              ) {
+              <mat-error
+                >
+                Variable field is <strong>required</strong>
+              </mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="form-field">
             <mat-label>Description Field</mat-label>
             <input matInput formControlName="descriptionField" />
-            <mat-error
-              *ngIf="
-                autoHarmonizerForm.get('descriptionField')?.hasError('required')
-              "
-            >
-              Description field is <strong>required</strong>
-            </mat-error>
+            @if (
+              autoHarmonizerForm.get('descriptionField')?.hasError('required')
+              ) {
+              <mat-error
+                >
+                Description field is <strong>required</strong>
+              </mat-error>
+            }
           </mat-form-field>
         </form>
       </div>
@@ -86,7 +92,7 @@
           (change)="onFileSelect($event)"
           [accept]="requiredFileType"
           #fileUpload
-        />
+          />
         <div class="file-upload">
           {{ fileName || "No file uploaded yet." }}
           <button
@@ -94,7 +100,7 @@
             color="primary"
             class="upload-btn"
             (click)="fileUpload.click()"
-          >
+            >
             <mat-icon>attach_file</mat-icon>
           </button>
         </div>
@@ -105,19 +111,22 @@
       <button mat-raised-button color="primary" (click)="onSubmit()">
         Harmonize
       </button>
-      <button
-        mat-raised-button
-        color="accent"
-        (click)="downloadTableAsCSV()"
-        *ngIf="closestMappings.length > 0"
-      >
-        Download as CSV
-      </button>
+      @if (closestMappings.length > 0) {
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="downloadTableAsCSV()"
+          >
+          Download as CSV
+        </button>
+      }
     </div>
 
-    <div *ngIf="loading" class="loading-spinner">
-      <mat-spinner diameter="40"></mat-spinner>
-    </div>
+    @if (loading) {
+      <div class="loading-spinner">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    }
   </div>
 
   <div class="mat-elevation-z8 table-container">
