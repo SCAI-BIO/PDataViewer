@@ -20,97 +20,109 @@
     <div class="biomarker-container">
       <mat-form-field class="full-width">
         <mat-chip-listbox [multiple]="false" aria-label="Biomarker selection">
-          <mat-chip-option
-            *ngIf="selectedBiomarker"
-            [removable]="true"
-            [selectable]="false"
-            (removed)="removeBiomarker()"
-          >
-            {{ selectedBiomarker }}
-            <mat-icon matChipRemove>cancel</mat-icon>
-          </mat-chip-option>
+          @if (selectedBiomarker) {
+            <mat-chip-option
+              [removable]="true"
+              [selectable]="false"
+              (removed)="removeBiomarker()"
+              >
+              {{ selectedBiomarker }}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip-option>
+          }
           <input
             matInput
             placeholder="Enter a variable"
             [matAutocomplete]="autoBiomarker"
             [formControl]="biomarkerCtrl"
-          />
+            />
         </mat-chip-listbox>
         <mat-autocomplete
           #autoBiomarker="matAutocomplete"
           [displayWith]="displayFn"
           (optionSelected)="biomarkerSelected($event)"
-        >
-          <mat-option
-            *ngFor="let option of filteredBiomarkers | async"
-            [value]="option"
           >
-            {{ option }}
-          </mat-option>
+          @for (option of filteredBiomarkers | async; track option) {
+            <mat-option
+              [value]="option"
+              >
+              {{ option }}
+            </mat-option>
+          }
         </mat-autocomplete>
       </mat-form-field>
     </div>
 
-    <div class="cohort-container" *ngIf="selectedBiomarker">
-      <h4>Available Cohorts for {{ selectedBiomarker }}:</h4>
-      <br />
-      <div class="cohort-list">
-        <div *ngFor="let cohort of cohorts">
-          <p>
-            <span
-              class="color-circle"
-              [style.background-color]="colors[cohort]"
-            ></span>
-            {{ cohort }}
-          </p>
+    @if (selectedBiomarker) {
+      <div class="cohort-container">
+        <h4>Available Cohorts for {{ selectedBiomarker }}:</h4>
+        <br />
+        <div class="cohort-list">
+          @for (cohort of cohorts; track cohort) {
+            <div>
+              <p>
+                <span
+                  class="color-circle"
+                  [style.background-color]="colors[cohort]"
+                ></span>
+                {{ cohort }}
+              </p>
+            </div>
+          }
         </div>
       </div>
-    </div>
+    }
 
-    <div class="cohort-selection-container" *ngIf="selectedBiomarker">
-      <mat-form-field class="full-width">
-        <mat-chip-listbox aria-label="Cohort selection">
-          <mat-chip-option
-            *ngFor="let cohort of selectedCohorts"
-            [removable]="true"
-            [selectable]="false"
-            (removed)="removeCohort(cohort)"
-          >
-            {{ cohort }}
-            <mat-icon matChipRemove>cancel</mat-icon>
-          </mat-chip-option>
-          <input
-            matInput
-            placeholder="Select at least one cohort"
-            [matAutocomplete]="autoCohort"
-            [formControl]="cohortCtrl"
-            (matChipInputTokenEnd)="addCohort($any($event))"
-          />
-        </mat-chip-listbox>
-        <mat-autocomplete
-          #autoCohort="matAutocomplete"
-          [displayWith]="displayFn"
-          (optionSelected)="cohortSelected($event)"
-        >
-          <mat-option
-            *ngFor="let option of filteredDiagnoses | async"
-            [value]="option"
-          >
-            {{ option }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
+    @if (selectedBiomarker) {
+      <div class="cohort-selection-container">
+        <mat-form-field class="full-width">
+          <mat-chip-listbox aria-label="Cohort selection">
+            @for (cohort of selectedCohorts; track cohort) {
+              <mat-chip-option
+                [removable]="true"
+                [selectable]="false"
+                (removed)="removeCohort(cohort)"
+                >
+                {{ cohort }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip-option>
+            }
+            <input
+              matInput
+              placeholder="Select at least one cohort"
+              [matAutocomplete]="autoCohort"
+              [formControl]="cohortCtrl"
+              (matChipInputTokenEnd)="addCohort($any($event))"
+              />
+          </mat-chip-listbox>
+          <mat-autocomplete
+            #autoCohort="matAutocomplete"
+            [displayWith]="displayFn"
+            (optionSelected)="cohortSelected($event)"
+            >
+            @for (option of filteredDiagnoses | async; track option) {
+              <mat-option
+                [value]="option"
+                >
+                {{ option }}
+              </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    }
 
     <!-- Button container for ranking cohorts -->
-    <div class="button-container" *ngIf="selectedCohorts.length > 0">
-      <mat-slide-toggle (change)="onToggleDataPoints($event.checked)">
-        Show Data Points
-      </mat-slide-toggle>
-      <button mat-raised-button color="primary" (click)="generateBoxplot()">
-        Visualize feature distribution
-      </button>
-    </div>
+    @if (selectedCohorts.length > 0) {
+      <div class="button-container">
+        <mat-slide-toggle (change)="onToggleDataPoints($event.checked)">
+          Show Data Points
+        </mat-slide-toggle>
+        <button mat-raised-button color="primary" (click)="generateBoxplot()">
+          Visualize feature distribution
+        </button>
+      </div>
+    }
 
     <div #boxplot></div>
   </div>

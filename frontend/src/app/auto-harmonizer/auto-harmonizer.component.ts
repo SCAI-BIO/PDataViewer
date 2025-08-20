@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
   FormBuilder,
@@ -23,7 +23,6 @@ import { Terminology, Response } from '../interfaces/mapping';
   templateUrl: './auto-harmonizer.component.html',
   styleUrls: ['./auto-harmonizer.component.css'],
   imports: [
-    CommonModule,
     MatFormFieldModule,
     MatGridListModule,
     MatIconModule,
@@ -32,8 +31,8 @@ import { Terminology, Response } from '../interfaces/mapping';
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
-    ReactiveFormsModule,
-  ],
+    ReactiveFormsModule
+],
 })
 export class AutoHarmonizerComponent implements OnInit {
   @ViewChild('paginator') paginator!: MatPaginator;

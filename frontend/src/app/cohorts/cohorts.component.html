@@ -92,20 +92,18 @@
       <ng-container matColumnDef="Link">
         <th mat-header-cell *matHeaderCellDef>Data Access</th>
         <td mat-cell *matCellDef="let element">
-          <ng-container
-            *ngIf="element.Link === 'Shared by consortium'; else buttonTemplate"
-          >
+          @if (element.Link === 'Shared by consortium') {
             {{ element.Link }}
-          </ng-container>
-          <ng-template #buttonTemplate>
-            <button
-              mat-button
-              *ngIf="element.Link"
-              (click)="openLink(element.Link)"
-            >
-              Apply
-            </button>
-          </ng-template>
+          } @else {
+            @if (element.Link) {
+              <button
+                mat-button
+                (click)="openLink(element.Link)"
+                >
+                Apply
+              </button>
+            }
+          }
         </td>
       </ng-container>
 
