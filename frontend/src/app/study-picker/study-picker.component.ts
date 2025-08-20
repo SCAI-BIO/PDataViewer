@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -37,10 +37,10 @@ import { environment } from '../../environments/environment';
 })
 export class StudyPickerComponent implements OnInit, OnDestroy {
   cohortData: Metadata = {};
-  cohortColors: { [key: string]: string } = {};
-  cohortLinks: { [key: string]: string } = {};
+  cohortColors: Record<string, string> = {};
+  cohortLinks: Record<string, string> = {};
   cohortRankings: RankData[] = [];
-  dataAvailability: { [key: string]: boolean } = {
+  dataAvailability: Record<string, boolean> = {
     PPMI: true,
     BIOFIND: true,
     LuxPARK: false,
@@ -67,9 +67,9 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   @Input() selectedFeatures: string[] = [];
   suggestions$: Observable<string[]> | null = null;
   private API_URL = environment.API_URL;
+  private http = inject(HttpClient);
+  private router = inject(Router);
   private subscriptions: Subscription[] = [];
-
-  constructor(private http: HttpClient, private router: Router) {}
 
   addFeature(event: MatChipInputEvent): void {
     let feature = event.value;
@@ -95,7 +95,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         this.cohortData = data;
         for (const cohort in data) {
-          if (data.hasOwnProperty(cohort)) {
+          if (Object.hasOwn(data, cohort)) {
             this.cohortColors[cohort] = data[cohort].Color;
             this.cohortLinks[cohort] = data[cohort].Link;
           }
