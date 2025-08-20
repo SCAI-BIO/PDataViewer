@@ -8,7 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
     selector: 'app-home',
     imports: [RouterModule, MatDividerModule],
     templateUrl: './home.component.html',
-    styleUrl: './home.component.css'
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit, OnDestroy {
   cohortNumber: number = 0;

@@ -21,19 +21,19 @@ import { RankData } from '../interfaces/rankdata';
 import { environment } from '../../environments/environment';
 
 @Component({
-    selector: 'app-study-picker',
-    imports: [
-        CommonModule,
-        MatFormFieldModule,
-        MatAutocompleteModule,
-        MatInputModule,
-        MatChipsModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatTableModule,
-    ],
-    templateUrl: './study-picker.component.html',
-    styleUrl: './study-picker.component.css'
+  selector: 'app-study-picker',
+  imports: [
+    CommonModule,
+    MatFormFieldModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    MatChipsModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatTableModule,
+  ],
+  templateUrl: './study-picker.component.html',
+  styleUrl: './study-picker.component.scss',
 })
 export class StudyPickerComponent implements OnInit, OnDestroy {
   cohortData: Metadata = {};

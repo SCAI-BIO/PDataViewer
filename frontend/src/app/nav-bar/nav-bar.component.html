@@ -8,7 +8,7 @@
           <a [routerLink]="['/']">
             <img
               class="img-fluid"
-              src="assets/logos/logo.png"
+              src="logos/logo.png"
               id="pdataviewer-logo"
               alt="pdataviewer-logo"
             />
@@ -33,28 +33,12 @@
               >
             </li>
             <li>
-              <a routerLink="/ethnicity" class="button fancy-button disable"
-                >Ethnicity</a
-              >
-            </li>
-            <li>
               <a routerLink="/mappings" class="button fancy-button">Mappings</a>
             </li>
             <li>
               <a routerLink="/longitudinal" class="button fancy-button"
                 >Longitudinal</a
               >
-            </li>
-            <li
-              class="tools-menu"
-              (mouseenter)="openToolsMenu()"
-              (mouseleave)="closeToolsMenu()"
-            >
-              <a class="button fancy-button">Tools</a>
-              <div class="dropdown-menu" [class.show]="isToolsMenuOpen">
-                <a routerLink="/auto-harmonizer" class="dropdown-item">Auto-Harmonizer</a>
-                <a href="https://index.bio.scai.fraunhofer.de/visualization" target="_blank" class="dropdown-item">tSNE</a>
-              </div>
             </li>
             <li>
               <a routerLink="/contact-us" class="button fancy-button"

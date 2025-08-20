@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:pdataviewer": "node dist/pdataviewer/server/server.mjs"
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -37,12 +37,14 @@
     "@types/express": "^5.0.3",
     "@types/jasmine": "^5.1.9",
     "@types/node": "^24.3.0",
+    "eslint": "^9.33.0",
     "jasmine-core": "^5.9.0",
     "karma": "~6.4.4",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.40.0"
   }
 }

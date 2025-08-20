@@ -1,0 +1,295 @@
+.mat-divider {
+  border-style: hidden;
+}
+
+/* Welcome Area */
+.welcome-area {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40vh;
+}
+
+.banner {
+  max-height: 100vh;
+  width: 100%;
+}
+
+.welcome-area .header-text {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-55%);
+  text-align: center;
+  width: 100%;
+}
+
+.welcome-area .header-text h1 {
+  font-size: 2vw;
+  color: #fff;
+}
+
+/* About */
+.about .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-item {
+  background: #fff;
+  box-shadow: 0 2px 48px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 1%;
+  text-align: center;
+  transition: 0.3s ease;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.about-title {
+  font-size: 1.2vw;
+  color: #1e1e1e;
+  margin-bottom: 15px;
+}
+
+.about-item p {
+  font-size: 1vw;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+/* Counter */
+.counter {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 0;
+  background: url("../../../public/home/background-applications.png") center
+    center / cover no-repeat;
+  height: 30vh;
+}
+
+.counter .content {
+  width: 100%;
+  text-align: center;
+}
+
+.counts-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.counter .count-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+}
+
+.counter .count-item strong {
+  font-weight: 600;
+  font-size: 2vw;
+  margin: 10px 0;
+  color: #fff;
+  transition: 0.3s ease;
+}
+
+.counter .count-item span {
+  color: #fff;
+  font-weight: 500;
+  font-size: 1vw;
+}
+
+/* Images */
+.img {
+  max-width: 25%;
+  max-height: 25%;
+}
+
+.left-img {
+  margin-right: 20px;
+}
+
+.right-img {
+  margin-left: 20px;
+}
+
+/* Background for Biomarker and Mapping Sections */
+.biomarker,
+.longitudinal {
+  background: url("../../../public/home/background-applications.png") center
+    center / cover no-repeat;
+}
+
+.biomarker p,
+.longitudinal p,
+.biomarker h2,
+.counter h2,
+.longitudinal h2 {
+  color: #fff;
+}
+
+/* Citation Section */
+.citation-section {
+  padding: 0 25%;
+}
+
+/* Section Content */
+.section-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 25%;
+}
+
+.section-content img {
+  margin-right: 20px;
+}
+
+.section-content .text {
+  font-size: 1vw;
+}
+
+.section-content .text-center {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+a.button {
+  background-color: #99004f;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+a.button:hover {
+  background-color: #660035;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+  .about-item {
+    width: 70%;
+  }
+
+  .section-content {
+    padding: 0 15%;
+  }
+
+  .counter .count-item {
+    width: 150px;
+  }
+}
+
+@media (max-width: 992px) {
+  .welcome-area {
+    height: 35vh;
+  }
+
+  .welcome-area .header-text h1 {
+    font-size: 2.5vw;
+  }
+
+  .about-item {
+    width: 80%;
+  }
+
+  .counter .count-item strong {
+    font-size: 2.5vw;
+  }
+
+  .counter .count-item span {
+    font-size: 1.5vw;
+  }
+
+  .citation-section,
+  .section-content {
+    padding: 0 10%;
+  }
+
+  .section-content .text {
+    font-size: 1.2vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-area {
+    height: 30vh;
+  }
+
+  .welcome-area .header-text h1 {
+    font-size: 3.5vw;
+  }
+
+  .about-item {
+    width: 90%;
+  }
+
+  .counter .count-item strong {
+    font-size: 3vw;
+  }
+
+  .counter .count-item span {
+    font-size: 1.8vw;
+  }
+
+  .citation-section,
+  .section-content {
+    padding: 0 5%;
+  }
+
+  .section-content .text {
+    font-size: 1.5vw;
+  }
+}
+
+@media (max-width: 576px) {
+  .welcome-area {
+    height: 25vh;
+  }
+
+  .welcome-area .header-text h1 {
+    font-size: 4.5vw;
+  }
+
+  .about-title {
+    font-size: 4vw;
+  }
+
+  .about-item p {
+    font-size: 2vw;
+  }
+
+  .counter {
+    height: 25vh;
+  }
+
+  .counter .count-item strong {
+    font-size: 4vw;
+  }
+
+  .counter .count-item span {
+    font-size: 2.5vw;
+  }
+
+  .section-content .text {
+    font-size: 2vw;
+  }
+
+  .counts-wrapper {
+    /* Stack counters vertically on small screens */
+    flex-direction: column;
+    gap: 10px;
+  }
+}

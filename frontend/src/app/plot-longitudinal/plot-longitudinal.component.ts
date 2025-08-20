@@ -16,7 +16,7 @@ import { LineplotService } from '../services/lineplot.service';
     selector: 'app-plot-longitudinal',
     imports: [],
     templateUrl: './plot-longitudinal.component.html',
-    styleUrl: './plot-longitudinal.component.css'
+    styleUrl: './plot-longitudinal.component.scss'
 })
 export class PlotLongitudinalComponent implements OnInit, OnDestroy {
   cohort: string = '';
@@ -80,7 +80,7 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
   loadOriginalCaseMappings(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<{ [key: string]: string }>('./assets/lower_to_original_case.json')
+        .get<{ [key: string]: string }>('lower_to_original_case.json')
         .subscribe({
           next: (data) => {
             this.originalVariableNameMappings = data;

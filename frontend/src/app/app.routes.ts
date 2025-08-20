@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { AutoHarmonizerComponent } from './auto-harmonizer/auto-harmonizer.component';
 import { BiomarkersComponent } from './biomarkers/biomarkers.component';
 import { CohortsComponent } from './cohorts/cohorts.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
@@ -15,10 +14,6 @@ export const routes: Routes = [
     path: '',
     component: HomeComponent,
     pathMatch: 'full',
-  },
-  {
-    path: 'auto-harmonizer',
-    component: AutoHarmonizerComponent,
   },
   {
     path: 'biomarkers',

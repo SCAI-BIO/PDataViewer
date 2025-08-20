@@ -12,7 +12,7 @@ import { ChordData } from '../interfaces/chord';
   selector: 'app-mappings',
   imports: [CommonModule, MatSliderModule],
   templateUrl: './mappings.component.html',
-  styleUrl: './mappings.component.css',
+  styleUrl: './mappings.component.scss',
 })
 export class MappingsComponent implements OnInit, OnDestroy {
   dataChunks: ChordData[] = [];

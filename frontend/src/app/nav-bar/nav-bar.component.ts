@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
     selector: 'app-nav-bar',
     imports: [MatButtonModule, MatMenuModule, RouterModule],
     templateUrl: './nav-bar.component.html',
-    styleUrl: './nav-bar.component.css'
+    styleUrl: './nav-bar.component.scss'
 })
 export class NavBarComponent {
   isToolsMenuOpen: boolean = false;

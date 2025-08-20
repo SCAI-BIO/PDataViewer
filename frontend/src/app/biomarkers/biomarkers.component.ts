@@ -26,19 +26,19 @@ import { BoxplotService } from '../services/boxplot.service';
 import { environment } from '../../environments/environment';
 
 @Component({
-    selector: 'app-biomarkers',
-    imports: [
-        CommonModule,
-        MatAutocompleteModule,
-        MatChipsModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatInputModule,
-        MatSlideToggleModule,
-        ReactiveFormsModule,
-    ],
-    templateUrl: './biomarkers.component.html',
-    styleUrls: ['./biomarkers.component.css']
+  selector: 'app-biomarkers',
+  imports: [
+    CommonModule,
+    MatAutocompleteModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatSlideToggleModule,
+    ReactiveFormsModule,
+  ],
+  templateUrl: './biomarkers.component.html',
+  styleUrl: './biomarkers.component.scss',
 })
 export class BiomarkersComponent implements OnInit, OnDestroy {
   biomarkerCtrl = new FormControl();
@@ -198,7 +198,9 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
 
   loadOriginalCaseMappings(): void {
     this.http
-      .get<{ [key: string]: string }>('./assets/lower_to_original_case.json')
+      .get<{ [key: string]: string }>(
+        '../../../public/lower_to_original_case.json'
+      )
       .subscribe({
         next: (data) => {
           this.originalVariableNameMappings = data;

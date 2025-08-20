@@ -26,18 +26,18 @@ import { LongitudinalData } from '../interfaces/longitudinal-data';
 import { LineplotService } from '../services/lineplot.service';
 
 @Component({
-    selector: 'app-longitudinal',
-    imports: [
-        CommonModule,
-        MatAutocompleteModule,
-        MatChipsModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatInputModule,
-        ReactiveFormsModule,
-    ],
-    templateUrl: './longitudinal.component.html',
-    styleUrl: './longitudinal.component.css'
+  selector: 'app-longitudinal',
+  imports: [
+    CommonModule,
+    MatAutocompleteModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    ReactiveFormsModule,
+  ],
+  templateUrl: './longitudinal.component.html',
+  styleUrl: './longitudinal.component.scss',
 })
 export class LongitudinalComponent implements OnInit, OnDestroy {
   colors: { [key: string]: string } = {};
@@ -134,7 +134,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   loadOriginalCaseMappings(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<{ [key: string]: string }>('./assets/lower_to_original_case.json')
+        .get<{ [key: string]: string }>('/lower_to_original_case.json')
         .subscribe({
           next: (data) => {
             this.originalVariableNameMappings = data;

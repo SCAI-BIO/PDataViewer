@@ -6,6 +6,6 @@ import { MatGridListModule } from '@angular/material/grid-list';
     selector: 'app-imprint',
     imports: [MatCardModule, MatGridListModule],
     templateUrl: './imprint.component.html',
-    styleUrl: './imprint.component.css'
+    styleUrl: './imprint.component.scss'
 })
 export class ImprintComponent {}
