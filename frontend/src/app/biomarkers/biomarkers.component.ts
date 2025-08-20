@@ -6,6 +6,7 @@ import {
   OnDestroy,
   ElementRef,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -42,26 +43,23 @@ import { environment } from '../../environments/environment';
 })
 export class BiomarkersComponent implements OnInit, OnDestroy {
   biomarkerCtrl = new FormControl();
-  biomarkerData: { [cohort: string]: number[] } = {};
+  biomarkerData: Record<string, number[]> = {};
   biomarkers: string[] = [];
   cohortCtrl = new FormControl();
   cohorts: string[] = [];
-  colors: { [key: string]: string } = {};
-  diagnoses: { [key: string]: string[] } = {};
+  colors: Record<string, string> = {};
+  diagnoses: Record<string, string[]> = {};
   filteredBiomarkers: Observable<string[]> | null = null;
   filteredDiagnoses: Observable<string[]> | null = null;
-  originalVariableNameMappings: { [key: string]: string } = {};
-  selectedBiomarker: string = '';
+  originalVariableNameMappings: Record<string, string> = {};
+  selectedBiomarker = '';
   selectedCohorts: string[] = [];
-  showDataPoints: boolean = false;
-  private API_URL = environment.API_URL;
+  showDataPoints = false;
   @ViewChild('boxplot') private chartContainer!: ElementRef;
+  private API_URL = environment.API_URL;
+  private boxplotService = inject(BoxplotService);
+  private http = inject(HttpClient);
   private subscriptions: Subscription[] = [];
-
-  constructor(
-    private boxplotService: BoxplotService,
-    private http: HttpClient
-  ) {}
 
   addCohort(event: MatChipInputEvent): void {
     let cohort = event.value;
@@ -146,9 +144,9 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
       .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
       .pipe(
         map((metadata) => {
-          const colors: { [key: string]: string } = {};
+          const colors: Record<string, string> = {};
           for (const key in metadata) {
-            if (metadata.hasOwnProperty(key)) {
+            if (Object.hasOwn(metadata, key)) {
               colors[key] = metadata[key].Color;
             }
           }
@@ -170,7 +168,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   fetchDiagnoses(): void {
     const biomarker = this.selectedBiomarker.toLowerCase();
     const sub = this.http
-      .get<{ [key: string]: string[] }>(
+      .get<Record<string, string[]>>(
         `${this.API_URL}/biomarkers/${biomarker}/diagnoses`
       )
       .subscribe({
@@ -198,7 +196,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
 
   loadOriginalCaseMappings(): void {
     this.http
-      .get<{ [key: string]: string }>(
+      .get<Record<string, string>>(
         '../../../public/lower_to_original_case.json'
       )
       .subscribe({
@@ -257,7 +255,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
 
   private _filterDiagnoses(
     value: string,
-    diagnoses: { [key: string]: string[] }
+    diagnoses: Record<string, string[]>
   ): string[] {
     const filterValue = value.toLowerCase();
     const transformedDiagnoses = this._transformDiagnoses(diagnoses);
@@ -276,9 +274,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
       : biomarker.charAt(0).toUpperCase() + biomarker.slice(1);
   }
 
-  private _transformDiagnoses(diagnoses: {
-    [key: string]: string[];
-  }): string[] {
+  private _transformDiagnoses(diagnoses: Record<string, string[]>): string[] {
     const transformedDiagnoses = Object.entries(diagnoses).flatMap(
       ([cohort, diagnoses]) =>
         diagnoses.map((diagnosis) =>

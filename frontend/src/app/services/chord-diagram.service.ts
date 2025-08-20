@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
 import * as d3 from 'd3';
 import { Observable } from 'rxjs';
@@ -15,8 +15,9 @@ export class ChordDiagramService {
   dataChunks: ChordData[] = [];
   private API_URL = environment.API_URL;
   private colorScale: d3.ScaleOrdinal<string, string>;
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {
+  constructor() {
     this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
   }
 
@@ -125,8 +126,11 @@ export class ChordDiagramService {
     const chord = d3.chord().padAngle(0.06).sortSubgroups(d3.descending);
     const chords = chord(matrix);
 
-    const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);
-    const ribbon = d3.ribbon().radius(innerRadius);
+    const arc = d3
+      .arc<d3.ChordGroup>()
+      .innerRadius(innerRadius)
+      .outerRadius(outerRadius);
+    const ribbon = d3.ribbon<d3.Chord, d3.ChordSubgroup>().radius(innerRadius);
 
     const svgGroup = svg
       .attr('width', '100%')
@@ -155,31 +159,28 @@ export class ChordDiagramService {
         const feature = nodes[d.index];
         return d3.rgb(this.colorScale(feature.group)).darker().toString();
       })
-      .attr('d', arc as any);
+      .attr('d', arc);
 
     group
       .append('text')
-      .each((d: any) => {
-        d.angle = (d.startAngle + d.endAngle) / 2;
-      })
       .attr('dy', '.35em')
-      .attr(
-        'transform',
-        (d: any) => `
-                rotate(${(d.angle * 180) / Math.PI - 90})
-                translate(${outerRadius + 20})
-                ${d.angle > Math.PI ? 'rotate(180)' : ''}
-            `
+      .attr('transform', (d) => {
+        const angle = (d.startAngle + d.endAngle) / 2;
+        return `
+      rotate(${(angle * 180) / Math.PI - 90})
+      translate(${outerRadius + 20})
+      ${angle > Math.PI ? 'rotate(180)' : ''}
+    `;
+      })
+      .style('text-anchor', (d) =>
+        (d.startAngle + d.endAngle) / 2 > Math.PI ? 'end' : null
       )
-      .style('text-anchor', (d: any) => (d.angle > Math.PI ? 'end' : null))
-      .text((d: d3.ChordGroup) => nodes[d.index].name)
+      .text((d) => nodes[d.index].name)
       .on('mouseover', function (event: MouseEvent, d: d3.ChordGroup) {
         const index = d.index;
         svgGroup
-          .selectAll('.ribbon')
-          .filter(
-            (r: any) => r.source.index === index || r.target.index === index
-          )
+          .selectAll<SVGPathElement, d3.Chord>('.ribbon')
+          .filter((r) => r.source.index === index || r.target.index === index)
           .style('fill', 'black')
           .style('stroke', 'black');
       })
@@ -200,7 +201,7 @@ export class ChordDiagramService {
       .enter()
       .append('path')
       .attr('class', 'ribbon')
-      .attr('d', ribbon as any);
+      .attr('d', ribbon);
 
     const existingGroups = Array.from(
       new Set(nodes.map((node) => node.group))

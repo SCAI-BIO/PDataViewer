@@ -1,22 +1,21 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { Subscription } from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
 @Component({
-    selector: 'app-home',
-    imports: [RouterModule, MatDividerModule],
-    templateUrl: './home.component.html',
-    styleUrl: './home.component.scss'
+  selector: 'app-home',
+  imports: [RouterModule, MatDividerModule],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  cohortNumber: number = 0;
-  featureNumber: number = 0;
+  cohortNumber = 0;
+  featureNumber = 0;
   private API_URL = environment.API_URL;
+  private http = inject(HttpClient);
   private subscriptions: Subscription[] = [];
-
-  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.fetchCohorts();

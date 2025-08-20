@@ -5,13 +5,11 @@ import * as d3 from 'd3';
   providedIn: 'root',
 })
 export class BoxplotService {
-  constructor() {}
-
   createBoxplot(
     element: ElementRef,
-    data: { [key: string]: number[] },
-    colors: { [key: string]: string },
-    showDataPoints: boolean = false
+    data: Record<string, number[]>,
+    colors: Record<string, string>,
+    showDataPoints = false
   ): void {
     const margin = { top: 20, right: 150, bottom: 40, left: 40 };
     const width = 800 - margin.left - margin.right;
@@ -76,7 +74,7 @@ export class BoxplotService {
 
     svg.append('g').call(d3.axisLeft(y));
 
-    const colorMap: { [key: string]: string } = {
+    const colorMap: Record<string, string> = {
       CU: '#32cd32',
       PD: '#ff0000',
       Complete: '#008080',
@@ -233,7 +231,9 @@ export class BoxplotService {
       .text((d) => d);
 
     if (showDataPoints) {
-      const usedDiagnosisGroups = Array.from(new Set(allData.map(d => d.diagnosisGroup)));
+      const usedDiagnosisGroups = Array.from(
+        new Set(allData.map((d) => d.diagnosisGroup))
+      );
       const diagnosisLegend = svg
         .append('g')
         .attr(

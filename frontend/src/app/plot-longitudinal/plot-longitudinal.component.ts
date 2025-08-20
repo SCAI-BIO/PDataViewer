@@ -4,6 +4,7 @@ import {
   OnInit,
   OnDestroy,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
@@ -13,26 +14,23 @@ import { LongitudinalData } from '../interfaces/longitudinal-data';
 import { LineplotService } from '../services/lineplot.service';
 
 @Component({
-    selector: 'app-plot-longitudinal',
-    imports: [],
-    templateUrl: './plot-longitudinal.component.html',
-    styleUrl: './plot-longitudinal.component.scss'
+  selector: 'app-plot-longitudinal',
+  imports: [],
+  templateUrl: './plot-longitudinal.component.html',
+  styleUrl: './plot-longitudinal.component.scss',
 })
 export class PlotLongitudinalComponent implements OnInit, OnDestroy {
-  cohort: string = '';
+  cohort = '';
   variables: string[] = [];
   data: LongitudinalData[] = [];
-  originalVariableNameMappings: { [key: string]: string } = {};
-  private API_URL = environment.API_URL;
+  originalVariableNameMappings: Record<string, string> = {};
   @ViewChild('lineplot') private chartContainer!: ElementRef;
-  private subscriptions: Subscription[] = [];
+  private API_URL = environment.API_URL;
   private dataFetchCount = 0;
-
-  constructor(
-    private route: ActivatedRoute,
-    private http: HttpClient,
-    private lineplotService: LineplotService
-  ) {}
+  private http = inject(HttpClient);
+  private lineplotService = inject(LineplotService);
+  private route = inject(ActivatedRoute);
+  private subscriptions: Subscription[] = [];
 
   fetchLongitudinalTable(table_name: string): void {
     const feature_name = this._transformLongitudinalName(table_name);
@@ -80,7 +78,7 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
   loadOriginalCaseMappings(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<{ [key: string]: string }>('lower_to_original_case.json')
+        .get<Record<string, string>>('lower_to_original_case.json')
         .subscribe({
           next: (data) => {
             this.originalVariableNameMappings = data;

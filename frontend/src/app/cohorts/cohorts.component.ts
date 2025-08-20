@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
 
@@ -35,8 +35,7 @@ export class CohortsComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
   private API_URL = environment.API_URL;
   private destroy$ = new Subject<void>();
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   fetchMetadata(): void {
     this.http

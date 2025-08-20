@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,10 +12,9 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrl: './contact-us.component.scss',
 })
 export class ContactUsComponent {
-  constructor(
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
-  ) {
+  private matIconRegistry = inject(MatIconRegistry);
+  private domSanitizer = inject(DomSanitizer);
+  constructor() {
     this.matIconRegistry.addSvgIcon(
       'x',
       this.domSanitizer.bypassSecurityTrustResourceUrl('social-media/x.svg')

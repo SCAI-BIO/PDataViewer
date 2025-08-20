@@ -29,63 +29,63 @@
       Model (PASSIONATE) on
       <a href="https://zenodo.org/records/10218362" target="_blank"
         >Zenodo</a
-        ></strong
-        >
-        <br />
-        <br />
+      ></strong
+    >
+    <br />
+    <br />
 
-        Please select a modality to continue.
-      </p>
-      <div class="content-container">
-        <!-- Container for modality buttons -->
-        <div class="modality-buttons">
-          <!-- Loop through each modality and create a button -->
-          @for (modality of modalities; track modality) {
-            <button
-              (click)="onModalityClick(modality)"
-              [ngClass]="{ 'selected-modality': modality === selectedModality }"
-              >
-              <!-- Interpolate modality name -->
-              {{ modality }}
-            </button>
-          }
-        </div>
-
-        <!-- Conditional display of no-data message -->
-        @if (noData) {
-          <div class="no-data-message">
-            Sorry, no mapping to showcase for this modality currently. We are
-            collecting more data, keep in touch!
-          </div>
-        }
-
-        <!-- Container for max features label and slider -->
-        <div class="max-features-wrapper">
-          <div class="max-features-container">
-            <label id="featureNumber" class="featureNumber"
-              >Maximum Number of Features:
-            </label>
-            <span class="featureNumber">{{ maxFeatures }}</span>
-          </div>
-          <mat-slider
-            [min]="minFeatures"
-            [max]="totalFeatures"
-            step="10"
-            (input)="onSliderChange($event)"
-            >
-            <input matSliderThumb [value]="maxFeatures" />
-          </mat-slider>
-        </div>
-
-        <!-- Container for chord diagrams -->
-        <div class="chord-diagrams-container">
-          <!-- Loop through each data chunk and create a container for chord diagram -->
-          @for (chunk of dataChunks; track chunk) {
-            <div class="chord-diagram">
-              <!-- Placeholder for SVG content of chord diagram -->
-              <svg></svg>
-            </div>
-          }
-        </div>
-      </div>
+    Please select a modality to continue.
+  </p>
+  <div class="content-container">
+    <!-- Container for modality buttons -->
+    <div class="modality-buttons">
+      <!-- Loop through each modality and create a button -->
+      @for (modality of modalities; track modality) {
+      <button
+        (click)="onModalityClick(modality)"
+        [ngClass]="{ 'selected-modality': modality === selectedModality }"
+      >
+        <!-- Interpolate modality name -->
+        {{ modality }}
+      </button>
+      }
     </div>
+
+    <!-- Conditional display of no-data message -->
+    @if (noData) {
+    <div class="no-data-message">
+      Sorry, no mapping to showcase for this modality currently. We are
+      collecting more data, keep in touch!
+    </div>
+    }
+
+    <!-- Container for max features label and slider -->
+    <div class="max-features-wrapper">
+      <div class="max-features-container">
+        <label for="featureNumberInput" class="featureNumber"
+          >Maximum Number of Features:
+        </label>
+        <span class="featureNumber">{{ maxFeatures }}</span>
+      </div>
+      <mat-slider
+        [min]="minFeatures"
+        [max]="totalFeatures"
+        step="10"
+        (input)="onSliderChange($event)"
+      >
+        <input id="featureNumberInput" matSliderThumb [value]="maxFeatures" />
+      </mat-slider>
+    </div>
+
+    <!-- Container for chord diagrams -->
+    <div class="chord-diagrams-container">
+      <!-- Loop through each data chunk and create a container for chord diagram -->
+      @for (chunk of dataChunks; track chunk) {
+      <div class="chord-diagram">
+        <!-- Placeholder for SVG content of chord diagram -->
+        <svg></svg>
+      </div>
+      }
+    </div>
+  </div>
+</div>

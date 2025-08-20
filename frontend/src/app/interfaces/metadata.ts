@@ -11,6 +11,4 @@ export interface CohortMetadata {
   readonly Color: string;
 }
 
-export interface Metadata {
-  readonly [key: string]: CohortMetadata;
-}
+export type Metadata = Readonly<Record<string, CohortMetadata>>;

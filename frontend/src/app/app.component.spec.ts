@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { AppComponent } from './app.component';
 import { ActivatedRoute } from '@angular/router';
+
 import { of } from 'rxjs';
+
+import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -11,7 +13,7 @@ describe('AppComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            params: of({}), // Mocked ActivatedRoute with observable params
+            params: of({}),
           },
         },
       ],

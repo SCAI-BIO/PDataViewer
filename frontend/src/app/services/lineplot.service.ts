@@ -1,19 +1,21 @@
-import { ElementRef, Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { ElementRef, Injectable, PLATFORM_ID, inject } from '@angular/core';
+
 import * as d3 from 'd3';
+
 import { LongitudinalData } from '../interfaces/longitudinal-data';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LineplotService {
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  private platformId = inject(PLATFORM_ID);
 
   createLineplot(
     element: ElementRef,
     data: LongitudinalData[],
-    colors: { [key: string]: string } = {}, // Default parameter
-    title: string = '' // New optional title parameter
+    colors: Record<string, string> = {}, // Default parameter
+    title = '' // New optional title parameter
   ): void {
     if (!isPlatformBrowser(this.platformId)) {
       console.warn(
@@ -183,7 +185,7 @@ export class LineplotService {
         .attr('cy', y((d.PatientCount / d.TotalPatientCount) * 100))
         .attr('r', 5)
         .attr('fill', cohortColors.get(d.Cohort) || 'steelblue')
-        .on('mouseover', (event) => {
+        .on('mouseover', () => {
           // Find all data points for the same month
           const monthData = data.filter((md) => md.Months === d.Months);
           let tableContent = `

@@ -6,6 +6,7 @@ import {
   OnInit,
   OnDestroy,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -40,21 +41,18 @@ import { LineplotService } from '../services/lineplot.service';
   styleUrl: './longitudinal.component.scss',
 })
 export class LongitudinalComponent implements OnInit, OnDestroy {
-  colors: { [key: string]: string } = {};
+  colors: Record<string, string> = {};
   data: LongitudinalData[] = [];
   featureCtrl = new FormControl();
   filteredFeatures: Observable<string[]> | null = null;
   longitudinalTables: string[] = [];
-  originalVariableNameMappings: { [key: string]: string } = {};
-  selectedFeature: string = '';
-  private API_URL = environment.API_URL;
+  originalVariableNameMappings: Record<string, string> = {};
+  selectedFeature = '';
   @ViewChild('lineplot') private chartContainer!: ElementRef;
+  private API_URL = environment.API_URL;
+  private http = inject(HttpClient);
+  private lineplotService = inject(LineplotService);
   private subscriptions: Subscription[] = [];
-
-  constructor(
-    private http: HttpClient,
-    private lineplotService: LineplotService
-  ) {}
 
   displayFn(option: string): string {
     return option ? option : '';
@@ -74,9 +72,9 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
       .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
       .pipe(
         map((metadata) => {
-          const colors: { [key: string]: string } = {};
+          const colors: Record<string, string> = {};
           for (const key in metadata) {
-            if (metadata.hasOwnProperty(key)) {
+            if (Object.hasOwn(metadata, key)) {
               colors[key] = metadata[key].Color;
             }
           }
@@ -134,7 +132,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   loadOriginalCaseMappings(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<{ [key: string]: string }>('/lower_to_original_case.json')
+        .get<Record<string, string>>('/lower_to_original_case.json')
         .subscribe({
           next: (data) => {
             this.originalVariableNameMappings = data;

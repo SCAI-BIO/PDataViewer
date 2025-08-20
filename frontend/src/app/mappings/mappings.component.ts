@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { MatSliderModule } from '@angular/material/slider';
 import { Subscription, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -17,24 +17,21 @@ import { ChordData } from '../interfaces/chord';
 export class MappingsComponent implements OnInit, OnDestroy {
   dataChunks: ChordData[] = [];
   // Maximum amount of features to display in a single chords diagram
-  maxFeatures: number = 50;
+  maxFeatures = 50;
   // Minimum amount of features for the min variable of the slider
-  minFeatures: number = 20;
+  minFeatures = 20;
   modalities: string[] = [];
-  noData: boolean = false;
-  selectedModality: string = '';
+  noData = false;
+  selectedModality = '';
   // Total number of features in the modality
-  totalFeatures: number = 0;
+  totalFeatures = 0;
   private API_URL = environment.API_URL;
   private cohorts: string[] = [];
-  private modality: string = '';
+  private chordService = inject(ChordDiagramService);
+  private http = inject(HttpClient);
+  private modality = '';
   private subscriptions: Subscription[] = [];
   private sliderChange$: Subject<number> = new Subject<number>();
-
-  constructor(
-    private chordService: ChordDiagramService,
-    private http: HttpClient
-  ) {}
 
   ngOnInit(): void {
     this.fetchModalities();
@@ -72,8 +69,9 @@ export class MappingsComponent implements OnInit, OnDestroy {
     this.fetchData();
   }
 
-  onSliderChange(event: any): void {
-    const value = Number((event.target as HTMLInputElement).value);
+  onSliderChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = Number(input.value);
     this.sliderChange$.next(value);
   }
 
