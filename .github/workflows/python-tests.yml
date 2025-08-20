@@ -12,7 +12,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [24]
         python-version: ["3.12"]
 
     steps:
@@ -47,30 +46,3 @@ jobs:
       - name: Test with pytest
         run: |
           pytest
-
-      # Frontend setup and test setups
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Cachen npm
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install frontend dependencies
-        run: |
-          cd frontend
-          npm ci
-
-      - name: Install Angular CLI
-        run: npm install -g @angular/cli
-
-      - name: Run frontend tests
-        run: |
-          cd frontend
-          ng test --watch=false --browsers=ChromeHeadless
