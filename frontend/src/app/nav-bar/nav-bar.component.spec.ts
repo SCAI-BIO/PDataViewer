@@ -11,6 +11,7 @@ describe('NavBarComponent', () => {
     await TestBed.configureTestingModule({
       imports: [NavBarComponent],
       providers: [provideRouter([])],
+      teardown: { destroyAfterEach: false },
     }).compileComponents();
 
     fixture = TestBed.createComponent(NavBarComponent);

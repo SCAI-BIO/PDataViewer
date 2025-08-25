@@ -11,6 +11,7 @@ describe('StudyPickerComponent', () => {
     await TestBed.configureTestingModule({
       imports: [StudyPickerComponent],
       providers: [provideHttpClient()],
+      teardown: { destroyAfterEach: false },
     }).compileComponents();
 
     fixture = TestBed.createComponent(StudyPickerComponent);

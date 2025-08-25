@@ -11,6 +11,7 @@ describe('ContactUsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ContactUsComponent],
       providers: [provideHttpClient(), provideRouter([])],
+      teardown: { destroyAfterEach: false },
     }).compileComponents();
   });
 

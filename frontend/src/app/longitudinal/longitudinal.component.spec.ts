@@ -11,6 +11,7 @@ describe('LongitudinalComponent', () => {
     await TestBed.configureTestingModule({
       imports: [],
       providers: [provideHttpClient()],
+      teardown: { destroyAfterEach: false },
     }).compileComponents();
 
     fixture = TestBed.createComponent(LongitudinalComponent);
