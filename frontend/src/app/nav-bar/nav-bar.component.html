@@ -1,70 +1,35 @@
-<header class="header-area">
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <nav class="main-nav">
-          <!-- ***** Logo Start ***** -->
-          <!-- Router Link to home page with logo -->
-          <a [routerLink]="['/']">
-            <img
-              class="img-fluid"
-              src="assets/logos/logo.png"
-              id="pdataviewer-logo"
-              alt="pdataviewer-logo"
-            />
-          </a>
-          <!-- ***** Logo End ***** -->
-
-          <!-- ***** Menu Start ***** -->
-          <!-- Navigation Menu -->
-          <ul class="nav">
-            <!-- Router links to different sections of the application -->
-            <li>
-              <a routerLink="/cohorts" class="button fancy-button">Cohorts</a>
-            </li>
-            <li>
-              <a routerLink="/biomarkers" class="button fancy-button"
-                >Biomarkers</a
-              >
-            </li>
-            <li>
-              <a routerLink="/study-picker" class="button fancy-button"
-                >StudyPicker</a
-              >
-            </li>
-            <li>
-              <a routerLink="/ethnicity" class="button fancy-button disable"
-                >Ethnicity</a
-              >
-            </li>
-            <li>
-              <a routerLink="/mappings" class="button fancy-button">Mappings</a>
-            </li>
-            <li>
-              <a routerLink="/longitudinal" class="button fancy-button"
-                >Longitudinal</a
-              >
-            </li>
-            <li
-              class="tools-menu"
-              (mouseenter)="openToolsMenu()"
-              (mouseleave)="closeToolsMenu()"
-            >
-              <a class="button fancy-button">Tools</a>
-              <div class="dropdown-menu" [class.show]="isToolsMenuOpen">
-                <a routerLink="/auto-harmonizer" class="dropdown-item">Auto-Harmonizer</a>
-                <a href="https://index.bio.scai.fraunhofer.de/visualization" target="_blank" class="dropdown-item">tSNE</a>
-              </div>
-            </li>
-            <li>
-              <a routerLink="/contact-us" class="button fancy-button"
-                >Contact Us</a
-              >
-            </li>
-          </ul>
-          <!-- ***** Menu End ***** -->
-        </nav>
-      </div>
-    </div>
+<header class="banner">
+  <div class="logo-box">
+    <a [routerLink]="['/']">
+      <img class="logo" src="logos/logo_white.svg" alt="Website Logo" />
+    </a>
+  </div>
+  <div class="site-title-box">
+    <h1 class="site-title">PDataViewer</h1>
+  </div>
+  <div class="routing-menu-box">
+    <button [routerLink]="'/cohorts'" class="button-style">Cohorts</button>
+    <button [routerLink]="'/biomarkers'" class="button-style">
+      Biomarkers
+    </button>
+    <button [routerLink]="'/study-picker'" class="button-style">
+      Study Picker
+    </button>
+    <button [routerLink]="'/mappings'" class="button-style">Mappings</button>
+    <button [routerLink]="'/longitudinal'" class="button-style">
+      Longitudinal
+    </button>
+    <button [routerLink]="'/contact-us'" class="button-style">
+      Contact Us
+    </button>
+  </div>
+  <div class="github-logo-box">
+    <a href="https://github.com/SCAI-BIO/PDataViewer" target="_blank">
+      <img
+        src="social-media/github-mark-white.svg"
+        alt="GitHub"
+        class="github-logo"
+      />
+    </a>
   </div>
 </header>

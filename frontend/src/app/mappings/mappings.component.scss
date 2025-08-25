@@ -1,0 +1,38 @@
+.input-container {
+  padding: 20px;
+  border-radius: 4px;
+  width: 80%;
+}
+
+/* Styles for modality buttons */
+.modality-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  margin-bottom: 20px;
+  gap: 20px;
+}
+
+.navigation-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+
+  .button-style {
+    width: 110px; // To make the button sizes equal. Otherwise, looks off-center.
+  }
+}
+
+.chord-diagram-container {
+  margin-top: 20px;
+  width: 60%;
+}
+
+.chord-diagram {
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+}

@@ -1,91 +1,94 @@
-<div class="header-container">
-  <h1>Mappings</h1>
-  <p>
-    <br />
-    The Mappings helps you to identify semantic equivalent of the feature(s) of
-    your interest in another cohort. <br />
-    <br />
+<div class="main-container">
+  <div class="description-box">
+    <h1>Mappings</h1>
+    <p>
+      <br />
+      The Mappings helps you to identify semantic equivalent of the feature(s)
+      of your interest in another cohort. <br />
+      <br />
 
-    Adjust the "Maximum Number of Features" slider to adjust the maximum number
-    of features to be displayed in a single chord diagram <br />
-    <br />
+      Adjust the "Maximum Number of Features" slider to adjust the maximum
+      number of features to be displayed in a single chord diagram <br />
+      <br />
 
-    You can hover over the feature of your interest to highlight its semantic
-    equivalent(s). <br />
-    <br />
+      You can hover over the feature of your interest to highlight its semantic
+      equivalent(s). <br />
+      <br />
 
-    Some of the modalities are too big to showcase in a singular chord diagram,
-    especially with a low "Maximum Number of Features" setting. You might need
-    to scroll down to be able to see all the diagrams. <br />
-    <br />
+      Some of the modalities are too big to showcase in a singular chord
+      diagram, especially with a low "Maximum Number of Features" setting. You
+      might need to scroll down to be able to see all the diagrams. <br />
+      <br />
 
-    Unfortunately, due to data limitation, there might be no mappings to
-    showcase for some modalities. Please keep in touch, as we are trying to
-    collect more data each day! <br />
-    <br />
+      Unfortunately, due to data limitation, there might be no mappings to
+      showcase for some modalities. Please keep in touch, as we are trying to
+      collect more data each day! <br />
+      <br />
 
-    <strong
-      >You can find all of the mappings in our Parkinson's Disease Common Data
-      Model (PASSIONATE) on
-      <a href="https://zenodo.org/records/10218362" target="_blank"
-        >Zenodo</a
+      <strong
+        >You can find all of the mappings in our Parkinson's Disease Common Data
+        Model (PASSIONATE) on
+        <a href="https://zenodo.org/records/10218362" target="_blank"
+          >Zenodo</a
         ></strong
-        >
-        <br />
-        <br />
+      >
+      <br />
+      <br />
 
-        Please select a modality to continue.
-      </p>
-      <div class="content-container">
-        <!-- Container for modality buttons -->
-        <div class="modality-buttons">
-          <!-- Loop through each modality and create a button -->
-          @for (modality of modalities; track modality) {
-            <button
-              (click)="onModalityClick(modality)"
-              [ngClass]="{ 'selected-modality': modality === selectedModality }"
-              >
-              <!-- Interpolate modality name -->
-              {{ modality }}
-            </button>
-          }
-        </div>
+      Please select a modality to continue.
+    </p>
+  </div>
 
-        <!-- Conditional display of no-data message -->
-        @if (noData) {
-          <div class="no-data-message">
-            Sorry, no mapping to showcase for this modality currently. We are
-            collecting more data, keep in touch!
-          </div>
-        }
+  <!-- Loading Spinner -->
+  @if (loading) {
+  <div class="loading-spinner">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+  }
 
-        <!-- Container for max features label and slider -->
-        <div class="max-features-wrapper">
-          <div class="max-features-container">
-            <label id="featureNumber" class="featureNumber"
-              >Maximum Number of Features:
-            </label>
-            <span class="featureNumber">{{ maxFeatures }}</span>
-          </div>
-          <mat-slider
-            [min]="minFeatures"
-            [max]="totalFeatures"
-            step="10"
-            (input)="onSliderChange($event)"
-            >
-            <input matSliderThumb [value]="maxFeatures" />
-          </mat-slider>
-        </div>
-
-        <!-- Container for chord diagrams -->
-        <div class="chord-diagrams-container">
-          <!-- Loop through each data chunk and create a container for chord diagram -->
-          @for (chunk of dataChunks; track chunk) {
-            <div class="chord-diagram">
-              <!-- Placeholder for SVG content of chord diagram -->
-              <svg></svg>
-            </div>
-          }
-        </div>
-      </div>
+  <div class="input-container">
+    <!-- Container for modality buttons -->
+    <div class="modality-buttons">
+      <!-- Loop through each modality and create a button -->
+      @for (modality of modalities; track modality) {
+      <button class="button-style" (click)="onModalityClick(modality)">
+        <!-- Interpolate modality name -->
+        {{ modality }}
+      </button>
+      }
     </div>
+  </div>
+
+  <!-- Conditional display of no-data message -->
+  @if (!(dataChunks.length > 0)) {
+  <div class="no-data-message">
+    Sorry, no mapping to showcase for this modality currently. We are collecting
+    more data, keep in touch!
+  </div>
+  } @if (dataChunks.length > 0 ) {
+  <div class="navigation-buttons">
+    <button
+      (click)="previous()"
+      [disabled]="currentIndex === 0"
+      class="button-style"
+    >
+      Previous
+    </button>
+    <span>{{ currentIndex + 1 }} / {{ dataChunks.length }}</span>
+    <button
+      (click)="next()"
+      [disabled]="currentIndex === dataChunks.length - 1"
+      class="button-style"
+    >
+      Next
+    </button>
+  </div>
+
+  <!-- Render one diagram per chunk -->
+  <div class="chord-diagram-container">
+    <div class="chord-diagram">
+      <svg></svg>
+    </div>
+  </div>
+  }
+</div>

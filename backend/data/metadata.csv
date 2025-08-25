@@ -1,4 +1,4 @@
-Cohort,Participants,HealthyControls,ProdromalPatients,PDPatients,LongitudinalPatients,FollowUpInterval,Location,DOI,Link,Color
+cohort,participants,healthyControls,prodromalPatients,pdPatients,longitudinalPatients,followUpInterval,location,doi,link,color
 PPMI,3497,262,958,1127,1244,6 Months,"USA, Europe",https://doi.org/10.1016/j.pneurobio.2011.09.005,https://ida.loni.usc.edu/login.jsp,#d62728
 BIOFIND,232,106,0,126,0,14 Days,USA,https://doi.org/10.1002/mds.26613,https://ida.loni.usc.edu/login.jsp,#1f77b4
 LuxPARK,1018,520,0,498,229,12 Months,Luxembourg,https://doi.org/10.3389/fnagi.2018.00326,Shared by consortium,#ff7f0e

@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import {
-  Component,
-  ElementRef,
-  OnInit,
-  OnDestroy,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -16,45 +10,46 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { Observable, Subscription } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Observable, Subscription, map, startWith } from 'rxjs';
 
-import { environment } from '../../environments/environment';
-import { Metadata } from '../interfaces/metadata';
+import { LongitudinalUtilsService } from './longitudinal-utils.service';
 import { LongitudinalData } from '../interfaces/longitudinal-data';
+import { ApiService } from '../services/api.service';
+import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 import { LineplotService } from '../services/lineplot.service';
 
 @Component({
-    selector: 'app-longitudinal',
-    imports: [
-        CommonModule,
-        MatAutocompleteModule,
-        MatChipsModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatInputModule,
-        ReactiveFormsModule,
-    ],
-    templateUrl: './longitudinal.component.html',
-    styleUrl: './longitudinal.component.css'
+  selector: 'app-longitudinal',
+  imports: [
+    CommonModule,
+    MatAutocompleteModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    ReactiveFormsModule,
+  ],
+  templateUrl: './longitudinal.component.html',
+  styleUrl: './longitudinal.component.scss',
 })
 export class LongitudinalComponent implements OnInit, OnDestroy {
-  colors: { [key: string]: string } = {};
+  colors: Record<string, string> = {};
   data: LongitudinalData[] = [];
   featureCtrl = new FormControl();
   filteredFeatures: Observable<string[]> | null = null;
+  loading = false;
   longitudinalTables: string[] = [];
-  originalVariableNameMappings: { [key: string]: string } = {};
-  selectedFeature: string = '';
-  private API_URL = environment.API_URL;
-  @ViewChild('lineplot') private chartContainer!: ElementRef;
+  originalVariableNameMappings: Record<string, string> = {};
+  selectedFeature = '';
+  private apiService = inject(ApiService);
+  private errorHandler = inject(ApiErrorHandlerService);
+  private http = inject(HttpClient);
+  private lineplotService = inject(LineplotService);
+  private longitudinalUtilsService = inject(LongitudinalUtilsService);
   private subscriptions: Subscription[] = [];
-
-  constructor(
-    private http: HttpClient,
-    private lineplotService: LineplotService
-  ) {}
 
   displayFn(option: string): string {
     return option ? option : '';
@@ -65,19 +60,22 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
     if (longitudinal) {
       this.selectedFeature = longitudinal;
       this.featureCtrl.setValue('');
-      this.fetchLongitudinalTable(this._transformFeatureName(longitudinal));
+      this.fetchLongitudinalTable(
+        this.longitudinalUtilsService.transformFeatureName(longitudinal)
+      );
     }
   }
 
   fetchColors(): void {
-    const sub = this.http
-      .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
+    this.loading = true;
+    const sub = this.apiService
+      .fetchMetadata()
       .pipe(
         map((metadata) => {
-          const colors: { [key: string]: string } = {};
+          const colors: Record<string, string> = {};
           for (const key in metadata) {
-            if (metadata.hasOwnProperty(key)) {
-              colors[key] = metadata[key].Color;
+            if (Object.hasOwn(metadata, key)) {
+              colors[key] = metadata[key].color;
             }
           }
           return colors;
@@ -87,54 +85,61 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
         next: (v) => {
           this.colors = v;
         },
-        error: (e) => {
-          console.error('Error fetching colors:', e);
+        error: (err) => {
+          this.loading = false;
+          this.errorHandler.handleError(err, 'fetching colors');
         },
-        complete: () => console.info('Colors successfully fetched'),
+        complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
   }
 
-  fetchLongitudinalTable(table_name: string): void {
-    const sub = this.http
-      .get<LongitudinalData[]>(`${this.API_URL}/longitudinal/${table_name}`)
-      .subscribe({
-        next: (v) => (this.data = v),
-        error: (e) => console.error(e),
-        complete: () => console.info('complete'),
-      });
+  fetchLongitudinalTable(tableName: string): void {
+    this.loading = true;
+    const sub = this.apiService.fetchLongitudinalTable(tableName).subscribe({
+      next: (v) => (this.data = v),
+      error: (err) => {
+        this.loading = false;
+        this.errorHandler.handleError(err, 'fetching longitudinal table');
+      },
+      complete: () => (this.loading = false),
+    });
     this.subscriptions.push(sub);
   }
 
   fetchLongitudinalTables(): void {
-    const sub = this.http
-      .get<string[]>(`${this.API_URL}/longitudinal`)
-      .subscribe({
-        next: (v) =>
-          (this.longitudinalTables = v.map((longitudinal) =>
-            this._transformLongitudinalName(longitudinal)
-          )),
-        error: (e) => console.error(e),
-        complete: () =>
-          console.info('Longitudinal data tables successfully fetched'),
-      });
+    this.loading = true;
+    const sub = this.apiService.fetchLongitudinalTables().subscribe({
+      next: (v) =>
+        (this.longitudinalTables = v.map((longitudinal) =>
+          this.longitudinalUtilsService.transformLongitudinalName(
+            this.originalVariableNameMappings,
+            longitudinal
+          )
+        )),
+      error: (err) => {
+        this.loading = false;
+        this.errorHandler.handleError(err, 'fetching longitudinal tables');
+      },
+      complete: () => (this.loading = false),
+    });
     this.subscriptions.push(sub);
   }
 
   generateLineplot(): void {
     const title = `Longitudinal data for ${this.selectedFeature}`;
     this.lineplotService.createLineplot(
-      this.chartContainer,
       this.data,
       this.colors,
-      title
+      title,
+      'lineplot'
     );
   }
 
   loadOriginalCaseMappings(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<{ [key: string]: string }>('./assets/lower_to_original_case.json')
+        .get<Record<string, string>>('lower_to_original_case.json')
         .subscribe({
           next: (data) => {
             this.originalVariableNameMappings = data;
@@ -164,35 +169,17 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
       this.fetchColors();
       this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
         startWith(''),
-        map((value) => this._filterTableName(value || ''))
+        map((value) =>
+          this.longitudinalUtilsService.filterTableName(
+            this.longitudinalTables,
+            value || ''
+          )
+        )
       );
     });
   }
 
   removeFeature(): void {
     this.selectedFeature = '';
-  }
-
-  private _filterTableName(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.longitudinalTables.filter((option) =>
-      option.toLowerCase().includes(filterValue)
-    );
-  }
-
-  private _transformFeatureName(feature: string): string {
-    feature = feature.toLowerCase();
-    return feature.split(' ').join('_').replace('/', '_');
-  }
-
-  private _transformLongitudinalName(longitudinal: string): string {
-    if (longitudinal.startsWith('longitudinal_')) {
-      longitudinal = longitudinal.substring(13);
-    }
-    longitudinal = longitudinal.split('_').join(' ');
-    const mappedValue = this.originalVariableNameMappings[longitudinal];
-    return mappedValue
-      ? mappedValue
-      : longitudinal.charAt(0).toUpperCase() + longitudinal.slice(1);
   }
 }

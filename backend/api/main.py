@@ -8,7 +8,6 @@ from starlette.middleware.cors import CORSMiddleware
 
 from api.auth import init_credentials
 from api.routers import (
-    autocompletion,
     biomarkers,
     cdm,
     cohorts,
@@ -79,5 +78,4 @@ app.include_router(cdm.router)
 app.include_router(cohorts.router)
 app.include_router(visualization.router)
 app.include_router(stupdypicker.router)
-app.include_router(autocompletion.router)
 app.include_router(database.router)

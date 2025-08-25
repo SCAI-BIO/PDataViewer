@@ -1,0 +1,63 @@
+/* Biomarker Input Container */
+.input-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 30%;
+  margin: 20px 0;
+}
+
+/* Cohort Container */
+.cohort-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* Cohort List */
+.cohort-list {
+  display: grid;
+
+  p {
+    margin: 0 10px;
+    text-align: center;
+  }
+}
+
+/* Color Circle */
+.color-circle {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 2px;
+}
+
+/* Cohort and Button Containers */
+.cohort-selection-container,
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40%;
+  padding: 10px 0;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+/* Chip Listbox */
+mat-chip-listbox {
+  padding: 10px;
+}
+
+.output-box {
+  width: 100%;
+  max-width: 1400px;
+  margin: 20px 0;
+}

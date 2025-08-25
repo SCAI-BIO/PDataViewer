@@ -1,5 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -10,6 +9,7 @@ import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 
@@ -18,29 +18,31 @@ import { map, startWith } from 'rxjs/operators';
 
 import { Metadata } from '../interfaces/metadata';
 import { RankData } from '../interfaces/rankdata';
-import { environment } from '../../environments/environment';
+import { ApiService } from '../services/api.service';
+import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 
 @Component({
-    selector: 'app-study-picker',
-    imports: [
-        CommonModule,
-        MatFormFieldModule,
-        MatAutocompleteModule,
-        MatInputModule,
-        MatChipsModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatTableModule,
-    ],
-    templateUrl: './study-picker.component.html',
-    styleUrl: './study-picker.component.css'
+  selector: 'app-study-picker',
+  imports: [
+    CommonModule,
+    MatFormFieldModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    MatChipsModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatTableModule,
+    ReactiveFormsModule,
+  ],
+  templateUrl: './study-picker.component.html',
+  styleUrl: './study-picker.component.scss',
 })
 export class StudyPickerComponent implements OnInit, OnDestroy {
   cohortData: Metadata = {};
-  cohortColors: { [key: string]: string } = {};
-  cohortLinks: { [key: string]: string } = {};
+  cohortColors: Record<string, string> = {};
+  cohortLinks: Record<string, string> = {};
   cohortRankings: RankData[] = [];
-  dataAvailability: { [key: string]: boolean } = {
+  dataAvailability: Record<string, boolean> = {
     PPMI: true,
     BIOFIND: true,
     LuxPARK: false,
@@ -64,12 +66,13 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   featureCtrl = new FormControl();
   features: string[] = [];
   filteredFeatures: Observable<string[]> | null = null;
+  loading = false;
   @Input() selectedFeatures: string[] = [];
   suggestions$: Observable<string[]> | null = null;
-  private API_URL = environment.API_URL;
+  private apiService = inject(ApiService);
+  private errorHandler = inject(ApiErrorHandlerService);
+  private router = inject(Router);
   private subscriptions: Subscription[] = [];
-
-  constructor(private http: HttpClient, private router: Router) {}
 
   addFeature(event: MatChipInputEvent): void {
     let feature = event.value;
@@ -90,32 +93,53 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   }
 
   fetchMetadata(): void {
-    const sub = this.http
-      .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
-      .subscribe((data) => {
+    this.loading = true;
+    const sub = this.apiService.fetchMetadata().subscribe({
+      next: (data) => {
         this.cohortData = data;
         for (const cohort in data) {
-          if (data.hasOwnProperty(cohort)) {
-            this.cohortColors[cohort] = data[cohort].Color;
-            this.cohortLinks[cohort] = data[cohort].Link;
+          if (Object.hasOwn(data, cohort)) {
+            this.cohortColors[cohort] = data[cohort].color;
+            this.cohortLinks[cohort] = data[cohort].link;
           }
         }
-      });
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorHandler.handleError(err, 'fetching metadata');
+      },
+      complete: () => (this.loading = false),
+    });
     this.subscriptions.push(sub);
   }
 
-  fetchFeatures(): Observable<{ Feature: string[] }> {
-    return this.http.get<{ Feature: string[] }>(`${this.API_URL}/cdm/features`);
+  fetchFeatures(): void {
+    const sub = this.apiService.fetchFeatures().subscribe({
+      next: (v) => {
+        this.features = v.Feature;
+        this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
+          startWith(''),
+          map((value) => this._filter(value))
+        );
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorHandler.handleError(err, 'fetching features');
+      },
+      complete: () => (this.loading = false),
+    });
+    this.subscriptions.push(sub);
   }
 
-  getRankings(features: string[]) {
-    const sub = this.http
-      .post<RankData[]>(`${this.API_URL}/studypicker/rank`, features)
-      .subscribe({
-        next: (v) => (this.cohortRankings = v),
-        error: (e) => console.error(e),
-        complete: () => console.info('Rankings fetched successfully.'),
-      });
+  fetchRankings(features: string[]) {
+    const sub = this.apiService.fetchRankings(features).subscribe({
+      next: (v) => (this.cohortRankings = v),
+      error: (err) => {
+        this.loading = false;
+        this.errorHandler.handleError(err, 'fetching rankings');
+      },
+      complete: () => (this.loading = false),
+    });
     this.subscriptions.push(sub);
   }
 
@@ -124,14 +148,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const sub = this.fetchFeatures().subscribe((features) => {
-      this.features = features.Feature;
-      this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
-        startWith(''),
-        map((value) => this._filter(value))
-      );
-    });
-    this.subscriptions.push(sub);
+    this.fetchFeatures();
     this.fetchMetadata();
   }
 

@@ -1,0 +1,59 @@
+@use "sass:color";
+
+/* Header Area */
+.button-style {
+  min-width: 150px;
+  background: none;
+
+  &:hover {
+    color: #fe0fb0;
+  }
+}
+
+.banner {
+  background: linear-gradient(135deg, #610030, #4d0063);
+  color: white;
+  display: grid;
+  grid-template-columns: 1fr 1fr 50fr 1fr;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.logo-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 20px;
+  .logo {
+    height: 70px;
+    width: auto;
+  }
+}
+
+.site-title-box {
+  .site-title {
+    text-align: left;
+  }
+}
+
+.routing-menu-box {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+
+  .button-style {
+    font-size: 18px;
+  }
+}
+
+.github-logo-box {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  .github-logo {
+    height: 55px;
+    width: auto;
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,39 @@
+/* Input container */
+.input-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 30%;
+  margin: 20px 0;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+/* Chip listbox wrapping */
+mat-chip-listbox {
+  padding: 10px;
+}
+
+.table-container {
+  min-width: 80%;
+}
+
+/* Color circle for display */
+.color-circle {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+/* Missing features cell */
+.missing-features-cell {
+  max-width: 100px;
+  word-wrap: break-word;
+  white-space: normal;
+}

@@ -1,67 +1,67 @@
-
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
 
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
-import { Metadata, CohortMetadata } from '../interfaces/metadata';
-import { environment } from '../../environments/environment';
+import { CohortData } from '../interfaces/metadata';
+import { ApiService } from '../services/api.service';
+import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 
-interface CohortData extends CohortMetadata {
-  cohort: string;
-}
 @Component({
-    selector: 'app-cohorts',
-    imports: [MatTableModule, MatSortModule],
-    templateUrl: './cohorts.component.html',
-    styleUrls: ['./cohorts.component.css']
+  selector: 'app-cohorts',
+  imports: [MatProgressSpinnerModule, MatSortModule, MatTableModule],
+  templateUrl: './cohorts.component.html',
+  styleUrl: './cohorts.component.scss',
 })
 export class CohortsComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = [
     'cohort',
-    'Participants',
-    'HealthyControls',
-    'ProdromalPatients',
-    'PDPatients',
-    'LongitudinalPatients',
-    'FollowUpInterval',
-    'Location',
-    'DOI',
-    'Link',
+    'participants',
+    'healthyControls',
+    'prodromalPatients',
+    'pdPatients',
+    'longitudinalPatients',
+    'followUpInterval',
+    'location',
+    'doi',
+    'link',
   ];
+  metadata: CohortData[] = [];
   dataSource = new MatTableDataSource<CohortData>();
+  loading = false;
   @ViewChild(MatSort) sort!: MatSort;
-  private API_URL = environment.API_URL;
-  private destroy$ = new Subject<void>();
-
-  constructor(private http: HttpClient) {}
+  private apiService = inject(ApiService);
+  private errorHandler = inject(ApiErrorHandlerService);
+  private subscriptions: Subscription[] = [];
 
   fetchMetadata(): void {
-    this.http
-      .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          const transformedData = Object.keys(data).map((key) => ({
-            cohort: key,
-            ...data[key],
-          }));
-          this.dataSource.data = transformedData;
-          this.dataSource.sort = this.sort;
+    this.loading = true;
+    const sub = this.apiService.fetchMetadata().subscribe({
+      next: (data) => {
+        const transformedData = Object.keys(data).map((key) => ({
+          cohort: key,
+          ...data[key],
+        }));
+        this.metadata = transformedData;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorHandler.handleError(err, 'fetching colors');
+      },
+      complete: () => {
+        this.dataSource.data = this.metadata;
+        this.dataSource.sort = this.sort;
 
-          const initialSortState: Sort = { active: 'cohort', direction: 'asc' };
-          this.sort.active = initialSortState.active;
-          this.sort.direction = initialSortState.direction;
-          this.sort.sortChange.emit(initialSortState);
-        },
-        error: (e) => {
-          console.error('Error fetching metadata', e);
-        },
-        complete: () => console.info('Metadata successfully fetched'),
-      });
+        const initialSortState: Sort = { active: 'cohort', direction: 'asc' };
+        this.sort.active = initialSortState.active;
+        this.sort.direction = initialSortState.direction;
+        this.sort.sortChange.emit(initialSortState);
+        this.loading = false;
+      },
+    });
+    this.subscriptions.push(sub);
   }
 
   openLink(link: string) {
@@ -69,8 +69,7 @@ export class CohortsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   ngOnInit() {

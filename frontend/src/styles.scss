@@ -1,0 +1,144 @@
+@use "sass:color";
+
+// Define global button variables
+$max-width: 100%;
+$font-size: 16px;
+$bold-font-weight: 600;
+
+// Button variables
+$button-primary: #610030;
+$button-secondary: #f9f9f9;
+$button-padding: 10px 20px;
+$button-radius: 5px;
+
+// Base button styles
+%button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $button-padding;
+  font-size: $font-size;
+  font-weight: bold;
+  border: none;
+  border-radius: $button-radius;
+  text-align: center;
+  white-space: nowrap;
+  transition: background 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+body {
+  font-family: "Robot", sans-serif;
+  font-size: $font-size;
+  line-height: 1.6;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+strong,
+b {
+  font-weight: $bold-font-weight;
+}
+
+.button-style {
+  @extend %button-base;
+  background: $button-primary;
+  color: $button-secondary;
+
+  &:hover {
+    background: color.adjust($button-primary, $lightness: 10%);
+  }
+}
+
+.inverted-button-style {
+  @extend %button-base;
+  background: $button-secondary;
+  color: $button-primary;
+
+  &:hover {
+    background: color.adjust($button-primary, $lightness: 70%);
+  }
+}
+
+// Layout utilities
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 50px 0;
+  max-width: $max-width;
+}
+
+// Description Box
+.description-box {
+  max-width: 80%;
+  margin-bottom: 20px;
+  text-align: center;
+  align-self: center;
+
+  ul {
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    text-align: left;
+
+    li {
+      padding-left: 8px;
+      list-style: none;
+      margin-bottom: 6px;
+      text-align: center;
+      text-indent: -12px;
+    }
+  }
+}
+
+// Table Styles
+.table-container {
+  overflow: auto;
+  max-height: 800px;
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+}
+
+// Table Column Borders
+.mat-table th,
+.mat-table td {
+  border-right: 1px solid #e0e0e0;
+  padding: 12px 16px;
+  line-height: 1.4;
+}
+
+thead,
+th {
+  background-color: $button-primary !important;
+  color: $button-secondary !important;
+}
+
+.mat-mdc-row:hover {
+  background-color: color.adjust(white, $lightness: -5%);
+}
+
+// Loading spinner
+.loading-spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}

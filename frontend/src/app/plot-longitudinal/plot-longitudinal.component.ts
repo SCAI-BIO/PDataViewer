@@ -1,56 +1,54 @@
-import {
-  Component,
-  ElementRef,
-  OnInit,
-  OnDestroy,
-  ViewChild,
-} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
 import { Subscription } from 'rxjs';
-import { environment } from '../../environments/environment';
+
 import { LongitudinalData } from '../interfaces/longitudinal-data';
+import { ApiService } from '../services/api.service';
+import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 import { LineplotService } from '../services/lineplot.service';
 
 @Component({
-    selector: 'app-plot-longitudinal',
-    imports: [],
-    templateUrl: './plot-longitudinal.component.html',
-    styleUrl: './plot-longitudinal.component.css'
+  selector: 'app-plot-longitudinal',
+  imports: [],
+  templateUrl: './plot-longitudinal.component.html',
+  styleUrl: './plot-longitudinal.component.scss',
 })
 export class PlotLongitudinalComponent implements OnInit, OnDestroy {
-  cohort: string = '';
+  cohort = '';
   variables: string[] = [];
   data: LongitudinalData[] = [];
-  originalVariableNameMappings: { [key: string]: string } = {};
-  private API_URL = environment.API_URL;
-  @ViewChild('lineplot') private chartContainer!: ElementRef;
+  dataFetchCount = 0;
+  loading = false;
+  originalVariableNameMappings: Record<string, string> = {};
+  private apiService = inject(ApiService);
+  private errorHandler = inject(ApiErrorHandlerService);
+  private http = inject(HttpClient);
+  private lineplotService = inject(LineplotService);
+  private route = inject(ActivatedRoute);
   private subscriptions: Subscription[] = [];
-  private dataFetchCount = 0;
 
-  constructor(
-    private route: ActivatedRoute,
-    private http: HttpClient,
-    private lineplotService: LineplotService
-  ) {}
-
-  fetchLongitudinalTable(table_name: string): void {
-    const feature_name = this._transformLongitudinalName(table_name);
-    const sub = this.http
-      .get<LongitudinalData[]>(
-        `${this.API_URL}/longitudinal/${table_name}/${this.cohort}`
-      )
+  fetchLongitudinalTable(tableName: string): void {
+    this.loading = true;
+    const featureName = this._transformLongitudinalName(tableName);
+    const sub = this.apiService
+      .fetchLongitudinalTableForCohort(tableName, this.cohort)
       .subscribe({
         next: (v) =>
           v.forEach((item) => {
-            this.data.push({ ...item, Cohort: feature_name });
+            this.data.push({ ...item, Cohort: featureName });
           }),
-        error: (e) => console.error(e),
+        error: (err) => {
+          this.loading = false;
+          this.errorHandler.handleError(err, 'fetching longitudinal data');
+        },
         complete: () => {
           this.dataFetchCount--;
           if (this.dataFetchCount === 0) {
             this.generateLineplot();
           }
+          this.loading = false;
         },
       });
     this.subscriptions.push(sub);
@@ -69,18 +67,13 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
         : variables[0] || ''; // Handle single or empty features case
 
     const title = `Longitudinal follow-ups for ${features_string} in the ${this.cohort} cohort`;
-    this.lineplotService.createLineplot(
-      this.chartContainer,
-      this.data,
-      {},
-      title
-    );
+    this.lineplotService.createLineplot(this.data, {}, title, 'lineplot');
   }
 
   loadOriginalCaseMappings(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<{ [key: string]: string }>('./assets/lower_to_original_case.json')
+        .get<Record<string, string>>('lower_to_original_case.json')
         .subscribe({
           next: (data) => {
             this.originalVariableNameMappings = data;

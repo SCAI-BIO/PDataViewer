@@ -1,0 +1,17 @@
+.body {
+  flex: 1;
+  overflow: auto;
+  padding-bottom: 300px;
+  background: #f9f9f9;
+}
+
+.container {
+  min-height: 100%;
+  position: relative;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
