@@ -1,177 +1,170 @@
-/* Reset and Global Styles */
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p,
-blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em,
-font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var,
-b, u, i, center, dl, dt, dd, ol, ul, li, figure, header, nav, section, article,
-aside, footer, figcaption {
-    margin: 0;
+@use "sass:color";
+
+// Define global button variables
+$max-width: 100%;
+$font-size: 16px;
+$bold-font-weight: 600;
+
+// Button variables
+$button-primary: #5c003e;
+$button-secondary: #f9f9f9;
+$button-padding: 10px 20px;
+$button-radius: 5px;
+
+// Base button styles
+%button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $button-padding;
+  font-size: $font-size;
+  font-weight: bold;
+  border: none;
+  border-radius: $button-radius;
+  text-align: center;
+  white-space: nowrap;
+  transition: background 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+// Info button variable
+$info-button-color: #1976d2;
+
+// External link variable
+$external-link-color: #1e88e5;
+
+body {
+  font-family: "Robot", sans-serif;
+  font-size: $font-size;
+  line-height: 1.6;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+strong,
+b {
+  font-weight: $bold-font-weight;
+}
+.button-style {
+  @extend %button-base;
+  background: linear-gradient(
+    135deg,
+    $button-primary,
+    color.adjust($button-primary, $lightness: 15%)
+  );
+  color: $button-secondary;
+  background-size: 150% 150%;
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      color.adjust($button-primary, $lightness: 10%),
+      color.adjust($button-primary, $lightness: 25%)
+    );
+    background-position: right center;
+  }
+}
+
+.inverted-button-style {
+  @extend %button-base;
+  background: linear-gradient(135deg, #f9f9f9, #f9f9f9);
+  color: $button-primary;
+  transition: background 0.3s ease-in-out;
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      $button-secondary,
+      color.adjust($button-primary, $lightness: 60%)
+    );
+    background-position: right center;
+  }
+}
+
+.button-icon {
+  margin-left: 6px;
+}
+
+// Layout utilities
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  max-width: $max-width;
+  margin: 2rem auto;
+}
+
+// Description Box
+.description-box {
+  max-width: 80%;
+  margin-bottom: 20px;
+  text-align: center;
+  align-self: center;
+
+  ul {
     padding: 0;
-    border: 0;
-    outline: 0;
-    list-style: none;
-    box-sizing: border-box;
-}
-
-html, body {
-    font-family: Roboto, "Helvetica Neue", sans-serif;
-    font-weight: 400;
-    background-color: #fff;
-    -ms-text-size-adjust: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    height: 100%;
-    overflow-x: hidden;
-}
-
-a {
-    text-decoration: none;
-}
-
-h1, h2, h3, h4, h5, h6, ul {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-::selection, ::-moz-selection {
-    background: #1cacd7;
-    color: #fff;
-}
-
-.section {
-    position: relative;
-    padding-top: 100px;
-    padding-bottom: 80px;
-}
-
-.section.colored {
-    background: #f9f9f9;
-}
-
-.section-title {
-    color: #1e1e1e;
-    margin-bottom: 30px;
-    font-size: 1.4vw;
-    text-align: center;
-}
-
-.text-center, .text, .text-center p, .text p {
-    text-align: center;
-    font-size: 1vw;
-    color: #777;
-    margin-bottom: 30px;
-}
-
-button {
-    background-color: #99004f;
-    border: none;
-    color: white;
-    padding: 10px 20px;
+    margin: 0;
     display: inline-block;
-    font-size: 0.8vw;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    text-align: center;
+    text-align: left;
+
+    li {
+      padding-left: 8px;
+      list-style: none;
+      margin-bottom: 6px;
+      text-align: center;
+      text-indent: -12px;
+    }
+  }
 }
 
-button:hover {
-    background-color: #660035;
-}
+// Table Styles
+.table-container {
+  overflow: auto;
+  max-height: 800px;
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 
-.container {
-    min-height: 100%;
-    position: relative;
-}
-
-.nav-bar {
-    padding: 0 19%;
+  table {
     width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
 }
 
-.body {
-    padding-bottom: 436px;
+// Table Column Borders
+.mat-table th,
+.mat-table td {
+  border-right: 1px solid #e0e0e0;
+  padding: 12px 16px;
+  line-height: 1.4;
 }
 
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
+thead,
+th {
+  background-color: color.adjust($button-primary, $lightness: 15%) !important;
+  color: $button-secondary !important;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 1200px) {
-    .nav-bar {
-        padding: 0 10%;
-    }
-
-    .section-title {
-        font-size: 1.8vw;
-    }
-
-    button {
-        font-size: 1vw;
-    }
+.mat-mdc-row:hover {
+  background-color: color.adjust(white, $lightness: -5%);
 }
 
-@media (max-width: 992px) {
-    .nav-bar {
-        padding: 0 5%;
-    }
-
-    .section-title {
-        font-size: 2.2vw;
-    }
-
-    .text-center, .text, .text-center p, .text p {
-        font-size: 1.2vw;
-    }
-
-    button {
-        font-size: 1.2vw;
-        padding: 8px 16px;
-    }
-}
-
-@media (max-width: 768px) {
-    .nav-bar {
-        padding: 0 5%;
-    }
-
-    .section {
-        padding-top: 50px;
-        padding-bottom: 50px;
-    }
-
-    .section-title {
-        font-size: 3vw;
-    }
-
-    .text-center, .text, .text-center p, .text p {
-        font-size: 1.5vw;
-    }
-
-    button {
-        font-size: 1.5vw;
-        padding: 8px 14px;
-    }
-}
-
-@media (max-width: 576px) {
-    .section-title {
-        font-size: 16px;
-    }
-
-    .text-center, .text, .text-center p, .text p {
-        font-size: 14px;
-    }
-
-    button {
-        font-size: 14px;
-        padding: 6px 12px;
-    }
-
-    .nav-bar {
-        padding: 0 2%;
-    }
+// Loading spinner
+.loading-spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
