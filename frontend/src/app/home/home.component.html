@@ -1,242 +1,214 @@
-<body>
-  <!-- ***** Welcome Area Start ***** -->
-  <div class="welcome-area">
-    <img src="home/banner-bg.png" class="banner" alt="Welcome Background" />
-    <div class="header-text">
-      <div class="container">
-        <div class="row">
-          <div class="col text-center">
-            <h1>
-              PDataViewer <br />Exploring the Parkinson's Disease Data Landscape
-            </h1>
+<main class="main-container">
+  <!-- About Container -->
+  <div class="section-container about">
+    <div class="section-inner-container">
+      <h1>About</h1>
+      <p>
+        Data collected in cohort studies lay the groundwork for a plethora of
+        Parkinson's disease (PD) research endeavors. PDataViewer lets you
+        explore this PD data landscape and identify cohort datasets that suit
+        your research needs.
+      </p>
+      <p>
+        We accessed and curated major PD cohort datasets in a purely data-driven
+        manner with the aim of characterizing their underlying data, assessing
+        the quantity and availability of data, and evaluating the
+        interoperability across these distinct cohort datasets.
+      </p>
+      <h2>How to Cite Us</h2>
+      <strong>
+        Yasamin Salimi, Tim Adams, Mehmet Can Ay et al. On the Utility of Large
+        Language Model Embeddings for Revolutionizing Semantic Data
+        Harmonization in Alzheimer's and Parkinson's Disease, 01 April 2024,
+        PREPRINT (Version 1) available at Research Square [<a
+          href="https://doi.org/10.21203/rs.3.rs-4108029/v1"
+          >https://doi.org/10.21203/rs.3.rs-4108029/v1</a
+        >]</strong
+      >
+    </div>
+  </div>
+
+  <!-- Counter Container -->
+  <div class="section-container counter-container colored-bg">
+    <div class="section-inner-container">
+      <div class="counter-title">
+        <h2>Content</h2>
+      </div>
+      <div class="counter-content">
+        <div class="statistics-container">
+          <strong>{{ cohortNumber }}</strong>
+          <span> Cohorts </span>
+        </div>
+
+        <div class="image-between">
+          <img src="home/circle-dec.png" alt="Statistics Illustration" />
+        </div>
+
+        <div class="statistics-container">
+          <strong>55,986</strong>
+          <span>Patients</span>
+        </div>
+
+        <div class="image-between">
+          <img src="home/circle-dec.png" alt="Statistics Illustration" />
+        </div>
+
+        <div class="statistics-container">
+          <strong>{{ featureNumber }}</strong>
+          <span>Variables Mapped</span>
+        </div>
+
+        <div class="image-between">
+          <img src="home/circle-dec.png" alt="Statistics Illustration" />
+        </div>
+
+        <div class="statistics-container">
+          <strong>10</strong>
+          <span>Compared Modalities</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cohort Container -->
+  <div class="section-container">
+    <div class="section-inner-container">
+      <div class="content-container">
+        <div class="title-description-button">
+          <div class="title-container">
+            <h2>Cohorts</h2>
+          </div>
+          <div class="description-container">
+            <p>
+              Here you can find an overview on the investigated cohorts,
+              references to the study design and links for data access
+              application. Additionally, there are summary statistics on key
+              Parkinson's disease biomarkers displayed.
+            </p>
+          </div>
+          <div class="button-container">
+            <button class="button-style" [routerLink]="'/cohorts'">
+              Explore
+            </button>
+          </div>
+        </div>
+        <div class="image-container">
+          <img src="home/cohorts.png" class="image" alt="Cohort Comparison" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Biomarker Container -->
+  <div class="section-container colored-bg">
+    <div class="section-inner-container">
+      <div class="content-container">
+        <div class="image-container">
+          <img
+            src="home/biomarkers.png"
+            class="image"
+            alt="Heatmap Screenshot"
+          />
+        </div>
+        <div class="title-description-button">
+          <div class="title-container">
+            <h2>Biomarker Overview</h2>
+          </div>
+          <div class="description-container">
+            <p>Explore and compare variable distributions across cohorts.</p>
+          </div>
+          <div class="button-container">
+            <button class="inverted-button-style" [routerLink]="'/biomarkers'">
+              Explore
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!-- ***** Welcome Area End ***** -->
 
-  <mat-divider></mat-divider>
-
-  <!-- ***** About Start ***** -->
-  <section class="about section">
-    <div class="container">
-      <div class="row">
-        <div class="col text-center">
-          <div class="about-item">
-            <h3 class="about-title">ABOUT</h3>
+  <!-- Study Picker Container -->
+  <div class="section-container">
+    <div class="section-inner-container">
+      <div class="content-container">
+        <div class="title-description-button">
+          <div class="title-container">
+            <h2>Study Picker</h2>
+          </div>
+          <div class="description-container">
             <p>
-              Data collected in cohort studies lay the groundwork for a plethora
-              of Parkinson's disease (PD) research endeavors. PDataViewer lets
-              you explore this PD data landscape and identify cohort datasets
-              that suit your research needs.
-            </p>
-            <p>
-              We accessed and curated major PD cohort datasets in a purely
-              data-driven manner with the aim of characterizing their underlying
-              data, assessing the quantity and availability of data, and
-              evaluating the interoperability across these distinct cohort
-              datasets.
+              The StudyPicker assists you in identifying suited PD data
+              resources for your research plans. Rank cohorts based on their
+              available variables and investigate further properties.
             </p>
           </div>
+          <div class="button-container">
+            <button class="button-style" [routerLink]="'/cohorts'">
+              Explore
+            </button>
+          </div>
+        </div>
+        <div class="image-container">
+          <img src="home/study-picker.png" class="image" alt="Study Picker" />
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <mat-divider></mat-divider>
-
-  <!-- ***** Citation Start ***** -->
-  <section id="citation" class="section citation-section">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
-          <h2 class="section-title">How to Cite Us</h2>
-          <div class="text">
-            <strong>
-              Yasamin Salimi, Tim Adams, Mehmet Can Ay et al. On the Utility of
-              Large Language Model Embeddings for Revolutionizing Semantic Data
-              Harmonization in Alzheimer's and Parkinson's Disease, 01 April
-              2024, PREPRINT (Version 1) available at Research Square [<a
-                href="https://doi.org/10.21203/rs.3.rs-4108029/v1"
-                >https://doi.org/10.21203/rs.3.rs-4108029/v1</a
-              >]
-            </strong>
-          </div>
+  <!-- Longitudinal Container -->
+  <div class="section-container colored-bg">
+    <div class="section-inner-container">
+      <div class="content-container">
+        <div class="image-container">
+          <img src="home/longitudinal.png" class="image" alt="Longitudinal" />
         </div>
-      </div>
-    </div>
-  </section>
-
-  <mat-divider></mat-divider>
-
-  <!-- ***** Content Start ***** -->
-  <section class="counter section">
-    <div class="content">
-      <div class="container">
-        <div class="row">
-          <div class="col text-center">
-            <h2 class="section-title">Content</h2>
+        <div class="title-description-button">
+          <div class="title-container">
+            <h2>Longitudinal Follow-up</h2>
           </div>
-        </div>
-        <div class="row counts-wrapper">
-          <div class="count-item">
-            <strong>{{ cohortNumber }}</strong>
-            <span>Cohorts</span>
+          <div class="description-container">
+            <p>
+              This section lets you explore interactive visualizations of the
+              longitudinal follow-up and participant drop-out encountered in the
+              included studies. Additionally, you can visualize the longitudinal
+              coverage of individual variables per study.
+            </p>
           </div>
-          <div class="count-item">
-            <strong>{{ featureNumber }}</strong>
-            <span>Variables Mapped</span>
+          <div class="button-container">
+            <button class="inverted-button-style" [routerLink]="'/biomarkers'">
+              Explore
+            </button>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <mat-divider></mat-divider>
-  <!-- ***** Cohorts Start ***** -->
-  <section class="section">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="section-content">
-            <div class="text">
-              <h2 class="section-title">Cohorts</h2>
-              <p>
-                Here you can find an overview on the investigated cohorts,
-                references to the study design and links for data access
-                application. Additionally, there are summary statistics on key
-                Parkinson's disease biomarkers displayed.
-              </p>
-              <div class="text-center">
-                <a routerLink="/cohorts" class="button">Explore</a>
-              </div>
-            </div>
-            <img
-              src="home/cohorts.png"
-              class="img right-img"
-              alt="Cohort Comparison"
-            />
+  <!-- Mapping Container -->
+  <div class="section-container">
+    <div class="section-inner-container">
+      <div class="content-container">
+        <div class="title-description-button">
+          <div class="title-container">
+            <h2>Feature Mappings</h2>
           </div>
+          <div class="description-container">
+            <p>
+              Following the link, you will find semantic mappings between
+              variables of the investigated datasets. Equivalent features have
+              been connected and highlight semantic interoperability.
+            </p>
+          </div>
+          <div class="button-container">
+            <button class="button-style" [routerLink]="'/mappings'">
+              Explore
+            </button>
+          </div>
+        </div>
+        <div class="image-container">
+          <img src="home/mappings.png" class="image" alt="Feature Mapping" />
         </div>
       </div>
     </div>
-  </section>
-
-  <mat-divider></mat-divider>
-
-  <!-- ***** Biomarker Start ***** -->
-  <section class="section biomarker">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="section-content">
-            <img
-              src="home/biomarkers.png"
-              class="img left-img"
-              alt="Heatmap Screenshot"
-            />
-            <div class="text">
-              <h2 class="section-title">Biomarker Overview</h2>
-              <p>Explore and compare variable distributions across cohorts.</p>
-              <div class="text-center">
-                <a routerLink="/biomarkers" class="button">Explore</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <mat-divider></mat-divider>
-
-  <!-- ***** Study Picker Start ***** -->
-  <section class="section">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="section-content">
-            <div class="text">
-              <h2 class="section-title">StudyPicker</h2>
-              <p>
-                The StudyPicker assists you in identifying suited PD data
-                resources for your research plans. Rank cohorts based on their
-                available variables and investigate further properties.
-              </p>
-              <div class="text-center">
-                <a routerLink="/study-picker" class="button">Explore</a>
-              </div>
-            </div>
-            <img
-              src="home/study-picker.png"
-              class="img right-img"
-              alt="StudyPicker"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <mat-divider></mat-divider>
-
-  <!-- ***** Longitudinal Start ***** -->
-  <section class="section longitudinal">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="section-content">
-            <img
-              src="home/longitudinal.png"
-              class="img left-img"
-              alt="Longitudinal"
-            />
-            <div class="text">
-              <h2 class="section-title">Longitudinal Follow-up</h2>
-              <p>
-                This section lets you explore interactive visualizations of the
-                longitudinal follow-up and participant drop-out encountered in
-                the included studies. Additionally, you can visualize the
-                longitudinal coverage of individual variables per study.
-              </p>
-              <div class="text-center">
-                <a routerLink="/longitudinal" class="button">Explore</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <mat-divider></mat-divider>
-
-  <!-- ***** Mapping Start ***** -->
-  <section class="section">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="section-content">
-            <div class="text">
-              <h2 class="section-title">Feature Mappings</h2>
-              <p>
-                Following the link, you will find semantic mappings between
-                variables of the investigated datasets. Equivalent features have
-                been connected and highlight semantic interoperability.
-              </p>
-              <div class="text-center">
-                <a routerLink="/mappings" class="button">Explore</a>
-              </div>
-            </div>
-            <img
-              src="home/mappings.png"
-              class="img right-img"
-              alt="Feature Mapping"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-</body>
+  </div>
+</main>

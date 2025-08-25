@@ -1,295 +1,64 @@
-.mat-divider {
-  border-style: hidden;
-}
-
-/* Welcome Area */
-.welcome-area {
-  position: relative;
-  display: flex;
+.counter-content {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   align-items: center;
-  justify-content: center;
-  height: 40vh;
+  gap: 2rem;
 }
 
-.banner {
-  max-height: 100vh;
+.section-container {
   width: 100%;
+  min-height: 370px;
+  margin-top: 10px 0;
+  padding: 10px;
+
+  align-content: center;
 }
 
-.welcome-area .header-text {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-55%);
-  text-align: center;
-  width: 100%;
+.section-container.about {
+  border-radius: 12px;
+  padding: 4rem 2rem;
 }
 
-.welcome-area .header-text h1 {
-  font-size: 2vw;
-  color: #fff;
-}
-
-/* About */
-.about .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.about-item {
-  background: #fff;
-  box-shadow: 0 2px 48px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  padding: 1%;
-  text-align: center;
-  transition: 0.3s ease;
-  width: 50%;
+.section-inner-container {
+  max-width: 60%;
   margin: 0 auto;
-}
-
-.about-title {
-  font-size: 1.2vw;
-  color: #1e1e1e;
-  margin-bottom: 15px;
-}
-
-.about-item p {
-  font-size: 1vw;
-  color: #777;
-  margin-bottom: 20px;
-}
-
-/* Counter */
-.counter {
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 30px 0;
-  background: url("../../../public/home/background-applications.png") center
-    center / cover no-repeat;
-  height: 30vh;
-}
-
-.counter .content {
-  width: 100%;
   text-align: center;
+  padding: 2rem;
 }
 
-.counts-wrapper {
-  display: flex;
-  justify-content: center;
+.content-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 20px;
+  gap: 2rem;
 }
 
-.counter .count-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.colored-bg {
+  background: linear-gradient(135deg, #5c003e, #8e2b5a);
+  color: #f9f9f9;
+}
+
+.image {
   width: 200px;
+  height: auto;
 }
 
-.counter .count-item strong {
-  font-weight: 600;
-  font-size: 2vw;
-  margin: 10px 0;
-  color: #fff;
-  transition: 0.3s ease;
+/** Counter **/
+.counter-container {
+  font-size: 25px;
 }
 
-.counter .count-item span {
-  color: #fff;
-  font-weight: 500;
-  font-size: 1vw;
-}
-
-/* Images */
-.img {
-  max-width: 25%;
-  max-height: 25%;
-}
-
-.left-img {
-  margin-right: 20px;
-}
-
-.right-img {
-  margin-left: 20px;
-}
-
-/* Background for Biomarker and Mapping Sections */
-.biomarker,
-.longitudinal {
-  background: url("../../../public/home/background-applications.png") center
-    center / cover no-repeat;
-}
-
-.biomarker p,
-.longitudinal p,
-.biomarker h2,
-.counter h2,
-.longitudinal h2 {
-  color: #fff;
-}
-
-/* Citation Section */
-.citation-section {
-  padding: 0 25%;
-}
-
-/* Section Content */
-.section-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 25%;
-}
-
-.section-content img {
-  margin-right: 20px;
-}
-
-.section-content .text {
-  font-size: 1vw;
-}
-
-.section-content .text-center {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-a.button {
-  background-color: #99004f;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  display: inline-block;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: all 0.3s ease;
-  text-align: center;
-}
-
-a.button:hover {
-  background-color: #660035;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 1200px) {
-  .about-item {
-    width: 70%;
+.statistics-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: scale(1.3);
   }
-
-  .section-content {
-    padding: 0 15%;
+  strong {
+    font-size: 40px;
   }
-
-  .counter .count-item {
-    width: 150px;
-  }
-}
-
-@media (max-width: 992px) {
-  .welcome-area {
-    height: 35vh;
-  }
-
-  .welcome-area .header-text h1 {
-    font-size: 2.5vw;
-  }
-
-  .about-item {
-    width: 80%;
-  }
-
-  .counter .count-item strong {
-    font-size: 2.5vw;
-  }
-
-  .counter .count-item span {
-    font-size: 1.5vw;
-  }
-
-  .citation-section,
-  .section-content {
-    padding: 0 10%;
-  }
-
-  .section-content .text {
-    font-size: 1.2vw;
-  }
-}
-
-@media (max-width: 768px) {
-  .welcome-area {
-    height: 30vh;
-  }
-
-  .welcome-area .header-text h1 {
-    font-size: 3.5vw;
-  }
-
-  .about-item {
-    width: 90%;
-  }
-
-  .counter .count-item strong {
-    font-size: 3vw;
-  }
-
-  .counter .count-item span {
-    font-size: 1.8vw;
-  }
-
-  .citation-section,
-  .section-content {
-    padding: 0 5%;
-  }
-
-  .section-content .text {
-    font-size: 1.5vw;
-  }
-}
-
-@media (max-width: 576px) {
-  .welcome-area {
-    height: 25vh;
-  }
-
-  .welcome-area .header-text h1 {
-    font-size: 4.5vw;
-  }
-
-  .about-title {
-    font-size: 4vw;
-  }
-
-  .about-item p {
-    font-size: 2vw;
-  }
-
-  .counter {
-    height: 25vh;
-  }
-
-  .counter .count-item strong {
-    font-size: 4vw;
-  }
-
-  .counter .count-item span {
-    font-size: 2.5vw;
-  }
-
-  .section-content .text {
-    font-size: 2vw;
-  }
-
-  .counts-wrapper {
-    /* Stack counters vertically on small screens */
-    flex-direction: column;
-    gap: 10px;
+  span {
+    font-size: 20px;
   }
 }
