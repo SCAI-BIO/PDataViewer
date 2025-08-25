@@ -11,6 +11,7 @@ describe('FooterComponent', () => {
     await TestBed.configureTestingModule({
       imports: [FooterComponent],
       providers: [provideRouter([])],
+      teardown: { destroyAfterEach: false },
     }).compileComponents();
   });
 

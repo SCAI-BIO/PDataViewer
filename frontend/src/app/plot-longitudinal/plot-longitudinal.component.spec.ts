@@ -21,6 +21,7 @@ describe('PlotLongitudinalComponent', () => {
           },
         },
       ],
+      teardown: { destroyAfterEach: false },
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlotLongitudinalComponent);

@@ -11,6 +11,7 @@ describe('BiomarkersComponent', () => {
     await TestBed.configureTestingModule({
       imports: [BiomarkersComponent],
       providers: [provideHttpClient()],
+      teardown: { destroyAfterEach: false },
     }).compileComponents();
 
     fixture = TestBed.createComponent(BiomarkersComponent);

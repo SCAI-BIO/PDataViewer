@@ -22,6 +22,7 @@ describe('HomeComponent', () => {
           },
         },
       ],
+      teardown: { destroyAfterEach: false },
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomeComponent);

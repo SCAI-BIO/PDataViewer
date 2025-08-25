@@ -11,6 +11,7 @@ describe('CohortsComponent', () => {
     TestBed.configureTestingModule({
       imports: [CohortsComponent],
       providers: [provideHttpClient()],
+      teardown: { destroyAfterEach: false },
     }).compileComponents();
 
     fixture = TestBed.createComponent(CohortsComponent);
