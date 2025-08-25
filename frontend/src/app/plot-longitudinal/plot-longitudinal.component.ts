@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 
 import { LongitudinalData } from '../interfaces/longitudinal-data';
 import { ApiService } from '../services/api.service';
+import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 import { LineplotService } from '../services/lineplot.service';
 
 @Component({
@@ -25,11 +26,12 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
   cohort = '';
   variables: string[] = [];
   data: LongitudinalData[] = [];
+  dataFetchCount = 0;
   loading = false;
   originalVariableNameMappings: Record<string, string> = {};
   @ViewChild('lineplot') private chartContainer!: ElementRef;
   private apiService = inject(ApiService);
-  private dataFetchCount = 0;
+  private errorHandler = inject(ApiErrorHandlerService);
   private http = inject(HttpClient);
   private lineplotService = inject(LineplotService);
   private route = inject(ActivatedRoute);
@@ -46,21 +48,8 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
             this.data.push({ ...item, Cohort: featureName });
           }),
         error: (err) => {
-          console.error('Error fetching longidutinal data', err);
           this.loading = false;
-          const detail = err.error?.detail;
-          const message = err.error?.message || err.message;
-
-          let errorMessage = 'An unknown error occurred.';
-          if (detail && message) {
-            errorMessage = `${message} — ${detail}`;
-          } else if (detail || message) {
-            errorMessage = detail || message;
-          }
-
-          alert(
-            `An error occurred while fetching longitudinal data: ${errorMessage}`
-          );
+          this.errorHandler.handleError(err, 'fetching longitudinal data');
         },
         complete: () => {
           this.dataFetchCount--;

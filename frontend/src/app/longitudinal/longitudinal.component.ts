@@ -24,6 +24,7 @@ import { Observable, Subscription, map, startWith } from 'rxjs';
 import { LongitudinalUtilsService } from './longitudinal-utils.service';
 import { LongitudinalData } from '../interfaces/longitudinal-data';
 import { ApiService } from '../services/api.service';
+import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 import { LineplotService } from '../services/lineplot.service';
 
 @Component({
@@ -52,6 +53,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   selectedFeature = '';
   @ViewChild('lineplot') private chartContainer!: ElementRef;
   private apiService = inject(ApiService);
+  private errorHandler = inject(ApiErrorHandlerService);
   private http = inject(HttpClient);
   private lineplotService = inject(LineplotService);
   private longitudinalUtilsService = inject(LongitudinalUtilsService);
@@ -92,19 +94,8 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
           this.colors = v;
         },
         error: (err) => {
-          console.error('Error fetching colors', err);
           this.loading = false;
-          const detail = err.error?.detail;
-          const message = err.error?.message || err.message;
-
-          let errorMessage = 'An unknown error occurred.';
-          if (detail && message) {
-            errorMessage = `${message} — ${detail}`;
-          } else if (detail || message) {
-            errorMessage = detail || message;
-          }
-
-          alert(`An error occurred while fetching colors: ${errorMessage}`);
+          this.errorHandler.handleError(err, 'fetching colors');
         },
         complete: () => (this.loading = false),
       });
@@ -116,21 +107,8 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
     const sub = this.apiService.fetchLongitudinalTable(tableName).subscribe({
       next: (v) => (this.data = v),
       error: (err) => {
-        console.error('Error fetching logitudinal table', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(
-          `An error occurred while fetching longitudinal table: ${errorMessage}`
-        );
+        this.errorHandler.handleError(err, 'fetching longitudinal table');
       },
       complete: () => (this.loading = false),
     });
@@ -148,21 +126,8 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
           )
         )),
       error: (err) => {
-        console.error('Error fetching longitudinal tables', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(
-          `An error occurred while fetching longitudinal tables: ${errorMessage}`
-        );
+        this.errorHandler.handleError(err, 'fetching longitudinal tables');
       },
       complete: () => (this.loading = false),
     });

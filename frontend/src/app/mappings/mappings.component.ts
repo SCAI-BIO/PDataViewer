@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { ChordData } from '../interfaces/chord-diagram';
 import { ApiService } from '../services/api.service';
 import { ChordDiagramService } from '../services/chord-diagram.service';
+import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 
 @Component({
   selector: 'app-mappings',
@@ -29,6 +30,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
   private apiService = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private chordService = inject(ChordDiagramService);
+  private errorHandler = inject(ApiErrorHandlerService);
   private subscriptions: Subscription[] = [];
 
   fetchCohorts(): void {
@@ -38,19 +40,8 @@ export class MappingsComponent implements OnInit, OnDestroy {
         this.cohorts = v;
       },
       error: (err) => {
-        console.error('Error fetching cohorts', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(`An error occurred while fetching cohorts: ${errorMessage}`);
+        this.errorHandler.handleError(err, 'fetching cohorts');
       },
       complete: () => (this.loading = false),
     });
@@ -77,19 +68,8 @@ export class MappingsComponent implements OnInit, OnDestroy {
         });
       },
       error: (err) => {
-        console.error('Error fetching chord data', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(`An error occurred while fetching chord data: ${errorMessage}`);
+        this.errorHandler.handleError(err, 'fetching chord data');
       },
       complete: () => (this.loading = false),
     });
@@ -103,19 +83,8 @@ export class MappingsComponent implements OnInit, OnDestroy {
         this.modalities = v;
       },
       error: (err) => {
-        console.error('Error fetching modalities', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(`An error occurred while fetching modalities: ${errorMessage}`);
+        this.errorHandler.handleError(err, 'fetching modalities');
       },
       complete: () => (this.loading = false),
     });

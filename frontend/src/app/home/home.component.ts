@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { ApiService } from '../services/api.service';
+import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 
 @Component({
   selector: 'app-home',
@@ -17,6 +18,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   featureNumber = 0;
   loading = false;
   private apiService = inject(ApiService);
+  private errorHandler = inject(ApiErrorHandlerService);
   private subscriptions: Subscription[] = [];
 
   fetchCohorts(): void {
@@ -24,19 +26,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     const sub = this.apiService.fetchCohorts().subscribe({
       next: (v) => (this.cohortNumber = v.length),
       error: (err) => {
-        console.error('Error fetching cohorts', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(`An error occurred while fetching cohorts: ${errorMessage}`);
+        this.errorHandler.handleError(err, 'fetching cohorts');
       },
       complete: () => (this.loading = false),
     });
@@ -48,19 +39,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     const sub = this.apiService.fetchFeatures().subscribe({
       next: (v) => (this.featureNumber = v.Feature.length),
       error: (err) => {
-        console.error('Error fetching features', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(`An error occurred while fetching features: ${errorMessage}`);
+        this.errorHandler.handleError(err, 'fetching features');
       },
       complete: () => (this.loading = false),
     });

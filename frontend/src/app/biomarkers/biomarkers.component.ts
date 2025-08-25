@@ -25,6 +25,7 @@ import { Observable, Subscription, map, startWith } from 'rxjs';
 import { BiomarkerUtilsService } from './biomarker-utils.service';
 import { ApiService } from '../services/api.service';
 import { BoxplotService } from '../services/boxplot.service';
+import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 
 @Component({
   selector: 'app-biomarkers',
@@ -61,6 +62,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   private apiService = inject(ApiService);
   private biomarkerUtilsService = inject(BiomarkerUtilsService);
   private boxplotService = inject(BoxplotService);
+  private errorHandler = inject(ApiErrorHandlerService);
   private http = inject(HttpClient);
   private subscriptions: Subscription[] = [];
 
@@ -111,21 +113,8 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (v) => (this.biomarkerData[cohort_and_diagnosis] = v),
         error: (err) => {
-          console.error('Error fetching biomarker data', err);
           this.loading = false;
-          const detail = err.error?.detail;
-          const message = err.error?.message || err.message;
-
-          let errorMessage = 'An unknown error occurred.';
-          if (detail && message) {
-            errorMessage = `${message} — ${detail}`;
-          } else if (detail || message) {
-            errorMessage = detail || message;
-          }
-
-          alert(
-            `An error occurred while fetching biomarker data: ${errorMessage}`
-          );
+          this.errorHandler.handleError(err, 'fetching biomarker data');
         },
         complete: () => (this.loading = false),
       });
@@ -143,19 +132,8 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
           )
         )),
       error: (err) => {
-        console.error('Error fetching biomarkers', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(`An error occurred while fetching biomarkers: ${errorMessage}`);
+        this.errorHandler.handleError(err, 'fetching biomarkers');
       },
       complete: () => (this.loading = false),
     });
@@ -168,19 +146,8 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
     const sub = this.apiService.fetchCohortsForBiomarker(biomarker).subscribe({
       next: (v) => (this.cohorts = v),
       error: (err) => {
-        console.error('Error fetching cohorts', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(`An error occurred while fetching cohorts: ${errorMessage}`);
+        this.errorHandler.handleError(err, 'fetching cohorts');
       },
       complete: () => (this.loading = false),
     });
@@ -207,19 +174,8 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
           this.colors = v;
         },
         error: (err) => {
-          console.error('Error fetching colors', err);
           this.loading = false;
-          const detail = err.error?.detail;
-          const message = err.error?.message || err.message;
-
-          let errorMessage = 'An unknown error occurred.';
-          if (detail && message) {
-            errorMessage = `${message} — ${detail}`;
-          } else if (detail || message) {
-            errorMessage = detail || message;
-          }
-
-          alert(`An error occurred while fetching colors: ${errorMessage}`);
+          this.errorHandler.handleError(err, 'fetching colors');
         },
         complete: () => (this.loading = false),
       });
@@ -242,19 +198,8 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
           ))
         ),
         error: (err) => {
-          console.error('Error fetching diagnoses', err);
           this.loading = false;
-          const detail = err.error?.detail;
-          const message = err.error?.message || err.message;
-
-          let errorMessage = 'An unknown error occurred.';
-          if (detail && message) {
-            errorMessage = `${message} — ${detail}`;
-          } else if (detail || message) {
-            errorMessage = detail || message;
-          }
-
-          alert(`An error occurred while fetching diagnoses: ${errorMessage}`);
+          this.errorHandler.handleError(err, 'fetching diagnoses');
         },
         complete: () => (this.loading = false),
       });
@@ -276,9 +221,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
 
   loadOriginalCaseMappings(): void {
     this.http
-      .get<Record<string, string>>(
-        '../../../public/lower_to_original_case.json'
-      )
+      .get<Record<string, string>>('lower_to_original_case.json')
       .subscribe({
         next: (data) => {
           this.originalVariableNameMappings = data;

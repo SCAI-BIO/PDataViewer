@@ -19,6 +19,7 @@ import { map, startWith } from 'rxjs/operators';
 import { Metadata } from '../interfaces/metadata';
 import { RankData } from '../interfaces/rankdata';
 import { ApiService } from '../services/api.service';
+import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 
 @Component({
   selector: 'app-study-picker',
@@ -69,6 +70,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   @Input() selectedFeatures: string[] = [];
   suggestions$: Observable<string[]> | null = null;
   private apiService = inject(ApiService);
+  private errorHandler = inject(ApiErrorHandlerService);
   private router = inject(Router);
   private subscriptions: Subscription[] = [];
 
@@ -103,19 +105,8 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
-        console.error('Error fetching metadata', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(`An error occurred while fetching metadata: ${errorMessage}`);
+        this.errorHandler.handleError(err, 'fetching metadata');
       },
       complete: () => (this.loading = false),
     });
@@ -132,19 +123,8 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
         );
       },
       error: (err) => {
-        console.error('Error fetching features', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(`An error occurred while fetching features: ${errorMessage}`);
+        this.errorHandler.handleError(err, 'fetching features');
       },
       complete: () => (this.loading = false),
     });
@@ -155,19 +135,8 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     const sub = this.apiService.fetchRankings(features).subscribe({
       next: (v) => (this.cohortRankings = v),
       error: (err) => {
-        console.error('Error fetching rakings', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(`An error occurred while fetching rankings: ${errorMessage}`);
+        this.errorHandler.handleError(err, 'fetching rankings');
       },
       complete: () => (this.loading = false),
     });
