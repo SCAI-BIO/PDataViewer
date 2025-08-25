@@ -19,8 +19,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { Observable, Subscription } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Observable, Subscription, map, startWith } from 'rxjs';
 
 import { LongitudinalUtilsService } from './longitudinal-utils.service';
 import { LongitudinalData } from '../interfaces/longitudinal-data';
