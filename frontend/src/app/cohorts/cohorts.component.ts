@@ -28,6 +28,7 @@ export class CohortsComponent implements OnInit, OnDestroy {
     'doi',
     'link',
   ];
+  metadata: CohortData[] = [];
   dataSource = new MatTableDataSource<CohortData>();
   loading = false;
   @ViewChild(MatSort) sort!: MatSort;
@@ -43,19 +44,22 @@ export class CohortsComponent implements OnInit, OnDestroy {
           cohort: key,
           ...data[key],
         }));
-        this.dataSource.data = transformedData;
+        this.metadata = transformedData;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorHandler.handleError(err, 'fetching colors');
+      },
+      complete: () => {
+        this.dataSource.data = this.metadata;
         this.dataSource.sort = this.sort;
 
         const initialSortState: Sort = { active: 'cohort', direction: 'asc' };
         this.sort.active = initialSortState.active;
         this.sort.direction = initialSortState.direction;
         this.sort.sortChange.emit(initialSortState);
-      },
-      error: (err) => {
         this.loading = false;
-        this.errorHandler.handleError(err, 'fetching colors');
       },
-      complete: () => (this.loading = false),
     });
     this.subscriptions.push(sub);
   }

@@ -489,7 +489,7 @@ export class ChordDiagramService {
           const colors: Record<string, string> = {};
           for (const key in metadata) {
             if (Object.hasOwn(metadata, key)) {
-              colors[key] = metadata[key].Color;
+              colors[key] = metadata[key].color;
             }
           }
           return colors;

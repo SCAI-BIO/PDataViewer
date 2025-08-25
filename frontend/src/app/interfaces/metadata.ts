@@ -1,14 +1,14 @@
 export interface CohortMetadata {
-  readonly Participants: number;
-  readonly HealthyControls: number;
-  readonly ProdromalPatients: number;
-  readonly PDPatients: number;
-  readonly LongitudinalPatients: number;
-  readonly FollowUpInterval: string;
-  readonly Location: string;
-  readonly DOI: string;
-  readonly Link: string;
-  readonly Color: string;
+  readonly participants: number;
+  readonly healthyControls: number;
+  readonly prodromalPatients: number;
+  readonly pdPatients: number;
+  readonly longitudinalPatients: number;
+  readonly followUpInterval: string;
+  readonly location: string;
+  readonly doi: string;
+  readonly link: string;
+  readonly color: string;
 }
 
 export interface CohortData extends CohortMetadata {

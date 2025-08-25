@@ -25,7 +25,7 @@
         <td mat-cell *matCellDef="let element">
           <span
             class="color-circle"
-            [style.background-color]="element.Color"
+            [style.background-color]="element.color"
           ></span>
           <span class="cohort-name">{{ element.cohort }}</span>
         </td>
@@ -34,7 +34,7 @@
       <!-- Participants Column -->
       <ng-container matColumnDef="participants">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Participants</th>
-        <td mat-cell *matCellDef="let element">{{ element.Participants }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.participants }}</td>
       </ng-container>
 
       <!-- Healthy Controls Column -->
@@ -43,7 +43,7 @@
           Healthy Controls
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.HealthyControls }}
+          {{ element.healthyControls }}
         </td>
       </ng-container>
 
@@ -53,21 +53,21 @@
           Prodromal Patients
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.ProdromalPatients }}
+          {{ element.prodromalPatients }}
         </td>
       </ng-container>
 
       <!-- PD Patients Column -->
       <ng-container matColumnDef="pdPatients">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>PD Patients</th>
-        <td mat-cell *matCellDef="let element">{{ element.PDPatients }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.pdPatients }}</td>
       </ng-container>
 
       <!-- Longitudinal Patients Column -->
       <ng-container matColumnDef="longitudinalPatients">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>≥ 2 Visits</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.LongitudinalPatients }}
+          {{ element.longitudinalPatients }}
         </td>
       </ng-container>
 
@@ -75,21 +75,21 @@
       <ng-container matColumnDef="followUpInterval">
         <th mat-header-cell *matHeaderCellDef>Follow-up Interval</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.FollowUpInterval }}
+          {{ element.followUpInterval }}
         </td>
       </ng-container>
 
       <!-- Location Column -->
       <ng-container matColumnDef="location">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
-        <td mat-cell *matCellDef="let element">{{ element.Location }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.location }}</td>
       </ng-container>
 
       <!-- DOI Column -->
       <ng-container matColumnDef="doi">
         <th mat-header-cell *matHeaderCellDef>Reference</th>
         <td mat-cell *matCellDef="let element">
-          <button class="button-style" (click)="openLink(element.DOI)">
+          <button class="button-style" (click)="openLink(element.doi)">
             DOI
           </button>
         </td>
@@ -99,10 +99,10 @@
       <ng-container matColumnDef="link">
         <th mat-header-cell *matHeaderCellDef>Data Access</th>
         <td mat-cell *matCellDef="let element">
-          @if (element.Link === 'Shared by consortium') {
-          {{ element.Link }}
-          } @else { @if (element.Link) {
-          <button class="button-style" (click)="openLink(element.Link)">
+          @if (element.link === 'Shared by consortium') {
+          {{ element.link }}
+          } @else { @if (element.link) {
+          <button class="button-style" (click)="openLink(element.link)">
             Apply
           </button>
           } }

@@ -99,8 +99,8 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
         this.cohortData = data;
         for (const cohort in data) {
           if (Object.hasOwn(data, cohort)) {
-            this.cohortColors[cohort] = data[cohort].Color;
-            this.cohortLinks[cohort] = data[cohort].Link;
+            this.cohortColors[cohort] = data[cohort].color;
+            this.cohortLinks[cohort] = data[cohort].link;
           }
         }
       },
