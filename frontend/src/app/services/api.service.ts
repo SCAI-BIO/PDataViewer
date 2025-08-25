@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 
 import { Metadata } from '../interfaces/metadata';
 import { environment } from '../../environments/environment';
+import { LongitudinalData } from '../interfaces/longitudinal-data';
 
 @Injectable({
   providedIn: 'root',
@@ -47,6 +48,16 @@ export class ApiService {
 
   fetchFeatures(): Observable<{ Feature: string[] }> {
     return this.http.get<{ Feature: string[] }>(`${this.API_URL}/cdm/features`);
+  }
+
+  fetchLongitudinalTable(tableName: string): Observable<LongitudinalData[]> {
+    return this.http.get<LongitudinalData[]>(
+      `${this.API_URL}/longitudinal/${tableName}`
+    );
+  }
+
+  fetchLongitudinalTables(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.API_URL}/longitudinal`);
   }
 
   fetchMetadata(): Observable<Metadata> {
