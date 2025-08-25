@@ -1,8 +1,8 @@
 # PDataViewer
 
-<img src="./frontend/src/assets/logos/logo.png" width="200" alt="logo"/>
+<img src="./frontend/public/logos/logo_white.svg" width="100" alt="logo"/>
 
-![tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/test.yml/badge.svg) ![version](https://img.shields.io/github/v/release/SCAI-BIO/PDataViewer) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![DOI](https://zenodo.org/badge/785700235.svg)](https://zenodo.org/doi/10.5281/zenodo.13629127) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9409/badge)](https://www.bestpractices.dev/projects/9409) [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8B%20%20%E2%97%8B-orange)](https://fair-software.eu)
+![backend-tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/python-tests.yml/badge.svg) ![frontend-tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-tests.yml/badge.svg) ![version](https://img.shields.io/github/v/release/SCAI-BIO/PDataViewer) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![DOI](https://zenodo.org/badge/785700235.svg)](https://zenodo.org/doi/10.5281/zenodo.13629127) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9409/badge)](https://www.bestpractices.dev/projects/9409) [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8B%20%20%E2%97%8B-orange)](https://fair-software.eu)
 
 PDataViewer is a web application that lets you explore the PD data landscape and identify cohort datasets that suit your research needs.
 
@@ -24,9 +24,9 @@ PDataViewer is a web application that lets you explore the PD data landscape and
 
 Data collected in cohort studies lay the groundwork for a plethora of Parkinson’s disease (PD) research endeavors. PDataViewer lets you explore this PD data landscape and identify cohort datasets that suit your research needs. We accessed and curated major PD cohort datasets in a purely data-driven manner with the aim of:
 
-1) characterizing their underlying data
-2) assessing the quantity and availability of data
-3) evaluating the interoperability across these distinct cohort datasets.
+1. characterizing their underlying data
+2. assessing the quantity and availability of data
+3. evaluating the interoperability across these distinct cohort datasets.
 
 ## Requirements
 
@@ -144,7 +144,7 @@ You can deploy a local version of the API and the web application together.
 
 2. Navigate to the Root (PDataViewer) Folder
 3. Build and Run the Containers:
-  
+
    ```bash
    docker-compose -f ./docker-compose.local.yml up --build
    ```
@@ -155,6 +155,6 @@ You can deploy a local version of the API and the web application together.
    docker ps
    ```
 
-  This command lists all running containers. You should be able to see your containers with the name `pdataviewer-frontend` and `pdataviewer-backend`.
-  
-  You can access the web application on [localhost:3000](http://localhost:3000) and the API on [localhost:5000](http://localhost:5000)
+This command lists all running containers. You should be able to see your containers with the name `pdataviewer-frontend` and `pdataviewer-backend`.
+
+You can access the web application on [localhost:3000](http://localhost:3000) and the API on [localhost:5000](http://localhost:5000)
