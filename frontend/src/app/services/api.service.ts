@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { Metadata } from '../interfaces/metadata';
 import { environment } from '../../environments/environment';
 import { LongitudinalData } from '../interfaces/longitudinal-data';
-import { ChordData } from '../interfaces/chord';
+import { ChordData } from '../interfaces/chord-diagram';
 import { RankData } from '../interfaces/rankdata';
 
 @Injectable({
