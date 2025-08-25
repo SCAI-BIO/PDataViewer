@@ -1,93 +1,24 @@
-/* Header Container */
-.header-container {
-  margin: 20px;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  background-color: #f9f9f9;
-}
-
-/* Component container */
-.component-container {
-  padding: 20px;
-  background-color: #f9f9f9;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
 /* Input container */
 .input-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  max-width: 600px;
+  width: 30%;
   margin: 20px 0;
 }
 
-/* Full width for form fields and inputs */
-.full-width, .mat-form-field, .mat-form-field-infix, table {
+mat-form-field {
   width: 100%;
 }
 
 /* Chip listbox wrapping */
 mat-chip-listbox {
-  flex-wrap: wrap;
   padding: 10px;
 }
 
-/* Chip options */
-mat-chip-option {
-  margin: 5px;
-  background-color: #d1c4e9;
-  color: #99004f;
-}
-
-/* Table container, button container, and input container alignment */
-.table-container, .button-container, .input-container {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-/* Button container adjustments */
-.button-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-  padding: 10px;
-}
-
-/* Table styling */
-table {
-  border-collapse: collapse;
-  background-color: #ffffff;
-  color: #000000;
-  margin-top: 20px;
-  padding: 10px;
-  width: 90%;
-  max-width: 100%;
-}
-
-table, th, td {
-  border: 1px solid #dddddd;
-}
-
-th, td {
-  padding: 12px;
-  text-align: left;
-}
-
-thead, th {
-  background-color: #99004f !important;
-  color: white !important;
-}
-
-/* Body padding */
-body {
-  padding: 40px 20px;
+.table-container {
+  min-width: 80%;
 }
 
 /* Color circle for display */
@@ -105,68 +36,4 @@ body {
   max-width: 100px;
   word-wrap: break-word;
   white-space: normal;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1200px) {
-
-  .table-container, .button-container, .input-container {
-    width: 70%;
-  }
-
-  .missing-features-cell {
-    max-width: 150px;
-  }
-}
-
-/* Medium screens (tablets) */
-@media (max-width: 992px) {
-  .header-container, .component-container {
-    padding: 15px;
-  }
-
-  .table-container, .button-container, .input-container {
-    width: 80%;
-  }
-
-  .missing-features-cell {
-    max-width: 200px;
-  }
-}
-
-@media (max-width: 768px) {
-  .header-container, .component-container {
-    padding: 10px;
-  }
-
-  .input-container {
-    width: 90%;
-    margin-top: 20px;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  table, th, td {
-    padding: 8px;
-  }
-}
-
-@media (max-width: 576px) {
-
-  .header-container,
-  .component-container {
-    padding: 8px;
-    margin: 10px;
-  }
-
-  .input-container {
-    width: 100%;
-    margin-top: 20px;
-  }
-
-  table {
-    width: 100%;
-  }
 }

@@ -10,6 +10,7 @@ import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 
@@ -28,9 +29,10 @@ import { environment } from '../../environments/environment';
     MatAutocompleteModule,
     MatInputModule,
     MatChipsModule,
-    ReactiveFormsModule,
+    MatProgressSpinnerModule,
     MatIconModule,
     MatTableModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './study-picker.component.html',
   styleUrl: './study-picker.component.scss',
@@ -64,6 +66,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   featureCtrl = new FormControl();
   features: string[] = [];
   filteredFeatures: Observable<string[]> | null = null;
+  loading = false;
   @Input() selectedFeatures: string[] = [];
   suggestions$: Observable<string[]> | null = null;
   private API_URL = environment.API_URL;
@@ -90,16 +93,24 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   }
 
   fetchMetadata(): void {
+    this.loading = true;
     const sub = this.http
       .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
-      .subscribe((data) => {
-        this.cohortData = data;
-        for (const cohort in data) {
-          if (Object.hasOwn(data, cohort)) {
-            this.cohortColors[cohort] = data[cohort].Color;
-            this.cohortLinks[cohort] = data[cohort].Link;
+      .subscribe({
+        next: (data) => {
+          this.cohortData = data;
+          for (const cohort in data) {
+            if (Object.hasOwn(data, cohort)) {
+              this.cohortColors[cohort] = data[cohort].Color;
+              this.cohortLinks[cohort] = data[cohort].Link;
+            }
           }
-        }
+        },
+        error: (e) => {
+          this.loading = false;
+          console.error(e);
+        },
+        complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
   }
@@ -113,8 +124,11 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
       .post<RankData[]>(`${this.API_URL}/studypicker/rank`, features)
       .subscribe({
         next: (v) => (this.cohortRankings = v),
-        error: (e) => console.error(e),
-        complete: () => console.info('Rankings fetched successfully.'),
+        error: (e) => {
+          this.loading = false;
+          console.error(e);
+        },
+        complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
   }
