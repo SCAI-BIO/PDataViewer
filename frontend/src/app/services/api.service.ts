@@ -13,7 +13,7 @@ import { RankData } from '../interfaces/rankdata';
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly API_URL = environment.apiUrl;
+  private readonly apiUrl = environment.apiUrl;
   private http = inject(HttpClient);
 
   fetchBiomarkerData(
@@ -22,12 +22,12 @@ export class ApiService {
     diagnosis: string
   ): Observable<number[]> {
     return this.http.get<number[]>(
-      `${this.API_URL}/biomarkers/${biomarker}/cohorts/${cohort}/diagnoses/${diagnosis}`
+      `${this.apiUrl}/biomarkers/${biomarker}/cohorts/${cohort}/diagnoses/${diagnosis}`
     );
   }
 
   fetchBiomarkers(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.API_URL}/biomarkers`);
+    return this.http.get<string[]>(`${this.apiUrl}/biomarkers`);
   }
 
   fetchChordsData(request: {
@@ -35,18 +35,18 @@ export class ApiService {
     modality: string;
   }): Observable<ChordData> {
     return this.http.post<ChordData>(
-      `${this.API_URL}/visualization/chords/`,
+      `${this.apiUrl}/visualization/chords/`,
       request
     );
   }
 
   fetchCohorts(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.API_URL}/cdm/cohorts`);
+    return this.http.get<string[]>(`${this.apiUrl}/cdm/cohorts`);
   }
 
   fetchCohortsForBiomarker(biomarker: string): Observable<string[]> {
     return this.http.get<string[]>(
-      `${this.API_URL}/biomarkers/${biomarker}/cohorts`
+      `${this.apiUrl}/biomarkers/${biomarker}/cohorts`
     );
   }
 
@@ -54,17 +54,17 @@ export class ApiService {
     biomarker: string
   ): Observable<Record<string, string[]>> {
     return this.http.get<Record<string, string[]>>(
-      `${this.API_URL}/biomarkers/${biomarker}/diagnoses`
+      `${this.apiUrl}/biomarkers/${biomarker}/diagnoses`
     );
   }
 
   fetchFeatures(): Observable<{ Feature: string[] }> {
-    return this.http.get<{ Feature: string[] }>(`${this.API_URL}/cdm/features`);
+    return this.http.get<{ Feature: string[] }>(`${this.apiUrl}/cdm/features`);
   }
 
   fetchLongitudinalTable(tableName: string): Observable<LongitudinalData[]> {
     return this.http.get<LongitudinalData[]>(
-      `${this.API_URL}/longitudinal/${tableName}`
+      `${this.apiUrl}/longitudinal/${tableName}`
     );
   }
 
@@ -73,25 +73,25 @@ export class ApiService {
     cohortName: string
   ): Observable<LongitudinalData[]> {
     return this.http.get<LongitudinalData[]>(
-      `${this.API_URL}/longitudinal/${tableName}/${cohortName}`
+      `${this.apiUrl}/longitudinal/${tableName}/${cohortName}`
     );
   }
 
   fetchLongitudinalTables(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.API_URL}/longitudinal`);
+    return this.http.get<string[]>(`${this.apiUrl}/longitudinal`);
   }
 
   fetchMetadata(): Observable<Metadata> {
-    return this.http.get<Metadata>(`${this.API_URL}/cohorts/metadata`);
+    return this.http.get<Metadata>(`${this.apiUrl}/cohorts/metadata`);
   }
 
   fetchModalities(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.API_URL}/cdm/modalities`);
+    return this.http.get<string[]>(`${this.apiUrl}/cdm/modalities`);
   }
 
   fetchRankings(features: string[]): Observable<RankData[]> {
     return this.http.post<RankData[]>(
-      `${this.API_URL}/studypicker/rank`,
+      `${this.apiUrl}/studypicker/rank`,
       features
     );
   }
