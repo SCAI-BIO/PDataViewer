@@ -20,8 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { Observable, Subscription } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Observable, Subscription, map, startWith } from 'rxjs';
 
 import { BiomarkerUtilsService } from './biomarker-utils.service';
 import { ApiService } from '../services/api.service';
