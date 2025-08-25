@@ -139,7 +139,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   loadOriginalCaseMappings(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<Record<string, string>>('/lower_to_original_case.json')
+        .get<Record<string, string>>('lower_to_original_case.json')
         .subscribe({
           next: (data) => {
             this.originalVariableNameMappings = data;
