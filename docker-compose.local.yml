@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-
   frontend:
     image: pdataviewer-frontend
     build:
@@ -21,13 +20,6 @@ services:
       - .env
     ports:
       - "5000:80"
-
-  weaviate:
-    image: cr.weaviate.io/semitechnologies/weaviate:1.24.20
-    ports:
-      - "8080:8080"
-    volumes:
-      - weaviate_data:/var/lib/weaviate
 
 volumes:
   weaviate_data:
