@@ -50,6 +50,21 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  fetchModalityCount(): void {
+    this.loading = true;
+    const sub = this.apiService.fetchModalities().subscribe({
+      next: (v) => {
+        this.modalityCount = v.length;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorHandler.handleError(err, 'fetching modalities');
+      },
+      complete: () => (this.loading = false),
+    });
+    this.subscriptions.push(sub);
+  }
+
   fetchParticipantCount(): void {
     this.loading = true;
     const sub = this.apiService.fetchMetadata().subscribe({
@@ -69,29 +84,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
-  fetchModalityCount(): void {
-    this.loading = true;
-    const sub = this.apiService.fetchModalities().subscribe({
-      next: (v) => {
-        this.modalityCount = v.length;
-      },
-      error: (err) => {
-        this.loading = false;
-        this.errorHandler.handleError(err, 'fetching modalities');
-      },
-      complete: () => (this.loading = false),
-    });
-    this.subscriptions.push(sub);
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   ngOnInit(): void {
     this.fetchCohortCount();
     this.fetchFeatureCount();
-    this.fetchParticipantCount();
     this.fetchModalityCount();
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
+    this.fetchParticipantCount();
   }
 }
