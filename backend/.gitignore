@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 data/patient_level
 data/processed
+database.db
