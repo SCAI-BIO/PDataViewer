@@ -43,7 +43,7 @@
       </div>
       <div class="counter-content">
         <div class="statistics-container">
-          <strong>{{ cohortNumber }}</strong>
+          <strong>{{ cohortCount | number }}</strong>
           <span> Cohorts </span>
         </div>
 
@@ -52,8 +52,8 @@
         </div>
 
         <div class="statistics-container">
-          <strong>41,704</strong>
-          <span>Patients</span>
+          <strong>{{ participantCount | number }}</strong>
+          <span>Participants</span>
         </div>
 
         <div class="image-between">
@@ -61,7 +61,7 @@
         </div>
 
         <div class="statistics-container">
-          <strong>{{ featureNumber }}</strong>
+          <strong>{{ featureCount | number }}</strong>
           <span>Variables Mapped</span>
         </div>
 
@@ -70,7 +70,7 @@
         </div>
 
         <div class="statistics-container">
-          <strong>11</strong>
+          <strong>{{ modalityCount | number }}</strong>
           <span>Compared Modalities</span>
         </div>
       </div>
