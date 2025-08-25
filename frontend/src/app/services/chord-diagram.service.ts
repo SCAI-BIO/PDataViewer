@@ -13,7 +13,7 @@ import { environment } from '../../environments/environment';
 })
 export class ChordDiagramService {
   dataChunks: ChordData[] = [];
-  private API_URL = environment.API_URL;
+  private API_URL = environment.apiUrl;
   private colorScale: d3.ScaleOrdinal<string, string>;
   private http = inject(HttpClient);
 

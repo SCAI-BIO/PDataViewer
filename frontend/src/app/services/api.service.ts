@@ -13,7 +13,7 @@ import { RankData } from '../interfaces/rankdata';
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly API_URL = environment.API_URL;
+  private readonly API_URL = environment.apiUrl;
   private http = inject(HttpClient);
 
   fetchBiomarkerData(
