@@ -27,9 +27,6 @@ $button-radius: 5px;
   cursor: pointer;
 }
 
-// External link variable
-$external-link-color: #1e88e5;
-
 body {
   font-family: "Robot", sans-serif;
   font-size: $font-size;
@@ -46,6 +43,7 @@ strong,
 b {
   font-weight: $bold-font-weight;
 }
+
 .button-style {
   @extend %button-base;
   background: $button-primary;
@@ -64,10 +62,6 @@ b {
   &:hover {
     background: color.adjust($button-primary, $lightness: 70%);
   }
-}
-
-.button-icon {
-  margin-left: 6px;
 }
 
 // Layout utilities
