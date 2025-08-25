@@ -22,9 +22,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
-import { Metadata } from '../interfaces/metadata';
+import { ApiService } from '../services/api.service';
 import { BoxplotService } from '../services/boxplot.service';
-import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-biomarkers',
@@ -51,12 +50,13 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   diagnoses: Record<string, string[]> = {};
   filteredBiomarkers: Observable<string[]> | null = null;
   filteredDiagnoses: Observable<string[]> | null = null;
+  loading = false;
   originalVariableNameMappings: Record<string, string> = {};
   selectedBiomarker = '';
   selectedCohorts: string[] = [];
   showDataPoints = false;
   @ViewChild('boxplot') private chartContainer!: ElementRef;
-  private API_URL = environment.API_URL;
+  private apiService = inject(ApiService);
   private boxplotService = inject(BoxplotService);
   private http = inject(HttpClient);
   private subscriptions: Subscription[] = [];
@@ -99,49 +99,91 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   }
 
   fetchBiomarkerData(cohort_and_diagnosis: string): void {
+    this.loading = true;
     const biomarker = this.selectedBiomarker.toLowerCase();
     const { cohort, diagnosis } = this._splitDiagnosis(cohort_and_diagnosis);
-    const sub = this.http
-      .get<number[]>(
-        `${this.API_URL}/biomarkers/${biomarker}/cohorts/${cohort}/diagnoses/${diagnosis}`
-      )
+    const sub = this.apiService
+      .fetchBiomarkerData(biomarker, cohort, diagnosis)
       .subscribe({
         next: (v) => (this.biomarkerData[cohort_and_diagnosis] = v),
-        error: (e) => console.error(e),
-        complete: () => console.info('Biomarker data successfully fetched.'),
+        error: (err) => {
+          console.error('Error fetching biomarker data', err);
+          this.loading = false;
+          const detail = err.error?.detail;
+          const message = err.error?.message || err.message;
+
+          let errorMessage = 'An unknown error occurred.';
+          if (detail && message) {
+            errorMessage = `${message} — ${detail}`;
+          } else if (detail || message) {
+            errorMessage = detail || message;
+          }
+
+          alert(
+            `An error occurred while fetching biomarker data: ${errorMessage}`
+          );
+        },
+        complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
   }
 
   fetchBiomarkers(): void {
-    const sub = this.http
-      .get<string[]>(`${this.API_URL}/biomarkers`)
-      .subscribe({
-        next: (v) =>
-          (this.biomarkers = v.map((biomarker) =>
-            this._transformBiomarkerName(biomarker)
-          )),
-        error: (e) => console.error(e),
-        complete: () => console.info('Biomarkers successfully fetched.'),
-      });
+    this.loading = true;
+    const sub = this.apiService.fetchBiomarkers().subscribe({
+      next: (v) =>
+        (this.biomarkers = v.map((biomarker) =>
+          this._transformBiomarkerName(biomarker)
+        )),
+      error: (err) => {
+        console.error('Error fetching biomarkers', err);
+        this.loading = false;
+        const detail = err.error?.detail;
+        const message = err.error?.message || err.message;
+
+        let errorMessage = 'An unknown error occurred.';
+        if (detail && message) {
+          errorMessage = `${message} — ${detail}`;
+        } else if (detail || message) {
+          errorMessage = detail || message;
+        }
+
+        alert(`An error occurred while fetching biomarkers: ${errorMessage}`);
+      },
+      complete: () => (this.loading = false),
+    });
     this.subscriptions.push(sub);
   }
 
   fetchCohorts(): void {
+    this.loading = true;
     const biomarker = this.selectedBiomarker.toLowerCase();
-    const sub = this.http
-      .get<string[]>(`${this.API_URL}/biomarkers/${biomarker}/cohorts`)
-      .subscribe({
-        next: (v) => (this.cohorts = v),
-        error: (e) => console.error(e),
-        complete: () => console.info('Cohort data successfully fetched.'),
-      });
+    const sub = this.apiService.fetchCohortsForBiomarker(biomarker).subscribe({
+      next: (v) => (this.cohorts = v),
+      error: (err) => {
+        console.error('Error fetching cohorts', err);
+        this.loading = false;
+        const detail = err.error?.detail;
+        const message = err.error?.message || err.message;
+
+        let errorMessage = 'An unknown error occurred.';
+        if (detail && message) {
+          errorMessage = `${message} — ${detail}`;
+        } else if (detail || message) {
+          errorMessage = detail || message;
+        }
+
+        alert(`An error occurred while fetching cohorts: ${errorMessage}`);
+      },
+      complete: () => (this.loading = false),
+    });
     this.subscriptions.push(sub);
   }
 
   fetchColors(): void {
-    const sub = this.http
-      .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
+    this.loading = true;
+    const sub = this.apiService
+      .fetchColors()
       .pipe(
         map((metadata) => {
           const colors: Record<string, string> = {};
@@ -157,20 +199,31 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
         next: (v) => {
           this.colors = v;
         },
-        error: (e) => {
-          console.error('Error fetching colors:', e);
+        error: (err) => {
+          console.error('Error fetching colors', err);
+          this.loading = false;
+          const detail = err.error?.detail;
+          const message = err.error?.message || err.message;
+
+          let errorMessage = 'An unknown error occurred.';
+          if (detail && message) {
+            errorMessage = `${message} — ${detail}`;
+          } else if (detail || message) {
+            errorMessage = detail || message;
+          }
+
+          alert(`An error occurred while fetching colors: ${errorMessage}`);
         },
-        complete: () => console.info('Colors successfully fetched.'),
+        complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
   }
 
   fetchDiagnoses(): void {
+    this.loading = true;
     const biomarker = this.selectedBiomarker.toLowerCase();
-    const sub = this.http
-      .get<Record<string, string[]>>(
-        `${this.API_URL}/biomarkers/${biomarker}/diagnoses`
-      )
+    const sub = this.apiService
+      .fetchDiagnosesForBiomarker(biomarker)
       .subscribe({
         next: (v) => (
           (this.diagnoses = v),
@@ -179,8 +232,22 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
             map((value) => this._filterDiagnoses(value || '', v))
           ))
         ),
-        error: (e) => console.error(e),
-        complete: () => console.info('Diagnoses successfully fetched.'),
+        error: (err) => {
+          console.error('Error fetching diagnoses', err);
+          this.loading = false;
+          const detail = err.error?.detail;
+          const message = err.error?.message || err.message;
+
+          let errorMessage = 'An unknown error occurred.';
+          if (detail && message) {
+            errorMessage = `${message} — ${detail}`;
+          } else if (detail || message) {
+            errorMessage = detail || message;
+          }
+
+          alert(`An error occurred while fetching diagnoses: ${errorMessage}`);
+        },
+        complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
   }
