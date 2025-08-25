@@ -67,6 +67,15 @@ export class ApiService {
     );
   }
 
+  fetchLongitudinalTableForCohort(
+    tableName: string,
+    cohortName: string
+  ): Observable<LongitudinalData[]> {
+    return this.http.get<LongitudinalData[]>(
+      `${this.API_URL}/longitudinal/${tableName}/${cohortName}`
+    );
+  }
+
   fetchLongitudinalTables(): Observable<string[]> {
     return this.http.get<string[]>(`${this.API_URL}/longitudinal`);
   }
