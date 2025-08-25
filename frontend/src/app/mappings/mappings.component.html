@@ -46,7 +46,7 @@
   </div>
   }
 
-  <div class="content-container">
+  <div class="input-container">
     <!-- Container for modality buttons -->
     <div class="modality-buttons">
       <!-- Loop through each modality and create a button -->
@@ -57,42 +57,38 @@
       </button>
       }
     </div>
+  </div>
 
-    <!-- Conditional display of no-data message -->
-    @if (noData) {
-    <div class="no-data-message">
-      Sorry, no mapping to showcase for this modality currently. We are
-      collecting more data, keep in touch!
-    </div>
-    }
+  <!-- Conditional display of no-data message -->
+  @if (!(dataChunks.length > 0)) {
+  <div class="no-data-message">
+    Sorry, no mapping to showcase for this modality currently. We are collecting
+    more data, keep in touch!
+  </div>
+  } @if (dataChunks.length > 0 ) {
+  <div class="navigation-buttons">
+    <button
+      (click)="previous()"
+      [disabled]="currentIndex === 0"
+      class="button-style"
+    >
+      Previous
+    </button>
+    <span>{{ currentIndex + 1 }} / {{ dataChunks.length }}</span>
+    <button
+      (click)="next()"
+      [disabled]="currentIndex === dataChunks.length - 1"
+      class="button-style"
+    >
+      Next
+    </button>
+  </div>
 
-    <!-- Container for max features label and slider -->
-    <div class="max-features-wrapper">
-      <div class="max-features-container">
-        <label for="featureNumberInput" class="featureNumber"
-          >Maximum Number of Features:
-        </label>
-        <span class="featureNumber">{{ maxFeatures }}</span>
-      </div>
-      <mat-slider
-        [min]="minFeatures"
-        [max]="totalFeatures"
-        step="10"
-        (input)="onSliderChange($event)"
-      >
-        <input id="featureNumberInput" matSliderThumb [value]="maxFeatures" />
-      </mat-slider>
-    </div>
-
-    <!-- Container for chord diagrams -->
-    <div class="chord-diagrams-container">
-      <!-- Loop through each data chunk and create a container for chord diagram -->
-      @for (chunk of dataChunks; track chunk) {
-      <div class="chord-diagram">
-        <!-- Placeholder for SVG content of chord diagram -->
-        <svg></svg>
-      </div>
-      }
+  <!-- Render one diagram per chunk -->
+  <div class="chord-diagram-container">
+    <div class="chord-diagram">
+      <svg></svg>
     </div>
   </div>
+  }
 </div>
