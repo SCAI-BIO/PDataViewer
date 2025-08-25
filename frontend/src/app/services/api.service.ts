@@ -27,6 +27,10 @@ export class ApiService {
     return this.http.get<string[]>(`${this.API_URL}/biomarkers`);
   }
 
+  fetchCohorts(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.API_URL}/cdm/cohorts`);
+  }
+
   fetchCohortsForBiomarker(biomarker: string): Observable<string[]> {
     return this.http.get<string[]>(
       `${this.API_URL}/biomarkers/${biomarker}/cohorts`
@@ -39,6 +43,10 @@ export class ApiService {
     return this.http.get<Record<string, string[]>>(
       `${this.API_URL}/biomarkers/${biomarker}/diagnoses`
     );
+  }
+
+  fetchFeatures(): Observable<{ Feature: string[] }> {
+    return this.http.get<{ Feature: string[] }>(`${this.API_URL}/cdm/features`);
   }
 
   fetchMetadata(): Observable<Metadata> {
