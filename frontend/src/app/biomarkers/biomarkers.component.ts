@@ -271,6 +271,10 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
     );
   }
 
+  getCohortColumns(): number {
+    return Math.min(this.cohorts.length, 4);
+  }
+
   loadOriginalCaseMappings(): void {
     this.http
       .get<Record<string, string>>(
