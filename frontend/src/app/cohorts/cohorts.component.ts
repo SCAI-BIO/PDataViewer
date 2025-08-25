@@ -5,12 +5,10 @@ import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
 
 import { Subscription } from 'rxjs';
 
-import { CohortMetadata } from '../interfaces/metadata';
+import { CohortData } from '../interfaces/metadata';
 import { ApiService } from '../services/api.service';
+import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 
-interface CohortData extends CohortMetadata {
-  cohort: string;
-}
 @Component({
   selector: 'app-cohorts',
   imports: [MatProgressSpinnerModule, MatSortModule, MatTableModule],
@@ -34,6 +32,7 @@ export class CohortsComponent implements OnInit, OnDestroy {
   loading = false;
   @ViewChild(MatSort) sort!: MatSort;
   private apiService = inject(ApiService);
+  private errorHandler = inject(ApiErrorHandlerService);
   private subscriptions: Subscription[] = [];
 
   fetchMetadata(): void {
@@ -53,19 +52,8 @@ export class CohortsComponent implements OnInit, OnDestroy {
         this.sort.sortChange.emit(initialSortState);
       },
       error: (err) => {
-        console.error('Error fetching colors', err);
         this.loading = false;
-        const detail = err.error?.detail;
-        const message = err.error?.message || err.message;
-
-        let errorMessage = 'An unknown error occurred.';
-        if (detail && message) {
-          errorMessage = `${message} — ${detail}`;
-        } else if (detail || message) {
-          errorMessage = detail || message;
-        }
-
-        alert(`An error occurred while fetching colors: ${errorMessage}`);
+        this.errorHandler.handleError(err, 'fetching colors');
       },
       complete: () => (this.loading = false),
     });
