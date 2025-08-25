@@ -3,12 +3,14 @@
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 4px;
+  width: 80%;
 }
 
 /* Styles for modality buttons */
 .modality-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   margin-bottom: 20px;
-  text-align: center;
   gap: 20px;
 }
 
