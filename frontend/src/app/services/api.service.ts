@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { Metadata } from '../interfaces/metadata';
 import { environment } from '../../environments/environment';
 import { LongitudinalData } from '../interfaces/longitudinal-data';
+import { ChordData } from '../interfaces/chord';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,16 @@ export class ApiService {
 
   fetchBiomarkers(): Observable<string[]> {
     return this.http.get<string[]>(`${this.API_URL}/biomarkers`);
+  }
+
+  fetchChordsData(request: {
+    cohorts: string[];
+    modality: string;
+  }): Observable<ChordData> {
+    return this.http.post<ChordData>(
+      `${this.API_URL}/visualization/chords/`,
+      request
+    );
   }
 
   fetchCohorts(): Observable<string[]> {
@@ -62,5 +73,9 @@ export class ApiService {
 
   fetchMetadata(): Observable<Metadata> {
     return this.http.get<Metadata>(`${this.API_URL}/cohorts/metadata`);
+  }
+
+  fetchModalities(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.API_URL}/cdm/modalities`);
   }
 }
