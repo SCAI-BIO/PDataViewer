@@ -33,15 +33,15 @@ export class ApiService {
     );
   }
 
-  fetchColors(): Observable<Metadata> {
-    return this.http.get<Metadata>(`${this.API_URL}/cohorts/metadata`);
-  }
-
   fetchDiagnosesForBiomarker(
     biomarker: string
   ): Observable<Record<string, string[]>> {
     return this.http.get<Record<string, string[]>>(
       `${this.API_URL}/biomarkers/${biomarker}/diagnoses`
     );
+  }
+
+  fetchMetadata(): Observable<Metadata> {
+    return this.http.get<Metadata>(`${this.API_URL}/cohorts/metadata`);
   }
 }

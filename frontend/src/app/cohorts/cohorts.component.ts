@@ -1,13 +1,12 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
 
-import { Subject } from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import { Metadata, CohortMetadata } from '../interfaces/metadata';
-import { environment } from '../../environments/environment';
+import { CohortMetadata } from '../interfaces/metadata';
+import { ApiService } from '../services/api.service';
 
 interface CohortData extends CohortMetadata {
   cohort: string;
@@ -34,13 +33,12 @@ export class CohortsComponent implements OnInit, OnDestroy {
   dataSource = new MatTableDataSource<CohortData>();
   loading = false;
   @ViewChild(MatSort) sort!: MatSort;
-  private API_URL = environment.API_URL;
-  private destroy$ = new Subject<void>();
-  private http = inject(HttpClient);
+  private apiService = inject(ApiService);
+  private subscriptions: Subscription[] = [];
 
   fetchMetadata(): void {
     this.loading = true;
-    this.http.get<Metadata>(`${this.API_URL}/cohorts/metadata`).subscribe({
+    const sub = this.apiService.fetchMetadata().subscribe({
       next: (data) => {
         const transformedData = Object.keys(data).map((key) => ({
           cohort: key,
@@ -54,12 +52,24 @@ export class CohortsComponent implements OnInit, OnDestroy {
         this.sort.direction = initialSortState.direction;
         this.sort.sortChange.emit(initialSortState);
       },
-      error: (e) => {
+      error: (err) => {
+        console.error('Error fetching colors', err);
         this.loading = false;
-        console.error('Error fetching metadata', e);
+        const detail = err.error?.detail;
+        const message = err.error?.message || err.message;
+
+        let errorMessage = 'An unknown error occurred.';
+        if (detail && message) {
+          errorMessage = `${message} — ${detail}`;
+        } else if (detail || message) {
+          errorMessage = detail || message;
+        }
+
+        alert(`An error occurred while fetching colors: ${errorMessage}`);
       },
       complete: () => (this.loading = false),
     });
+    this.subscriptions.push(sub);
   }
 
   openLink(link: string) {
@@ -67,8 +77,7 @@ export class CohortsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   ngOnInit() {
