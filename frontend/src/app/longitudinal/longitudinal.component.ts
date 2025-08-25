@@ -17,13 +17,13 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
-import { environment } from '../../environments/environment';
-import { Metadata } from '../interfaces/metadata';
 import { LongitudinalData } from '../interfaces/longitudinal-data';
+import { ApiService } from '../services/api.service';
 import { LineplotService } from '../services/lineplot.service';
 
 @Component({
@@ -35,6 +35,7 @@ import { LineplotService } from '../services/lineplot.service';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatProgressSpinnerModule,
     ReactiveFormsModule,
   ],
   templateUrl: './longitudinal.component.html',
@@ -45,11 +46,12 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   data: LongitudinalData[] = [];
   featureCtrl = new FormControl();
   filteredFeatures: Observable<string[]> | null = null;
+  loading = false;
   longitudinalTables: string[] = [];
   originalVariableNameMappings: Record<string, string> = {};
   selectedFeature = '';
   @ViewChild('lineplot') private chartContainer!: ElementRef;
-  private API_URL = environment.API_URL;
+  private apiService = inject(ApiService);
   private http = inject(HttpClient);
   private lineplotService = inject(LineplotService);
   private subscriptions: Subscription[] = [];
@@ -68,8 +70,9 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   }
 
   fetchColors(): void {
-    const sub = this.http
-      .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
+    this.loading = true;
+    const sub = this.apiService
+      .fetchMetadata()
       .pipe(
         map((metadata) => {
           const colors: Record<string, string> = {};
@@ -85,37 +88,78 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
         next: (v) => {
           this.colors = v;
         },
-        error: (e) => {
-          console.error('Error fetching colors:', e);
+        error: (err) => {
+          console.error('Error fetching colors', err);
+          this.loading = false;
+          const detail = err.error?.detail;
+          const message = err.error?.message || err.message;
+
+          let errorMessage = 'An unknown error occurred.';
+          if (detail && message) {
+            errorMessage = `${message} — ${detail}`;
+          } else if (detail || message) {
+            errorMessage = detail || message;
+          }
+
+          alert(`An error occurred while fetching colors: ${errorMessage}`);
         },
-        complete: () => console.info('Colors successfully fetched'),
+        complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
   }
 
-  fetchLongitudinalTable(table_name: string): void {
-    const sub = this.http
-      .get<LongitudinalData[]>(`${this.API_URL}/longitudinal/${table_name}`)
-      .subscribe({
-        next: (v) => (this.data = v),
-        error: (e) => console.error(e),
-        complete: () => console.info('complete'),
-      });
+  fetchLongitudinalTable(tableName: string): void {
+    this.loading = true;
+    const sub = this.apiService.fetchLongitudinalTable(tableName).subscribe({
+      next: (v) => (this.data = v),
+      error: (err) => {
+        console.error('Error fetching logitudinal table', err);
+        this.loading = false;
+        const detail = err.error?.detail;
+        const message = err.error?.message || err.message;
+
+        let errorMessage = 'An unknown error occurred.';
+        if (detail && message) {
+          errorMessage = `${message} — ${detail}`;
+        } else if (detail || message) {
+          errorMessage = detail || message;
+        }
+
+        alert(
+          `An error occurred while fetching longitudinal table: ${errorMessage}`
+        );
+      },
+      complete: () => (this.loading = false),
+    });
     this.subscriptions.push(sub);
   }
 
   fetchLongitudinalTables(): void {
-    const sub = this.http
-      .get<string[]>(`${this.API_URL}/longitudinal`)
-      .subscribe({
-        next: (v) =>
-          (this.longitudinalTables = v.map((longitudinal) =>
-            this._transformLongitudinalName(longitudinal)
-          )),
-        error: (e) => console.error(e),
-        complete: () =>
-          console.info('Longitudinal data tables successfully fetched'),
-      });
+    this.loading = true;
+    const sub = this.apiService.fetchLongitudinalTables().subscribe({
+      next: (v) =>
+        (this.longitudinalTables = v.map((longitudinal) =>
+          this._transformLongitudinalName(longitudinal)
+        )),
+      error: (err) => {
+        console.error('Error fetching longitudinal tables', err);
+        this.loading = false;
+        const detail = err.error?.detail;
+        const message = err.error?.message || err.message;
+
+        let errorMessage = 'An unknown error occurred.';
+        if (detail && message) {
+          errorMessage = `${message} — ${detail}`;
+        } else if (detail || message) {
+          errorMessage = detail || message;
+        }
+
+        alert(
+          `An error occurred while fetching longitudinal tables: ${errorMessage}`
+        );
+      },
+      complete: () => (this.loading = false),
+    });
     this.subscriptions.push(sub);
   }
 
