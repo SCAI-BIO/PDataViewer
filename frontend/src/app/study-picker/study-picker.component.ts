@@ -151,12 +151,23 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
-  getRankings(features: string[]) {
+  fetchRankings(features: string[]) {
     const sub = this.apiService.fetchRankings(features).subscribe({
       next: (v) => (this.cohortRankings = v),
-      error: (e) => {
+      error: (err) => {
+        console.error('Error fetching rakings', err);
         this.loading = false;
-        console.error(e);
+        const detail = err.error?.detail;
+        const message = err.error?.message || err.message;
+
+        let errorMessage = 'An unknown error occurred.';
+        if (detail && message) {
+          errorMessage = `${message} — ${detail}`;
+        } else if (detail || message) {
+          errorMessage = detail || message;
+        }
+
+        alert(`An error occurred while fetching rankings: ${errorMessage}`);
       },
       complete: () => (this.loading = false),
     });
