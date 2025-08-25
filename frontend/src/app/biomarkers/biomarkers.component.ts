@@ -1,13 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  ElementRef,
-  ViewChild,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -58,7 +51,6 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   selectedBiomarker = '';
   selectedCohorts: string[] = [];
   showDataPoints = false;
-  @ViewChild('boxplot') private chartContainer!: ElementRef;
   private apiService = inject(ApiService);
   private biomarkerUtilsService = inject(BiomarkerUtilsService);
   private boxplotService = inject(BoxplotService);
@@ -208,10 +200,11 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
 
   generateBoxplot(): void {
     this.boxplotService.createBoxplot(
-      this.chartContainer,
       this.biomarkerData,
+      this.selectedBiomarker,
       this.colors,
-      this.showDataPoints
+      this.showDataPoints,
+      'boxplot'
     );
   }
 
