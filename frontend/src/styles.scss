@@ -6,7 +6,7 @@ $font-size: 16px;
 $bold-font-weight: 600;
 
 // Button variables
-$button-primary: #5c003e;
+$button-primary: #610030;
 $button-secondary: #f9f9f9;
 $button-padding: 10px 20px;
 $button-radius: 5px;
@@ -26,9 +26,6 @@ $button-radius: 5px;
   transition: background 0.3s ease-in-out;
   cursor: pointer;
 }
-
-// Info button variable
-$info-button-color: #1976d2;
 
 // External link variable
 $external-link-color: #1e88e5;
@@ -51,37 +48,21 @@ b {
 }
 .button-style {
   @extend %button-base;
-  background: linear-gradient(
-    135deg,
-    $button-primary,
-    color.adjust($button-primary, $lightness: 15%)
-  );
+  background: $button-primary;
   color: $button-secondary;
-  background-size: 150% 150%;
 
   &:hover {
-    background: linear-gradient(
-      135deg,
-      color.adjust($button-primary, $lightness: 10%),
-      color.adjust($button-primary, $lightness: 25%)
-    );
-    background-position: right center;
+    background: color.adjust($button-primary, $lightness: 10%);
   }
 }
 
 .inverted-button-style {
   @extend %button-base;
-  background: linear-gradient(135deg, #f9f9f9, #f9f9f9);
+  background: $button-secondary;
   color: $button-primary;
-  transition: background 0.3s ease-in-out;
 
   &:hover {
-    background: linear-gradient(
-      135deg,
-      $button-secondary,
-      color.adjust($button-primary, $lightness: 60%)
-    );
-    background-position: right center;
+    background: color.adjust($button-primary, $lightness: 70%);
   }
 }
 
@@ -146,7 +127,7 @@ b {
 
 thead,
 th {
-  background-color: color.adjust($button-primary, $lightness: 15%) !important;
+  background-color: $button-primary !important;
   color: $button-secondary !important;
 }
 
