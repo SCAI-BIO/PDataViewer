@@ -23,6 +23,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
+import { BiomarkerUtilsService } from './biomarker-utils.service';
 import { ApiService } from '../services/api.service';
 import { BoxplotService } from '../services/boxplot.service';
 
@@ -59,6 +60,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   showDataPoints = false;
   @ViewChild('boxplot') private chartContainer!: ElementRef;
   private apiService = inject(ApiService);
+  private biomarkerUtilsService = inject(BiomarkerUtilsService);
   private boxplotService = inject(BoxplotService);
   private http = inject(HttpClient);
   private subscriptions: Subscription[] = [];
@@ -103,7 +105,8 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   fetchBiomarkerData(cohort_and_diagnosis: string): void {
     this.loading = true;
     const biomarker = this.selectedBiomarker.toLowerCase();
-    const { cohort, diagnosis } = this._splitDiagnosis(cohort_and_diagnosis);
+    const { cohort, diagnosis } =
+      this.biomarkerUtilsService.splitDiagnosis(cohort_and_diagnosis);
     const sub = this.apiService
       .fetchBiomarkerData(biomarker, cohort, diagnosis)
       .subscribe({
@@ -135,7 +138,10 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
     const sub = this.apiService.fetchBiomarkers().subscribe({
       next: (v) =>
         (this.biomarkers = v.map((biomarker) =>
-          this._transformBiomarkerName(biomarker)
+          this.biomarkerUtilsService.transformBiomarkerName(
+            this.originalVariableNameMappings,
+            biomarker
+          )
         )),
       error: (err) => {
         console.error('Error fetching biomarkers', err);
@@ -231,7 +237,9 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
           (this.diagnoses = v),
           (this.filteredDiagnoses = this.cohortCtrl.valueChanges.pipe(
             startWith(''),
-            map((value) => this._filterDiagnoses(value || '', v))
+            map((value) =>
+              this.biomarkerUtilsService.filterDiagnoses(value || '', v)
+            )
           ))
         ),
         error: (err) => {
@@ -293,7 +301,12 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
     this.fetchColors();
     this.filteredBiomarkers = this.biomarkerCtrl.valueChanges.pipe(
       startWith(''),
-      map((value) => this._filterBiomarkers(value || ''))
+      map((value) =>
+        this.biomarkerUtilsService.filterBiomarkers(
+          this.biomarkers,
+          value || ''
+        )
+      )
     );
   }
 
@@ -313,59 +326,5 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
       this.selectedCohorts.splice(index, 1);
       delete this.biomarkerData[cohort];
     }
-  }
-
-  private _filterBiomarkers(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.biomarkers.filter((option) =>
-      option.toLowerCase().includes(filterValue)
-    );
-  }
-
-  private _filterDiagnoses(
-    value: string,
-    diagnoses: Record<string, string[]>
-  ): string[] {
-    const filterValue = value.toLowerCase();
-    const transformedDiagnoses = this._transformDiagnoses(diagnoses);
-    return transformedDiagnoses.filter((diagnosis) =>
-      diagnosis.toLowerCase().includes(filterValue)
-    );
-  }
-
-  private _transformBiomarkerName(biomarker: string): string {
-    if (biomarker.startsWith('biomarkers_')) {
-      biomarker = biomarker.substring(11);
-    }
-    const mappedValue = this.originalVariableNameMappings[biomarker];
-    return mappedValue
-      ? mappedValue
-      : biomarker.charAt(0).toUpperCase() + biomarker.slice(1);
-  }
-
-  private _transformDiagnoses(diagnoses: Record<string, string[]>): string[] {
-    const transformedDiagnoses = Object.entries(diagnoses).flatMap(
-      ([cohort, diagnoses]) =>
-        diagnoses.map((diagnosis) =>
-          diagnosis === 'Complete'
-            ? `${cohort} (${diagnosis})`
-            : `${cohort} (${diagnosis} Group)`
-        )
-    );
-    return transformedDiagnoses;
-  }
-
-  private _splitDiagnosis(cohort_and_diagnosis: string): {
-    cohort: string;
-    diagnosis: string;
-  } {
-    const parts = cohort_and_diagnosis.split('(');
-    const cohortPart = parts[0].trim();
-    const diagnosisPart = parts[1].replace('Group', '').replace(')', '').trim();
-
-    return {
-      cohort: cohortPart,
-      diagnosis: diagnosisPart,
-    };
   }
 }
