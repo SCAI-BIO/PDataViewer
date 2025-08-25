@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import {
   Component,
   ElementRef,
@@ -6,11 +7,12 @@ import {
   ViewChild,
   inject,
 } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+
 import { Subscription } from 'rxjs';
-import { environment } from '../../environments/environment';
+
 import { LongitudinalData } from '../interfaces/longitudinal-data';
+import { ApiService } from '../services/api.service';
 import { LineplotService } from '../services/lineplot.service';
 
 @Component({
@@ -23,32 +25,49 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
   cohort = '';
   variables: string[] = [];
   data: LongitudinalData[] = [];
+  loading = false;
   originalVariableNameMappings: Record<string, string> = {};
   @ViewChild('lineplot') private chartContainer!: ElementRef;
-  private API_URL = environment.API_URL;
+  private apiService = inject(ApiService);
   private dataFetchCount = 0;
   private http = inject(HttpClient);
   private lineplotService = inject(LineplotService);
   private route = inject(ActivatedRoute);
   private subscriptions: Subscription[] = [];
 
-  fetchLongitudinalTable(table_name: string): void {
-    const feature_name = this._transformLongitudinalName(table_name);
-    const sub = this.http
-      .get<LongitudinalData[]>(
-        `${this.API_URL}/longitudinal/${table_name}/${this.cohort}`
-      )
+  fetchLongitudinalTable(tableName: string): void {
+    this.loading = true;
+    const featureName = this._transformLongitudinalName(tableName);
+    const sub = this.apiService
+      .fetchLongitudinalTableForCohort(tableName, this.cohort)
       .subscribe({
         next: (v) =>
           v.forEach((item) => {
-            this.data.push({ ...item, Cohort: feature_name });
+            this.data.push({ ...item, Cohort: featureName });
           }),
-        error: (e) => console.error(e),
+        error: (err) => {
+          console.error('Error fetching longidutinal data', err);
+          this.loading = false;
+          const detail = err.error?.detail;
+          const message = err.error?.message || err.message;
+
+          let errorMessage = 'An unknown error occurred.';
+          if (detail && message) {
+            errorMessage = `${message} — ${detail}`;
+          } else if (detail || message) {
+            errorMessage = detail || message;
+          }
+
+          alert(
+            `An error occurred while fetching longitudinal data: ${errorMessage}`
+          );
+        },
         complete: () => {
           this.dataFetchCount--;
           if (this.dataFetchCount === 0) {
             this.generateLineplot();
           }
+          this.loading = false;
         },
       });
     this.subscriptions.push(sub);
