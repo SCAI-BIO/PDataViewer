@@ -1,21 +1,25 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSliderModule } from '@angular/material/slider';
+
 import { Subscription, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { ChordDiagramService } from '../services/chord-diagram.service';
+
 import { ChordData } from '../interfaces/chord';
+import { ChordDiagramService } from '../services/chord-diagram.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-mappings',
-  imports: [CommonModule, MatSliderModule],
+  imports: [CommonModule, MatProgressSpinnerModule, MatSliderModule],
   templateUrl: './mappings.component.html',
   styleUrl: './mappings.component.scss',
 })
 export class MappingsComponent implements OnInit, OnDestroy {
   dataChunks: ChordData[] = [];
+  loading = false;
   // Maximum amount of features to display in a single chords diagram
   maxFeatures = 50;
   // Minimum amount of features for the min variable of the slider
@@ -83,19 +87,24 @@ export class MappingsComponent implements OnInit, OnDestroy {
   }
 
   private fetchCohorts(): void {
+    this.loading = true;
     const sub = this.http
       .get<string[]>(`${this.API_URL}/cdm/cohorts`)
       .subscribe({
         next: (v) => {
           this.cohorts = v;
         },
-        error: (e) => console.error('Error fetching cohorts:', e),
-        complete: () => console.info('Cohorts fetched successfully.'),
+        error: (e) => {
+          this.loading = false;
+          console.error('Error fetching cohorts:', e);
+        },
+        complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
   }
 
   private fetchData(): void {
+    this.loading = true;
     const request = {
       cohorts: this.cohorts,
       modality: this.modality,
@@ -124,22 +133,28 @@ export class MappingsComponent implements OnInit, OnDestroy {
             this.chordService.createChordDiagrams(this.dataChunks);
           }
         },
-        error: (e) => console.error('Error fetching chord data:', e),
-        complete: () =>
-          console.info('Chord diagram data fetched successfully.'),
+        error: (e) => {
+          this.loading = false;
+          console.error('Error fetching chord data:', e);
+        },
+        complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
   }
 
   private fetchModalities(): void {
+    this.loading = true;
     const sub = this.http
       .get<string[]>(`${this.API_URL}/cdm/modalities`)
       .subscribe({
         next: (v) => {
           this.modalities = v;
         },
-        error: (e) => console.error('Error fetching the modalities:', e),
-        complete: () => console.info('Modalities fetched successfully.'),
+        error: (e) => {
+          this.loading = false;
+          console.error('Error fetching the modalities:', e);
+        },
+        complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
   }
