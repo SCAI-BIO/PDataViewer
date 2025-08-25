@@ -13,3 +13,7 @@ export interface ChordData {
   readonly nodes: ChordNode[];
   readonly links: ChordLink[];
 }
+
+export interface LabeledChordGroup extends d3.ChordGroup {
+  angle?: number;
+}
