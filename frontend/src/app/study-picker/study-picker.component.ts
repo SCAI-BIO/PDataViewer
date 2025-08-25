@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -19,7 +18,7 @@ import { map, startWith } from 'rxjs/operators';
 
 import { Metadata } from '../interfaces/metadata';
 import { RankData } from '../interfaces/rankdata';
-import { environment } from '../../environments/environment';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-study-picker',
@@ -69,8 +68,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   loading = false;
   @Input() selectedFeatures: string[] = [];
   suggestions$: Observable<string[]> | null = null;
-  private API_URL = environment.API_URL;
-  private http = inject(HttpClient);
+  private apiService = inject(ApiService);
   private router = inject(Router);
   private subscriptions: Subscription[] = [];
 
@@ -94,42 +92,74 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
 
   fetchMetadata(): void {
     this.loading = true;
-    const sub = this.http
-      .get<Metadata>(`${this.API_URL}/cohorts/metadata`)
-      .subscribe({
-        next: (data) => {
-          this.cohortData = data;
-          for (const cohort in data) {
-            if (Object.hasOwn(data, cohort)) {
-              this.cohortColors[cohort] = data[cohort].Color;
-              this.cohortLinks[cohort] = data[cohort].Link;
-            }
+    const sub = this.apiService.fetchMetadata().subscribe({
+      next: (data) => {
+        this.cohortData = data;
+        for (const cohort in data) {
+          if (Object.hasOwn(data, cohort)) {
+            this.cohortColors[cohort] = data[cohort].Color;
+            this.cohortLinks[cohort] = data[cohort].Link;
           }
-        },
-        error: (e) => {
-          this.loading = false;
-          console.error(e);
-        },
-        complete: () => (this.loading = false),
-      });
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching metadata', err);
+        this.loading = false;
+        const detail = err.error?.detail;
+        const message = err.error?.message || err.message;
+
+        let errorMessage = 'An unknown error occurred.';
+        if (detail && message) {
+          errorMessage = `${message} — ${detail}`;
+        } else if (detail || message) {
+          errorMessage = detail || message;
+        }
+
+        alert(`An error occurred while fetching metadata: ${errorMessage}`);
+      },
+      complete: () => (this.loading = false),
+    });
     this.subscriptions.push(sub);
   }
 
-  fetchFeatures(): Observable<{ Feature: string[] }> {
-    return this.http.get<{ Feature: string[] }>(`${this.API_URL}/cdm/features`);
+  fetchFeatures(): void {
+    const sub = this.apiService.fetchFeatures().subscribe({
+      next: (v) => {
+        this.features = v.Feature;
+        this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
+          startWith(''),
+          map((value) => this._filter(value))
+        );
+      },
+      error: (err) => {
+        console.error('Error fetching features', err);
+        this.loading = false;
+        const detail = err.error?.detail;
+        const message = err.error?.message || err.message;
+
+        let errorMessage = 'An unknown error occurred.';
+        if (detail && message) {
+          errorMessage = `${message} — ${detail}`;
+        } else if (detail || message) {
+          errorMessage = detail || message;
+        }
+
+        alert(`An error occurred while fetching features: ${errorMessage}`);
+      },
+      complete: () => (this.loading = false),
+    });
+    this.subscriptions.push(sub);
   }
 
   getRankings(features: string[]) {
-    const sub = this.http
-      .post<RankData[]>(`${this.API_URL}/studypicker/rank`, features)
-      .subscribe({
-        next: (v) => (this.cohortRankings = v),
-        error: (e) => {
-          this.loading = false;
-          console.error(e);
-        },
-        complete: () => (this.loading = false),
-      });
+    const sub = this.apiService.fetchRankings(features).subscribe({
+      next: (v) => (this.cohortRankings = v),
+      error: (e) => {
+        this.loading = false;
+        console.error(e);
+      },
+      complete: () => (this.loading = false),
+    });
     this.subscriptions.push(sub);
   }
 
@@ -138,14 +168,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const sub = this.fetchFeatures().subscribe((features) => {
-      this.features = features.Feature;
-      this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
-        startWith(''),
-        map((value) => this._filter(value))
-      );
-    });
-    this.subscriptions.push(sub);
+    this.fetchFeatures();
     this.fetchMetadata();
   }
 
