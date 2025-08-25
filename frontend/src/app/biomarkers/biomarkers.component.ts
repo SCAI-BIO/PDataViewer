@@ -191,7 +191,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   fetchColors(): void {
     this.loading = true;
     const sub = this.apiService
-      .fetchColors()
+      .fetchMetadata()
       .pipe(
         map((metadata) => {
           const colors: Record<string, string> = {};
