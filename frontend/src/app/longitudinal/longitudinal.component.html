@@ -1,12 +1,14 @@
-<div class="header-container">
-  <h1>Participant Follow-up / Drop-out</h1>
-  <p>
-    <br />The chart below illustrates the longitudinal follow-up of the cohort
-    studies and thereby inherently the participant drop-out over time. We
-    display the proportion of assessed participants per month in study relative
-    to its number of participants at study baseline. Respectively, the inverse
-    of this proportion denotes the drop-out.
-  </p>
+<main class="main-container">
+  <div class="description-box">
+    <h1>Participant Follow-up / Drop-out</h1>
+    <p>
+      <br />The chart below illustrates the longitudinal follow-up of the cohort
+      studies and thereby inherently the participant drop-out over time. We
+      display the proportion of assessed participants per month in study
+      relative to its number of participants at study baseline. Respectively,
+      the inverse of this proportion denotes the drop-out.
+    </p>
+  </div>
 
   <!-- Loading Spinner -->
   @if (loading) {
@@ -14,50 +16,46 @@
     <mat-spinner diameter="40"></mat-spinner>
   </div>
   }
-  <div class="component-container">
-    <div class="longitudinal-container">
-      <mat-form-field class="full-width">
-        <mat-chip-listbox
-          [multiple]="false"
-          aria-label="Longitudinal selection"
-        >
-          @if (selectedFeature) {
-          <mat-chip-option
-            [removable]="true"
-            [selectable]="false"
-            (removed)="removeFeature()"
-          >
-            {{ selectedFeature }}
-            <mat-icon matChipRemove>cancel</mat-icon>
-          </mat-chip-option>
-          }
-          <input
-            matInput
-            placeholder="Enter a feature"
-            [matAutocomplete]="autoLongitudinal"
-            [formControl]="featureCtrl"
-          />
-        </mat-chip-listbox>
-        <mat-autocomplete
-          #autoLongitudinal="matAutocomplete"
-          [displayWith]="displayFn"
-          (optionSelected)="featureSelected($event)"
-        >
-          @for (option of filteredFeatures | async; track option) {
-          <mat-option [value]="option">
-            {{ option }}
-          </mat-option>
-          }
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-    <!-- Button container for ranking cohorts -->
-    <div class="button-container">
-      <button mat-raised-button color="primary" (click)="generateLineplot()">
-        Visualize participant follow-up
-      </button>
-    </div>
 
-    <div class="lineplot" #lineplot></div>
+  <div class="input-container">
+    <mat-form-field>
+      <mat-chip-listbox [multiple]="false" aria-label="Longitudinal selection">
+        @if (selectedFeature) {
+        <mat-chip-option
+          [removable]="true"
+          [selectable]="false"
+          (removed)="removeFeature()"
+        >
+          {{ selectedFeature }}
+          <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip-option>
+        }
+        <input
+          matInput
+          placeholder="Enter a feature"
+          [matAutocomplete]="autoLongitudinal"
+          [formControl]="featureCtrl"
+        />
+      </mat-chip-listbox>
+      <mat-autocomplete
+        #autoLongitudinal="matAutocomplete"
+        [displayWith]="displayFn"
+        (optionSelected)="featureSelected($event)"
+      >
+        @for (option of filteredFeatures | async; track option) {
+        <mat-option [value]="option">
+          {{ option }}
+        </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
   </div>
-</div>
+  <!-- Button container for ranking cohorts -->
+  <div class="button-container">
+    <button class="button-style" (click)="generateLineplot()">
+      Visualize participant follow-up
+    </button>
+  </div>
+
+  <div class="lineplot" #lineplot></div>
+</main>
