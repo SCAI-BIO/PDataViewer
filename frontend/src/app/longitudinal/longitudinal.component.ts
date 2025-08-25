@@ -22,6 +22,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
+import { LongitudinalUtilsService } from './longitudinal-utils.service';
 import { LongitudinalData } from '../interfaces/longitudinal-data';
 import { ApiService } from '../services/api.service';
 import { LineplotService } from '../services/lineplot.service';
@@ -54,6 +55,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   private apiService = inject(ApiService);
   private http = inject(HttpClient);
   private lineplotService = inject(LineplotService);
+  private longitudinalUtilsService = inject(LongitudinalUtilsService);
   private subscriptions: Subscription[] = [];
 
   displayFn(option: string): string {
@@ -65,7 +67,9 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
     if (longitudinal) {
       this.selectedFeature = longitudinal;
       this.featureCtrl.setValue('');
-      this.fetchLongitudinalTable(this._transformFeatureName(longitudinal));
+      this.fetchLongitudinalTable(
+        this.longitudinalUtilsService.transformFeatureName(longitudinal)
+      );
     }
   }
 
@@ -139,7 +143,10 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
     const sub = this.apiService.fetchLongitudinalTables().subscribe({
       next: (v) =>
         (this.longitudinalTables = v.map((longitudinal) =>
-          this._transformLongitudinalName(longitudinal)
+          this.longitudinalUtilsService.transformLongitudinalName(
+            this.originalVariableNameMappings,
+            longitudinal
+          )
         )),
       error: (err) => {
         console.error('Error fetching longitudinal tables', err);
@@ -206,35 +213,17 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
       this.fetchColors();
       this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
         startWith(''),
-        map((value) => this._filterTableName(value || ''))
+        map((value) =>
+          this.longitudinalUtilsService.filterTableName(
+            this.longitudinalTables,
+            value || ''
+          )
+        )
       );
     });
   }
 
   removeFeature(): void {
     this.selectedFeature = '';
-  }
-
-  private _filterTableName(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.longitudinalTables.filter((option) =>
-      option.toLowerCase().includes(filterValue)
-    );
-  }
-
-  private _transformFeatureName(feature: string): string {
-    feature = feature.toLowerCase();
-    return feature.split(' ').join('_').replace('/', '_');
-  }
-
-  private _transformLongitudinalName(longitudinal: string): string {
-    if (longitudinal.startsWith('longitudinal_')) {
-      longitudinal = longitudinal.substring(13);
-    }
-    longitudinal = longitudinal.split('_').join(' ');
-    const mappedValue = this.originalVariableNameMappings[longitudinal];
-    return mappedValue
-      ? mappedValue
-      : longitudinal.charAt(0).toUpperCase() + longitudinal.slice(1);
   }
 }
