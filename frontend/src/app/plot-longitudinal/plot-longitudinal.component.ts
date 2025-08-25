@@ -1,12 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import {
-  Component,
-  ElementRef,
-  OnInit,
-  OnDestroy,
-  ViewChild,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Subscription } from 'rxjs';
@@ -29,7 +22,6 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
   dataFetchCount = 0;
   loading = false;
   originalVariableNameMappings: Record<string, string> = {};
-  @ViewChild('lineplot') private chartContainer!: ElementRef;
   private apiService = inject(ApiService);
   private errorHandler = inject(ApiErrorHandlerService);
   private http = inject(HttpClient);
@@ -75,12 +67,7 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
         : variables[0] || ''; // Handle single or empty features case
 
     const title = `Longitudinal follow-ups for ${features_string} in the ${this.cohort} cohort`;
-    this.lineplotService.createLineplot(
-      this.chartContainer,
-      this.data,
-      {},
-      title
-    );
+    this.lineplotService.createLineplot(this.data, {}, title, 'lineplot');
   }
 
   loadOriginalCaseMappings(): Promise<void> {

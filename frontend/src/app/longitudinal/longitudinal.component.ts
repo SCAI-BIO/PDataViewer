@@ -1,13 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import {
-  Component,
-  ElementRef,
-  OnInit,
-  OnDestroy,
-  ViewChild,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -51,7 +44,6 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   longitudinalTables: string[] = [];
   originalVariableNameMappings: Record<string, string> = {};
   selectedFeature = '';
-  @ViewChild('lineplot') private chartContainer!: ElementRef;
   private apiService = inject(ApiService);
   private errorHandler = inject(ApiErrorHandlerService);
   private http = inject(HttpClient);
@@ -137,10 +129,10 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   generateLineplot(): void {
     const title = `Longitudinal data for ${this.selectedFeature}`;
     this.lineplotService.createLineplot(
-      this.chartContainer,
       this.data,
       this.colors,
-      title
+      title,
+      'lineplot'
     );
   }
 
