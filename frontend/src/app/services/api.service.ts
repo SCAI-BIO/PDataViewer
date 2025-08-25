@@ -7,6 +7,7 @@ import { Metadata } from '../interfaces/metadata';
 import { environment } from '../../environments/environment';
 import { LongitudinalData } from '../interfaces/longitudinal-data';
 import { ChordData } from '../interfaces/chord';
+import { RankData } from '../interfaces/rankdata';
 
 @Injectable({
   providedIn: 'root',
@@ -86,5 +87,12 @@ export class ApiService {
 
   fetchModalities(): Observable<string[]> {
     return this.http.get<string[]>(`${this.API_URL}/cdm/modalities`);
+  }
+
+  fetchRankings(features: string[]): Observable<RankData[]> {
+    return this.http.post<RankData[]>(
+      `${this.API_URL}/studypicker/rank`,
+      features
+    );
   }
 }
