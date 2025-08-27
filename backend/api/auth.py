@@ -26,20 +26,22 @@ def init_credentials():
     Returns:
         bool: Returns `True` if the admin credentials are successfully initialized.
     """
+    load_dotenv()
 
     # Check the admin username and password is already set in the environment
     admin_username = os.getenv("PDATAVIEWER_ADMIN_USERNAME")
     admin_password = os.getenv("PDATAVIEWER_ADMIN_PASSWORD")
 
-    # If not set, load the environment file. Then, check if the values are set in the environment file
     if not admin_username or not admin_password:
-        load_dotenv()
-    if os.getenv("PDATAVIEWER_ADMIN_USERNAME") and os.getenv(
-        "PDATAVIEWER_ADMIN_PASSWORD"
-    ):
-        return True
-    else:
         raise HTTPException(status_code=500, detail="Missing admin credentials")
+
+    # Detect if password is already a hash (argon2 hashes always start with "$argon2")
+    if not admin_password.startswith("$argon2"):
+        # Hash the plaintext password
+        hashed = ph.hash(admin_password)
+        os.environ["PDATAVIEWER_ADMIN_PASSWORD"] = hashed
+
+    return True
 
 
 def authenticate_user(credentials: HTTPBasicCredentials = Depends(security)):
@@ -70,9 +72,7 @@ def authenticate_user(credentials: HTTPBasicCredentials = Depends(security)):
 
     # If they are not set, raise exception
     if username is None or password is None:
-        raise HTTPException(
-            status_code=500, detail="Admin credentials are not configured"
-        )
+        raise HTTPException(status_code=500, detail="Admin credentials are not configured")
 
     # Check if the user supplied username is correct
     if credentials.username != username:
