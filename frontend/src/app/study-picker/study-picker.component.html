@@ -1,11 +1,11 @@
 <div class="main-container">
   <div class="description-box">
-    <h1>StudyPicker</h1>
+    <h1>Study Picker</h1>
     <p>
       <br />
-      The StudyPicker is a tool designed to help you efficiently locate cohort
+      The Study Picker is a tool designed to help you efficiently locate cohort
       datasets that best match your research needs. By entering the specific
-      variables or features of interest, the StudyPicker will analyze all
+      variables or features of interest, the Study Picker will analyze all
       available datasets and provide a ranked list of cohort studies that we
       have access to, prioritized by how well they align with your criteria.
       <br />
@@ -100,12 +100,17 @@
         <th mat-header-cell *matHeaderCellDef>Longitudinal</th>
         <td mat-cell *matCellDef="let cohort" class="plot-longitudinal-cell">
           @if (isDataAvailable(cohort.cohort)) {
-          <button
+          <a
             class="button-style"
-            (click)="redirectToPlot(cohort.cohort, cohort.missing)"
+            [routerLink]="'/plot-longitudinal'"
+            [queryParams]="{
+              cohort: cohort.cohort,
+              features: availableFeatures(cohort.missing)
+            }"
+            target="_blank"
           >
             Plot
-          </button>
+          </a>
           } @else {
           <span>Data not available</span>
           }
@@ -117,12 +122,14 @@
           @if ( cohortLinks[cohort.cohort] === 'Shared by consortium') {
           {{ cohortLinks[cohort.cohort] }}
           } @else { @if (cohortLinks[cohort.cohort]) {
-          <button
+          <a
             class="button-style"
-            (click)="openLink(cohortLinks[cohort.cohort])"
+            [href]="cohortLinks[cohort.cohort]"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Apply
-          </button>
+          </a>
           } }
         </td>
       </ng-container>

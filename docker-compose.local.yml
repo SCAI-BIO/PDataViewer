@@ -20,7 +20,3 @@ services:
       - .env
     ports:
       - "5000:80"
-
-volumes:
-  weaviate_data:
-    driver: local

@@ -77,9 +77,6 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (data) => {
             this.originalVariableNameMappings = data;
-            console.info(
-              'Lowercase to original case mappings successfully loaded'
-            );
             resolve();
           },
           error: (e) => {
