@@ -216,12 +216,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
     this.http
       .get<Record<string, string>>('lower_to_original_case.json')
       .subscribe({
-        next: (data) => {
-          this.originalVariableNameMappings = data;
-          console.info(
-            'Lowercase to original case mappings successfully loaded'
-          );
-        },
+        next: (data) => (this.originalVariableNameMappings = data),
         error: (e) =>
           console.error(
             'Error loading lowercase to original case mappings:',
