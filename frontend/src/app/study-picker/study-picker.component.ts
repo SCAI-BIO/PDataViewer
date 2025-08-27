@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -33,6 +33,7 @@ import { ApiErrorHandlerService } from '../services/api-error-handler.service';
     MatIconModule,
     MatTableModule,
     ReactiveFormsModule,
+    RouterModule,
   ],
   templateUrl: './study-picker.component.html',
   styleUrl: './study-picker.component.scss',
@@ -71,7 +72,6 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   suggestions$: Observable<string[]> | null = null;
   private apiService = inject(ApiService);
   private errorHandler = inject(ApiErrorHandlerService);
-  private router = inject(Router);
   private subscriptions: Subscription[] = [];
 
   addFeature(event: MatChipInputEvent): void {
@@ -86,6 +86,23 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
       }
       this.featureCtrl.setValue(null);
     }
+  }
+
+  availableFeatures(missingFeatures: string): string[] {
+    const availableFeatures = [...this.selectedFeatures];
+    const missingList = missingFeatures.split(', ');
+
+    for (const missing of missingList) {
+      const indexToRemove = availableFeatures.indexOf(missing);
+
+      if (indexToRemove !== -1) {
+        availableFeatures.splice(indexToRemove, 1);
+      }
+    }
+
+    return availableFeatures.map((feature) =>
+      feature.toLowerCase().replace(/\s+/g, '_')
+    );
   }
 
   displayFn(feature: string): string {
@@ -175,40 +192,10 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     }
   }
 
-  redirectToPlot(cohort: string, missing: string) {
-    const availableFeatures = this._availableFeatures(missing);
-    const url = this.router
-      .createUrlTree(['plot-longitudinal'], {
-        queryParams: {
-          cohort: cohort,
-          features: availableFeatures,
-        },
-      })
-      .toString();
-    window.open(url, '_blank');
-  }
-
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.features.filter((feature) =>
       feature.toLowerCase().includes(filterValue)
-    );
-  }
-
-  private _availableFeatures(missingFeatures: string): string[] {
-    const availableFeatures = [...this.selectedFeatures];
-    const missingList = missingFeatures.split(', ');
-
-    for (const missing of missingList) {
-      const indexToRemove = availableFeatures.indexOf(missing);
-
-      if (indexToRemove !== -1) {
-        availableFeatures.splice(indexToRemove, 1);
-      }
-    }
-
-    return availableFeatures.map((feature) =>
-      feature.toLowerCase().replace(/\s+/g, '_')
     );
   }
 }
