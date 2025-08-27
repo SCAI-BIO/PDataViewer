@@ -2,7 +2,16 @@ from io import BytesIO
 from typing import List, Optional
 
 import pandas as pd
-from sqlalchemy import Column, Integer, MetaData, String, Table, create_engine, inspect
+from sqlalchemy import (
+    Column,
+    Integer,
+    MetaData,
+    String,
+    Table,
+    create_engine,
+    inspect,
+    select,
+)
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 Base = declarative_base()
@@ -94,9 +103,7 @@ class SQLLiteRepository:
         Returns:
             pd.DataFrame: A DataFrame containing data from all modalities. An empty DataFrame is returned if no data is found.
         """
-        modalities = pd.read_sql(sql="SELECT Modality FROM modality", con=self.engine)[
-            "Modality"
-        ]
+        modalities = pd.read_sql(sql="SELECT Modality FROM modality", con=self.engine)["Modality"]
         data_frames = []
 
         # Read all modality tables into a list of DataFrames
@@ -132,16 +139,12 @@ class SQLLiteRepository:
         inspector = inspect(self.engine)
         table_names = inspector.get_table_names()
         if starts_with:
-            filtered_table_names = [
-                name for name in table_names if name.startswith(starts_with)
-            ]
+            filtered_table_names = [name for name in table_names if name.startswith(starts_with)]
             return filtered_table_names
 
         return table_names
 
-    def retrieve_table(
-        self, table_name: str, columns: Optional[List[str]] = None
-    ) -> pd.DataFrame:
+    def retrieve_table(self, table_name: str, columns: Optional[List[str]] = None) -> pd.DataFrame:
         """Retrieves a specified table from the SQL database and returns it as a Pandas DataFrame.
 
         This method executes a SQL query to retrieve all or specific columns from a given table.
@@ -156,17 +159,18 @@ class SQLLiteRepository:
                 If an error occurs, an empty DataFrame is returned.
         """
         try:
-            # Quote table name to handle spaces or special characters
-            quoted_table_name = f'"{table_name}"'
-            if columns:
-                # Quote each column name to handle spaces or special characters
-                quoted_columns = [f'"{col}"' for col in columns]
-                columns_str = ", ".join(quoted_columns)
-            else:
-                columns_str = "*"
-            query = f"SELECT {columns_str} FROM {quoted_table_name}"
+            metadata = MetaData()
+            metadata.reflect(self.engine, only=[table_name])
+            table = metadata.tables[table_name]
 
-            return pd.read_sql(sql=query, con=self.engine)
+            if columns:
+                # Only allow valid column names
+                cols = [table.c[col] for col in columns if col in table.c]
+            else:
+                cols = [table]  # equivalent to SELECT *
+
+            stmt = select(*cols)
+            return pd.read_sql(stmt, con=self.engine)
         except Exception as e:
             print(f"Error retrieving table {table_name}: {e}")
             return pd.DataFrame()
