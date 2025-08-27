@@ -173,10 +173,6 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
-  openLink(url: string): void {
-    window.open(url, '_blank');
-  }
-
   optionSelected(event: MatAutocompleteSelectedEvent): void {
     const feature = event.option.value;
     if (feature && !this.selectedFeatures.includes(feature)) {
