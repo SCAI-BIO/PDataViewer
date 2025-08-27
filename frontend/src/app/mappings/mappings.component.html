@@ -60,7 +60,7 @@
   </div>
 
   <!-- Conditional display of no-data message -->
-  @if (!(dataChunks.length > 0)) {
+  @if (selectedModality && !(dataChunks.length > 0)) {
   <div class="no-data-message">
     Sorry, no mapping to showcase for this modality currently. We are collecting
     more data, keep in touch!
