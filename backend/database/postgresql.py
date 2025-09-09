@@ -149,16 +149,12 @@ class PostgreSQLRepository:
         self.session.commit()
 
     def get_concepts(
-        self,
-        cohort_name: Optional[str] = None,
-        source_type: Optional[ConceptSource] = None,
-        modality: Optional[str] = None,
+        self, cohort_name: Optional[str] = None, source_type: Optional[ConceptSource] = None
     ) -> list[Concept]:
         """Retrieve all concepts from the database.
 
         :param cohort_name: Optional name of a cohort, defaults to None.
         :param source_type: Optional source type of concept, defaults to None.
-        :param modality: Optional modality of the concept, defaults to None.
         :return: List of all concepts.
         """
         query = self.session.query(Concept)
@@ -167,8 +163,6 @@ class PostgreSQLRepository:
             query = query.filter_by(cohort_id=cohort.id)
         if source_type:
             query = query.filter_by(source_type=source_type)
-        if modality:
-            query = query.filter_by(modality=modality)
         concepts = query.all()
         return concepts
 
@@ -187,16 +181,11 @@ class PostgreSQLRepository:
         return concept
 
     def add_concept(
-        self,
-        variable_name: str,
-        modality: str,
-        cohort: Optional[Cohort] = None,
-        source_type: ConceptSource = ConceptSource.COHORT,
+        self, variable_name: str, cohort: Optional[Cohort] = None, source_type: ConceptSource = ConceptSource.COHORT
     ) -> Concept:
         """Add a new concept to the specified vocabulary, if it does not already exist.
 
         :param variable_name: Name of the variable.
-        :param modality: Modality of the concept.
         :param cohort_name: Optional name of the cohort study the concept belongs to, defaults to None.
         :param concept_source: Source of the concept. One of ConceptSource.COHORT or ConceptSource.CDM, defaults to ConceptSource.COHORT.
         :return: The created or existing Concept object.
@@ -226,10 +215,7 @@ class PostgreSQLRepository:
             return concept
 
         concept = Concept(
-            variable=variable_name,
-            modality=modality,
-            source_type=source_type,
-            cohort_id=cohort_db.id if cohort_db else None,
+            variable=variable_name, source_type=source_type, cohort_id=cohort_db.id if cohort_db else None
         )
         self.session.add(concept)
         self.session.commit()
@@ -256,38 +242,44 @@ class PostgreSQLRepository:
         self.session.commit()
 
     def get_modalities(self) -> list[str]:
-        """Retrieve all unique modalities from the concept table.
+        """Retrieve all unique modalities from the mapping table.
 
         :return: List of unique modality names.
         """
         modalities = list(
-            self.session.execute(select(Concept.modality).distinct().order_by(Concept.modality)).scalars().all()
+            self.session.execute(select(Mapping.modality).distinct().order_by(Mapping.modality)).scalars().all()
         )
         return modalities
 
-    def get_mappings(self) -> list[Mapping]:
+    def get_mappings(self, modality: Optional[str]) -> list[Mapping]:
         """Retrieve all mapping entries, optionally filtered by modality name.
 
+        :param modality: The modality name of the mappings.
         :return: List of all mapping entries.
         """
-        return self.session.query(Mapping).all()
+        query = self.session.query(Mapping)
+        if modality:
+            query = query.filter_by(modality=modality)
+        mappings = query.all()
+        return mappings
 
-    def add_mapping(self, source: Concept, target: Concept) -> Mapping:
+    def add_mapping(self, source: Concept, target: Concept, modality: str) -> Mapping:
         """Add a new mapping between two concepts, if it does not already exist.
 
         :param source: The source Concept object.
         :param target: The target Concept object.
+        :param modality: The modality of the mapping.
         :return: The created or existed Mapping object.
         """
-        source_db = self.add_concept(source.variable, source.modality, source.cohort, source.source_type)
-        target_db = self.add_concept(target.variable, target.modality, target.cohort, target.source_type)
+        source_db = self.add_concept(source.variable, source.cohort, source.source_type)
+        target_db = self.add_concept(target.variable, target.cohort, target.source_type)
 
         # Skip if mapping already exists
         mapping = self.session.query(Mapping).filter_by(source_id=source_db.id, target_id=target_db.id).first()
         if mapping:
             return mapping
 
-        mapping = Mapping(source_id=source_db.id, target_id=target_db.id)
+        mapping = Mapping(source_id=source_db.id, target_id=target_db.id, modality=modality)
         self.session.add(mapping)
         self.session.commit()
         return mapping
@@ -558,9 +550,7 @@ class PostgreSQLRepository:
         df = pd.read_csv(io.BytesIO(csv_data))
 
         for _, row in df.iterrows():
-            cdm_concept = self.add_concept(
-                variable_name=row["Feature"], cohort=None, source_type=ConceptSource.CDM, modality=modality
-            )
+            cdm_concept = self.add_concept(variable_name=row["Feature"], cohort=None, source_type=ConceptSource.CDM)
 
             # Skip metadata columns
             for column in df.columns:
@@ -578,9 +568,9 @@ class PostgreSQLRepository:
                 for value in values:
                     cohort = self.get_cohort(column)
                     cohort_concept = self.add_concept(
-                        variable_name=str(value), modality=modality, cohort=cohort, source_type=ConceptSource.COHORT
+                        variable_name=str(value), cohort=cohort, source_type=ConceptSource.COHORT
                     )
-                    self.add_mapping(cohort_concept, cdm_concept)
+                    self.add_mapping(cohort_concept, cdm_concept, modality)
 
     def clear_all(self):
         """

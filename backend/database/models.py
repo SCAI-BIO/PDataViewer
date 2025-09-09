@@ -59,7 +59,6 @@ class Concept(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     variable: Mapped[str] = mapped_column(String, nullable=False)
-    modality: Mapped[str] = mapped_column(String, nullable=False)
     source_type: Mapped[ConceptSource] = mapped_column(
         Enum(ConceptSource), nullable=False, default=ConceptSource.COHORT
     )
@@ -80,6 +79,7 @@ class Mapping(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     source_id: Mapped[int] = mapped_column(ForeignKey("concepts.id", ondelete="CASCADE"), nullable=False)
     target_id: Mapped[int] = mapped_column(ForeignKey("concepts.id", ondelete="CASCADE"), nullable=False)
+    modality: Mapped[str] = mapped_column(String, nullable=False)
 
     source: Mapped["Concept"] = relationship(back_populates="mappings_as_source", foreign_keys=[source_id])
     target: Mapped["Concept"] = relationship(back_populates="mappings_as_target", foreign_keys=[target_id])
