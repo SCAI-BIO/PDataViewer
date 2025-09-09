@@ -3,6 +3,7 @@ from typing import Optional
 
 from sqlalchemy import (
     Enum,
+    Float,
     ForeignKey,
     Integer,
     String,
@@ -92,7 +93,7 @@ class LongitudinalMeasurement(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     variable: Mapped[str] = mapped_column(String, nullable=False)
-    months: Mapped[int] = mapped_column(Integer, nullable=False)
+    months: Mapped[float] = mapped_column(Float, nullable=False)
     cohort_id: Mapped[int] = mapped_column(ForeignKey("cohorts.id", ondelete="CASCADE"), nullable=False)
     patient_count: Mapped[int] = mapped_column(Integer, nullable=False)
     total_patient_count: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -108,7 +109,7 @@ class BiomarkerMeasurement(Base):
     variable: Mapped[str] = mapped_column(String, nullable=False)
     participant_id: Mapped[int] = mapped_column(Integer, nullable=False)
     cohort_id: Mapped[int] = mapped_column(ForeignKey("cohorts.id", ondelete="CASCADE"), nullable=False)
-    measurement: Mapped[int] = mapped_column(Integer, nullable=False)
+    measurement: Mapped[float] = mapped_column(Float, nullable=False)
     diagnosis: Mapped[str] = mapped_column(String, nullable=False)
 
     cohort: Mapped["Cohort"] = relationship(back_populates="biomarker_measurements")

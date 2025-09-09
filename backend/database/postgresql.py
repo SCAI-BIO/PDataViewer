@@ -572,6 +572,58 @@ class PostgreSQLRepository:
                     )
                     self.add_mapping(cdm_concept, cohort_concept, modality)
 
+    def import_longitudinal_data(self, csv_data: bytes, variable_name: str):
+        """Import longitudinal data from a CSV file.
+
+        :param csv_data: Longitudinal Measurement CSV file content in bytes.
+        """
+        df = pd.read_csv(io.BytesIO(csv_data))
+
+        required_columns = {"Months", "Cohort", "PatientCount", "TotalPatientCount"}
+        missing = required_columns - set(df.columns)
+        if missing:
+            raise ValueError(f"Missing required columns: {missing}")
+
+        for _, row in df.iterrows():
+            cohort_name = str(row["Cohort"]).strip()
+            months = float(row["Months"])
+            patient_count = int(row["PatientCount"])
+            total_patient_count = int(row["TotalPatientCount"])
+
+            self.add_longitudinal_measurement(
+                variable=variable_name,
+                months=months,
+                cohort_name=cohort_name,
+                patient_count=patient_count,
+                total_patient_count=total_patient_count,
+            )
+
+    def import_biomarker_data(self, csv_data: bytes, variable_name: str):
+        """Import biomarker data from a CSV file.
+
+        :param csv_data: Biomarker measurement CSV file content in bytes.
+        """
+        df = pd.read_csv(io.BytesIO(csv_data))
+
+        required_columns = {"Participant number", "Cohort", "Measurement", "Diagnosis"}
+        missing = required_columns - set(df.columns)
+        if missing:
+            raise ValueError(f"Missing required columns: {missing}")
+
+        for _, row in df.iterrows():
+            cohort_name = str(row["Cohort"]).strip()
+            participant_id = int(row["Participant number"])
+            measurement = float(row["Measurement"])
+            diagnosis = str(row["Diagnosis"])
+
+            self.add_biomarker_measurement(
+                variable=variable_name,
+                participant_id=participant_id,
+                cohort_name=cohort_name,
+                measurement=measurement,
+                diagnosis=diagnosis,
+            )
+
     def clear_all(self):
         """
         Clear all database tables: vocabularies, concepts, CDMs, and mappings.
