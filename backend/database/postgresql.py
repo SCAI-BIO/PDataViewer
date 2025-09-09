@@ -553,16 +553,20 @@ class PostgreSQLRepository:
 
         for _, row in df.iterrows():
             cohort_name = str(row["cohort"]).strip()
-            participants = int(row["participants"])
-            control_participants = int(row["healthyControls"])
-            prodromal_participants = int(row["prodromalPatients"])
-            pd_participants = int(row["pdPatients"])
-            longitudinal_participants = int(row["longitudinalPatients"])
-            follow_up_interval = str(row["followUpInterval"])
-            location = str(row["location"])
-            doi = str(row["doi"])
-            link = str(row["link"])
-            color = str(row["color"])
+            participants = int(row["participants"]) if pd.notna(row["participants"]) else None
+            control_participants = int(row["healthyControls"]) if pd.notna(row["healthyControls"]) else None
+            prodromal_participants = int(row["prodromalPatients"]) if pd.notna(row["prodromalPatients"]) else None
+            pd_participants = int(row["pdPatients"]) if pd.notna(row["pdPatients"]) else None
+            longitudinal_participants = (
+                int(row["longitudinalPatients"]) if pd.notna(row["longitudinalPatients"]) else None
+            )
+            follow_up_interval = (
+                (str(row["followUpInterval"]).strip() or None) if pd.notna(row["followUpInterval"]) else None
+            )
+            location = (str(row["location"]).strip() or None) if pd.notna(row["location"]) else None
+            doi = (str(row["doi"]).strip() or None) if pd.notna(row["doi"]) else None
+            link = (str(row["link"]).strip() or None) if pd.notna(row["link"]) else None
+            color = str(row["color"]).strip()
 
             self.add_cohort(
                 name=cohort_name,
