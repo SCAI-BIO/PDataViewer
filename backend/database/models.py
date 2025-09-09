@@ -56,7 +56,7 @@ class Cohort(Base):
 
 class Concept(Base):
     __tablename__ = "concepts"
-    __table_args__ = UniqueConstraint("variable", "source_type", "cohort_id", name="uq_variable_source_cohort")
+    __table_args__ = (UniqueConstraint("variable", "source_type", "cohort_id", name="uq_variable_source_cohort"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     variable: Mapped[str] = mapped_column(String, nullable=False)
@@ -76,7 +76,9 @@ class Concept(Base):
 
 class Mapping(Base):
     __tablename__ = "mappings"
-    __table_args__ = UniqueConstraint("source_id", "target_id", "modality", name="uq_mapping_source_target_modality")
+    __table_args__ = (
+        UniqueConstraint("source_id", "target_id", "modality", name="uq_mapping_source_target_modality"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     source_id: Mapped[int] = mapped_column(ForeignKey("concepts.id", ondelete="CASCADE"), nullable=False)
@@ -89,7 +91,7 @@ class Mapping(Base):
 
 class LongitudinalMeasurement(Base):
     __tablename__ = "longitudinal_measurements"
-    __table_args__ = UniqueConstraint("variable", "months", "cohort_id", name="uq_variable_months_cohort")
+    __table_args__ = (UniqueConstraint("variable", "months", "cohort_id", name="uq_variable_months_cohort"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     variable: Mapped[str] = mapped_column(String, nullable=False)
@@ -103,7 +105,7 @@ class LongitudinalMeasurement(Base):
 
 class BiomarkerMeasurement(Base):
     __tablename__ = "biomarker_measurements"
-    __table_args__ = UniqueConstraint("participant_id", "cohort_id", name="uq_participant_cohort")
+    __table_args__ = (UniqueConstraint("participant_id", "cohort_id", name="uq_participant_cohort"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     variable: Mapped[str] = mapped_column(String, nullable=False)
