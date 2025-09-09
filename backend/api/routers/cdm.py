@@ -25,8 +25,3 @@ def get_features(database: Annotated[PostgreSQLRepository, Depends(get_client)])
 @router.get("/modalities", description="Get all modalities available in PASSIONATE.")
 def get_modalities(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
     return database.get_modalities()
-
-
-@router.get("/modalities/{modality}", description="Get all features of a modality.")
-def get_modality(modality: str, database: Annotated[PostgreSQLRepository, Depends(get_client)]):
-    return database.get_concepts(modality=modality)
