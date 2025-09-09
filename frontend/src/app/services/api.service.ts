@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
 import { Observable } from 'rxjs';
@@ -30,18 +30,19 @@ export class ApiService {
     return this.http.get<string[]>(`${this.apiUrl}/biomarkers`);
   }
 
-  fetchChordsData(request: {
-    cohorts: string[];
-    modality: string;
-  }): Observable<ChordData> {
+  fetchChordsData(modality: string): Observable<ChordData> {
+    const params = new HttpParams().set('modality', modality);
     return this.http.post<ChordData>(
       `${this.apiUrl}/visualization/chords/`,
-      request
+      null,
+      {
+        params,
+      }
     );
   }
 
   fetchCohorts(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/cdm/cohorts`);
+    return this.http.get<string[]>(`${this.apiUrl}/cohorts/`);
   }
 
   fetchCohortsForBiomarker(biomarker: string): Observable<string[]> {
@@ -58,8 +59,8 @@ export class ApiService {
     );
   }
 
-  fetchFeatures(): Observable<{ Feature: string[] }> {
-    return this.http.get<{ Feature: string[] }>(`${this.apiUrl}/cdm/features`);
+  fetchFeatures(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/cdm/features`);
   }
 
   fetchLongitudinalTable(tableName: string): Observable<LongitudinalData[]> {
