@@ -1,9 +1,9 @@
 from typing import Annotated
 
+from database.postgresql import PostgreSQLRepository
 from fastapi import APIRouter, Depends
 
 from api.dependencies import get_client
-from backend.database.postgresql import PostgreSQLRepository
 
 router = APIRouter(prefix="/biomarkers", tags=["biomarkers"], dependencies=[Depends(get_client)])
 
