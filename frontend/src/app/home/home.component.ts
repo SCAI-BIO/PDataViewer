@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   fetchFeatureCount(): void {
     this.loading = true;
     const sub = this.apiService.fetchFeatures().subscribe({
-      next: (v) => (this.featureCount = v.Feature.length),
+      next: (v) => (this.featureCount = v.length),
       error: (err) => {
         this.loading = false;
         this.errorHandler.handleError(err, 'fetching features');

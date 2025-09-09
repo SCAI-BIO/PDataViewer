@@ -133,7 +133,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   fetchFeatures(): void {
     const sub = this.apiService.fetchFeatures().subscribe({
       next: (v) => {
-        this.features = v.Feature;
+        this.features = v;
         this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
           startWith(''),
           map((value) => this._filter(value))
