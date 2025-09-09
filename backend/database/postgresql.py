@@ -505,7 +505,7 @@ class PostgreSQLRepository:
         :raises ValueError: Incorrect user name or password.
         :return: The authenticated user.
         """
-        user = self.session.query(User).filter_by(user_name=user_name).first()
+        user = self.session.query(User).filter_by(name=user_name).first()
         if user is None or not ph.verify(user.hashed_password, password):
             raise ValueError("Incorrect user_name or password.")
         return user
@@ -517,12 +517,12 @@ class PostgreSQLRepository:
         :param password: The password of the user.
         """
         # Skip if user already exists
-        user = self.session.query(User).filter_by(user_name=user_name).first()
+        user = self.session.query(User).filter_by(name=user_name).first()
         if user:
             return user
 
         hashed_password = ph.hash(password)
-        user = User(user_name=user_name, hashed_password=hashed_password)
+        user = User(name=user_name, hashed_password=hashed_password)
         self.session.add(user)
         self.session.commit()
         return user
@@ -570,7 +570,7 @@ class PostgreSQLRepository:
                     cohort_concept = self.add_concept(
                         variable_name=str(value), cohort=cohort, source_type=ConceptSource.COHORT
                     )
-                    self.add_mapping(cohort_concept, cdm_concept, modality)
+                    self.add_mapping(cdm_concept, cohort_concept, modality)
 
     def clear_all(self):
         """

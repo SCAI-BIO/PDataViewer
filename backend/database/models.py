@@ -62,7 +62,7 @@ class Concept(Base):
     source_type: Mapped[ConceptSource] = mapped_column(
         Enum(ConceptSource), nullable=False, default=ConceptSource.COHORT
     )
-    cohort_id: Mapped[Optional[int]] = mapped_column(ForeignKey("cohort.id", ondelete="CASCADE"), nullable=True)
+    cohort_id: Mapped[Optional[int]] = mapped_column(ForeignKey("cohorts.id", ondelete="CASCADE"), nullable=True)
 
     mappings_as_source: Mapped[list["Mapping"]] = relationship(
         foreign_keys="Mapping.source_id", back_populates="source", cascade="all, delete-orphan", passive_deletes=True
@@ -75,6 +75,7 @@ class Concept(Base):
 
 class Mapping(Base):
     __tablename__ = "mappings"
+    __table_args__ = UniqueConstraint("source_id", "target_id", "modality", name="uq_mapping_source_target_modality")
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     source_id: Mapped[int] = mapped_column(ForeignKey("concepts.id", ondelete="CASCADE"), nullable=False)
@@ -92,7 +93,7 @@ class LongitudinalMeasurement(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     variable: Mapped[str] = mapped_column(String, nullable=False)
     months: Mapped[int] = mapped_column(Integer, nullable=False)
-    cohort_id: Mapped[int] = mapped_column(ForeignKey("cohort.id", ondelete="CASCADE"), nullable=False)
+    cohort_id: Mapped[int] = mapped_column(ForeignKey("cohorts.id", ondelete="CASCADE"), nullable=False)
     patient_count: Mapped[int] = mapped_column(Integer, nullable=False)
     total_patient_count: Mapped[int] = mapped_column(Integer, nullable=False)
 
@@ -101,12 +102,12 @@ class LongitudinalMeasurement(Base):
 
 class BiomarkerMeasurement(Base):
     __tablename__ = "biomarker_measurements"
-    __table_args__ = UniqueConstraint("paticipant_id", "cohort_id", name="uq_participant_cohort")
+    __table_args__ = UniqueConstraint("participant_id", "cohort_id", name="uq_participant_cohort")
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     variable: Mapped[str] = mapped_column(String, nullable=False)
     participant_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    cohort_id: Mapped[int] = mapped_column(ForeignKey("cohort.id", ondelete="CASCADE"), nullable=False)
+    cohort_id: Mapped[int] = mapped_column(ForeignKey("cohorts.id", ondelete="CASCADE"), nullable=False)
     measurement: Mapped[int] = mapped_column(Integer, nullable=False)
     diagnosis: Mapped[str] = mapped_column(String, nullable=False)
 
