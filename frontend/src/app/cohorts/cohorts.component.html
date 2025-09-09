@@ -38,36 +38,38 @@
       </ng-container>
 
       <!-- Healthy Controls Column -->
-      <ng-container matColumnDef="healthyControls">
+      <ng-container matColumnDef="controlParticipants">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Healthy Controls
+          Control Participants
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.healthyControls }}
+          {{ element.controlParticipants }}
         </td>
       </ng-container>
 
       <!-- Prodromal Patients Column -->
-      <ng-container matColumnDef="prodromalPatients">
+      <ng-container matColumnDef="prodromalParticipants">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Prodromal Patients
+          Prodromal Participants
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.prodromalPatients }}
+          {{ element.prodromalParticipants }}
         </td>
       </ng-container>
 
       <!-- PD Patients Column -->
-      <ng-container matColumnDef="pdPatients">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>PD Patients</th>
-        <td mat-cell *matCellDef="let element">{{ element.pdPatients }}</td>
+      <ng-container matColumnDef="pdParticipants">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          PD Participants
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.pdParticipants }}</td>
       </ng-container>
 
       <!-- Longitudinal Patients Column -->
-      <ng-container matColumnDef="longitudinalPatients">
+      <ng-container matColumnDef="longitudinalParticipants">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>≥ 2 Visits</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.longitudinalPatients }}
+          {{ element.longitudinalParticipants ?? "not reported" }}
         </td>
       </ng-container>
 
@@ -75,14 +77,16 @@
       <ng-container matColumnDef="followUpInterval">
         <th mat-header-cell *matHeaderCellDef>Follow-up Interval</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.followUpInterval }}
+          {{ element.followUpInterval ?? "not reported" }}
         </td>
       </ng-container>
 
       <!-- Location Column -->
       <ng-container matColumnDef="location">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
-        <td mat-cell *matCellDef="let element">{{ element.location }}</td>
+        <td mat-cell *matCellDef="let element">
+          {{ element.location ?? "not reported" }}
+        </td>
       </ng-container>
 
       <!-- DOI Column -->
