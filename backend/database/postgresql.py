@@ -679,6 +679,72 @@ class PostgreSQLRepository:
                 diagnosis=diagnosis,
             )
 
+    def get_chord_diagram(self, modality: str) -> dict:
+        """Build a chord diagram data based on the current mappings.
+
+        :param modality: The modality of the mappings.
+        :return: A dictionary containing the nodes and the links of the chord diagram.
+        """
+        cdm_concepts = self.session.query(Concept).filter(Concept.source_type == ConceptSource.CDM).all()
+
+        node_seen: set[tuple[str, str]] = set()  # (name, group)
+        link_seen: set[tuple[str, str]] = set()  # (min_name, max_name) for undirected
+        nodes: list[dict[str, str]] = []
+        links: list[dict[str, str]] = []
+
+        def add_node(name: str, group: str) -> None:
+            key = (name, group)
+            if key not in node_seen:
+                node_seen.add(key)
+                nodes.append({"name": name, "group": group})
+
+        def add_link(a: str, b: str) -> None:
+            s, t = (a, b) if a <= b else (b, a)  # undirected de-dupe
+            key = (s, t)
+            if s != t and key not in link_seen:
+                link_seen.add(key)
+                links.append({"source": s, "target": t})
+
+        for cdm in cdm_concepts:
+            # collect mapped study variables (label, study_name) for this CDM
+            study_vars: list[tuple[str, str]] = []
+
+            for m in cdm.mappings_as_source:
+                if modality is not None and m.modality != modality:
+                    continue
+                tgt = m.target
+                if tgt and tgt.cohort:
+                    label = (tgt.variable or "").strip()
+                    study = tgt.cohort.name
+                    if label and study:
+                        study_vars.append((label, study))
+
+            for m in cdm.mappings_as_target:
+                if modality is not None and m.modality != modality:
+                    continue
+                src = m.source
+                if src and src.cohort:
+                    label = (src.variable or "").strip()
+                    study = src.cohort.name
+                    if label and study:
+                        study_vars.append((label, study))
+
+            # unique per-CDM study nodes
+            per_cdm_unique = list(dict.fromkeys(study_vars))  # order-preserving de-dupe
+            for label, study in per_cdm_unique:
+                add_node(label, study)
+
+            # link every pair across different studies (via this CDM)
+            n = len(per_cdm_unique)
+            for i in range(n):
+                li, si = per_cdm_unique[i]
+                for j in range(i + 1, n):
+                    lj, sj = per_cdm_unique[j]
+                    if si != sj:
+                        add_link(li, lj)
+
+        return {"nodes": nodes, "links": links}
+
     def clear_all(self):
         """
         Clear all database tables: vocabularies, concepts, CDMs, and mappings.
