@@ -1,9 +1,10 @@
 import pandas as pd
-from repository.sqllite import SQLLiteRepository
+
+from backend.database.postgresql import PostgreSQLRepository
 
 
 def generate_chords(
-    modality: str, cohorts: list[str], repo: SQLLiteRepository
+    modality: str, cohorts: list[str], repo: PostgreSQLRepository
 ) -> dict[str, list[dict[str, str]]]:
     """Generate linkage information for cohorts in a specified modality.
 

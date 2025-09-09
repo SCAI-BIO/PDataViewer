@@ -1,11 +1,12 @@
 import numpy as np
 import pandas as pd
-from repository.sqllite import SQLLiteRepository
+
+from backend.database.postgresql import PostgreSQLRepository
 
 
 def rank_cohorts(
     variables: list[str],
-    repo: SQLLiteRepository,
+    repo: PostgreSQLRepository,
     columns_to_drop: list[str] | None = [
         "CURIE",
         "Definition",
