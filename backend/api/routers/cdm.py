@@ -19,7 +19,8 @@ def get_cdm(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
 
 @router.get("/features", description="Get all features available in PASSIONATE.")
 def get_features(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
-    return database.get_concepts(source_type=ConceptSource.CDM)
+    concepts = database.get_concepts(source_type=ConceptSource.CDM)
+    return [c.variable for c in concepts]
 
 
 @router.get("/modalities", description="Get all modalities available in PASSIONATE.")
