@@ -3,7 +3,7 @@ version: "3.8"
 services:
   postgres:
     image: postgres:17
-    container_name: adhteb-postgres
+    container_name: pdataviewer-postgres
     environment:
       POSTGRES_USER: testuser
       POSTGRES_PASSWORD: testpass
@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pddata:/var/lib/postgresql/data
 
 volumes:
-  pgdata:
+  pddata:
