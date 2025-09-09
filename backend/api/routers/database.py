@@ -2,11 +2,12 @@ import io
 import zipfile
 from typing import Annotated
 
+from database.postgresql import PostgreSQLRepository
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.security import HTTPBasicCredentials
 
 from api.dependencies import authenticate_user, get_client
-from backend.database.postgresql import PostgreSQLRepository
+from api.model import UploadType
 
 router = APIRouter(prefix="/database", tags=["database"], dependencies=[Depends(get_client)])
 
@@ -18,41 +19,39 @@ router = APIRouter(prefix="/database", tags=["database"], dependencies=[Depends(
 async def import_data(
     credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
     database: Annotated[PostgreSQLRepository, Depends(get_client)],
+    upload_type: UploadType,
     file: UploadFile = File(...),
 ):
     # Check if the file is a zip file
     if not file.filename or not file.filename.endswith(".zip"):
         raise HTTPException(status_code=400, detail="Invalid file type. Only .zip files are accepted.")
 
-    # Read the zip file
     contents = await file.read()
     with zipfile.ZipFile(io.BytesIO(contents)) as z:
-        # Iterate over each file in the zip
         for filename in z.namelist():
-            if filename.endswith(".csv"):
-                # Read the CSV file
-                with z.open(filename) as csv_file:
-                    # Read the CSV content into a pandas DataFrame
-                    csv_data = csv_file.read()
-
-                table_name = filename[:-4]  # Remove the .csv extension
-
-                # Process the DataFrame
-
-                if (
-                    filename.startswith("longitudinal_")
-                    or filename.startswith("biomarkers_")
-                    or filename.startswith("metadata")
-                ):
-                    database.store_upload(csv_data, table_name)
-
-                else:
-                    database.update_cdm_upload(csv_data, table_name)
-            else:
+            if not filename.endswith(".csv"):
                 raise HTTPException(
                     status_code=400,
                     detail="Invalid file type in ZIP. Only CSV files are accepted.",
                 )
+
+            with z.open(filename) as csv_file:
+                csv_data = csv_file.read()
+
+            file_name = filename[:-4]  # Remove the .csv extension
+
+            # Route based on the user's chosen upload_type
+            if upload_type == UploadType.LONGITUDINAL:
+                database.import_longitudinal_measurements(csv_data, file_name)
+
+            elif upload_type == UploadType.BIOMARKERS:
+                database.import_biomarker_measurements(csv_data, file_name)
+
+            elif upload_type == UploadType.METADATA:
+                database.import_metadata(csv_data)
+
+            elif upload_type == UploadType.CDM:
+                database.import_cdm(csv_data, modality=file_name)
     return {"message": "Data imported successfully!"}
 
 
