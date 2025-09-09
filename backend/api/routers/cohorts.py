@@ -15,13 +15,12 @@ def get_cohorts(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
     return [cohort.name for cohort in cohorts]
 
 
-@router.get("/metadata", response_model=list[CohortMetadata], description="Get cohort metadata")
+@router.get("/metadata", description="Get cohort metadata")
 def get_metadata(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
     cohort_metadata = database.get_cohorts()
 
-    return [
-        CohortMetadata(
-            name=cm.name,
+    return {
+        cm.name: CohortMetadata(
             participants=cm.participants,
             controlParticipants=cm.control_participants,
             prodromalParticipants=cm.prodromal_participants,
@@ -34,4 +33,4 @@ def get_metadata(database: Annotated[PostgreSQLRepository, Depends(get_client)])
             color=cm.color,
         )
         for cm in cohort_metadata
-    ]
+    }
