@@ -29,24 +29,8 @@ def extract_variables(
             - Inner dictionary:
                 - Keys: Cohort names.
                 - Values: Lists of dictionaries containing:
-                    - "Measurement" (int | float | str): The measured value for the variable.
-                    - "Diagnoses" (str): The diagnosis associated with the measurement.
-
-    Example:
-        {
-            "VariableA": {
-                "Cohort1": [
-                    {"Measurement": 5.2, "Diagnosis": "DiseaseA"},
-                    {"Measurement": 3.1, "Diagnosis": "DiseaseB"}
-                ],
-                "Cohort2": [
-                    {"Measurement": 7.4, "Diagnosis": "DiseaseC"}
-                ]
-            },
-            "VariableB": {
-                ...
-            }
-        }
+                    - "measurement" (int | float | str): The measured value for the variable.
+                    - "diagnoses" (str): The diagnosis associated with the measurement.
     """
 
     result_dict = {}
@@ -73,9 +57,7 @@ def extract_variables(
                 continue
 
             # Filter rows where both the Measurement and the Diagnosis contain valid information.
-            valid_rows = df_dict[cohort][
-                (df_dict[cohort][feat].notna()) & (df_dict[cohort]["Diagnosis"].notna())
-            ]
+            valid_rows = df_dict[cohort][(df_dict[cohort][feat].notna()) & (df_dict[cohort]["Diagnosis"].notna())]
 
             if not valid_rows.empty:
                 if variable not in result_dict:
@@ -86,8 +68,8 @@ def extract_variables(
                 for _, row in valid_rows.iterrows():
                     result_dict[variable][cohort].append(
                         {
-                            "Measurement": row[feat],
-                            "Diagnosis": row["Diagnosis"],
+                            "measurement": row[feat],
+                            "diagnosis": row["Diagnosis"],
                         }
                     )
 
@@ -121,14 +103,10 @@ numeric_variables = merged_df.loc[merged_df.Rank == 2]
 ### READ PATIENT LEVEL DATA ###
 patient_level_files = sorted(base_path.glob("patient_level/*.csv"))
 cohorts = [file.stem for file in patient_level_files]  # names of the cohorts
-datasets = [
-    pd.read_csv(file, index_col=0, low_memory=False)
-    for file in patient_level_files  # the actual dataframes
-]
+datasets = [pd.read_csv(file, index_col=0, low_memory=False) for file in patient_level_files]  # the actual dataframes
 # Create a dictionary with all cohorts as dataframes
 cohort_studies = {
-    cohort: df.loc[(df["Months"] == 0)]
-    for cohort, df in zip(cohorts, datasets)  # Only utilizing baseline visit
+    cohort: df.loc[(df["Months"] == 0)] for cohort, df in zip(cohorts, datasets)  # Only utilizing baseline visit
 }
 
 # Drop empty columns from the dataframes
@@ -151,10 +129,10 @@ for variable, variable_data in result.items():
         for i, measurement in enumerate(measurements):
             data.append(
                 {
-                    "Participant number": i,
-                    "Cohort": cohort,
-                    "Measurement": measurement["Measurement"],
-                    "Diagnosis": measurement["Diagnosis"],
+                    "participantNumber": i,
+                    "cohort": cohort,
+                    "measurement": measurement["measurement"],
+                    "diagnosis": measurement["diagnosis"],
                 }
             )
 
@@ -164,5 +142,5 @@ for variable, variable_data in result.items():
     # Check if DataFrame is empty before saving
     if not df.empty:
         df = df.sample(frac=1)
-        df.set_index(["Participant number", "Cohort"], inplace=True)
-        df.to_csv(output_path / f"biomarkers_{variable.lower()}.csv")
+        df.set_index(["participantNumber", "cohort"], inplace=True)
+        df.to_csv(output_path / f"{variable}.csv")

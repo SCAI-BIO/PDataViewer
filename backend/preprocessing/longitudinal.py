@@ -19,24 +19,24 @@ def extract_longitudinal_variables(
         participant_data (dict[str, pd.DataFrame]): A dictionary containing participant-level data for each cohort.
             - Keys: Cohort names.
             - Values: Data frames of participant data, which must include columns "ID" (participant identifier) and
-                "Months".
+                "months".
 
     Returns:
         dict[str, pd.DataFrame]: A dictionary where:
             - Keys are variable names as specified in the CDM.
             - Values are data frames with the following columns:
-                - "Months": The time point of the visit (in months).
-                - "PatientCount": Number of participants recorded for the variable at that time point.
-                - "TotalPatientCount": Total number of participants in the cohort.
-                - "Cohort": The name of the cohort.
+                - "months": The time point of the visit (in months).
+                - "patientCount": Number of participants recorded for the variable at that time point.
+                - "totalPatientCount": Total number of participants in the cohort.
+                - "cohort": The name of the cohort.
 
     Example:
         {
             "VariableA": pd.DataFrame({
-                "Months": [0, 6, 12],
-                "PatientCount": [100, 90, 80],
-                "TotalPatientCount": [120, 120, 120],
-                "Cohort": ["Cohort1", "Cohort1", "Cohort1"]
+                "months": [0, 6, 12],
+                "patientCount": [100, 90, 80],
+                "totalPatientCount": [120, 120, 120],
+                "cohort": ["Cohort1", "Cohort1", "Cohort1"]
             }),
             "VariableB": ...
         }
@@ -44,7 +44,7 @@ def extract_longitudinal_variables(
     longitudinal: dict[str, pd.DataFrame] = {}
     for variable in cdm.index:
         longitudinal_variable: pd.DataFrame = pd.DataFrame(
-            columns=["Months", "PatientCount", "TotalPatientCount", "Cohort"]
+            columns=["months", "patientCount", "totalPatientCount", "cohort"]
         )
         for cohort in participant_data:
             total_participant_count = len(participant_data[cohort].ID.unique())
@@ -116,7 +116,5 @@ output_path.mkdir(exist_ok=True)
 for variable in longitudinal_variable_data:
     df = longitudinal_variable_data[variable]
     if not df.empty:
-        df.set_index(["Months", "Cohort"], inplace=True)
-        variable = variable.replace(" ", "_")
-        variable = variable.replace("/", "_")
-        df.to_csv(output_path / f"longitudinal_{variable.lower()}.csv")
+        df.set_index(["months", "cohort"], inplace=True)
+        df.to_csv(output_path / f"{variable}.csv")

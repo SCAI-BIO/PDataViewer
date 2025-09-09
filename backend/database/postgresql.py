@@ -527,6 +527,57 @@ class PostgreSQLRepository:
         self.session.commit()
         return user
 
+    def import_metadata(self, csv_data: bytes):
+        """Import cohort metadata via a CSV file.
+
+        :param csv_data: Cohort metadata CSV file content in bytes.
+        """
+        df = pd.read_csv(io.BytesIO(csv_data))
+
+        required_columns = {
+            "cohort",
+            "participants",
+            "healthyControls",
+            "prodromalPatients",
+            "pdPatients",
+            "longitudinalPatients",
+            "followUpInterval",
+            "location",
+            "doi",
+            "link",
+            "color",
+        }
+        missing = required_columns - set(df.columns)
+        if missing:
+            raise ValueError(f"Missing required columns: {missing}")
+
+        for _, row in df.iterrows():
+            cohort_name = str(row["cohort"]).strip()
+            participants = int(row["participants"])
+            control_participants = int(row["healthyControls"])
+            prodromal_participants = int(row["prodromalPatients"])
+            pd_participants = int(row["pdPatients"])
+            longitudinal_participants = int(row["longitudinalPatients"])
+            follow_up_interval = str(row["followUpInterval"])
+            location = str(row["location"])
+            doi = str(row["doi"])
+            link = str(row["link"])
+            color = str(row["color"])
+
+            self.add_cohort(
+                name=cohort_name,
+                participants=participants,
+                control_participants=control_participants,
+                prodromal_participants=prodromal_participants,
+                pd_participants=pd_participants,
+                longitudinal_participants=longitudinal_participants,
+                follow_up_interval=follow_up_interval,
+                location=location,
+                doi=doi,
+                link=link,
+                color=color,
+            )
+
     def import_cdm(
         self,
         csv_data: bytes,
@@ -572,23 +623,23 @@ class PostgreSQLRepository:
                     )
                     self.add_mapping(cdm_concept, cohort_concept, modality)
 
-    def import_longitudinal_data(self, csv_data: bytes, variable_name: str):
-        """Import longitudinal data from a CSV file.
+    def import_longitudinal_measurements(self, csv_data: bytes, variable_name: str):
+        """Import longitudinal measurements from a CSV file.
 
-        :param csv_data: Longitudinal Measurement CSV file content in bytes.
+        :param csv_data: Longitudinal measurements CSV file content in bytes.
         """
         df = pd.read_csv(io.BytesIO(csv_data))
 
-        required_columns = {"Months", "Cohort", "PatientCount", "TotalPatientCount"}
+        required_columns = {"months", "cohort", "patientCount", "totalPatientCount"}
         missing = required_columns - set(df.columns)
         if missing:
             raise ValueError(f"Missing required columns: {missing}")
 
         for _, row in df.iterrows():
-            cohort_name = str(row["Cohort"]).strip()
-            months = float(row["Months"])
-            patient_count = int(row["PatientCount"])
-            total_patient_count = int(row["TotalPatientCount"])
+            cohort_name = str(row["cohort"]).strip()
+            months = float(row["months"])
+            patient_count = int(row["patientCount"])
+            total_patient_count = int(row["totalPatientCount"])
 
             self.add_longitudinal_measurement(
                 variable=variable_name,
@@ -598,23 +649,23 @@ class PostgreSQLRepository:
                 total_patient_count=total_patient_count,
             )
 
-    def import_biomarker_data(self, csv_data: bytes, variable_name: str):
-        """Import biomarker data from a CSV file.
+    def import_biomarker_measurements(self, csv_data: bytes, variable_name: str):
+        """Import biomarker measurements from a CSV file.
 
-        :param csv_data: Biomarker measurement CSV file content in bytes.
+        :param csv_data: Biomarker measurements CSV file content in bytes.
         """
         df = pd.read_csv(io.BytesIO(csv_data))
 
-        required_columns = {"Participant number", "Cohort", "Measurement", "Diagnosis"}
+        required_columns = {"participantNumber", "cohort", "measurement", "diagnosis"}
         missing = required_columns - set(df.columns)
         if missing:
             raise ValueError(f"Missing required columns: {missing}")
 
         for _, row in df.iterrows():
-            cohort_name = str(row["Cohort"]).strip()
-            participant_id = int(row["Participant number"])
-            measurement = float(row["Measurement"])
-            diagnosis = str(row["Diagnosis"])
+            cohort_name = str(row["cohort"]).strip()
+            participant_id = int(row["participantNumber"])
+            measurement = float(row["measurement"])
+            diagnosis = str(row["diagnosis"])
 
             self.add_biomarker_measurement(
                 variable=variable_name,
