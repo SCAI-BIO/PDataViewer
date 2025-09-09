@@ -4,20 +4,11 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.security import HTTPBasicCredentials
-from repository.sqllite import SQLLiteRepository
 
-from api.auth import authenticate_user
-from api.dependencies import get_db
+from api.dependencies import authenticate_user, get_client
+from backend.database.postgresql import PostgreSQLRepository
 
-router = APIRouter(
-    prefix="/database", tags=["database"], dependencies=[Depends(get_db)]
-)
-
-
-@router.get("/", description="Get all table names.")
-async def table_names(database: Annotated[SQLLiteRepository, Depends(get_db)]):
-    tables = database.get_table_names()
-    return tables
+router = APIRouter(prefix="/database", tags=["database"], dependencies=[Depends(get_client)])
 
 
 @router.post(
@@ -26,14 +17,12 @@ async def table_names(database: Annotated[SQLLiteRepository, Depends(get_db)]):
 )
 async def import_data(
     credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
-    database: Annotated[SQLLiteRepository, Depends(get_db)],
+    database: Annotated[PostgreSQLRepository, Depends(get_client)],
     file: UploadFile = File(...),
 ):
     # Check if the file is a zip file
     if not file.filename or not file.filename.endswith(".zip"):
-        raise HTTPException(
-            status_code=400, detail="Invalid file type. Only .zip files are accepted."
-        )
+        raise HTTPException(status_code=400, detail="Invalid file type. Only .zip files are accepted.")
 
     # Read the zip file
     contents = await file.read()
@@ -70,19 +59,7 @@ async def import_data(
 @router.delete("/delete", description="Delete all tables from the database.")
 def delete_database(
     credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
-    database: Annotated[SQLLiteRepository, Depends(get_db)],
+    database: Annotated[PostgreSQLRepository, Depends(get_client)],
 ):
-    database.delete_database()
+    database.clear_all()
     return {"message": "All tables deleted successfully!"}
-
-
-@router.delete("/delete/{table_name}", description="Delete a table from the database.")
-def delete_table(
-    table_name: str,
-    credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
-    database: Annotated[SQLLiteRepository, Depends(get_db)],
-):
-    if table_name not in database.get_table_names():
-        raise HTTPException(status_code=404, detail="Table not found.")
-    database.delete_table(table_name)
-    return {"message": "Table deleted successfully!"}

@@ -1,77 +1,63 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from repository.sqllite import SQLLiteRepository
 
-from api.dependencies import get_db
+from api.dependencies import get_client
+from backend.database.postgresql import PostgreSQLRepository
 
-router = APIRouter(
-    prefix="/biomarkers", tags=["biomarkers"], dependencies=[Depends(get_db)]
-)
+router = APIRouter(prefix="/biomarkers", tags=["biomarkers"], dependencies=[Depends(get_client)])
 
 
 @router.get("/")
-def get_biomarkers(database: Annotated[SQLLiteRepository, Depends(get_db)]):
+def get_biomarkers(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
     """
-    Get all available biomarker tables.
+    Get all available biomarker variables.
     """
-    return database.get_table_names(starts_with="biomarkers_")
+    return database.get_biomarker_variables()
 
 
 @router.get("/{biomarker}")
-def get_biomarker(
-    biomarker: str, database: Annotated[SQLLiteRepository, Depends(get_db)]
-):
+def get_biomarker(biomarker: str, database: Annotated[PostgreSQLRepository, Depends(get_client)]):
     """
-    Retrieve a biomarker table.
+    Retrieve a biomarker measurements.
     """
-    table_name = "biomarkers_" + biomarker
-    data = database.retrieve_table(table_name=table_name)
-    return data.to_dict(orient="records")
+    return database.get_biomarker_measurements(biomarker)
 
 
 @router.get("/{biomarker}/cohorts")
-def get_biomarker_cohorts(
-    biomarker: str, database: Annotated[SQLLiteRepository, Depends(get_db)]
-):
+def get_biomarker_cohorts(biomarker: str, database: Annotated[PostgreSQLRepository, Depends(get_client)]):
     """
     Retrieve the list of available cohorts for a biomarker table.
     """
-    table_name = "biomarkers_" + biomarker
-    data = database.retrieve_table(table_name=table_name)
-    return list(data.Cohort.unique())
+    return database.get_cohorts_for_biomarker(biomarker)
 
 
 @router.get("/{biomarker}/diagnoses")
-def get_cohort_biomarkers(
-    biomarker: str, database: Annotated[SQLLiteRepository, Depends(get_db)]
-):
+def get_cohort_biomarkers(biomarker: str, database: Annotated[PostgreSQLRepository, Depends(get_client)]):
     """
-    Retrieve the measurements of chosen biomarker for the specified cohort.
+    Retrieve all unique diagnoses per cohort for the given biomarker.
+    If multiple diagnoses exist in a cohort, add "Complete".
     """
-    diagnoses = {}
-    table_name = "biomarkers_" + biomarker
-    data = database.retrieve_table(table_name=table_name)
-    for cohort in data.Cohort.unique():
-        cohort_data = data.loc[data["Cohort"] == cohort]
-        unique_diagnoses = list(cohort_data.Diagnosis.unique())
-        if len(unique_diagnoses) > 1:
-            unique_diagnoses.append("Complete")
-        diagnoses[cohort] = unique_diagnoses
+    diagnoses: dict[str, list[str]] = {}
+
+    cohorts = database.get_cohorts_for_biomarker(biomarker)
+    for cohort in cohorts:
+        cohort_diagnoses = database.get_diagnoses_for_biomarker_in_cohort(biomarker, cohort)
+        if len(cohort_diagnoses) > 1:
+            cohort_diagnoses.append("Complete")
+        diagnoses[cohort] = cohort_diagnoses
+
     return diagnoses
 
 
 @router.get("/{biomarker}/cohorts/{cohort}/diagnoses")
 def get_biomarker_diagnosis(
-    biomarker: str, cohort: str, database: Annotated[SQLLiteRepository, Depends(get_db)]
+    biomarker: str, cohort: str, database: Annotated[PostgreSQLRepository, Depends(get_client)]
 ):
     """
     Get unique diagnoses from a biomarker table.
     """
-    table_name = "biomarkers_" + biomarker
-    data = database.retrieve_table(table_name=table_name)
-    data = data.loc[data["Cohort"] == cohort]
-    return list(data.Diagnosis.unique())
+    return database.get_diagnoses_for_biomarker_in_cohort(biomarker, cohort)
 
 
 @router.get(
@@ -82,14 +68,9 @@ def get_filtered_data(
     biomarker: str,
     cohort: str,
     diagnosis: str,
-    database: Annotated[SQLLiteRepository, Depends(get_db)],
+    database: Annotated[PostgreSQLRepository, Depends(get_client)],
 ):
     """
     Filter biomarker data based on the chosen diagnosis type
     """
-    table_name = "biomarkers_" + biomarker
-    data = database.retrieve_table(table_name=table_name)
-    data = data.loc[data["Cohort"] == cohort]
-    if diagnosis != "Complete":
-        data = data.loc[data["Diagnosis"] == diagnosis]
-    return data.Measurement.to_list()
+    return database.get_biomarker_measurements(biomarker, cohort, diagnosis)

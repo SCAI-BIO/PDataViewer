@@ -1,15 +1,19 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from repository.sqllite import SQLLiteRepository
 
-from api.dependencies import get_db
+from api.dependencies import get_client
+from backend.database.postgresql import PostgreSQLRepository
 
-router = APIRouter(prefix="/cohorts", tags=["cohorts"], dependencies=[Depends(get_db)])
+router = APIRouter(prefix="/cohorts", tags=["cohorts"], dependencies=[Depends(get_client)])
 
 
-@router.get("/metadata", description="Get all features of a modality")
-def get_metadata(database: Annotated[SQLLiteRepository, Depends(get_db)]):
-    metadata = database.retrieve_table("metadata")
-    metadata.set_index("cohort", inplace=True)
-    return metadata.to_dict(orient="index")
+@router.get("/", description="Get all cohort names")
+def get_cohorts(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
+    cohorts = database.get_cohorts()
+    return [cohort.name for cohort in cohorts]
+
+
+@router.get("/metadata", description="Get cohort metadata")
+def get_metadata(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
+    return database.get_cohorts()
