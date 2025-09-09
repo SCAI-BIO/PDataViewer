@@ -1,5 +1,6 @@
 import io
 import os
+from collections import defaultdict
 from typing import Optional
 
 import pandas as pd
@@ -18,6 +19,7 @@ from database.models import (
     Mapping,
     User,
 )
+from database.typeddicts import CohortStats
 
 load_dotenv()
 USER_NAME = os.getenv("USER_NAME")
@@ -744,6 +746,60 @@ class PostgreSQLRepository:
                         add_link(li, lj)
 
         return {"nodes": nodes, "links": links}
+
+    def rank_cohorts(self, variables: list[str]) -> pd.DataFrame:
+        """Rank cohorts based on availability of requested CDM variables.
+
+        :param variables: A list of CDM variable names.
+        :return: pd.DataFrame with columns:
+            - cohort: cohort name
+            - found: "(found_variables)/(total_variables) (percentage%)"
+            - missing: comma-separated list of missing variables
+        """
+        if not variables:
+            raise ValueError("The 'variables' list cannot be empty")
+
+        total_variables = len(variables)
+        cohort_stats: dict[str, CohortStats] = defaultdict(lambda: CohortStats(found=0, missing=[]))
+
+        for var in variables:
+            cdm_concept = (
+                self.session.query(Concept)
+                .filter(Concept.variable == var, Concept.source_type == ConceptSource.CDM)
+                .first()
+            )
+            if not cdm_concept:
+                raise ValueError(f"Requested CDM variable '{var}' does not exist in the database.")
+
+            mapped_cohort_ids = {
+                m.target.cohort_id for m in cdm_concept.mappings_as_source if m.target and m.target.cohort_id
+            }
+
+            for m in cdm_concept.mappings_as_source:
+                if m.target and m.target.cohort:
+                    cohort_stats[m.target.cohort.name]["found"] += 1
+
+            for cohort in self.get_cohorts():
+                if cohort.id not in mapped_cohort_ids:
+                    cohort_stats[cohort.name]["missing"].append(var)
+
+        # Build DataFrame, skip cohorts with 0 found
+        rows = []
+        for cohort_name, stats in cohort_stats.items():
+            found_count: int = stats["found"]  # type: ignore
+            if found_count == 0:
+                continue  # skip cohorts with 0 availability
+
+            missing_vars = ", ".join(stats["missing"])
+            percentage = round((found_count / total_variables) * 100, 2)
+            found_str = f"{found_count}/{total_variables} ({percentage}%)"
+            rows.append({"cohort": cohort_name, "found": found_str, "missing": missing_vars})
+
+        df = pd.DataFrame(rows)
+        df.sort_values(by="found", ascending=False, inplace=True)
+        df.reset_index(drop=True, inplace=True)
+
+        return df
 
     def clear_all(self):
         """
