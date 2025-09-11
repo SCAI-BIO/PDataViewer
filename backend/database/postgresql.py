@@ -324,7 +324,19 @@ class PostgreSQLRepository:
             cohort = self.get_cohort(cohort_name)
             query = query.filter(LongitudinalMeasurement.cohort_id == cohort.id)
         longitudinal_measurements = query.all()
-        return longitudinal_measurements
+        results = []
+        for lm in longitudinal_measurements:
+            results.append(
+                {
+                    "id": lm.id,
+                    "months": lm.months,
+                    "variable": lm.variable,
+                    "patientCount": lm.patient_count,
+                    "totalPatientCount": lm.total_patient_count,
+                    "cohort": lm.cohort.name if lm.cohort else None,  # relationship
+                }
+            )
+        return results
 
     def add_longitudinal_measurement(
         self, variable: str, months: float, cohort_name: str, patient_count: int, total_patient_count: int
