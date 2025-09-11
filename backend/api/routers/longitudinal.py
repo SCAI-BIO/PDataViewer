@@ -4,6 +4,7 @@ from database.postgresql import PostgreSQLRepository
 from fastapi import APIRouter, Depends
 
 from api.dependencies import get_client
+from api.model import LongitudinalData
 
 router = APIRouter(prefix="/longitudinal", tags=["longitudinal"], dependencies=[Depends(get_client)])
 
@@ -13,7 +14,7 @@ def get_longitudinal_tables(database: Annotated[PostgreSQLRepository, Depends(ge
     return database.get_longitudinal_measurement_variables()
 
 
-@router.get("/{longitudinal}", description="Retrieve a longitudinal table.")
+@router.get("/{longitudinal}", response_model=list[LongitudinalData], description="Retrieve a longitudinal table.")
 def get_longitudinal_table(longitudinal: str, database: Annotated[PostgreSQLRepository, Depends(get_client)]):
     return database.get_longitudinal_measurements(longitudinal)
 
