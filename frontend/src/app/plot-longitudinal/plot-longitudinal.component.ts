@@ -31,13 +31,13 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
 
   fetchLongitudinalTable(tableName: string): void {
     this.loading = true;
-    const featureName = this._transformLongitudinalName(tableName);
+    const variableName = this._transformLongitudinalName(tableName);
     const sub = this.apiService
       .fetchLongitudinalTableForCohort(tableName, this.cohort)
       .subscribe({
         next: (v) =>
           v.forEach((item) => {
-            this.data.push({ ...item, Cohort: featureName });
+            this.data.push({ ...item, Cohort: variableName });
           }),
         error: (err) => {
           this.loading = false;
@@ -59,14 +59,14 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
     for (const variable of this.variables) {
       variables.push(this._transformLongitudinalName(variable));
     }
-    const features_string =
+    const variables_string =
       variables.length > 1
         ? variables.slice(0, -1).join(', ') +
           ' and ' +
           variables[variables.length - 1]
-        : variables[0] || ''; // Handle single or empty features case
+        : variables[0] || ''; // Handle single or empty variables case
 
-    const title = `Longitudinal follow-ups for ${features_string} in the ${this.cohort} cohort`;
+    const title = `Longitudinal follow-ups for ${variables_string} in the ${this.cohort} cohort`;
     this.lineplotService.createLineplot(this.data, {}, title, 'lineplot');
   }
 
@@ -98,16 +98,16 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
     this.loadOriginalCaseMappings().then(() => {
       const sub = this.route.queryParams.subscribe((params) => {
         this.cohort = params['cohort'] || '';
-        this.variables = params['features'] || [];
+        this.variables = params['variables'] || [];
       });
       this.subscriptions.push(sub);
 
-      // Ensure features is an array
+      // Ensure variables is an array
       if (!Array.isArray(this.variables)) {
         this.variables = [this.variables];
       }
 
-      // Set the count of features to fetch data
+      // Set the count of variables to fetch data
       this.dataFetchCount = this.variables.length;
 
       // Fetch data for each variable

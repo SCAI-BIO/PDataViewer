@@ -16,10 +16,10 @@ import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   cohortCount = 0;
-  featureCount = 0;
   loading = false;
   modalityCount = 0;
   participantCount = 0;
+  variableCount = 0;
   private apiService = inject(ApiService);
   private errorHandler = inject(ApiErrorHandlerService);
   private subscriptions: Subscription[] = [];
@@ -37,13 +37,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
-  fetchFeatureCount(): void {
+  fetchVariableCount(): void {
     this.loading = true;
-    const sub = this.apiService.fetchFeatures().subscribe({
-      next: (v) => (this.featureCount = v.length),
+    const sub = this.apiService.fetchVariables().subscribe({
+      next: (v) => (this.variableCount = v.length),
       error: (err) => {
         this.loading = false;
-        this.errorHandler.handleError(err, 'fetching features');
+        this.errorHandler.handleError(err, 'fetching variables');
       },
       complete: () => (this.loading = false),
     });
@@ -90,7 +90,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.fetchCohortCount();
-    this.fetchFeatureCount();
+    this.fetchVariableCount();
     this.fetchModalityCount();
     this.fetchParticipantCount();
   }

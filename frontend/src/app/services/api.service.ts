@@ -64,8 +64,8 @@ export class ApiService {
     });
   }
 
-  fetchFeatures(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/cdm/features`);
+  fetchVariables(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/cdm/variables`);
   }
 
   fetchLongitudinalTable(tableName: string): Observable<LongitudinalData[]> {
@@ -95,10 +95,10 @@ export class ApiService {
     return this.http.get<string[]>(`${this.apiUrl}/cdm/modalities`);
   }
 
-  fetchRankings(features: string[]): Observable<RankData[]> {
+  fetchRankings(variables: string[]): Observable<RankData[]> {
     return this.http.post<RankData[]>(
       `${this.apiUrl}/studypicker/rank`,
-      features
+      variables
     );
   }
 }

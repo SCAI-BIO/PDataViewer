@@ -11,9 +11,9 @@ export class LongitudinalUtilsService {
     );
   }
 
-  transformFeatureName(feature: string): string {
-    feature = feature.toLowerCase();
-    return feature.split(' ').join('_').replace('/', '_');
+  transformVariableName(variable: string): string {
+    variable = variable.toLowerCase();
+    return variable.split(' ').join('_').replace('/', '_');
   }
 
   transformLongitudinalName(

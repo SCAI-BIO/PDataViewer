@@ -9,8 +9,8 @@ from api.dependencies import get_client
 router = APIRouter(prefix="/cdm", tags=["cdm"], dependencies=[Depends(get_client)])
 
 
-@router.get("/features", description="Get all features available in PASSIONATE.")
-def get_features(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
+@router.get("/variables", description="Get all variables available in PASSIONATE.")
+def get_variables(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
     concepts = database.get_concepts(source_type=ConceptSource.CDM)
     return [c.variable for c in concepts]
 

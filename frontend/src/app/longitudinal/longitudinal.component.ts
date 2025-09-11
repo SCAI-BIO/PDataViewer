@@ -38,12 +38,12 @@ import { LineplotService } from '../services/lineplot.service';
 export class LongitudinalComponent implements OnInit, OnDestroy {
   colors: Record<string, string> = {};
   data: LongitudinalData[] = [];
-  featureCtrl = new FormControl();
-  filteredFeatures: Observable<string[]> | null = null;
+  filteredVariables: Observable<string[]> | null = null;
   loading = false;
   longitudinalTables: string[] = [];
   originalVariableNameMappings: Record<string, string> = {};
-  selectedFeature = '';
+  selectedVariable = '';
+  variableCtrl = new FormControl();
   private apiService = inject(ApiService);
   private errorHandler = inject(ApiErrorHandlerService);
   private http = inject(HttpClient);
@@ -55,13 +55,13 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
     return option ? option : '';
   }
 
-  featureSelected(event: MatAutocompleteSelectedEvent): void {
+  variableSelected(event: MatAutocompleteSelectedEvent): void {
     const longitudinal = event.option.value;
     if (longitudinal) {
-      this.selectedFeature = longitudinal;
-      this.featureCtrl.setValue('');
+      this.selectedVariable = longitudinal;
+      this.variableCtrl.setValue('');
       this.fetchLongitudinalTable(
-        this.longitudinalUtilsService.transformFeatureName(longitudinal)
+        this.longitudinalUtilsService.transformVariableName(longitudinal)
       );
     }
   }
@@ -127,7 +127,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   }
 
   generateLineplot(): void {
-    const title = `Longitudinal data for ${this.selectedFeature}`;
+    const title = `Longitudinal data for ${this.selectedVariable}`;
     this.lineplotService.createLineplot(
       this.data,
       this.colors,
@@ -164,7 +164,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
     this.loadOriginalCaseMappings().then(() => {
       this.fetchLongitudinalTables();
       this.fetchColors();
-      this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
+      this.filteredVariables = this.variableCtrl.valueChanges.pipe(
         startWith(''),
         map((value) =>
           this.longitudinalUtilsService.filterTableName(
@@ -176,7 +176,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
     });
   }
 
-  removeFeature(): void {
-    this.selectedFeature = '';
+  removeVariable(): void {
+    this.selectedVariable = '';
   }
 }
