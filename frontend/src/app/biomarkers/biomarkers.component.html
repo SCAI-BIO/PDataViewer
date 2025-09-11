@@ -51,7 +51,7 @@
         [displayWith]="displayFn"
         (optionSelected)="biomarkerSelected($event)"
       >
-        @for (option of biomarkers; track option) {
+        @for (option of filteredBiomarkers | async; track option) {
         <mat-option [value]="option">
           {{ option }}
         </mat-option>
@@ -108,7 +108,7 @@
         [displayWith]="displayFn"
         (optionSelected)="cohortSelected($event)"
       >
-        @for (option of diagnoses; track option) {
+        @for (option of filteredDiagnoses | async; track option) {
         <mat-option [value]="option">
           {{ option }}
         </mat-option>

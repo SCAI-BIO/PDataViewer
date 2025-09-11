@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -134,7 +134,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
         this.variables = v;
         this.filteredVariables = this.variableCtrl.valueChanges.pipe(
           startWith(''),
-          map((value) => this._filter(value))
+          map((value) => this.filterVariables(value))
         );
       },
       error: (err) => {
@@ -156,6 +156,13 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
       complete: () => (this.loading = false),
     });
     this.subscriptions.push(sub);
+  }
+
+  filterVariables(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.variables.filter((variable) =>
+      variable.toLowerCase().includes(filterValue)
+    );
   }
 
   isDataAvailable(cohort: string): boolean {
@@ -184,12 +191,5 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     if (index >= 0) {
       this.selectedVariables.splice(index, 1);
     }
-  }
-
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.variables.filter((variable) =>
-      variable.toLowerCase().includes(filterValue)
-    );
   }
 }

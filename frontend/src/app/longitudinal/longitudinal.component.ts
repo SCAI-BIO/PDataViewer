@@ -105,8 +105,9 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   }
 
   filterTableName(value: string): string[] {
-    return this.longitudinalTables.filter((option) =>
-      option.toLowerCase().includes(value)
+    const filterValue = value.toLowerCase();
+    return this.longitudinalTables.filter((longitudinalTable) =>
+      longitudinalTable.toLowerCase().includes(filterValue)
     );
   }
 

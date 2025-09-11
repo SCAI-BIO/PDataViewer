@@ -11,15 +11,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { Subscription, map } from 'rxjs';
+import { Observable, Subscription, map, startWith } from 'rxjs';
 
 import { ApiService } from '../services/api.service';
 import { BoxplotService } from '../services/boxplot.service';
 import { ApiErrorHandlerService } from '../services/api-error-handler.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-biomarkers',
   imports: [
+    CommonModule,
     MatAutocompleteModule,
     MatChipsModule,
     MatFormFieldModule,
@@ -40,6 +42,8 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   cohorts: string[] = [];
   colors: Record<string, string> = {};
   diagnoses: string[] = [];
+  filteredBiomarkers: Observable<string[]> | null = null;
+  filteredDiagnoses: Observable<string[]> | null = null;
   loading = false;
   selectedBiomarker = '';
   selectedCohorts: string[] = [];
@@ -163,7 +167,13 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
     const sub = this.apiService
       .fetchDiagnosesForBiomarker(this.selectedBiomarker)
       .subscribe({
-        next: (v) => (this.diagnoses = v),
+        next: (v) => {
+          this.diagnoses = v;
+          this.filteredDiagnoses = this.cohortCtrl.valueChanges.pipe(
+            startWith(''),
+            map((value) => this.filterDiagnoses(value || ''))
+          );
+        },
         error: (err) => {
           this.loading = false;
           this.errorHandler.handleError(err, 'fetching diagnoses');
@@ -171,6 +181,20 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
         complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
+  }
+
+  filterBiomarkers(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.biomarkers.filter((biomarker) =>
+      biomarker.toLowerCase().includes(filterValue)
+    );
+  }
+
+  filterDiagnoses(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.diagnoses.filter((diagnosis) =>
+      diagnosis.toLowerCase().includes(filterValue)
+    );
   }
 
   generateBoxplot(): void {
@@ -194,6 +218,10 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.fetchBiomarkers();
     this.fetchColors();
+    this.filteredBiomarkers = this.biomarkerCtrl.valueChanges.pipe(
+      startWith(''),
+      map((value) => this.filterBiomarkers(value || ''))
+    );
   }
 
   onToggleDataPoints(isChecked: boolean): void {
