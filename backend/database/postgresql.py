@@ -308,24 +308,6 @@ class PostgreSQLRepository:
         self.session.delete(mapping)
         self.session.commit()
 
-    def get_cdm(self) -> pd.DataFrame:
-        """Reconstruct the CDM table from mappings.
-
-        :return: Reconstructed CDM table as pandas DataFrame.
-        """
-        cdm_concepts = self.session.query(Concept).filter(Concept.source_type == ConceptSource.CDM).all()
-
-        rows = []
-        for cdm in cdm_concepts:
-            row = {"Feature": cdm.variable}
-            for mapping in cdm.mappings_as_source:
-                target = mapping.target
-                if target.cohort:
-                    row[target.cohort.name] = target.variable
-            rows.append(row)
-
-        return pd.DataFrame(rows)
-
     def get_longitudinal_measurements(
         self, variable: Optional[str] = None, cohort_name: Optional[str] = None
     ) -> list[LongitudinalMeasurement]:
@@ -377,7 +359,7 @@ class PostgreSQLRepository:
         self.session.commit()
         return longitudinal_measurement
 
-    def get_longitduinal_measurement_variables(self) -> list[str]:
+    def get_longitudinal_measurement_variables(self) -> list[str]:
         """Retrieve all unique longitudinal measurement variables from the LongitudinalMeasurement table.
 
         :return: List of unique longitudinal measurement varialbes.
