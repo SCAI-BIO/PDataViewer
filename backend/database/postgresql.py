@@ -345,7 +345,7 @@ class PostgreSQLRepository:
         return longitudinal_measurements
 
     def add_longitudinal_measurement(
-        self, variable: str, months: int, cohort_name: str, patient_count: int, total_patient_count: int
+        self, variable: str, months: float, cohort_name: str, patient_count: int, total_patient_count: int
     ) -> LongitudinalMeasurement:
         """Add a longitudinal measurement.
 
@@ -413,7 +413,7 @@ class PostgreSQLRepository:
         return biomarker_measurements
 
     def add_biomarker_measurement(
-        self, variable: str, participant_id: int, cohort_name: str, measurement: int, diagnosis: str
+        self, variable: str, participant_id: int, cohort_name: str, measurement: float, diagnosis: str
     ) -> BiomarkerMeasurement:
         """Add a biomarker measurement.
 
@@ -731,8 +731,15 @@ class PostgreSQLRepository:
                     if label and study:
                         study_vars.append((label, study))
 
-            # unique per-CDM study nodes
-            per_cdm_unique = list(dict.fromkeys(study_vars))  # order-preserving de-dupe
+            # de-dupe study vars
+            per_cdm_unique = list(dict.fromkeys(study_vars))
+
+            # skip CDM concepts that only map to a single cohort
+            unique_cohorts = {study for _, study in per_cdm_unique}
+            if len(unique_cohorts) < 2:
+                continue
+
+            # add nodes
             for label, study in per_cdm_unique:
                 add_node(label, study)
 
