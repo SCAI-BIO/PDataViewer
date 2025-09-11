@@ -43,16 +43,6 @@ def get_cohort_biomarkers(biomarker: str, database: Annotated[PostgreSQLReposito
     return diagnoses
 
 
-@router.get("/cohorts/{cohort}/diagnoses")
-def get_biomarker_diagnosis(
-    biomarker: str, cohort: str, database: Annotated[PostgreSQLRepository, Depends(get_client)]
-):
-    """
-    Get unique diagnoses from a biomarker table.
-    """
-    return database.get_diagnoses_for_biomarker_in_cohort(biomarker, cohort)
-
-
 @router.get("/cohorts/{cohort}/diagnoses/{diagnosis}", tags=["biomarkers"])
 def get_filtered_data(
     biomarker: str,
