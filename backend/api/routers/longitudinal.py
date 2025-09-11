@@ -10,7 +10,7 @@ router = APIRouter(prefix="/longitudinal", tags=["longitudinal"], dependencies=[
 
 @router.get("/", description="Get all available longitudinal tables.")
 def get_longitudinal_tables(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
-    return database.get_longitduinal_measurement_variables()
+    return database.get_longitudinal_measurement_variables()
 
 
 @router.get("/{longitudinal}", description="Retrieve a longitudinal table.")
