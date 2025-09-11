@@ -21,8 +21,13 @@ export class ApiService {
     cohort: string,
     diagnosis: string
   ): Observable<number[]> {
+    const params = new HttpParams()
+      .set('biomarker', biomarker)
+      .set('cohort', cohort)
+      .set('diagnosis', diagnosis);
     return this.http.get<number[]>(
-      `${this.apiUrl}/biomarkers/${biomarker}/cohorts/${cohort}/diagnoses/${diagnosis}`
+      `${this.apiUrl}/biomarkers/cohorts/${cohort}/diagnoses/${diagnosis}`,
+      { params }
     );
   }
 
@@ -46,15 +51,17 @@ export class ApiService {
   }
 
   fetchCohortsForBiomarker(biomarker: string): Observable<string[]> {
-    return this.http.get<string[]>(
-      `${this.apiUrl}/biomarkers/${biomarker}/cohorts`
-    );
+    const params = new HttpParams().set('biomarker', biomarker);
+    return this.http.get<string[]>(`${this.apiUrl}/biomarkers/cohorts`, {
+      params,
+    });
   }
 
   fetchDiagnosesForBiomarker(biomarker: string): Observable<string[]> {
-    return this.http.get<string[]>(
-      `${this.apiUrl}/biomarkers/${biomarker}/diagnoses`
-    );
+    const params = new HttpParams().set('biomarker', biomarker);
+    return this.http.get<string[]>(`${this.apiUrl}/biomarkers/diagnoses`, {
+      params,
+    });
   }
 
   fetchFeatures(): Observable<string[]> {
