@@ -38,14 +38,15 @@ def get_cohort_biomarkers(biomarker: str, database: Annotated[PostgreSQLReposito
     Retrieve all unique diagnoses per cohort for the given biomarker.
     If multiple diagnoses exist in a cohort, add "Complete".
     """
-    diagnoses: dict[str, list[str]] = {}
+    diagnoses = []
 
     cohorts = database.get_cohorts_for_biomarker(biomarker)
     for cohort in cohorts:
         cohort_diagnoses = database.get_diagnoses_for_biomarker_in_cohort(biomarker, cohort)
+        for diagnosis in cohort_diagnoses:
+            diagnoses.append(f"{cohort} ({diagnosis} Group)")
         if len(cohort_diagnoses) > 1:
-            cohort_diagnoses.append("Complete")
-        diagnoses[cohort] = cohort_diagnoses
+            diagnoses.append(f"{cohort} (Complete)")
 
     return diagnoses
 
@@ -73,4 +74,8 @@ def get_filtered_data(
     """
     Filter biomarker data based on the chosen diagnosis type
     """
-    return database.get_biomarker_measurements(biomarker, cohort, diagnosis)
+    if diagnosis == "Complete":
+        biomarker_data = database.get_biomarker_measurements(biomarker, cohort, None)
+    else:
+        biomarker_data = database.get_biomarker_measurements(biomarker, cohort, diagnosis)
+    return [bd.measurement for bd in biomarker_data]
