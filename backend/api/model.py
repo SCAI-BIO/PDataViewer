@@ -21,6 +21,13 @@ class CohortMetadata(BaseModel):
     color: str
 
 
+class LongitudinalData(BaseModel):
+    months: float
+    cohort: str
+    patientCount: int
+    totalPatientCount: int
+
+
 class UploadType(str, Enum):
     LONGITUDINAL = "longitudinal"
     BIOMARKERS = "biomarkers"
