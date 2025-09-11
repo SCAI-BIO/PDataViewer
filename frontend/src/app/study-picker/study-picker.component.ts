@@ -100,9 +100,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
       }
     }
 
-    return availableVariables.map((variable) =>
-      variable.toLowerCase().replace(/\s+/g, '_')
-    );
+    return availableVariables;
   }
 
   displayFn(variable: string): string {
