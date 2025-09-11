@@ -51,10 +51,8 @@ export class ApiService {
     );
   }
 
-  fetchDiagnosesForBiomarker(
-    biomarker: string
-  ): Observable<Record<string, string[]>> {
-    return this.http.get<Record<string, string[]>>(
+  fetchDiagnosesForBiomarker(biomarker: string): Observable<string[]> {
+    return this.http.get<string[]>(
       `${this.apiUrl}/biomarkers/${biomarker}/diagnoses`
     );
   }
