@@ -1,9 +1,9 @@
 argon2-cffi==25.1.0
-fastapi==0.116.1
-numpy==2.3.2
-pandas==2.3.1
-python-dotenv==1.1.1
+fastapi==0.120.2
+numpy==2.3.4
+pandas==2.3.3
+python-dotenv==1.2.1
 python-multipart==0.0.20
-SQLAlchemy==2.0.43
+SQLAlchemy==2.0.44
 thefuzz==0.22.1
-uvicorn==0.35.0
+uvicorn==0.38.0
