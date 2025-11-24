@@ -1,6 +1,6 @@
 argon2-cffi==25.1.0
-fastapi==0.120.2
-numpy==2.3.4
+fastapi==0.121.3
+numpy==2.3.5
 pandas==2.3.3
 python-dotenv==1.2.1
 python-multipart==0.0.20
