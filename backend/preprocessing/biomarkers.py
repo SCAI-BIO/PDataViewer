@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import numpy as np
@@ -141,6 +142,7 @@ for variable, variable_data in result.items():
 
     # Check if DataFrame is empty before saving
     if not df.empty:
+        variable = re.sub(r'[\\/*?:"<>|]', "-", variable)
         df = df.sample(frac=1)
         df.set_index(["participantNumber", "cohort"], inplace=True)
         df.to_csv(output_path / f"{variable}.csv")

@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import numpy as np
@@ -116,5 +117,6 @@ output_path.mkdir(exist_ok=True)
 for variable in longitudinal_variable_data:
     df = longitudinal_variable_data[variable]
     if not df.empty:
+        variable = re.sub(r'[\\/*?:"<>|]', "-", variable)
         df.set_index(["months", "cohort"], inplace=True)
         df.to_csv(output_path / f"{variable}.csv")
