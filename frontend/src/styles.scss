@@ -1,4 +1,4 @@
-@use "sass:color";
+@use 'sass:color';
 
 // Define global button variables
 $max-width: 100%;
@@ -28,7 +28,7 @@ $button-radius: 5px;
 }
 
 body {
-  font-family: "Robot", sans-serif;
+  font-family: 'Robot', sans-serif;
   font-size: $font-size;
   line-height: 1.6;
   margin: 0;

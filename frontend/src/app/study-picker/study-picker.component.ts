@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -57,15 +57,9 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     PostCEPT: true,
     SPARX: true,
   };
-  displayedColumns: string[] = [
-    'cohort',
-    'found',
-    'missing',
-    'plot',
-    'dataAccess',
-  ];
+  displayedColumns: string[] = ['cohort', 'found', 'missing', 'plot', 'dataAccess'];
   filteredVariables: Observable<string[]> | null = null;
-  loading = false;
+  isLoading = signal(false);
   @Input() selectedVariables: string[] = [];
   suggestions$: Observable<string[]> | null = null;
   variableCtrl = new FormControl();
@@ -108,7 +102,7 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   }
 
   fetchMetadata(): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const sub = this.apiService.fetchMetadata().subscribe({
       next: (data) => {
         this.cohortData = data;
@@ -120,10 +114,10 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
-        this.loading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleError(err, 'fetching metadata');
       },
-      complete: () => (this.loading = false),
+      complete: () => this.isLoading.set(false),
     });
     this.subscriptions.push(sub);
   }
@@ -138,10 +132,10 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
         );
       },
       error: (err) => {
-        this.loading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleError(err, 'fetching variables');
       },
-      complete: () => (this.loading = false),
+      complete: () => this.isLoading.set(false),
     });
     this.subscriptions.push(sub);
   }
@@ -150,19 +144,17 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     const sub = this.apiService.fetchRankings(variables).subscribe({
       next: (v) => (this.cohortRankings = v),
       error: (err) => {
-        this.loading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleError(err, 'fetching rankings');
       },
-      complete: () => (this.loading = false),
+      complete: () => this.isLoading.set(false),
     });
     this.subscriptions.push(sub);
   }
 
   filterVariables(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.variables.filter((variable) =>
-      variable.toLowerCase().includes(filterValue)
-    );
+    return this.variables.filter((variable) => variable.toLowerCase().includes(filterValue));
   }
 
   isDataAvailable(cohort: string): boolean {

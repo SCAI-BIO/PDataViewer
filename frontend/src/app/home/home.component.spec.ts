@@ -1,8 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
-
-import { of } from 'rxjs';
 
 import { HomeComponent } from './home.component';
 
@@ -13,15 +11,7 @@ describe('HomeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
-      providers: [
-        provideHttpClient(),
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            params: of({}),
-          },
-        },
-      ],
+      providers: [provideHttpClient(), provideRouter([])],
       teardown: { destroyAfterEach: false },
     }).compileComponents();
 

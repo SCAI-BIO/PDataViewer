@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -37,8 +37,8 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   colors: Record<string, string> = {};
   data: LongitudinalData[] = [];
   filteredVariables: Observable<string[]> | null = null;
-  loading = false;
   longitudinalTables: string[] = [];
+  isLoading = signal(false);
   selectedVariable = '';
   variableCtrl = new FormControl();
   private apiService = inject(ApiService);
@@ -51,7 +51,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   }
 
   fetchColors(): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const sub = this.apiService
       .fetchMetadata()
       .pipe(
@@ -70,36 +70,36 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
           this.colors = v;
         },
         error: (err) => {
-          this.loading = false;
+          this.isLoading.set(false);
           this.errorHandler.handleError(err, 'fetching colors');
         },
-        complete: () => (this.loading = false),
+        complete: () => this.isLoading.set(false),
       });
     this.subscriptions.push(sub);
   }
 
   fetchLongitudinalTable(tableName: string): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const sub = this.apiService.fetchLongitudinalTable(tableName).subscribe({
       next: (v) => (this.data = v),
       error: (err) => {
-        this.loading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleError(err, 'fetching longitudinal table');
       },
-      complete: () => (this.loading = false),
+      complete: () => this.isLoading.set(false),
     });
     this.subscriptions.push(sub);
   }
 
   fetchLongitudinalTables(): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const sub = this.apiService.fetchLongitudinalTables().subscribe({
       next: (v) => (this.longitudinalTables = v),
       error: (err) => {
-        this.loading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleError(err, 'fetching longitudinal tables');
       },
-      complete: () => (this.loading = false),
+      complete: () => this.isLoading.set(false),
     });
     this.subscriptions.push(sub);
   }
@@ -113,12 +113,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
 
   generateLineplot(): void {
     const title = `Longitudinal data for ${this.selectedVariable}`;
-    this.lineplotService.createLineplot(
-      this.data,
-      this.colors,
-      title,
-      'lineplot'
-    );
+    this.lineplotService.createLineplot(this.data, this.colors, title, 'lineplot');
   }
 
   ngOnDestroy(): void {

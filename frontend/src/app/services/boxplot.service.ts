@@ -20,22 +20,13 @@ export class BoxplotService {
 
     labels.forEach((label) => {
       const cohort = label.split(' (')[0];
-      const diagnosisGroup =
-        label.match(/\(([^)]+)\)/)?.[1].replace(' Group', '') || '';
+      const diagnosisGroup = label.match(/\(([^)]+)\)/)?.[1].replace(' Group', '') || '';
 
-      const values = (data[label] || []).filter(
-        (d): d is number => d !== undefined
-      );
+      const values = (data[label] || []).filter((d): d is number => d !== undefined);
 
       const boxColor =
-        Object.keys(colors).find((cohortName) =>
-          cohort.includes(cohortName)
-        ) !== undefined
-          ? colors[
-              Object.keys(colors).find((cohortName) =>
-                cohort.includes(cohortName)
-              )!
-            ]
+        Object.keys(colors).find((cohortName) => cohort.includes(cohortName)) !== undefined
+          ? colors[Object.keys(colors).find((cohortName) => cohort.includes(cohortName))!]
           : '#69b3a2';
 
       // Box trace
@@ -43,9 +34,7 @@ export class BoxplotService {
         y: values,
         type: 'box',
         name: cohort,
-        x: Array(values.length).fill(
-          `${cohort} (${diagnosisGroup} | n=${values.length})`
-        ),
+        x: Array(values.length).fill(`${cohort} (${diagnosisGroup} | n=${values.length})`),
         boxpoints: showDataPoints ? 'all' : 'outliers',
         jitter: showDataPoints ? 0.4 : 0, // jitter only if data points are shown
         pointpos: 0,

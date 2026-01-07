@@ -2,16 +2,15 @@
   <div class="description-box">
     <h1>Cohort Study Overview</h1>
     <p>
-      The table below provides an overview of the cohort studies included in
-      PDataViewer. It displays the number of recruited participants and key
-      information on the respective study design as reported on the
-      corresponding cohort study's reference link. Additionally, links are
+      The table below provides an overview of the cohort studies included in PDataViewer. It
+      displays the number of recruited participants and key information on the respective study
+      design as reported on the corresponding cohort study's reference link. Additionally, links are
       provided which facilitate access to the underlying datasets.
     </p>
   </div>
 
   <!-- Loading Spinner -->
-  @if (loading) {
+  @if (isLoading()) {
   <div class="loading-spinner">
     <mat-spinner diameter="40"></mat-spinner>
   </div>
@@ -23,10 +22,7 @@
       <ng-container matColumnDef="cohort">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Cohorts</th>
         <td mat-cell *matCellDef="let element">
-          <span
-            class="color-circle"
-            [style.background-color]="element.color"
-          ></span>
+          <span class="color-circle" [style.background-color]="element.color"></span>
           <span class="cohort-name">{{ element.cohort }}</span>
         </td>
       </ng-container>
@@ -39,9 +35,7 @@
 
       <!-- Healthy Controls Column -->
       <ng-container matColumnDef="controlParticipants">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Control Participants
-        </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Control Participants</th>
         <td mat-cell *matCellDef="let element">
           {{ element.controlParticipants }}
         </td>
@@ -49,9 +43,7 @@
 
       <!-- Prodromal Patients Column -->
       <ng-container matColumnDef="prodromalParticipants">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Prodromal Participants
-        </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Prodromal Participants</th>
         <td mat-cell *matCellDef="let element">
           {{ element.prodromalParticipants }}
         </td>
@@ -59,9 +51,7 @@
 
       <!-- PD Patients Column -->
       <ng-container matColumnDef="pdParticipants">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          PD Participants
-        </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>PD Participants</th>
         <td mat-cell *matCellDef="let element">{{ element.pdParticipants }}</td>
       </ng-container>
 
@@ -69,7 +59,7 @@
       <ng-container matColumnDef="longitudinalParticipants">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>≥ 2 Visits</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.longitudinalParticipants ?? "not reported" }}
+          {{ element.longitudinalParticipants ?? 'not reported' }}
         </td>
       </ng-container>
 
@@ -77,7 +67,7 @@
       <ng-container matColumnDef="followUpInterval">
         <th mat-header-cell *matHeaderCellDef>Follow-up Interval</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.followUpInterval ?? "not reported" }}
+          {{ element.followUpInterval ?? 'not reported' }}
         </td>
       </ng-container>
 
@@ -85,7 +75,7 @@
       <ng-container matColumnDef="location">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.location ?? "not reported" }}
+          {{ element.location ?? 'not reported' }}
         </td>
       </ng-container>
 
@@ -93,9 +83,7 @@
       <ng-container matColumnDef="doi">
         <th mat-header-cell *matHeaderCellDef>Reference</th>
         <td mat-cell *matCellDef="let element">
-          <button class="button-style" (click)="openLink(element.doi)">
-            DOI
-          </button>
+          <button class="button-style" (click)="openLink(element.doi)">DOI</button>
         </td>
       </ng-container>
 
@@ -106,9 +94,7 @@
           @if (element.link === 'Shared by consortium') {
           {{ element.link }}
           } @else { @if (element.link) {
-          <button class="button-style" (click)="openLink(element.link)">
-            Apply
-          </button>
+          <button class="button-style" (click)="openLink(element.link)">Apply</button>
           } }
         </td>
       </ng-container>

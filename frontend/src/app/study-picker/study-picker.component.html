@@ -3,25 +3,23 @@
     <h1>Study Picker</h1>
     <p>
       <br />
-      The Study Picker is a tool designed to help you efficiently locate cohort
-      datasets that best match your research needs. By entering the specific
-      variables or variables of interest, the Study Picker will analyze all
-      available datasets and provide a ranked list of cohort studies that we
-      have access to, prioritized by how well they align with your criteria.
+      The Study Picker is a tool designed to help you efficiently locate cohort datasets that best
+      match your research needs. By entering the specific variables or variables of interest, the
+      Study Picker will analyze all available datasets and provide a ranked list of cohort studies
+      that we have access to, prioritized by how well they align with your criteria.
       <br />
       <br />
 
-      For each accessible cohort, you will find a Plot button that allows you to
-      visualize the availability of your selected variables across different
-      visits. This plot presents a clear view of data completeness for each
-      variable, enabling you to make informed decisions about the suitability of
-      the datasets for your research. Simply enter your variables below, submit
-      your query, and explore the cohorts most relevant to your study.
+      For each accessible cohort, you will find a Plot button that allows you to visualize the
+      availability of your selected variables across different visits. This plot presents a clear
+      view of data completeness for each variable, enabling you to make informed decisions about the
+      suitability of the datasets for your research. Simply enter your variables below, submit your
+      query, and explore the cohorts most relevant to your study.
     </p>
   </div>
 
   <!-- Loading Spinner -->
-  @if (loading) {
+  @if (isLoading()) {
   <div class="loading-spinner">
     <mat-spinner diameter="40"></mat-spinner>
   </div>
@@ -66,9 +64,7 @@
 
     <!-- Button container for ranking cohorts -->
     <div class="button-container">
-      <button class="button-style" (click)="fetchRankings(selectedVariables)">
-        Rank cohorts
-      </button>
+      <button class="button-style" (click)="fetchRankings(selectedVariables)">Rank cohorts</button>
     </div>
   </div>
 
@@ -79,10 +75,7 @@
       <ng-container matColumnDef="cohort">
         <th mat-header-cell *matHeaderCellDef>Cohorts (Ranked)</th>
         <td mat-cell *matCellDef="let cohort">
-          <span
-            class="color-circle"
-            [style.background-color]="cohortColors[cohort.cohort]"
-          ></span>
+          <span class="color-circle" [style.background-color]="cohortColors[cohort.cohort]"></span>
           {{ cohort.cohort }}
         </td>
       </ng-container>
