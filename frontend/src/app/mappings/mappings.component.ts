@@ -50,29 +50,27 @@ export class MappingsComponent implements OnInit, OnDestroy {
 
   fetchData(): void {
     this.loading = true;
-    const request = {
-      cohorts: this.cohorts,
-      modality: this.selectedModality,
-    };
-    const sub = this.apiService.fetchChordsData(request).subscribe({
-      next: (v) => {
-        this.currentIndex = 0;
-        this.dataChunks = this.chordService.chunkData(v, 40);
+    const sub = this.apiService
+      .fetchChordsData(this.selectedModality)
+      .subscribe({
+        next: (v) => {
+          this.currentIndex = 0;
+          this.dataChunks = this.chordService.chunkData(v, 40);
 
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          this.chordService.createChordDiagrams(
-            this.dataChunks,
-            this.currentIndex
-          );
-        });
-      },
-      error: (err) => {
-        this.loading = false;
-        this.errorHandler.handleError(err, 'fetching chord data');
-      },
-      complete: () => (this.loading = false),
-    });
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            this.chordService.createChordDiagrams(
+              this.dataChunks,
+              this.currentIndex
+            );
+          });
+        },
+        error: (err) => {
+          this.loading = false;
+          this.errorHandler.handleError(err, 'fetching chord data');
+        },
+        complete: () => (this.loading = false),
+      });
     this.subscriptions.push(sub);
   }
 

@@ -2,87 +2,81 @@ import io
 import zipfile
 from typing import Annotated
 
+from database.postgresql import PostgreSQLRepository
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.security import HTTPBasicCredentials
-from repository.sqllite import SQLLiteRepository
 
-from api.auth import authenticate_user
-from api.dependencies import get_db
+from api.dependencies import authenticate_user, get_client
+from api.model import UploadType
 
-router = APIRouter(
-    prefix="/database", tags=["database"], dependencies=[Depends(get_db)]
-)
+router = APIRouter(prefix="/database", tags=["database"], dependencies=[Depends(get_client)])
 
 
-@router.get("/", description="Get all table names.")
-async def table_names(database: Annotated[SQLLiteRepository, Depends(get_db)]):
-    tables = database.get_table_names()
-    return tables
-
-
-@router.post(
-    "/import",
-    description="Import data from a ZIP file containing CSV files to the database.",
-)
+@router.post("/import", description="Import data from a ZIP or CSV file into the database.")
 async def import_data(
     credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
-    database: Annotated[SQLLiteRepository, Depends(get_db)],
+    database: Annotated[PostgreSQLRepository, Depends(get_client)],
+    upload_type: UploadType,
     file: UploadFile = File(...),
 ):
-    # Check if the file is a zip file
-    if not file.filename or not file.filename.endswith(".zip"):
-        raise HTTPException(
-            status_code=400, detail="Invalid file type. Only .zip files are accepted."
-        )
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="No file uploaded.")
 
-    # Read the zip file
     contents = await file.read()
-    with zipfile.ZipFile(io.BytesIO(contents)) as z:
-        # Iterate over each file in the zip
-        for filename in z.namelist():
-            if filename.endswith(".csv"):
-                # Read the CSV file
+
+    # --- Case 1: ZIP file with multiple CSVs ---
+    if file.filename.endswith(".zip"):
+        with zipfile.ZipFile(io.BytesIO(contents)) as z:
+            for filename in z.namelist():
+                if not filename.endswith(".csv"):
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Invalid file in ZIP: {filename}. Only CSV files are allowed.",
+                    )
+
                 with z.open(filename) as csv_file:
-                    # Read the CSV content into a pandas DataFrame
                     csv_data = csv_file.read()
 
-                table_name = filename[:-4]  # Remove the .csv extension
+                file_name = filename[:-4]  # strip ".csv"
 
-                # Process the DataFrame
+                if upload_type == UploadType.LONGITUDINAL:
+                    database.import_longitudinal_measurements(csv_data, file_name)
 
-                if (
-                    filename.startswith("longitudinal_")
-                    or filename.startswith("biomarkers_")
-                    or filename.startswith("metadata")
-                ):
-                    database.store_upload(csv_data, table_name)
+                elif upload_type == UploadType.BIOMARKERS:
+                    database.import_biomarker_measurements(csv_data, file_name)
 
-                else:
-                    database.update_cdm_upload(csv_data, table_name)
-            else:
-                raise HTTPException(
-                    status_code=400,
-                    detail="Invalid file type in ZIP. Only CSV files are accepted.",
-                )
-    return {"message": "Data imported successfully!"}
+                elif upload_type == UploadType.METADATA:
+                    database.import_metadata(csv_data)
+
+                elif upload_type == UploadType.CDM:
+                    database.import_cdm(csv_data, modality=file_name)
+
+    # --- Case 2: Single CSV file ---
+    elif file.filename.endswith(".csv"):
+        file_name = file.filename[:-4]
+
+        if upload_type == UploadType.LONGITUDINAL:
+            database.import_longitudinal_measurements(contents, file_name)
+
+        elif upload_type == UploadType.BIOMARKERS:
+            database.import_biomarker_measurements(contents, file_name)
+
+        elif upload_type == UploadType.METADATA:
+            database.import_metadata(contents)
+
+        elif upload_type == UploadType.CDM:
+            database.import_cdm(contents, modality=file_name)
+
+    else:
+        raise HTTPException(status_code=400, detail="Invalid file type. Only .zip or .csv files are accepted.")
+
+    return {"message": f"{upload_type.value} data imported successfully!"}
 
 
 @router.delete("/delete", description="Delete all tables from the database.")
 def delete_database(
     credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
-    database: Annotated[SQLLiteRepository, Depends(get_db)],
+    database: Annotated[PostgreSQLRepository, Depends(get_client)],
 ):
-    database.delete_database()
+    database.clear_all()
     return {"message": "All tables deleted successfully!"}
-
-
-@router.delete("/delete/{table_name}", description="Delete a table from the database.")
-def delete_table(
-    table_name: str,
-    credentials: Annotated[HTTPBasicCredentials, Depends(authenticate_user)],
-    database: Annotated[SQLLiteRepository, Depends(get_db)],
-):
-    if table_name not in database.get_table_names():
-        raise HTTPException(status_code=404, detail="Table not found.")
-    database.delete_table(table_name)
-    return {"message": "Table deleted successfully!"}

@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -14,7 +13,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { Observable, Subscription, map, startWith } from 'rxjs';
 
-import { LongitudinalUtilsService } from './longitudinal-utils.service';
 import { LongitudinalData } from '../interfaces/longitudinal-data';
 import { ApiService } from '../services/api.service';
 import { ApiErrorHandlerService } from '../services/api-error-handler.service';
@@ -38,32 +36,18 @@ import { LineplotService } from '../services/lineplot.service';
 export class LongitudinalComponent implements OnInit, OnDestroy {
   colors: Record<string, string> = {};
   data: LongitudinalData[] = [];
-  featureCtrl = new FormControl();
-  filteredFeatures: Observable<string[]> | null = null;
+  filteredVariables: Observable<string[]> | null = null;
   loading = false;
   longitudinalTables: string[] = [];
-  originalVariableNameMappings: Record<string, string> = {};
-  selectedFeature = '';
+  selectedVariable = '';
+  variableCtrl = new FormControl();
   private apiService = inject(ApiService);
   private errorHandler = inject(ApiErrorHandlerService);
-  private http = inject(HttpClient);
   private lineplotService = inject(LineplotService);
-  private longitudinalUtilsService = inject(LongitudinalUtilsService);
   private subscriptions: Subscription[] = [];
 
   displayFn(option: string): string {
     return option ? option : '';
-  }
-
-  featureSelected(event: MatAutocompleteSelectedEvent): void {
-    const longitudinal = event.option.value;
-    if (longitudinal) {
-      this.selectedFeature = longitudinal;
-      this.featureCtrl.setValue('');
-      this.fetchLongitudinalTable(
-        this.longitudinalUtilsService.transformFeatureName(longitudinal)
-      );
-    }
   }
 
   fetchColors(): void {
@@ -110,13 +94,7 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
   fetchLongitudinalTables(): void {
     this.loading = true;
     const sub = this.apiService.fetchLongitudinalTables().subscribe({
-      next: (v) =>
-        (this.longitudinalTables = v.map((longitudinal) =>
-          this.longitudinalUtilsService.transformLongitudinalName(
-            this.originalVariableNameMappings,
-            longitudinal
-          )
-        )),
+      next: (v) => (this.longitudinalTables = v),
       error: (err) => {
         this.loading = false;
         this.errorHandler.handleError(err, 'fetching longitudinal tables');
@@ -126,8 +104,15 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  filterTableName(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.longitudinalTables.filter((longitudinalTable) =>
+      longitudinalTable.toLowerCase().includes(filterValue)
+    );
+  }
+
   generateLineplot(): void {
-    const title = `Longitudinal data for ${this.selectedFeature}`;
+    const title = `Longitudinal data for ${this.selectedVariable}`;
     this.lineplotService.createLineplot(
       this.data,
       this.colors,
@@ -136,47 +121,29 @@ export class LongitudinalComponent implements OnInit, OnDestroy {
     );
   }
 
-  loadOriginalCaseMappings(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.http
-        .get<Record<string, string>>('lower_to_original_case.json')
-        .subscribe({
-          next: (data) => {
-            this.originalVariableNameMappings = data;
-            resolve();
-          },
-          error: (e) => {
-            console.error(
-              'Error loading lowercase to original case mappings:',
-              e
-            );
-            reject(e);
-          },
-        });
-    });
-  }
-
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   ngOnInit() {
-    this.loadOriginalCaseMappings().then(() => {
-      this.fetchLongitudinalTables();
-      this.fetchColors();
-      this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
-        startWith(''),
-        map((value) =>
-          this.longitudinalUtilsService.filterTableName(
-            this.longitudinalTables,
-            value || ''
-          )
-        )
-      );
-    });
+    this.fetchLongitudinalTables();
+    this.fetchColors();
+    this.filteredVariables = this.variableCtrl.valueChanges.pipe(
+      startWith(''),
+      map((value) => this.filterTableName(value || ''))
+    );
   }
 
-  removeFeature(): void {
-    this.selectedFeature = '';
+  removeVariable(): void {
+    this.selectedVariable = '';
+  }
+
+  variableSelected(event: MatAutocompleteSelectedEvent): void {
+    const longitudinal = event.option.value;
+    if (longitudinal) {
+      this.selectedVariable = longitudinal;
+      this.variableCtrl.setValue('');
+      this.fetchLongitudinalTable(this.selectedVariable);
+    }
   }
 }

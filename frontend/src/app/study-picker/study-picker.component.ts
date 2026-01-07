@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -64,49 +64,47 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     'plot',
     'dataAccess',
   ];
-  featureCtrl = new FormControl();
-  features: string[] = [];
-  filteredFeatures: Observable<string[]> | null = null;
+  filteredVariables: Observable<string[]> | null = null;
   loading = false;
-  @Input() selectedFeatures: string[] = [];
+  @Input() selectedVariables: string[] = [];
   suggestions$: Observable<string[]> | null = null;
+  variableCtrl = new FormControl();
+  variables: string[] = [];
   private apiService = inject(ApiService);
   private errorHandler = inject(ApiErrorHandlerService);
   private subscriptions: Subscription[] = [];
 
-  addFeature(event: MatChipInputEvent): void {
-    let feature = event.value;
+  addVariable(event: MatChipInputEvent): void {
+    let variable = event.value;
     const input = event.chipInput;
 
-    feature = (feature || '').trim();
-    if (feature && !this.selectedFeatures.includes(feature)) {
-      this.selectedFeatures.push(feature);
+    variable = (variable || '').trim();
+    if (variable && !this.selectedVariables.includes(variable)) {
+      this.selectedVariables.push(variable);
       if (input) {
         input.clear();
       }
-      this.featureCtrl.setValue(null);
+      this.variableCtrl.setValue(null);
     }
   }
 
-  availableFeatures(missingFeatures: string): string[] {
-    const availableFeatures = [...this.selectedFeatures];
-    const missingList = missingFeatures.split(', ');
+  availableVariables(missingVariables: string): string[] {
+    const availableVariables = [...this.selectedVariables];
+    const missingList = missingVariables.split(', ');
 
     for (const missing of missingList) {
-      const indexToRemove = availableFeatures.indexOf(missing);
+      const indexToRemove = availableVariables.indexOf(missing);
 
       if (indexToRemove !== -1) {
-        availableFeatures.splice(indexToRemove, 1);
+        availableVariables.splice(indexToRemove, 1);
       }
     }
 
-    return availableFeatures.map((feature) =>
-      feature.toLowerCase().replace(/\s+/g, '_')
-    );
+    return availableVariables;
   }
 
-  displayFn(feature: string): string {
-    return feature ? feature : '';
+  displayFn(variable: string): string {
+    return variable ? variable : '';
   }
 
   fetchMetadata(): void {
@@ -130,26 +128,26 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
-  fetchFeatures(): void {
-    const sub = this.apiService.fetchFeatures().subscribe({
+  fetchVariables(): void {
+    const sub = this.apiService.fetchVariables().subscribe({
       next: (v) => {
-        this.features = v.Feature;
-        this.filteredFeatures = this.featureCtrl.valueChanges.pipe(
+        this.variables = v;
+        this.filteredVariables = this.variableCtrl.valueChanges.pipe(
           startWith(''),
-          map((value) => this._filter(value))
+          map((value) => this.filterVariables(value))
         );
       },
       error: (err) => {
         this.loading = false;
-        this.errorHandler.handleError(err, 'fetching features');
+        this.errorHandler.handleError(err, 'fetching variables');
       },
       complete: () => (this.loading = false),
     });
     this.subscriptions.push(sub);
   }
 
-  fetchRankings(features: string[]) {
-    const sub = this.apiService.fetchRankings(features).subscribe({
+  fetchRankings(variables: string[]) {
+    const sub = this.apiService.fetchRankings(variables).subscribe({
       next: (v) => (this.cohortRankings = v),
       error: (err) => {
         this.loading = false;
@@ -160,12 +158,19 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
+  filterVariables(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.variables.filter((variable) =>
+      variable.toLowerCase().includes(filterValue)
+    );
+  }
+
   isDataAvailable(cohort: string): boolean {
     return this.dataAvailability[cohort] || false;
   }
 
   ngOnInit() {
-    this.fetchFeatures();
+    this.fetchVariables();
     this.fetchMetadata();
   }
 
@@ -174,24 +179,17 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   }
 
   optionSelected(event: MatAutocompleteSelectedEvent): void {
-    const feature = event.option.value;
-    if (feature && !this.selectedFeatures.includes(feature)) {
-      this.selectedFeatures.push(feature);
-      this.featureCtrl.setValue('');
+    const variable = event.option.value;
+    if (variable && !this.selectedVariables.includes(variable)) {
+      this.selectedVariables.push(variable);
+      this.variableCtrl.setValue('');
     }
   }
 
-  removeFeature(feature: string): void {
-    const index = this.selectedFeatures.indexOf(feature);
+  removeVariable(variable: string): void {
+    const index = this.selectedVariables.indexOf(variable);
     if (index >= 0) {
-      this.selectedFeatures.splice(index, 1);
+      this.selectedVariables.splice(index, 1);
     }
-  }
-
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.features.filter((feature) =>
-      feature.toLowerCase().includes(filterValue)
-    );
   }
 }

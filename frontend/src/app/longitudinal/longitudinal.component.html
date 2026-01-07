@@ -20,29 +20,29 @@
   <div class="input-container">
     <mat-form-field>
       <mat-chip-listbox [multiple]="false" aria-label="Longitudinal selection">
-        @if (selectedFeature) {
+        @if (selectedVariable) {
         <mat-chip-option
           [removable]="true"
           [selectable]="false"
-          (removed)="removeFeature()"
+          (removed)="removeVariable()"
         >
-          {{ selectedFeature }}
+          {{ selectedVariable }}
           <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip-option>
         }
         <input
           matInput
-          placeholder="Enter a feature"
+          placeholder="Enter a variable"
           [matAutocomplete]="autoLongitudinal"
-          [formControl]="featureCtrl"
+          [formControl]="variableCtrl"
         />
       </mat-chip-listbox>
       <mat-autocomplete
         #autoLongitudinal="matAutocomplete"
         [displayWith]="displayFn"
-        (optionSelected)="featureSelected($event)"
+        (optionSelected)="variableSelected($event)"
       >
-        @for (option of filteredFeatures | async; track option) {
+        @for (option of filteredVariables | async; track option) {
         <mat-option [value]="option">
           {{ option }}
         </mat-option>

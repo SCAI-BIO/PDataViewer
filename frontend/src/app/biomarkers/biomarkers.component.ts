@@ -1,5 +1,3 @@
-import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -15,10 +13,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { Observable, Subscription, map, startWith } from 'rxjs';
 
-import { BiomarkerUtilsService } from './biomarker-utils.service';
 import { ApiService } from '../services/api.service';
 import { BoxplotService } from '../services/boxplot.service';
 import { ApiErrorHandlerService } from '../services/api-error-handler.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-biomarkers',
@@ -43,19 +41,16 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   cohortCtrl = new FormControl();
   cohorts: string[] = [];
   colors: Record<string, string> = {};
-  diagnoses: Record<string, string[]> = {};
+  diagnoses: string[] = [];
   filteredBiomarkers: Observable<string[]> | null = null;
   filteredDiagnoses: Observable<string[]> | null = null;
   loading = false;
-  originalVariableNameMappings: Record<string, string> = {};
   selectedBiomarker = '';
   selectedCohorts: string[] = [];
   showDataPoints = false;
   private apiService = inject(ApiService);
-  private biomarkerUtilsService = inject(BiomarkerUtilsService);
   private boxplotService = inject(BoxplotService);
   private errorHandler = inject(ApiErrorHandlerService);
-  private http = inject(HttpClient);
   private subscriptions: Subscription[] = [];
 
   addCohort(event: MatChipInputEvent): void {
@@ -97,11 +92,9 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
 
   fetchBiomarkerData(cohort_and_diagnosis: string): void {
     this.loading = true;
-    const biomarker = this.selectedBiomarker.toLowerCase();
-    const { cohort, diagnosis } =
-      this.biomarkerUtilsService.splitDiagnosis(cohort_and_diagnosis);
+    const { cohort, diagnosis } = this.splitDiagnosis(cohort_and_diagnosis);
     const sub = this.apiService
-      .fetchBiomarkerData(biomarker, cohort, diagnosis)
+      .fetchBiomarkerData(this.selectedBiomarker, cohort, diagnosis)
       .subscribe({
         next: (v) => (this.biomarkerData[cohort_and_diagnosis] = v),
         error: (err) => {
@@ -116,13 +109,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   fetchBiomarkers(): void {
     this.loading = true;
     const sub = this.apiService.fetchBiomarkers().subscribe({
-      next: (v) =>
-        (this.biomarkers = v.map((biomarker) =>
-          this.biomarkerUtilsService.transformBiomarkerName(
-            this.originalVariableNameMappings,
-            biomarker
-          )
-        )),
+      next: (v) => (this.biomarkers = v),
       error: (err) => {
         this.loading = false;
         this.errorHandler.handleError(err, 'fetching biomarkers');
@@ -134,15 +121,16 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
 
   fetchCohorts(): void {
     this.loading = true;
-    const biomarker = this.selectedBiomarker.toLowerCase();
-    const sub = this.apiService.fetchCohortsForBiomarker(biomarker).subscribe({
-      next: (v) => (this.cohorts = v),
-      error: (err) => {
-        this.loading = false;
-        this.errorHandler.handleError(err, 'fetching cohorts');
-      },
-      complete: () => (this.loading = false),
-    });
+    const sub = this.apiService
+      .fetchCohortsForBiomarker(this.selectedBiomarker)
+      .subscribe({
+        next: (v) => (this.cohorts = v),
+        error: (err) => {
+          this.loading = false;
+          this.errorHandler.handleError(err, 'fetching cohorts');
+        },
+        complete: () => (this.loading = false),
+      });
     this.subscriptions.push(sub);
   }
 
@@ -176,19 +164,16 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
 
   fetchDiagnoses(): void {
     this.loading = true;
-    const biomarker = this.selectedBiomarker.toLowerCase();
     const sub = this.apiService
-      .fetchDiagnosesForBiomarker(biomarker)
+      .fetchDiagnosesForBiomarker(this.selectedBiomarker)
       .subscribe({
-        next: (v) => (
-          (this.diagnoses = v),
-          (this.filteredDiagnoses = this.cohortCtrl.valueChanges.pipe(
+        next: (v) => {
+          this.diagnoses = v;
+          this.filteredDiagnoses = this.cohortCtrl.valueChanges.pipe(
             startWith(''),
-            map((value) =>
-              this.biomarkerUtilsService.filterDiagnoses(value || '', v)
-            )
-          ))
-        ),
+            map((value) => this.filterDiagnoses(value || ''))
+          );
+        },
         error: (err) => {
           this.loading = false;
           this.errorHandler.handleError(err, 'fetching diagnoses');
@@ -196,6 +181,20 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
         complete: () => (this.loading = false),
       });
     this.subscriptions.push(sub);
+  }
+
+  filterBiomarkers(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.biomarkers.filter((biomarker) =>
+      biomarker.toLowerCase().includes(filterValue)
+    );
+  }
+
+  filterDiagnoses(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.diagnoses.filter((diagnosis) =>
+      diagnosis.toLowerCase().includes(filterValue)
+    );
   }
 
   generateBoxplot(): void {
@@ -212,35 +211,16 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
     return Math.min(this.cohorts.length, 4);
   }
 
-  loadOriginalCaseMappings(): void {
-    this.http
-      .get<Record<string, string>>('lower_to_original_case.json')
-      .subscribe({
-        next: (data) => (this.originalVariableNameMappings = data),
-        error: (e) =>
-          console.error(
-            'Error loading lowercase to original case mappings:',
-            e
-          ),
-      });
-  }
-
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   ngOnInit() {
-    this.loadOriginalCaseMappings();
     this.fetchBiomarkers();
     this.fetchColors();
     this.filteredBiomarkers = this.biomarkerCtrl.valueChanges.pipe(
       startWith(''),
-      map((value) =>
-        this.biomarkerUtilsService.filterBiomarkers(
-          this.biomarkers,
-          value || ''
-        )
-      )
+      map((value) => this.filterBiomarkers(value || ''))
     );
   }
 
@@ -260,5 +240,19 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
       this.selectedCohorts.splice(index, 1);
       delete this.biomarkerData[cohort];
     }
+  }
+
+  splitDiagnosis(cohort_and_diagnosis: string): {
+    cohort: string;
+    diagnosis: string;
+  } {
+    const parts = cohort_and_diagnosis.split('(');
+    const cohortPart = parts[0].trim();
+    const diagnosisPart = parts[1].replace('Group', '').replace(')', '').trim();
+
+    return {
+      cohort: cohortPart,
+      diagnosis: diagnosisPart,
+    };
   }
 }

@@ -43,7 +43,9 @@ export class BoxplotService {
         y: values,
         type: 'box',
         name: cohort,
-        x: Array(values.length).fill(`${diagnosisGroup} | n=${values.length}`),
+        x: Array(values.length).fill(
+          `${cohort} (${diagnosisGroup} | n=${values.length})`
+        ),
         boxpoints: showDataPoints ? 'all' : 'outliers',
         jitter: showDataPoints ? 0.4 : 0, // jitter only if data points are shown
         pointpos: 0,

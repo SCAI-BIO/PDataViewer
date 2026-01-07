@@ -17,10 +17,10 @@ export class LineplotService {
     // group data by cohort
     const cohorts = Array.from(
       data.reduce((map, d) => {
-        if (!map.has(d.Cohort)) {
-          map.set(d.Cohort, []);
+        if (!map.has(d.cohort)) {
+          map.set(d.cohort, []);
         }
-        map.get(d.Cohort)!.push(d);
+        map.get(d.cohort)!.push(d);
         return map;
       }, new Map<string, LongitudinalData[]>())
     );
@@ -28,8 +28,8 @@ export class LineplotService {
     // build traces
     const traces = cohorts.map(([cohort, values]) => {
       return {
-        x: values.map((v) => v.Months),
-        y: values.map((v) => (v.PatientCount / v.TotalPatientCount) * 100),
+        x: values.map((v) => v.months),
+        y: values.map((v) => (v.patientCount / v.totalPatientCount) * 100),
         mode: 'lines+markers',
         name: cohort,
         line: { color: colors[cohort] || undefined, width: 2 },
@@ -37,9 +37,9 @@ export class LineplotService {
         text: values.map(
           (v) =>
             `${cohort}<br>${(
-              (v.PatientCount / v.TotalPatientCount) *
+              (v.patientCount / v.totalPatientCount) *
               100
-            ).toFixed(1)}% (${v.PatientCount}/${v.TotalPatientCount})`
+            ).toFixed(1)}% (${v.patientCount}/${v.totalPatientCount})`
         ),
         hoverinfo: 'text+x',
       };

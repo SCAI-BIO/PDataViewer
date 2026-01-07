@@ -5,7 +5,7 @@
       <br />
       The Study Picker is a tool designed to help you efficiently locate cohort
       datasets that best match your research needs. By entering the specific
-      variables or features of interest, the Study Picker will analyze all
+      variables or variables of interest, the Study Picker will analyze all
       available datasets and provide a ranked list of cohort studies that we
       have access to, prioritized by how well they align with your criteria.
       <br />
@@ -31,14 +31,14 @@
   <div class="input-container">
     <mat-form-field>
       <mat-chip-listbox #chipListBox multiple>
-        <!-- Loop through selected features and display them as chips -->
-        @for (feature of selectedFeatures; track feature) {
+        <!-- Loop through selected variables and display them as chips -->
+        @for (variable of selectedVariables; track variable) {
         <mat-chip-option
           [selectable]="false"
           [removable]="true"
-          (removed)="removeFeature(feature)"
+          (removed)="removeVariable(variable)"
         >
-          {{ feature }}
+          {{ variable }}
           <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip-option>
         }
@@ -46,17 +46,17 @@
           matInput
           placeholder="Enter variables of interest"
           [matAutocomplete]="auto"
-          [formControl]="featureCtrl"
-          (matChipInputTokenEnd)="addFeature($any($event))"
+          [formControl]="variableCtrl"
+          (matChipInputTokenEnd)="addVariable($any($event))"
         />
       </mat-chip-listbox>
-      <!-- Autocomplete dropdown for feature suggestions -->
+      <!-- Autocomplete dropdown for variable suggestions -->
       <mat-autocomplete
         #auto="matAutocomplete"
         [displayWith]="displayFn"
         (optionSelected)="optionSelected($event)"
       >
-        @for (option of filteredFeatures | async; track option) {
+        @for (option of filteredVariables | async; track option) {
         <mat-option [value]="option">
           {{ option }}
         </mat-option>
@@ -66,7 +66,7 @@
 
     <!-- Button container for ranking cohorts -->
     <div class="button-container">
-      <button class="button-style" (click)="fetchRankings(selectedFeatures)">
+      <button class="button-style" (click)="fetchRankings(selectedVariables)">
         Rank cohorts
       </button>
     </div>
@@ -91,8 +91,8 @@
         <td mat-cell *matCellDef="let cohort">{{ cohort.found }}</td>
       </ng-container>
       <ng-container matColumnDef="missing">
-        <th mat-header-cell *matHeaderCellDef>Missing Features</th>
-        <td mat-cell *matCellDef="let cohort" class="missing-features-cell">
+        <th mat-header-cell *matHeaderCellDef>Missing Variabless</th>
+        <td mat-cell *matCellDef="let cohort" class="missing-variables-cell">
           {{ cohort.missing }}
         </td>
       </ng-container>
@@ -105,7 +105,7 @@
             [routerLink]="'/plot-longitudinal'"
             [queryParams]="{
               cohort: cohort.cohort,
-              features: availableFeatures(cohort.missing)
+              variables: availableVariables(cohort.missing)
             }"
             target="_blank"
           >
