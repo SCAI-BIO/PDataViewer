@@ -4,23 +4,20 @@
     <div class="section-inner-container">
       <h1>About</h1>
       <p>
-        Data collected in cohort studies lay the groundwork for a plethora of
-        Parkinson's disease (PD) research endeavors. PDataViewer lets you
-        explore this PD data landscape and identify cohort datasets that suit
-        your research needs.
+        Data collected in cohort studies lay the groundwork for a plethora of Parkinson's disease
+        (PD) research endeavors. PDataViewer lets you explore this PD data landscape and identify
+        cohort datasets that suit your research needs.
       </p>
       <p>
-        We accessed and curated major PD cohort datasets in a purely data-driven
-        manner with the aim of characterizing their underlying data, assessing
-        the quantity and availability of data, and evaluating the
-        interoperability across these distinct cohort datasets.
+        We accessed and curated major PD cohort datasets in a purely data-driven manner with the aim
+        of characterizing their underlying data, assessing the quantity and availability of data,
+        and evaluating the interoperability across these distinct cohort datasets.
       </p>
       <h2>How to Cite Us</h2>
       <strong>
-        Yasamin Salimi, Tim Adams, Mehmet Can Ay et al. On the Utility of Large
-        Language Model Embeddings for Revolutionizing Semantic Data
-        Harmonization in Alzheimer's and Parkinson's Disease, 01 April 2024,
-        PREPRINT (Version 1) available at Research Square [<a
+        Yasamin Salimi, Tim Adams, Mehmet Can Ay et al. On the Utility of Large Language Model
+        Embeddings for Revolutionizing Semantic Data Harmonization in Alzheimer's and Parkinson's
+        Disease, 01 April 2024, PREPRINT (Version 1) available at Research Square [<a
           href="https://doi.org/10.21203/rs.3.rs-4108029/v1"
           >https://doi.org/10.21203/rs.3.rs-4108029/v1</a
         >]</strong
@@ -29,7 +26,7 @@
   </div>
 
   <!-- Loading Spinner -->
-  @if (loading) {
+  @if (isLoading()) {
   <div class="loading-spinner">
     <mat-spinner diameter="40"></mat-spinner>
   </div>
@@ -87,16 +84,13 @@
           </div>
           <div class="description-container">
             <p>
-              Here you can find an overview on the investigated cohorts,
-              references to the study design and links for data access
-              application. Additionally, there are summary statistics on key
-              Parkinson's disease biomarkers displayed.
+              Here you can find an overview on the investigated cohorts, references to the study
+              design and links for data access application. Additionally, there are summary
+              statistics on key Parkinson's disease biomarkers displayed.
             </p>
           </div>
           <div class="button-container">
-            <button class="button-style" [routerLink]="'/cohorts'">
-              Explore
-            </button>
+            <button class="button-style" [routerLink]="'/cohorts'">Explore</button>
           </div>
         </div>
         <div class="image-container">
@@ -111,11 +105,7 @@
     <div class="section-inner-container">
       <div class="content-container">
         <div class="image-container">
-          <img
-            src="home/biomarkers.png"
-            class="image"
-            alt="Heatmap Screenshot"
-          />
+          <img src="home/biomarkers.png" class="image" alt="Heatmap Screenshot" />
         </div>
         <div class="title-description-button">
           <div class="title-container">
@@ -125,9 +115,7 @@
             <p>Explore and compare variable distributions across cohorts.</p>
           </div>
           <div class="button-container">
-            <button class="inverted-button-style" [routerLink]="'/biomarkers'">
-              Explore
-            </button>
+            <button class="inverted-button-style" [routerLink]="'/biomarkers'">Explore</button>
           </div>
         </div>
       </div>
@@ -144,15 +132,13 @@
           </div>
           <div class="description-container">
             <p>
-              The StudyPicker assists you in identifying suited PD data
-              resources for your research plans. Rank cohorts based on their
-              available variables and investigate further properties.
+              The StudyPicker assists you in identifying suited PD data resources for your research
+              plans. Rank cohorts based on their available variables and investigate further
+              properties.
             </p>
           </div>
           <div class="button-container">
-            <button class="button-style" [routerLink]="'/cohorts'">
-              Explore
-            </button>
+            <button class="button-style" [routerLink]="'/cohorts'">Explore</button>
           </div>
         </div>
         <div class="image-container">
@@ -175,16 +161,13 @@
           </div>
           <div class="description-container">
             <p>
-              This section lets you explore interactive visualizations of the
-              longitudinal follow-up and participant drop-out encountered in the
-              included studies. Additionally, you can visualize the longitudinal
-              coverage of individual variables per study.
+              This section lets you explore interactive visualizations of the longitudinal follow-up
+              and participant drop-out encountered in the included studies. Additionally, you can
+              visualize the longitudinal coverage of individual variables per study.
             </p>
           </div>
           <div class="button-container">
-            <button class="inverted-button-style" [routerLink]="'/biomarkers'">
-              Explore
-            </button>
+            <button class="inverted-button-style" [routerLink]="'/biomarkers'">Explore</button>
           </div>
         </div>
       </div>
@@ -201,15 +184,13 @@
           </div>
           <div class="description-container">
             <p>
-              Following the link, you will find semantic mappings between
-              variables of the investigated datasets. Equivalent variables have
-              been connected and highlight semantic interoperability.
+              Following the link, you will find semantic mappings between variables of the
+              investigated datasets. Equivalent variables have been connected and highlight semantic
+              interoperability.
             </p>
           </div>
           <div class="button-container">
-            <button class="button-style" [routerLink]="'/mappings'">
-              Explore
-            </button>
+            <button class="button-style" [routerLink]="'/mappings'">Explore</button>
           </div>
         </div>
         <div class="image-container">

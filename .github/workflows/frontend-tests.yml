@@ -1,8 +1,5 @@
 name: frontend-tests
 
-permissions:
-  contents: read
-
 on:
   push:
     branches: ["main"]
@@ -10,23 +7,23 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  test:
+    permissions:
+      contents: read
+      pull-requests: write
+
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [20, 22, 24]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 24
 
       - name: Cache npm
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -34,14 +31,18 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install frontend dependencies
-        run: |
-          cd frontend
-          npm ci
+        run: npm ci
+        working-directory: frontend
 
       - name: Install Angular CLI
         run: npm install -g @angular/cli
 
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+        working-directory: frontend
+
       - name: Run frontend tests
-        run: |
-          cd frontend
-          ng test --watch=false --browsers=ChromeHeadless
+        run: ng test --watch=false
+        working-directory: frontend
+        env:
+          CI: true

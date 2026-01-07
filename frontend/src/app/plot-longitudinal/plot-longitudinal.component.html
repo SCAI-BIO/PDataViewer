@@ -1,4 +1,11 @@
 <main class="main-container">
+  <!-- Loading Spinner -->
+  @if (isLoading()) {
+  <div class="loading-spinner">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+  }
+
   <h1>Variable-specific Follow-up</h1>
   <div class="output-box">
     <div id="lineplot"></div>

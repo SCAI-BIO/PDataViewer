@@ -25,27 +25,19 @@ export class ContactUsComponent {
     );
     this.matIconRegistry.addSvgIcon(
       'linkedin',
-      this.domSanitizer.bypassSecurityTrustResourceUrl(
-        'social-media/linkedin.svg'
-      )
+      this.domSanitizer.bypassSecurityTrustResourceUrl('social-media/linkedin.svg')
     );
     this.matIconRegistry.addSvgIcon(
       'google-scholar',
-      this.domSanitizer.bypassSecurityTrustResourceUrl(
-        'social-media/google-scholar.svg'
-      )
+      this.domSanitizer.bypassSecurityTrustResourceUrl('social-media/google-scholar.svg')
     );
     this.matIconRegistry.addSvgIcon(
       'stack-overflow',
-      this.domSanitizer.bypassSecurityTrustResourceUrl(
-        'social-media/stack-overflow.svg'
-      )
+      this.domSanitizer.bypassSecurityTrustResourceUrl('social-media/stack-overflow.svg')
     );
     this.matIconRegistry.addSvgIcon(
       'github',
-      this.domSanitizer.bypassSecurityTrustResourceUrl(
-        'social-media/github.svg'
-      )
+      this.domSanitizer.bypassSecurityTrustResourceUrl('social-media/github.svg')
     );
   }
 }

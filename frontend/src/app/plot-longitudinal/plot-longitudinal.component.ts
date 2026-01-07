@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute } from '@angular/router';
 
 import { Subscription } from 'rxjs';
@@ -10,7 +11,7 @@ import { LineplotService } from '../services/lineplot.service';
 
 @Component({
   selector: 'app-plot-longitudinal',
-  imports: [],
+  imports: [MatProgressSpinnerModule],
   templateUrl: './plot-longitudinal.component.html',
   styleUrl: './plot-longitudinal.component.scss',
 })
@@ -19,7 +20,7 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
   variables: string[] = [];
   data: LongitudinalData[] = [];
   dataFetchCount = 0;
-  loading = false;
+  isLoading = signal(false);
   private apiService = inject(ApiService);
   private errorHandler = inject(ApiErrorHandlerService);
   private lineplotService = inject(LineplotService);
@@ -27,26 +28,24 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   fetchLongitudinalTable(tableName: string): void {
-    this.loading = true;
-    const sub = this.apiService
-      .fetchLongitudinalTableForCohort(tableName, this.cohort)
-      .subscribe({
-        next: (v) =>
-          v.forEach((item) => {
-            this.data.push({ ...item, cohort: tableName });
-          }),
-        error: (err) => {
-          this.loading = false;
-          this.errorHandler.handleError(err, 'fetching longitudinal data');
-        },
-        complete: () => {
-          this.dataFetchCount--;
-          if (this.dataFetchCount === 0) {
-            this.generateLineplot();
-          }
-          this.loading = false;
-        },
-      });
+    this.isLoading.set(true);
+    const sub = this.apiService.fetchLongitudinalTableForCohort(tableName, this.cohort).subscribe({
+      next: (v) =>
+        v.forEach((item) => {
+          this.data.push({ ...item, cohort: tableName });
+        }),
+      error: (err) => {
+        this.isLoading.set(false);
+        this.errorHandler.handleError(err, 'fetching longitudinal data');
+      },
+      complete: () => {
+        this.dataFetchCount--;
+        if (this.dataFetchCount === 0) {
+          this.generateLineplot();
+        }
+        this.isLoading.set(false);
+      },
+    });
     this.subscriptions.push(sub);
   }
 
@@ -57,9 +56,7 @@ export class PlotLongitudinalComponent implements OnInit, OnDestroy {
     }
     const variables_string =
       variables.length > 1
-        ? variables.slice(0, -1).join(', ') +
-          ' and ' +
-          variables[variables.length - 1]
+        ? variables.slice(0, -1).join(', ') + ' and ' + variables[variables.length - 1]
         : variables[0] || ''; // Handle single or empty variables case
 
     const title = `Longitudinal follow-ups for ${variables_string} in the ${this.cohort} cohort`;

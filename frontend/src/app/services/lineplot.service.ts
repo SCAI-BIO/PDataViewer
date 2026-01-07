@@ -36,10 +36,9 @@ export class LineplotService {
         marker: { size: 6, color: colors[cohort] || undefined },
         text: values.map(
           (v) =>
-            `${cohort}<br>${(
-              (v.patientCount / v.totalPatientCount) *
-              100
-            ).toFixed(1)}% (${v.patientCount}/${v.totalPatientCount})`
+            `${cohort}<br>${((v.patientCount / v.totalPatientCount) * 100).toFixed(1)}% (${
+              v.patientCount
+            }/${v.totalPatientCount})`
         ),
         hoverinfo: 'text+x',
       };

@@ -31,7 +31,7 @@ Data collected in cohort studies lay the groundwork for a plethora of Parkinsonâ
 ## Requirements
 
 - Python >= 3.14
-- [Angular == 20.x.x](https://angular.io/guide/setup-local)
+- [Angular == 21.x.x](https://angular.io/guide/setup-local)
 - [Node.js >= 20.19.0](https://nodejs.org/en/download/package-manager)
 - TypeScript >= 5.9.0
 
@@ -54,8 +54,8 @@ uv sync
 ### Install the Frontend Requirements
 
 ```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-nvm install 20
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+nvm install 24
 npm install -g @angular/cli
 ```
 
@@ -69,7 +69,7 @@ Run the Backend API on port 5000:
 
 ```bash
 cd backend
-uvicorn api.mapin:app --reload --port 5000
+uvicorn api.main:app --reload --port 5000
 ```
 
 ### Run the Backend via Docker

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -44,7 +44,7 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   diagnoses: string[] = [];
   filteredBiomarkers: Observable<string[]> | null = null;
   filteredDiagnoses: Observable<string[]> | null = null;
-  loading = false;
+  isLoading = signal(false);
   selectedBiomarker = '';
   selectedCohorts: string[] = [];
   showDataPoints = false;
@@ -91,51 +91,49 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
   }
 
   fetchBiomarkerData(cohort_and_diagnosis: string): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const { cohort, diagnosis } = this.splitDiagnosis(cohort_and_diagnosis);
     const sub = this.apiService
       .fetchBiomarkerData(this.selectedBiomarker, cohort, diagnosis)
       .subscribe({
         next: (v) => (this.biomarkerData[cohort_and_diagnosis] = v),
         error: (err) => {
-          this.loading = false;
+          this.isLoading.set(false);
           this.errorHandler.handleError(err, 'fetching biomarker data');
         },
-        complete: () => (this.loading = false),
+        complete: () => this.isLoading.set(false),
       });
     this.subscriptions.push(sub);
   }
 
   fetchBiomarkers(): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const sub = this.apiService.fetchBiomarkers().subscribe({
       next: (v) => (this.biomarkers = v),
       error: (err) => {
-        this.loading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleError(err, 'fetching biomarkers');
       },
-      complete: () => (this.loading = false),
+      complete: () => this.isLoading.set(false),
     });
     this.subscriptions.push(sub);
   }
 
   fetchCohorts(): void {
-    this.loading = true;
-    const sub = this.apiService
-      .fetchCohortsForBiomarker(this.selectedBiomarker)
-      .subscribe({
-        next: (v) => (this.cohorts = v),
-        error: (err) => {
-          this.loading = false;
-          this.errorHandler.handleError(err, 'fetching cohorts');
-        },
-        complete: () => (this.loading = false),
-      });
+    this.isLoading.set(true);
+    const sub = this.apiService.fetchCohortsForBiomarker(this.selectedBiomarker).subscribe({
+      next: (v) => (this.cohorts = v),
+      error: (err) => {
+        this.isLoading.set(false);
+        this.errorHandler.handleError(err, 'fetching cohorts');
+      },
+      complete: () => this.isLoading.set(false),
+    });
     this.subscriptions.push(sub);
   }
 
   fetchColors(): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const sub = this.apiService
       .fetchMetadata()
       .pipe(
@@ -154,47 +152,41 @@ export class BiomarkersComponent implements OnInit, OnDestroy {
           this.colors = v;
         },
         error: (err) => {
-          this.loading = false;
+          this.isLoading.set(false);
           this.errorHandler.handleError(err, 'fetching colors');
         },
-        complete: () => (this.loading = false),
+        complete: () => this.isLoading.set(false),
       });
     this.subscriptions.push(sub);
   }
 
   fetchDiagnoses(): void {
-    this.loading = true;
-    const sub = this.apiService
-      .fetchDiagnosesForBiomarker(this.selectedBiomarker)
-      .subscribe({
-        next: (v) => {
-          this.diagnoses = v;
-          this.filteredDiagnoses = this.cohortCtrl.valueChanges.pipe(
-            startWith(''),
-            map((value) => this.filterDiagnoses(value || ''))
-          );
-        },
-        error: (err) => {
-          this.loading = false;
-          this.errorHandler.handleError(err, 'fetching diagnoses');
-        },
-        complete: () => (this.loading = false),
-      });
+    this.isLoading.set(true);
+    const sub = this.apiService.fetchDiagnosesForBiomarker(this.selectedBiomarker).subscribe({
+      next: (v) => {
+        this.diagnoses = v;
+        this.filteredDiagnoses = this.cohortCtrl.valueChanges.pipe(
+          startWith(''),
+          map((value) => this.filterDiagnoses(value || ''))
+        );
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.errorHandler.handleError(err, 'fetching diagnoses');
+      },
+      complete: () => this.isLoading.set(false),
+    });
     this.subscriptions.push(sub);
   }
 
   filterBiomarkers(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.biomarkers.filter((biomarker) =>
-      biomarker.toLowerCase().includes(filterValue)
-    );
+    return this.biomarkers.filter((biomarker) => biomarker.toLowerCase().includes(filterValue));
   }
 
   filterDiagnoses(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.diagnoses.filter((diagnosis) =>
-      diagnosis.toLowerCase().includes(filterValue)
-    );
+    return this.diagnoses.filter((diagnosis) => diagnosis.toLowerCase().includes(filterValue));
   }
 
   generateBoxplot(): void {

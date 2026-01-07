@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, inject, signal } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule, MatSort, Sort } from '@angular/material/sort';
@@ -30,14 +30,14 @@ export class CohortsComponent implements OnInit, OnDestroy {
   ];
   metadata: CohortData[] = [];
   dataSource = new MatTableDataSource<CohortData>();
-  loading = false;
+  isLoading = signal(false);
   @ViewChild(MatSort) sort!: MatSort;
   private apiService = inject(ApiService);
   private errorHandler = inject(ApiErrorHandlerService);
   private subscriptions: Subscription[] = [];
 
   fetchMetadata(): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const sub = this.apiService.fetchMetadata().subscribe({
       next: (data) => {
         const transformedData = Object.keys(data).map((key) => ({
@@ -47,7 +47,7 @@ export class CohortsComponent implements OnInit, OnDestroy {
         this.metadata = transformedData;
       },
       error: (err) => {
-        this.loading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleError(err, 'fetching colors');
       },
       complete: () => {
@@ -58,7 +58,7 @@ export class CohortsComponent implements OnInit, OnDestroy {
         this.sort.active = initialSortState.active;
         this.sort.direction = initialSortState.direction;
         this.sort.sortChange.emit(initialSortState);
-        this.loading = false;
+        this.isLoading.set(false);
       },
     });
     this.subscriptions.push(sub);

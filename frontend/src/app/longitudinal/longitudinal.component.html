@@ -2,16 +2,15 @@
   <div class="description-box">
     <h1>Participant Follow-up / Drop-out</h1>
     <p>
-      <br />The chart below illustrates the longitudinal follow-up of the cohort
-      studies and thereby inherently the participant drop-out over time. We
-      display the proportion of assessed participants per month in study
-      relative to its number of participants at study baseline. Respectively,
-      the inverse of this proportion denotes the drop-out.
+      <br />The chart below illustrates the longitudinal follow-up of the cohort studies and thereby
+      inherently the participant drop-out over time. We display the proportion of assessed
+      participants per month in study relative to its number of participants at study baseline.
+      Respectively, the inverse of this proportion denotes the drop-out.
     </p>
   </div>
 
   <!-- Loading Spinner -->
-  @if (loading) {
+  @if (isLoading()) {
   <div class="loading-spinner">
     <mat-spinner diameter="40"></mat-spinner>
   </div>
@@ -21,11 +20,7 @@
     <mat-form-field>
       <mat-chip-listbox [multiple]="false" aria-label="Longitudinal selection">
         @if (selectedVariable) {
-        <mat-chip-option
-          [removable]="true"
-          [selectable]="false"
-          (removed)="removeVariable()"
-        >
+        <mat-chip-option [removable]="true" [selectable]="false" (removed)="removeVariable()">
           {{ selectedVariable }}
           <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip-option>

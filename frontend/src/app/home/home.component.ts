@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 
@@ -16,8 +16,8 @@ import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   cohortCount = 0;
-  loading = false;
   modalityCount = 0;
+  isLoading = signal(false);
   participantCount = 0;
   variableCount = 0;
   private apiService = inject(ApiService);
@@ -25,48 +25,48 @@ export class HomeComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   fetchCohortCount(): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const sub = this.apiService.fetchCohorts().subscribe({
       next: (v) => (this.cohortCount = v.length),
       error: (err) => {
-        this.loading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleError(err, 'fetching cohorts');
       },
-      complete: () => (this.loading = false),
+      complete: () => this.isLoading.set(false),
     });
     this.subscriptions.push(sub);
   }
 
   fetchVariableCount(): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const sub = this.apiService.fetchVariables().subscribe({
       next: (v) => (this.variableCount = v.length),
       error: (err) => {
-        this.loading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleError(err, 'fetching variables');
       },
-      complete: () => (this.loading = false),
+      complete: () => this.isLoading.set(false),
     });
     this.subscriptions.push(sub);
   }
 
   fetchModalityCount(): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const sub = this.apiService.fetchModalities().subscribe({
       next: (v) => {
         this.modalityCount = v.length;
       },
       error: (err) => {
-        this.loading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleError(err, 'fetching modalities');
       },
-      complete: () => (this.loading = false),
+      complete: () => this.isLoading.set(false),
     });
     this.subscriptions.push(sub);
   }
 
   fetchParticipantCount(): void {
-    this.loading = true;
+    this.isLoading.set(true);
     const sub = this.apiService.fetchMetadata().subscribe({
       next: (data) => {
         // sum up all participants
@@ -76,10 +76,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         );
       },
       error: (err) => {
-        this.loading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleError(err, 'fetching metadata');
       },
-      complete: () => (this.loading = false),
+      complete: () => this.isLoading.set(false),
     });
     this.subscriptions.push(sub);
   }
