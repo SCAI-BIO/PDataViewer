@@ -4,6 +4,7 @@ numpy==2.3.4
 pandas==2.3.3
 python-dotenv==1.2.1
 python-multipart==0.0.20
+psycopg2==2.9.11
 SQLAlchemy==2.0.44
 thefuzz==0.22.1
 uvicorn==0.38.0
