@@ -1,0 +1,47 @@
+[build-system]
+requires = ['uv_build>=0.9.10,<0.10.0']
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = ["api", "database"]
+module-root = ""
+
+[project]
+name = "pdataviewer"
+version = "0.1.0"
+description = "PDataViewer is a web application designed to facilitate this process by ranking cohorts based on variables required in order to investigate specific research questions, providing summary statistics, showcasing the distribution of biomarkers, and participant drop-out rates."
+license = "Apache-2.0"
+requires-python = ">=3.14,<3.15"
+authors = [
+    { name = "Mehmet Can Ay", email = "mehmet.ay@scai.fraunhofer.de" },
+    { name = "Tim Adams", email = "tim.adams@scai.fraunhofer.de" },
+]
+keywords = [
+    "visualization",
+    "Parkinson's disease",
+    "cohort selection",
+    "common data model",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.14",
+]
+
+dependencies = [
+    "argon2-cffi>=25.1.0",
+    "fastapi[standard]>=0.128.0",
+    "numpy>=2.4.0",
+    "pandas>=2.3.3",
+    "psycopg2>=2.9.11",
+    "sqlalchemy>=2.0.45",
+]
+
+[dependency-groups]
+dev = ["flake8>=7.3.0"]
+
+[project.urls]
+Homepage = "https://github.com/SCAI-BIO/PDataViewer"
+Repository = "https://github.com/SCAI-BIO/PDataViewer"
+Documentation = "https://github.com/SCAI-BIO/PDataViewer#readme"
+Tracker = "https://github.com/SCAI-BIO/PDataViewer/issues"
