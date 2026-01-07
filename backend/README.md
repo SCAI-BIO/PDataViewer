@@ -19,14 +19,14 @@ For a detailed guide on using FastAPI, refer to the official [FastAPI Tutorial](
 
 ## Requirements
 
-- Python >= 3.11
+- Python >= 3.14
 
 ## Installation
 
 Install the project dependencies:
 
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
 
 ## Usage
