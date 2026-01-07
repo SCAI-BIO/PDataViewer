@@ -1,8 +1,43 @@
-__pycache__
-.pytest_cache
-.venv
-.venv/*
-data
-db
+# Byte-compiled / optimized / DLL Files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environments
 .env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+ven.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Database
+db
+snomed.db
+
+.pytest_cache
+data
 preprocessing

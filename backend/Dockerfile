@@ -1,15 +1,12 @@
-FROM python:3.12
+FROM astral/uv:python3.14-trixie
 
 WORKDIR /backend
 
-COPY ./requirements.txt /backend/requirements.txt
+COPY . /backend/
 
-RUN pip install -r /backend/requirements.txt
-
-COPY . .
-
+RUN uv sync --no-dev --no-cache
 # Make port 80 available to the world outside this container
 EXPOSE 80
 
 # Define the command to run the API
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uv", "run", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "80"]
