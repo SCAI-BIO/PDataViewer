@@ -32,17 +32,13 @@
     "@angular/cli": "^21.0.4",
     "@angular/compiler-cli": "^21.0.6",
     "@types/d3": "^7.4.3",
-    "@types/jasmine": "^5.1.9",
     "@types/plotly.js-dist-min": "^2.3.4",
+    "@vitest/browser-playwright": "^4.0.16",
     "angular-eslint": "20.1.1",
     "eslint": "^9.33.0",
-    "jasmine-core": "^5.9.0",
-    "karma": "~6.4.4",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.1",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
+    "jsdom": "^27.4.0",
     "typescript": "~5.9.2",
-    "typescript-eslint": "^8.40.0"
+    "typescript-eslint": "^8.40.0",
+    "vitest": "^4.0.16"
   }
 }
