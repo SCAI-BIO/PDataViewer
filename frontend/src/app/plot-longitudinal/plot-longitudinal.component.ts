@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute } from '@angular/router';
 
 import { Subscription } from 'rxjs';
@@ -10,7 +11,7 @@ import { LineplotService } from '../services/lineplot.service';
 
 @Component({
   selector: 'app-plot-longitudinal',
-  imports: [],
+  imports: [MatProgressSpinnerModule],
   templateUrl: './plot-longitudinal.component.html',
   styleUrl: './plot-longitudinal.component.scss',
 })
