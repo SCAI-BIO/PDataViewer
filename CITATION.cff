@@ -3,10 +3,10 @@
 
 cff-version: 1.2.0
 title: PDataViewer
-message: >-
-  If you use this software, please cite it using the
-  metadata from this file.
 type: software
+message: If you use this software, please cite it as below.
+license: Apache-2.0
+language: en
 authors:
   - given-names: Mehmet Can
     family-names: Ay
@@ -42,8 +42,7 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.13629128
     description: Zenodo
-repository-code: "https://github.com/SCAI-BIO/PDataViewer"
-url: "https://pdata.k8s.bio.scai.fraunhofer.de/"
+repository-code: https://github.com/SCAI-BIO/PDataViewer
 abstract: >-
   A web application for Parkinson's disease cohort landscape
   visualization.
@@ -52,11 +51,8 @@ keywords:
   - Neurodegeneration
   - Interoperability
   - FAIR principles
-license: Apache-2.0
-version: 0.0.9
-date-released: "2024-09-02"
+
 preferred-citation:
-  title: On the Utility of Large Language Model Embeddings for Revolutionizing Semantic Data Harmonization in Alzheimer's and Parkinson's Disease
   type: article
   authors:
     - given-names: Yasamin
@@ -71,6 +67,7 @@ preferred-citation:
       family-names: Jacobs
     - given-names: Martin
       family-names: Hofmann-Apitius
-  doi: 10.21203/rs.3.rs-4108029/v1
+  title: Evaluating language model embeddings for Parkinson's disease cohort harmonization using a novel manually curated variable mapping schema
   journal: Scientific Reports
-  year: 2024
+  year: 2025
+  doi: 10.1038/s41598-025-06447-2
