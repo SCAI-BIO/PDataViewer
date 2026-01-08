@@ -15,13 +15,17 @@
       </p>
       <h2>How to Cite Us</h2>
       <strong>
-        Yasamin Salimi, Tim Adams, Mehmet Can Ay, Helena Balabin, Marc Jacobs, Martin
-        Hofmann-Apitius. (2025). Evaluating language model embeddings for Parkinson's disease cohort
-        harmonization using a novel manually curated variable mapping schema. Scientific Reports,
-        15(1), 20210 [<a href="https://doi.org/10.1038/s41598-025-06447-2"
-          >https://doi.org/10.1038/s41598-025-06447-2</a
-        >]</strong
-      >
+        <a
+          href="https://doi.org/10.1038/s41598-025-06447-2"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="citation-link"
+        >
+          Salimi, Y., Adams, T., Ay, M. C., Balabin, H., Jacobs, M., & Hofmann-Apitius, M. (2025).
+          Evaluating language model embeddings for Parkinson's disease cohort harmonization using a
+          novel manually curated variable mapping schema. Scientific Reports, 15(1), 20210.
+        </a>
+      </strong>
     </div>
   </div>
 
@@ -40,7 +44,7 @@
       </div>
       <div class="counter-content">
         <div class="statistics-container">
-          <strong>{{ cohortCount | number }}</strong>
+          <strong>{{ (cohortCount() | number) ?? '--' }}</strong>
           <span> Cohorts </span>
         </div>
 
@@ -49,7 +53,7 @@
         </div>
 
         <div class="statistics-container">
-          <strong>{{ participantCount | number }}</strong>
+          <strong>{{ (participantCount() | number) ?? '--' }}</strong>
           <span>Participants</span>
         </div>
 
@@ -58,7 +62,7 @@
         </div>
 
         <div class="statistics-container">
-          <strong>{{ variableCount | number }}</strong>
+          <strong>{{ (variableCount() | number) ?? '--' }}</strong>
           <span>Variables Mapped</span>
         </div>
 
@@ -67,7 +71,7 @@
         </div>
 
         <div class="statistics-container">
-          <strong>{{ modalityCount | number }}</strong>
+          <strong>{{ (modalityCount() | number) ?? '--' }}</strong>
           <span>Compared Modalities</span>
         </div>
       </div>
