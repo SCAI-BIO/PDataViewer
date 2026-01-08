@@ -1,3 +1,14 @@
+.citation-link {
+  text-decoration: none;
+  color: #610030;
+  cursor: pointer;
+
+  &:visited, &:active, &:hover {
+    color: #610030;
+    text-decoration: none;
+  }
+}
+
 .counter-content {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
