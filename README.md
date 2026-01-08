@@ -46,6 +46,8 @@ cd PDataViewer
 
 ### Install the Backend Requirements
 
+Please consult [uv documentation](https://docs.astral.sh/uv/getting-started/installation/#__tabbed_1_1) for uv package manager installation.
+
 ```bash
 cd backend
 uv sync
@@ -76,21 +78,13 @@ uvicorn api.main:app --reload --port 5000
 
 The API can also be run via docker.
 
-You can either build the docker container locally or download the latest build from the PDataViewer GitHub package registry.
-
 To build the Docker container locally:
 
 ```bash
 docker build -t ghcr.io/scai-bio/pdataviewer/backend:latest .
 ```
 
-To download the latest build:
-
-```bash
-docker pull ghcr.io/scai-bio/pdataviewer/backend:latest
-```
-
-After building or downloading, you will be able to start the container and access the PDataViewer API by default on [localhost:8000](http://localhost:8000):
+After building, you will be able to start the container and access the PDataViewer API on [localhost:8000](http://localhost:8000) with the following command:
 
 ```bash
 docker run -p 8000:80 ghcr.io/pdataviewer/scai-bio/backend:latest
@@ -98,7 +92,7 @@ docker run -p 8000:80 ghcr.io/pdataviewer/scai-bio/backend:latest
 
 ### Starting the Frontend Locally
 
-You can deploy a local version of the web application via Angular
+You can deploy a local version of the web application via Angular CLI.
 
 You can access the web application on [localhost:4200](http://localhost:4200):
 
@@ -110,22 +104,13 @@ ng serve
 
 ### Run the Frontend via Docker
 
-You can deploy a local version of the web application via docker.
-You can either build the docker container locally or download the latest build from the PDataViewer GitHub package registry.
-
 To build the Docker container locally:
 
 ```bash
 docker build -t ghcr.io/scai-bio/pdataviewer/frontend:latest .
 ```
 
-To download the latest build:
-
-```bash
-docker pull ghcr.io/scai-bio/pdataviewer/frontend:latest
-```
-
-After building or downloading, you will be able to start the container and access the PDataViewer web application by default on [localhost:8080](http://localhost:8080):
+After building, you will be able to start the container and access the PDataViewer web application on [localhost:8080](http://localhost:8080) via the following command:
 
 ```bash
 docker run -p 8080:80 ghcr.io/scai-bio/pdataviewer/frontend:latest
@@ -146,7 +131,7 @@ You can deploy a local version of the API and the web application together.
 3. Build and Run the Containers:
 
    ```bash
-   docker-compose -f ./docker-compose.local.yml up --build
+   docker-compose up --build
    ```
 
 4. Verify that the Containers are Running:
@@ -155,6 +140,6 @@ You can deploy a local version of the API and the web application together.
    docker ps
    ```
 
-This command lists all running containers. You should be able to see your containers with the name `pdataviewer-frontend` and `pdataviewer-backend`.
+This command lists all running containers. You should be able to see your containers with the name `pdataviewer-frontend`, `pdataviewer-backend`, and `postgres:18`.
 
 You can access the web application on [localhost:3000](http://localhost:3000) and the API on [localhost:5000](http://localhost:5000)
