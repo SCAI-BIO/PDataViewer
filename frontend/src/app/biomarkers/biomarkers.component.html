@@ -25,7 +25,7 @@
   }
 
   <div class="input-container">
-    <mat-form-field>
+    <mat-form-field appearance="outline">
       <mat-label>Biomarker selection</mat-label>
       <input
         type="text"
@@ -52,7 +52,6 @@
   @if (selectedBiomarker()) {
   <div class="cohort-container">
     <h4>Available Cohorts for {{ selectedBiomarker() }}:</h4>
-    <br />
     <div
       class="cohort-list"
       [style.grid-template-columns]="'repeat(' + getCohortColumns() + ', 1fr)'"
@@ -69,7 +68,7 @@
   </div>
   } @if (selectedBiomarker()) {
   <div class="cohort-selection-container">
-    <mat-form-field class="full-width">
+    <mat-form-field class="full-width" appearance="outline">
       <mat-label>Select Cohorts</mat-label>
       <mat-chip-grid #cohortGrid aria-label="Cohort selection">
         @for (cohort of selectedCohorts(); track cohort) {
