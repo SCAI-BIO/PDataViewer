@@ -4,6 +4,17 @@
   width: 80%;
 }
 
+.zenodo-link {
+  text-decoration: none;
+  color: #610030;
+  cursor: pointer;
+
+  &:visited, &:active, &:hover {
+    color: #610030;
+    text-decoration: none;
+  }
+}
+
 /* Styles for modality buttons */
 .modality-buttons {
   display: grid;
