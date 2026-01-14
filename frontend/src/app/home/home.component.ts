@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 
@@ -22,6 +23,7 @@ export class HomeComponent implements OnInit {
   participantCount = signal<number | null>(null);
   variableCount = signal<number | null>(null);
   private apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private errorHandler = inject(ApiErrorHandlerService);
 
   fetchAllData(): void {
@@ -35,7 +37,10 @@ export class HomeComponent implements OnInit {
     };
 
     forkJoin(requests)
-      .pipe(finalize(() => this.isLoading.set(false)))
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
         next: (res) => {
           this.cohortCount.set(res.cohorts.length);

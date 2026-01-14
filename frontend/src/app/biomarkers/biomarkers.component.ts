@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -59,6 +59,7 @@ export class BiomarkersComponent implements OnInit {
   private biomarkerQuery = toSignal(this.biomarkerCtrl.valueChanges, { initialValue: '' });
   private boxplotService = inject(BoxplotService);
   private cohortQuery = toSignal(this.cohortCtrl.valueChanges, { initialValue: '' });
+  private destroyRef = inject(DestroyRef);
   private errorHandler = inject(ApiErrorHandlerService);
 
   addCohort(event: MatChipInputEvent): void {
@@ -82,7 +83,10 @@ export class BiomarkersComponent implements OnInit {
 
     this.apiService
       .fetchBiomarkerData(this.selectedBiomarker(), cohort, diagnosis)
-      .pipe(finalize(() => this.isLoading.set(false)))
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
         next: (v) => {
           this.biomarkerData.update((data) => ({
@@ -98,7 +102,10 @@ export class BiomarkersComponent implements OnInit {
     this.isLoading.set(true);
     this.apiService
       .fetchCohortsForBiomarker(this.selectedBiomarker())
-      .pipe(finalize(() => this.isLoading.set(false)))
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
         next: (v) => this.cohorts.set(v),
         error: (err) => this.errorHandler.handleError(err, 'fetching cohorts'),
@@ -109,7 +116,10 @@ export class BiomarkersComponent implements OnInit {
     this.isLoading.set(true);
     this.apiService
       .fetchDiagnosesForBiomarker(this.selectedBiomarker())
-      .pipe(finalize(() => this.isLoading.set(false)))
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
         next: (v) => this.diagnoses.set(v),
         error: (err) => this.errorHandler.handleError(err, 'fetching diagnoses'),
@@ -135,7 +145,10 @@ export class BiomarkersComponent implements OnInit {
       biomarkers: this.apiService.fetchBiomarkers(),
       colors: colors$,
     })
-      .pipe(finalize(() => this.isLoading.set(false)))
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
         next: (results) => {
           this.biomarkers.set(results.biomarkers);
