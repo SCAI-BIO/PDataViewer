@@ -17,14 +17,17 @@ import { CohortMetadata } from '../interfaces/metadata';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
+  // Dependencies
+  private apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
+  private errorHandler = inject(ApiErrorHandlerService);
+
+  // Signals
   cohortCount = signal<number | null>(null);
   modalityCount = signal<number | null>(null);
   isLoading = signal(false);
   participantCount = signal<number | null>(null);
   variableCount = signal<number | null>(null);
-  private apiService = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
-  private errorHandler = inject(ApiErrorHandlerService);
 
   fetchAllData(): void {
     this.isLoading.set(true);
