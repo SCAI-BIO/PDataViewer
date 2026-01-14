@@ -29,7 +29,7 @@
   <div class="input-container">
     <mat-form-field appearance="outline">
       <mat-label>Select Variables</mat-label>
-      <mat-chip-grid #chipListBox aria-label="Variable selection">
+      <mat-chip-grid #variableGrid aria-label="Variable selection">
         @for (variable of selectedVariables(); track variable) {
         <mat-chip-row [removable]="true" [editable]="false" (removed)="removeVariable(variable)">
           {{ variable }}
@@ -41,6 +41,7 @@
           [placeholder]="selectedVariables().length === 0 ? 'Select variables of interest' : ''"
           [matAutocomplete]="auto"
           [formControl]="variableCtrl"
+          [matChipInputFor]="variableGrid"
           (matChipInputTokenEnd)="addVariable($any($event))"
         />
       </mat-chip-grid>
