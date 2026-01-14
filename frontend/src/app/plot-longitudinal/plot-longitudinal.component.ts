@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute } from '@angular/router';
 
-import { Subscription } from 'rxjs';
+import { forkJoin } from 'rxjs';
+import { finalize, map } from 'rxjs/operators';
 
 import { LongitudinalData } from '../interfaces/longitudinal-data';
 import { ApiService } from '../services/api.service';
@@ -15,76 +17,79 @@ import { LineplotService } from '../services/lineplot.service';
   templateUrl: './plot-longitudinal.component.html',
   styleUrl: './plot-longitudinal.component.scss',
 })
-export class PlotLongitudinalComponent implements OnInit, OnDestroy {
-  cohort = '';
-  variables: string[] = [];
-  data: LongitudinalData[] = [];
-  dataFetchCount = 0;
-  isLoading = signal(false);
+export class PlotLongitudinalComponent implements OnInit {
+  // Dependencies
   private apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   private errorHandler = inject(ApiErrorHandlerService);
   private lineplotService = inject(LineplotService);
   private route = inject(ActivatedRoute);
-  private subscriptions: Subscription[] = [];
 
-  fetchLongitudinalTable(tableName: string): void {
+  // Signals
+  cohort = signal('');
+  data = signal<LongitudinalData[]>([]);
+  isLoading = signal(false);
+  variables = signal<string[]>([]);
+
+  fetchAndVisualize(variables: string[], cohort: string): void {
     this.isLoading.set(true);
-    const sub = this.apiService.fetchLongitudinalTableForCohort(tableName, this.cohort).subscribe({
-      next: (v) =>
-        v.forEach((item) => {
-          this.data.push({ ...item, cohort: tableName });
-        }),
-      error: (err) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleError(err, 'fetching longitudinal data');
-      },
-      complete: () => {
-        this.dataFetchCount--;
-        if (this.dataFetchCount === 0) {
+
+    const requests = variables.map((variableName) =>
+      this.apiService.fetchLongitudinalTableForCohort(variableName, cohort).pipe(
+        map((items) =>
+          items.map((item) => ({
+            ...item,
+            cohort: variableName,
+          }))
+        )
+      )
+    );
+    forkJoin(requests)
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (results) => {
+          const flatData = results.flat();
+          this.data.set(flatData);
           this.generateLineplot();
-        }
-        this.isLoading.set(false);
-      },
+        },
+        error: (err) => this.errorHandler.handleError(err, 'fetching longitudinal data'),
+      });
+  }
+
+  fetchQueryParams(): void {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const cohortParam = params['cohort'] || '';
+      let varsParam = params['variables'] || [];
+
+      if (!Array.isArray(varsParam)) {
+        varsParam = [varsParam];
+      }
+
+      this.cohort.set(cohortParam);
+      this.variables.set(varsParam);
+
+      if (varsParam.length > 0) {
+        this.fetchAndVisualize(varsParam, cohortParam);
+      }
     });
-    this.subscriptions.push(sub);
   }
 
   generateLineplot(): void {
-    const variables = [];
-    for (const variable of this.variables) {
-      variables.push(variable);
-    }
-    const variables_string =
-      variables.length > 1
-        ? variables.slice(0, -1).join(', ') + ' and ' + variables[variables.length - 1]
-        : variables[0] || ''; // Handle single or empty variables case
+    const vars = this.variables();
+    const varsString =
+      vars.length > 1
+        ? vars.slice(0, -1).join(', ') + ' and ' + vars[vars.length - 1]
+        : vars[0] || '';
 
-    const title = `Longitudinal follow-ups for ${variables_string} in the ${this.cohort} cohort`;
-    this.lineplotService.createLineplot(this.data, {}, title, 'lineplot');
-  }
+    const title = `Longitudinal follow-ups for ${varsString} in the ${this.cohort()} cohort`;
 
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
+    this.lineplotService.createLineplot(this.data(), {}, title, 'lineplot');
   }
 
   ngOnInit(): void {
-    const sub = this.route.queryParams.subscribe((params) => {
-      this.cohort = params['cohort'] || '';
-      this.variables = params['variables'] || [];
-    });
-    this.subscriptions.push(sub);
-
-    // Ensure variables is an array
-    if (!Array.isArray(this.variables)) {
-      this.variables = [this.variables];
-    }
-
-    // Set the count of variables to fetch data
-    this.dataFetchCount = this.variables.length;
-
-    // Fetch data for each variable
-    for (const variable of this.variables) {
-      this.fetchLongitudinalTable(variable);
-    }
+    this.fetchQueryParams();
   }
 }
