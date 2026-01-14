@@ -7,6 +7,7 @@ import pandas as pd
 from argon2 import PasswordHasher
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, select
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import sessionmaker
 
 from database.models import (
@@ -422,7 +423,7 @@ class PostgreSQLRepository:
 
         biomarker_measurements = (
             self.session.query(BiomarkerMeasurement)
-            .filter_by(participant_id=participant_id, cohort_id=cohort.id)
+            .filter_by(participant_id=participant_id, cohort_id=cohort.id, variable=variable)
             .first()
         )
         if biomarker_measurements:
@@ -656,24 +657,33 @@ class PostgreSQLRepository:
         """
         df = pd.read_csv(io.BytesIO(csv_data))
 
-        required_columns = {"participantNumber", "cohort", "measurement", "diagnosis"}
-        missing = required_columns - set(df.columns)
-        if missing:
-            raise ValueError(f"Missing required columns: {missing}")
+        cohort_map = {c.name: c.id for c in self.session.query(Cohort).all()}
 
+        records_to_insert = []
         for _, row in df.iterrows():
             cohort_name = str(row["cohort"]).strip()
-            participant_id = int(row["participantNumber"])
-            measurement = float(row["measurement"])
-            diagnosis = str(row["diagnosis"])
+            if cohort_name not in cohort_map:
+                continue  # Or handle error
 
-            self.add_biomarker_measurement(
-                variable=variable_name,
-                participant_id=participant_id,
-                cohort_name=cohort_name,
-                measurement=measurement,
-                diagnosis=diagnosis,
+            records_to_insert.append(
+                {
+                    "variable": variable_name,
+                    "participant_id": int(row["participantNumber"]),
+                    "cohort_id": cohort_map[cohort_name],
+                    "measurement": float(row["measurement"]),
+                    "diagnosis": str(row["diagnosis"]),
+                }
             )
+
+        if not records_to_insert:
+            return
+
+        stmt = pg_insert(BiomarkerMeasurement).values(records_to_insert)
+
+        stmt = stmt.on_conflict_do_nothing(constraint="uq_participant_cohort_variable")
+
+        self.session.execute(stmt)
+        self.session.commit()
 
     def get_chord_diagram(self, modality: str) -> dict:
         """Build a chord diagram data based on the current mappings.
@@ -806,6 +816,7 @@ class PostgreSQLRepository:
         """
         Clear all database tables: vocabularies, concepts, CDMs, and mappings.
         """
+        self.session.close()
         Base.metadata.drop_all(self.engine)
         Base.metadata.create_all(self.engine)
 
