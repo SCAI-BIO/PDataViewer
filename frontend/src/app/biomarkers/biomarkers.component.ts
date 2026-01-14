@@ -15,8 +15,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { finalize, forkJoin, map } from 'rxjs';
 
 import { ApiService } from '../services/api.service';
-import { BoxplotService } from '../services/boxplot.service';
 import { ApiErrorHandlerService } from '../services/api-error-handler.service';
+import { BoxplotService } from '../services/boxplot.service';
 
 @Component({
   selector: 'app-biomarkers',
@@ -69,27 +69,6 @@ export class BiomarkersComponent implements OnInit {
       this.selectedCohorts.update((list) => [...list, value]);
       event.chipInput?.clear();
       this.cohortCtrl.setValue(null);
-    }
-  }
-
-  biomarkerSelected(event: MatAutocompleteSelectedEvent): void {
-    const biomarker = event.option.value;
-    if (biomarker) {
-      this.selectedBiomarker.set(biomarker);
-      this.biomarkerCtrl.setValue('');
-      this.fetchCohorts();
-      this.fetchDiagnoses();
-    }
-  }
-
-  cohortSelected(event: MatAutocompleteSelectedEvent): void {
-    const cohort = event.option.value;
-    const currentSelected = this.selectedCohorts();
-
-    if (cohort && !currentSelected.includes(cohort)) {
-      this.selectedCohorts.update((list) => [...list, cohort]);
-      this.cohortCtrl.setValue('');
-      this.fetchBiomarkerData(cohort);
     }
   }
 
@@ -186,16 +165,35 @@ export class BiomarkersComponent implements OnInit {
     this.fetchInitialData();
   }
 
-  onToggleDataPoints(isChecked: boolean): void {
-    this.showDataPoints.set(isChecked);
+  onBiomarkerSelect(event: MatAutocompleteSelectedEvent): void {
+    const biomarker = event.option.value;
+    if (biomarker) {
+      this.selectedBiomarker.set(biomarker);
+      this.selectedCohorts.set([]);
+      this.biomarkerData.set({});
+      const plotContainer = document.getElementById('boxplot');
+      if (plotContainer) {
+        plotContainer.innerHTML = '';
+      }
+      this.fetchCohorts();
+      this.fetchDiagnoses();
+    }
   }
 
-  removeBiomarker(): void {
-    this.selectedBiomarker.set('');
-    this.selectedCohorts.set([]);
-    this.biomarkerData.set({});
-    this.cohorts.set([]);
-    this.diagnoses.set([]);
+  onCohortSelect(event: MatAutocompleteSelectedEvent): void {
+    const cohort = event.option.value;
+    const currentSelected = this.selectedCohorts();
+
+    if (cohort && !currentSelected.includes(cohort)) {
+      this.selectedCohorts.update((list) => [...list, cohort]);
+      this.fetchBiomarkerData(cohort);
+    }
+
+    this.cohortCtrl.setValue(null);
+  }
+
+  onToggleDataPoints(isChecked: boolean): void {
+    this.showDataPoints.set(isChecked);
   }
 
   removeCohort(cohort: string): void {

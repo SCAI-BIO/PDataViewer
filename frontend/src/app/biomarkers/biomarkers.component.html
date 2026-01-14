@@ -26,24 +26,19 @@
 
   <div class="input-container">
     <mat-form-field>
-      <mat-chip-listbox [multiple]="false" aria-label="Biomarker selection">
-        @if (selectedBiomarker()) {
-        <mat-chip-option [removable]="true" [selectable]="false" (removed)="removeBiomarker()">
-          {{ selectedBiomarker() }}
-          <mat-icon matChipRemove>cancel</mat-icon>
-        </mat-chip-option>
-        }
-        <input
-          matInput
-          placeholder="Enter a variable"
-          [matAutocomplete]="autoBiomarker"
-          [formControl]="biomarkerCtrl"
-        />
-      </mat-chip-listbox>
+      <mat-label>Biomarker selection</mat-label>
+      <input
+        type="text"
+        placeholder="Enter a variable"
+        aria-label="Biomarker selection"
+        matInput
+        [formControl]="biomarkerCtrl"
+        [matAutocomplete]="auto"
+      />
       <mat-autocomplete
-        #autoBiomarker="matAutocomplete"
-        [displayWith]="displayFn"
-        (optionSelected)="biomarkerSelected($event)"
+        autoActivateFirstOption
+        #auto="matAutocomplete"
+        (optionSelected)="onBiomarkerSelect($event)"
       >
         @for (option of filteredBiomarkers(); track option) {
         <mat-option [value]="option">
@@ -75,25 +70,27 @@
   } @if (selectedBiomarker()) {
   <div class="cohort-selection-container">
     <mat-form-field class="full-width">
-      <mat-chip-listbox aria-label="Cohort selection">
+      <mat-label>Select Cohorts</mat-label>
+      <mat-chip-grid #cohortGrid aria-label="Cohort selection">
         @for (cohort of selectedCohorts(); track cohort) {
-        <mat-chip-option [removable]="true" [selectable]="false" (removed)="removeCohort(cohort)">
+        <mat-chip-row [removable]="true" [editable]="false" (removed)="removeCohort(cohort)">
           {{ cohort }}
           <mat-icon matChipRemove>cancel</mat-icon>
-        </mat-chip-option>
+        </mat-chip-row>
         }
         <input
           matInput
-          placeholder="Select at least one cohort"
+          [placeholder]="selectedCohorts().length === 0 ? 'Select at least one cohort' : ''"
           [matAutocomplete]="autoCohort"
           [formControl]="cohortCtrl"
+          [matChipInputFor]="cohortGrid"
           (matChipInputTokenEnd)="addCohort($any($event))"
         />
-      </mat-chip-listbox>
+      </mat-chip-grid>
       <mat-autocomplete
         #autoCohort="matAutocomplete"
         [displayWith]="displayFn"
-        (optionSelected)="cohortSelected($event)"
+        (optionSelected)="onCohortSelect($event)"
       >
         @for (option of filteredDiagnoses(); track option) {
         <mat-option [value]="option">
