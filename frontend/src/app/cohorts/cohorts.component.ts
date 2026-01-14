@@ -17,8 +17,21 @@ import { ApiErrorHandlerService } from '../services/api-error-handler.service';
   styleUrl: './cohorts.component.scss',
 })
 export class CohortsComponent implements OnInit {
+  // Dependencies
+  private apiService = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
+  private errorHandler = inject(ApiErrorHandlerService);
+
+  // Signals
+  metadata = signal<CohortData[]>([]);
+  isLoading = signal(false);
+
+  // Table Elements
   dataSource = new MatTableDataSource<CohortData>();
-  displayedColumns: string[] = [
+  @ViewChild(MatSort) sort!: MatSort;
+
+  // Constants
+  readonly displayedColumns: string[] = [
     'cohort',
     'participants',
     'controlParticipants',
@@ -30,12 +43,6 @@ export class CohortsComponent implements OnInit {
     'doi',
     'link',
   ];
-  metadata = signal<CohortData[]>([]);
-  isLoading = signal(false);
-  @ViewChild(MatSort) sort!: MatSort;
-  private apiService = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
-  private errorHandler = inject(ApiErrorHandlerService);
 
   fetchMetadata(): void {
     this.isLoading.set(true);

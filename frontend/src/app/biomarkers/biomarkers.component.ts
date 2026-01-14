@@ -34,13 +34,31 @@ import { BoxplotService } from '../services/boxplot.service';
   styleUrl: './biomarkers.component.scss',
 })
 export class BiomarkersComponent implements OnInit {
-  biomarkerCtrl = new FormControl();
+  // Dependencies
+  private apiService = inject(ApiService);
+  private boxplotService = inject(BoxplotService);
+  private destroyRef = inject(DestroyRef);
+  private errorHandler = inject(ApiErrorHandlerService);
+
+  // Signals
   biomarkerData = signal<Record<string, number[]>>({});
   biomarkers = signal<string[]>([]);
-  cohortCtrl = new FormControl();
   cohorts = signal<string[]>([]);
   colors = signal<Record<string, string>>({});
   diagnoses = signal<string[]>([]);
+  isLoading = signal(false);
+  selectedBiomarker = signal<string>('');
+  selectedCohorts = signal<string[]>([]);
+  showDataPoints = signal(false);
+
+  // Form Controls
+  biomarkerCtrl = new FormControl();
+  cohortCtrl = new FormControl();
+
+  // Derived Signals
+  private biomarkerQuery = toSignal(this.biomarkerCtrl.valueChanges, { initialValue: '' });
+  private cohortQuery = toSignal(this.cohortCtrl.valueChanges, { initialValue: '' });
+
   filteredBiomarkers = computed(() => {
     const query = this.biomarkerQuery()?.toLowerCase() ?? '';
     const all = this.biomarkers();
@@ -51,16 +69,6 @@ export class BiomarkersComponent implements OnInit {
     const all = this.diagnoses();
     return all.filter((d) => d.toLowerCase().includes(query));
   });
-  isLoading = signal(false);
-  selectedBiomarker = signal<string>('');
-  selectedCohorts = signal<string[]>([]);
-  showDataPoints = signal(false);
-  private apiService = inject(ApiService);
-  private biomarkerQuery = toSignal(this.biomarkerCtrl.valueChanges, { initialValue: '' });
-  private boxplotService = inject(BoxplotService);
-  private cohortQuery = toSignal(this.cohortCtrl.valueChanges, { initialValue: '' });
-  private destroyRef = inject(DestroyRef);
-  private errorHandler = inject(ApiErrorHandlerService);
 
   addCohort(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
