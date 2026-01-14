@@ -1,9 +1,9 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 
-import { Subscription, finalize, forkJoin } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 
 import { ApiService } from '../services/api.service';
 import { ApiErrorHandlerService } from '../services/api-error-handler.service';
@@ -15,7 +15,7 @@ import { CohortMetadata } from '../interfaces/metadata';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
   cohortCount = signal<number | null>(null);
   modalityCount = signal<number | null>(null);
   isLoading = signal(false);
@@ -23,7 +23,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   variableCount = signal<number | null>(null);
   private apiService = inject(ApiService);
   private errorHandler = inject(ApiErrorHandlerService);
-  private subscription?: Subscription;
 
   fetchAllData(): void {
     this.isLoading.set(true);
@@ -35,7 +34,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       metadata: this.apiService.fetchMetadata(),
     };
 
-    this.subscription = forkJoin(requests)
+    forkJoin(requests)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
@@ -51,10 +50,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         },
         error: (err) => this.errorHandler.handleError(err, 'loading dashboard data'),
       });
-  }
-
-  ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
   }
 
   ngOnInit(): void {
