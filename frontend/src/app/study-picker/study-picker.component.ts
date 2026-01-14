@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, DestroyRef, computed } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -13,8 +13,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 
-import { Observable, Subscription } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { Metadata } from '../interfaces/metadata';
 import { RankData } from '../interfaces/rankdata';
@@ -24,7 +24,6 @@ import { ApiErrorHandlerService } from '../services/api-error-handler.service';
 @Component({
   selector: 'app-study-picker',
   imports: [
-    CommonModule,
     MatFormFieldModule,
     MatAutocompleteModule,
     MatInputModule,
@@ -38,12 +37,36 @@ import { ApiErrorHandlerService } from '../services/api-error-handler.service';
   templateUrl: './study-picker.component.html',
   styleUrl: './study-picker.component.scss',
 })
-export class StudyPickerComponent implements OnInit, OnDestroy {
-  cohortData: Metadata = {};
-  cohortColors: Record<string, string> = {};
-  cohortLinks: Record<string, string> = {};
-  cohortRankings: RankData[] = [];
-  dataAvailability: Record<string, boolean> = {
+export class StudyPickerComponent implements OnInit {
+  // Dependencies
+  private apiService = inject(ApiService);
+  private errorHandler = inject(ApiErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
+
+  // Signals
+  cohortColors = signal<Record<string, string>>({});
+  cohortData = signal<Metadata>({});
+  cohortLinks = signal<Record<string, string>>({});
+  cohortRankings = signal<RankData[]>([]);
+  selectedVariables = signal<string[]>([]);
+  variables = signal<string[]>([]);
+  isLoading = signal(false);
+
+  // Form Controls
+  variableCtrl = new FormControl('');
+
+  // Derived Signals
+  filteredVariables = computed(() => {
+    const rawQuery = this.variableQuery();
+    const query = (rawQuery || '').toLowerCase();
+    const allVariables = this.variables();
+
+    return allVariables.filter((variable) => variable.toLowerCase().includes(query));
+  });
+  private variableQuery = toSignal(this.variableCtrl.valueChanges, { initialValue: '' });
+
+  // Constants
+  readonly dataAvailability: Record<string, boolean> = {
     PPMI: true,
     BIOFIND: true,
     LuxPARK: false,
@@ -57,104 +80,69 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
     PostCEPT: true,
     SPARX: true,
   };
-  displayedColumns: string[] = ['cohort', 'found', 'missing', 'plot', 'dataAccess'];
-  filteredVariables: Observable<string[]> | null = null;
-  isLoading = signal(false);
-  @Input() selectedVariables: string[] = [];
-  suggestions$: Observable<string[]> | null = null;
-  variableCtrl = new FormControl();
-  variables: string[] = [];
-  private apiService = inject(ApiService);
-  private errorHandler = inject(ApiErrorHandlerService);
-  private subscriptions: Subscription[] = [];
+  readonly displayedColumns: string[] = ['cohort', 'found', 'missing', 'plot', 'dataAccess'];
 
   addVariable(event: MatChipInputEvent): void {
-    let variable = event.value;
-    const input = event.chipInput;
-
-    variable = (variable || '').trim();
-    if (variable && !this.selectedVariables.includes(variable)) {
-      this.selectedVariables.push(variable);
-      if (input) {
-        input.clear();
-      }
+    const value = (event.value || '').trim();
+    if (value && !this.selectedVariables().includes(value)) {
+      this.selectedVariables.update((vars) => [...vars, value]);
+      event.chipInput!.clear();
       this.variableCtrl.setValue(null);
     }
-  }
-
-  availableVariables(missingVariables: string): string[] {
-    const availableVariables = [...this.selectedVariables];
-    const missingList = missingVariables.split(', ');
-
-    for (const missing of missingList) {
-      const indexToRemove = availableVariables.indexOf(missing);
-
-      if (indexToRemove !== -1) {
-        availableVariables.splice(indexToRemove, 1);
-      }
-    }
-
-    return availableVariables;
   }
 
   displayFn(variable: string): string {
     return variable ? variable : '';
   }
 
-  fetchMetadata(): void {
+  fetchInitialData(): void {
     this.isLoading.set(true);
-    const sub = this.apiService.fetchMetadata().subscribe({
-      next: (data) => {
-        this.cohortData = data;
-        for (const cohort in data) {
-          if (Object.hasOwn(data, cohort)) {
-            this.cohortColors[cohort] = data[cohort].color;
-            this.cohortLinks[cohort] = data[cohort].link;
-          }
-        }
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleError(err, 'fetching metadata');
-      },
-      complete: () => this.isLoading.set(false),
-    });
-    this.subscriptions.push(sub);
-  }
+    forkJoin({
+      variables: this.apiService.fetchVariables(),
+      metadata: this.apiService.fetchMetadata(),
+    })
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (results) => {
+          this.variables.set(results.variables);
+          this.cohortData.set(results.metadata);
+          const colors: Record<string, string> = {};
+          const links: Record<string, string> = {};
+          const data = results.metadata;
 
-  fetchVariables(): void {
-    const sub = this.apiService.fetchVariables().subscribe({
-      next: (v) => {
-        this.variables = v;
-        this.filteredVariables = this.variableCtrl.valueChanges.pipe(
-          startWith(''),
-          map((value) => this.filterVariables(value))
-        );
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleError(err, 'fetching variables');
-      },
-      complete: () => this.isLoading.set(false),
-    });
-    this.subscriptions.push(sub);
+          for (const key in data) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
+              colors[key] = data[key].color;
+              links[key] = data[key].link;
+            }
+          }
+          this.cohortColors.set(colors);
+          this.cohortLinks.set(links);
+        },
+        error: (err) => this.errorHandler.handleError(err, 'fetching initial data'),
+      });
   }
 
   fetchRankings(variables: string[]) {
-    const sub = this.apiService.fetchRankings(variables).subscribe({
-      next: (v) => (this.cohortRankings = v),
-      error: (err) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleError(err, 'fetching rankings');
-      },
-      complete: () => this.isLoading.set(false),
-    });
-    this.subscriptions.push(sub);
+    this.isLoading.set(true);
+    this.apiService
+      .fetchRankings(variables)
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (v) => this.cohortRankings.set(v),
+        error: (err) => this.errorHandler.handleError(err, 'fetching rankings'),
+      });
   }
 
-  filterVariables(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.variables.filter((variable) => variable.toLowerCase().includes(filterValue));
+  getAvailableVariables(missingVariablesStr: string): string[] {
+    const missing = new Set(missingVariablesStr.split(', '));
+    return this.selectedVariables().filter((v) => !missing.has(v));
   }
 
   isDataAvailable(cohort: string): boolean {
@@ -162,26 +150,18 @@ export class StudyPickerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.fetchVariables();
-    this.fetchMetadata();
+    this.fetchInitialData();
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
-  }
-
-  optionSelected(event: MatAutocompleteSelectedEvent): void {
+  onOptionSelect(event: MatAutocompleteSelectedEvent): void {
     const variable = event.option.value;
-    if (variable && !this.selectedVariables.includes(variable)) {
-      this.selectedVariables.push(variable);
-      this.variableCtrl.setValue('');
+    if (variable && !this.selectedVariables().includes(variable)) {
+      this.selectedVariables.update((vars) => [...vars, variable]);
     }
+    this.variableCtrl.setValue('');
   }
 
   removeVariable(variable: string): void {
-    const index = this.selectedVariables.indexOf(variable);
-    if (index >= 0) {
-      this.selectedVariables.splice(index, 1);
-    }
+    this.selectedVariables.update((vars) => vars.filter((v) => v !== variable));
   }
 }
