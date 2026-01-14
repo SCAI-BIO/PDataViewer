@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   postgres:
     image: postgres:18
@@ -16,7 +14,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - pddata:/var/lib/postgresql/data
+      - pddata:/var/lib/postgresql/18/docker
 
 volumes:
   pddata:
