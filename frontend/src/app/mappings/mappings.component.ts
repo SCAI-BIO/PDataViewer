@@ -1,7 +1,16 @@
-import { ChangeDetectorRef, Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  OnInit,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { Subscription } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 
 import { ChordData } from '../interfaces/chord-diagram';
 import { ApiService } from '../services/api.service';
@@ -14,95 +23,92 @@ import { ApiErrorHandlerService } from '../services/api-error-handler.service';
   templateUrl: './mappings.component.html',
   styleUrl: './mappings.component.scss',
 })
-export class MappingsComponent implements OnInit, OnDestroy {
-  cohorts: string[] = [];
-  currentIndex = 0;
-  dataChunks: ChordData[] = [];
-  modalities: string[] = [];
-  isLoading = signal(false);
-  selectedModality = '';
+export class MappingsComponent implements OnInit {
+  // Dependencies
   private apiService = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private chordService = inject(ChordDiagramService);
+  private destroyRef = inject(DestroyRef);
   private errorHandler = inject(ApiErrorHandlerService);
-  private subscriptions: Subscription[] = [];
 
-  fetchCohorts(): void {
-    this.isLoading.set(true);
-    const sub = this.apiService.fetchCohorts().subscribe({
-      next: (v) => {
-        this.cohorts = v;
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleError(err, 'fetching cohorts');
-      },
-      complete: () => this.isLoading.set(false),
+  // Signals
+  cohorts = signal<string[]>([]);
+  modalities = signal<string[]>([]);
+  dataChunks = signal<ChordData[]>([]);
+  selectedModality = signal<string>('');
+  isLoading = signal(false);
+  currentIndex = 0;
+
+  constructor() {
+    effect(() => {
+      const modality = this.selectedModality();
+      if (modality) {
+        this.fetchChordData(modality);
+      }
     });
-    this.subscriptions.push(sub);
   }
 
-  fetchData(): void {
+  fetchChordData(modality: string): void {
     this.isLoading.set(true);
-    const sub = this.apiService.fetchChordsData(this.selectedModality).subscribe({
-      next: (v) => {
-        this.currentIndex = 0;
-        this.dataChunks = this.chordService.chunkData(v, 40);
-
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          this.chordService.createChordDiagrams(this.dataChunks, this.currentIndex);
-        });
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleError(err, 'fetching chord data');
-      },
-      complete: () => this.isLoading.set(false),
-    });
-    this.subscriptions.push(sub);
+    this.apiService
+      .fetchChordsData(modality)
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (v) => {
+          this.currentIndex = 0;
+          const chunks = this.chordService.chunkData(v, 40);
+          this.dataChunks.set(chunks);
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            this.chordService.createChordDiagrams(this.dataChunks(), this.currentIndex);
+          });
+        },
+        error: (err) => this.errorHandler.handleError(err, 'fetching chord data'),
+      });
   }
 
-  fetchModalities(): void {
+  fetchInitialMetadata(): void {
     this.isLoading.set(true);
-    const sub = this.apiService.fetchModalities().subscribe({
-      next: (v) => {
-        this.modalities = v;
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleError(err, 'fetching modalities');
-      },
-      complete: () => this.isLoading.set(false),
-    });
-    this.subscriptions.push(sub);
+
+    forkJoin({
+      modalities: this.apiService.fetchModalities(),
+      cohorts: this.apiService.fetchCohorts(),
+    })
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (results) => {
+          this.modalities.set(results.modalities);
+          this.cohorts.set(results.cohorts);
+        },
+        error: (err) => this.errorHandler.handleError(err, 'fetching metadata'),
+      });
   }
 
   next(): void {
-    if (this.currentIndex < this.dataChunks.length - 1) {
+    if (this.currentIndex < this.dataChunks().length - 1) {
       this.currentIndex++;
-      this.chordService.createChordDiagrams(this.dataChunks, this.currentIndex);
+      this.chordService.createChordDiagrams(this.dataChunks(), this.currentIndex);
     }
   }
 
   ngOnInit(): void {
-    this.fetchModalities();
-    this.fetchCohorts();
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
+    this.fetchInitialMetadata();
   }
 
   onModalityClick(modality: string): void {
-    this.selectedModality = modality;
-    this.fetchData();
+    this.selectedModality.set(modality);
   }
 
   previous(): void {
     if (this.currentIndex > 0) {
       this.currentIndex--;
-      this.chordService.createChordDiagrams(this.dataChunks, this.currentIndex);
+      this.chordService.createChordDiagrams(this.dataChunks(), this.currentIndex);
     }
   }
 }

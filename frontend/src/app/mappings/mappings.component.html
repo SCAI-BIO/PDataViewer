@@ -5,26 +5,21 @@
       <br />
       The Mappings helps you to identify semantic equivalent of the variable(s) of your interest in
       another cohort. <br />
-      <br />
 
       You can hover over the variable of your interest to highlight its semantic equivalent(s).
-      <br />
-      <br />
-
-      Some of the modalities are too big to showcase in a singular chord diagram, especially with a
-      low "Maximum Number of Variables" setting. You might need to scroll down to be able to see all
-      the diagrams. <br />
-      <br />
-
       Unfortunately, due to data limitation, there might be no mappings to showcase for some
       modalities. Please keep in touch, as we are trying to collect more data each day! <br />
-      <br />
-
       <strong
-        >You can find all of the mappings in our Parkinson's Disease Common Data Model (PASSIONATE)
-        on <a href="https://zenodo.org/records/10218362" target="_blank">Zenodo</a></strong
+        >You can find all of the mappings in our Parkinson's Disease Variable Mapping Schema -
+        PASSIONATE on
+        <a
+          href="https://zenodo.org/records/10218362"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="zenodo-link"
+          >Zenodo</a
+        ></strong
       >
-      <br />
       <br />
 
       Please select a modality to continue.
@@ -42,7 +37,7 @@
     <!-- Container for modality buttons -->
     <div class="modality-buttons">
       <!-- Loop through each modality and create a button -->
-      @for (modality of modalities; track modality) {
+      @for (modality of modalities(); track modality) {
       <button class="button-style" (click)="onModalityClick(modality)">
         <!-- Interpolate modality name -->
         {{ modality }}
@@ -52,20 +47,20 @@
   </div>
 
   <!-- Conditional display of no-data message -->
-  @if (selectedModality && !(dataChunks.length > 0)) {
+  @if (selectedModality() && !(dataChunks().length > 0)) {
   <div class="no-data-message">
     Sorry, no mapping to showcase for this modality currently. We are collecting more data, keep in
     touch!
   </div>
-  } @if (dataChunks.length > 0 ) {
+  } @if (dataChunks().length > 0 ) {
   <div class="navigation-buttons">
     <button (click)="previous()" [disabled]="currentIndex === 0" class="button-style">
       Previous
     </button>
-    <span>{{ currentIndex + 1 }} / {{ dataChunks.length }}</span>
+    <span>{{ currentIndex + 1 }} / {{ dataChunks().length }}</span>
     <button
       (click)="next()"
-      [disabled]="currentIndex === dataChunks.length - 1"
+      [disabled]="currentIndex === dataChunks().length - 1"
       class="button-style"
     >
       Next
