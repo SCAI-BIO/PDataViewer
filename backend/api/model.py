@@ -4,10 +4,6 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class PathModel(BaseModel):
-    path: str
-
-
 class CohortMetadata(BaseModel):
     participants: Optional[int]
     controlParticipants: Optional[int]

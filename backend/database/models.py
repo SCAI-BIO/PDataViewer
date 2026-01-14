@@ -105,7 +105,9 @@ class LongitudinalMeasurement(Base):
 
 class BiomarkerMeasurement(Base):
     __tablename__ = "biomarker_measurements"
-    __table_args__ = (UniqueConstraint("participant_id", "cohort_id", name="uq_participant_cohort"),)
+    __table_args__ = (
+        UniqueConstraint("participant_id", "cohort_id", "variable", name="uq_participant_cohort_variable"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     variable: Mapped[str] = mapped_column(String, nullable=False)

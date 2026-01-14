@@ -1,12 +1,13 @@
 import io
 import os
 from collections import defaultdict
-from typing import Optional
+from typing import Optional, cast
 
 import pandas as pd
 from argon2 import PasswordHasher
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, select
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import sessionmaker
 
 from database.models import (
@@ -84,72 +85,6 @@ class PostgreSQLRepository:
             raise ValueError(f"Cohort '{name}' not found.")
         return cohort
 
-    def add_cohort(
-        self,
-        name: str,
-        participants: Optional[int],
-        control_participants: Optional[int],
-        prodromal_participants: Optional[int],
-        pd_participants: Optional[int],
-        longitudinal_participants: Optional[int],
-        follow_up_interval: Optional[str],
-        location: Optional[str],
-        doi: Optional[str],
-        link: Optional[str],
-        color: str,
-    ) -> Cohort:
-        """Add a new cohort metadata if it does not exist.
-
-        :param name: Name of the cohort.
-        :param participants: Number of participants in the cohort.
-        :param control_participants: Number of control participants in the cohort.
-        :param prodromal_participants: Number of prodpromal participants in the cohort.
-        :param pd_participants: Number of participants with Parkinson's disease in the cohort.
-        :param longitudinal_participants: Number of participants that has more than 2 visits in the cohort.
-        :param follow_up_interval: Follow-up interval for participants in the cohort.
-        :param location: Location of the cohort study conducted.
-        :param doi: Publication DOI of the cohort study conducted.
-        :param link: Cohort study data application link.
-        :param color: Hex code of the color associated with the cohort study.
-        :return: The created or existing cohort metadata.
-        """
-        cohort = self.session.query(Cohort).filter_by(name=name).first()
-        if cohort:
-            return cohort
-
-        cohort = Cohort(
-            name=name,
-            participants=participants,
-            control_participants=control_participants,
-            prodromal_participants=prodromal_participants,
-            pd_participants=pd_participants,
-            longitudinal_participants=longitudinal_participants,
-            follow_up_interval=follow_up_interval,
-            location=location,
-            doi=doi,
-            link=link,
-            color=color,
-        )
-        self.session.add(cohort)
-        self.session.commit()
-        return cohort
-
-    def delete_cohort(self, name: str):
-        """Delete a cohort and its associated concepts, longitudinal measurements, and biomarker measurements.
-
-        :param name: Name of the cohort.
-        """
-        cohort = self.get_cohort(name)
-
-        # Delete related Concept, LongitudinalMeasurement, and BiomarkerMeasurement objects
-        self.session.query(Concept).filter_by(cohort_id=cohort.id).delete()
-        self.session.query(LongitudinalMeasurement).filter_by(cohort_id=cohort.id).delete()
-        self.session.query(BiomarkerMeasurement).filter_by(cohort_id=cohort.id).delete()
-
-        # Delete cohort metadata
-        self.session.delete(cohort)
-        self.session.commit()
-
     def get_concepts(
         self, cohort_name: Optional[str] = None, source_type: Optional[ConceptSource] = None
     ) -> list[Concept]:
@@ -168,81 +103,6 @@ class PostgreSQLRepository:
         concepts = query.all()
         return concepts
 
-    def get_concept(self, cohort_name: str, variable_name: str) -> Concept:
-        """Retrieve a concept by cohort name and variable name.
-
-        :param cohort_name: Name of the cohort the concept belongs to.
-        :param variable_name: Name of the variable.
-        :raises ValueError: If no concept with the given variable_name exists.
-        :return: The corresponding concept.
-        """
-        cohort = self.get_cohort(cohort_name)
-        concept = self.session.query(Concept).filter_by(variable=variable_name, cohort_id=cohort.id).first()
-        if concept is None:
-            raise ValueError(f"Concept '{variable_name}' in cohort '{cohort_name}' not found.")
-        return concept
-
-    def add_concept(
-        self, variable_name: str, cohort: Optional[Cohort] = None, source_type: ConceptSource = ConceptSource.COHORT
-    ) -> Concept:
-        """Add a new concept to the specified vocabulary, if it does not already exist.
-
-        :param variable_name: Name of the variable.
-        :param cohort_name: Optional name of the cohort study the concept belongs to, defaults to None.
-        :param concept_source: Source of the concept. One of ConceptSource.COHORT or ConceptSource.CDM, defaults to ConceptSource.COHORT.
-        :return: The created or existing Concept object.
-        """
-        query = self.session.query(Concept).filter_by(variable=variable_name, source_type=source_type)
-        cohort_db = None
-        if cohort:
-            cohort_db = self.add_cohort(
-                cohort.name,
-                cohort.participants,
-                cohort.control_participants,
-                cohort.prodromal_participants,
-                cohort.pd_participants,
-                cohort.longitudinal_participants,
-                cohort.follow_up_interval,
-                cohort.location,
-                cohort.doi,
-                cohort.link,
-                cohort.color,
-            )
-            query = query.filter_by(cohort_id=cohort_db.id)
-        else:
-            query = query.filter(Concept.cohort_id.is_(None))
-
-        concept = query.first()
-        if concept:
-            return concept
-
-        concept = Concept(
-            variable=variable_name, source_type=source_type, cohort_id=cohort_db.id if cohort_db else None
-        )
-        self.session.add(concept)
-        self.session.commit()
-        return concept
-
-    def delete_concept(self, cohort_name: str, variable_name: str):
-        """Delete a concept and its associated mappings.
-
-        :param cohort_name: Name of the cohort the concept belongs to.
-        :param variable_name: Variable name of the concept to delete.
-        :raises ValueError: If the concept does not exist.
-        """
-        cohort = self.get_cohort(cohort_name)
-        concept = self.session.query(Concept).filter_by(variable=variable_name, cohort_id=cohort.id).first()
-        if concept is None:
-            raise ValueError(f"Concept '{variable_name}' in cohort '{cohort_name}' not found.")
-
-        # Delete related Mapping entries first
-        self.session.query(Mapping).filter_by(source_id=concept.id).delete()
-        self.session.query(Mapping).filter_by(target_id=concept.id).delete()
-
-        # Delete the concept itself
-        self.session.delete(concept)
-        self.session.commit()
-
     def get_modalities(self) -> list[str]:
         """Retrieve all unique modalities from the mapping table.
 
@@ -252,61 +112,6 @@ class PostgreSQLRepository:
             self.session.execute(select(Mapping.modality).distinct().order_by(Mapping.modality)).scalars().all()
         )
         return modalities
-
-    def get_mappings(self, modality: Optional[str]) -> list[Mapping]:
-        """Retrieve all mapping entries, optionally filtered by modality name.
-
-        :param modality: The modality name of the mappings.
-        :return: List of all mapping entries.
-        """
-        query = self.session.query(Mapping)
-        if modality:
-            query = query.filter_by(modality=modality)
-        mappings = query.all()
-        return mappings
-
-    def add_mapping(self, source: Concept, target: Concept, modality: str) -> Mapping:
-        """Add a new mapping between two concepts, if it does not already exist.
-
-        :param source: The source Concept object.
-        :param target: The target Concept object.
-        :param modality: The modality of the mapping.
-        :return: The created or existed Mapping object.
-        """
-        source_db = self.add_concept(source.variable, source.cohort, source.source_type)
-        target_db = self.add_concept(target.variable, target.cohort, target.source_type)
-
-        # Skip if mapping already exists
-        mapping = self.session.query(Mapping).filter_by(source_id=source_db.id, target_id=target_db.id).first()
-        if mapping:
-            return mapping
-
-        mapping = Mapping(source_id=source_db.id, target_id=target_db.id, modality=modality)
-        self.session.add(mapping)
-        self.session.commit()
-        return mapping
-
-    def delete_mapping(self, source_variable: str, source_cohort: str, target_variable: str, target_cohort: str):
-        """Delete a specific mapping between two concepts.
-
-        :param source_variable: Source concept variable.
-        :param source_cohort: Cohort of the source concept.
-        :param target_code: Target concept variable.
-        :param target_cohort: Cohort of the target concept..
-        :raises ValueError: If the mapping or any referenced entity does not exist.
-        """
-        source = self.get_concept(source_cohort, source_variable)
-        target = self.get_concept(target_cohort, target_variable)
-
-        if not source or not target:
-            raise ValueError("One or more referenced entities (concepts) were not found.")
-
-        mapping = self.session.query(Mapping).filter_by(source_id=source.id, target_id=target.id).first()
-        if mapping is None:
-            raise ValueError("Mapping not found.")
-
-        self.session.delete(mapping)
-        self.session.commit()
 
     def get_longitudinal_measurements(
         self, variable: Optional[str] = None, cohort_name: Optional[str] = None
@@ -337,39 +142,6 @@ class PostgreSQLRepository:
                 }
             )
         return results
-
-    def add_longitudinal_measurement(
-        self, variable: str, months: float, cohort_name: str, patient_count: int, total_patient_count: int
-    ) -> LongitudinalMeasurement:
-        """Add a longitudinal measurement.
-
-        :param variable: Name of the variable measured longitudinally.
-        :param months: Month of the measurement.
-        :param cohort_name: Name of the associated cohort study.
-        :param patient_count: Number of patients on the given month measured for the variable.
-        :param total_patient_count: Total number of patients at the start of the study measured for the variable.
-        :return: The created or existing LongitudinalMeasurement object.
-        """
-        cohort = self.get_cohort(cohort_name)
-
-        longitudinal_measurement = (
-            self.session.query(LongitudinalMeasurement)
-            .filter_by(variable=variable, months=months, cohort_id=cohort.id)
-            .first()
-        )
-        if longitudinal_measurement:
-            return longitudinal_measurement
-
-        longitudinal_measurement = LongitudinalMeasurement(
-            variable=variable,
-            months=months,
-            patient_count=patient_count,
-            total_patient_count=total_patient_count,
-            cohort_id=cohort.id,
-        )
-        self.session.add(longitudinal_measurement)
-        self.session.commit()
-        return longitudinal_measurement
 
     def get_longitudinal_measurement_variables(self) -> list[str]:
         """Retrieve all unique longitudinal measurement variables from the LongitudinalMeasurement table.
@@ -404,39 +176,6 @@ class PostgreSQLRepository:
         if diagnosis:
             query = query.filter(BiomarkerMeasurement.diagnosis == diagnosis)
         biomarker_measurements = query.all()
-        return biomarker_measurements
-
-    def add_biomarker_measurement(
-        self, variable: str, participant_id: int, cohort_name: str, measurement: float, diagnosis: str
-    ) -> BiomarkerMeasurement:
-        """Add a biomarker measurement.
-
-        :param variable: Name of the variable measured longitudinally.
-        :param participant_id: ID of the participant.
-        :param cohort_name: Name of the associated cohort study.
-        :param measurement: The numeric value of the measurement.
-        :param diagnosis: The participant's diagnosis in the study for the given measurement.
-        :return: The created or existing BiomarkerMeasurement object.
-        """
-        cohort = self.get_cohort(cohort_name)
-
-        biomarker_measurements = (
-            self.session.query(BiomarkerMeasurement)
-            .filter_by(participant_id=participant_id, cohort_id=cohort.id)
-            .first()
-        )
-        if biomarker_measurements:
-            return biomarker_measurements
-
-        biomarker_measurements = BiomarkerMeasurement(
-            participant_id=participant_id,
-            variable=variable,
-            cohort_id=cohort.id,
-            measurement=measurement,
-            diagnosis=diagnosis,
-        )
-        self.session.add(biomarker_measurements)
-        self.session.commit()
         return biomarker_measurements
 
     def get_biomarker_variables(self) -> list[str]:
@@ -547,36 +286,38 @@ class PostgreSQLRepository:
         if missing:
             raise ValueError(f"Missing required columns: {missing}")
 
-        for _, row in df.iterrows():
-            cohort_name = str(row["cohort"]).strip()
-            participants = int(row["participants"]) if pd.notna(row["participants"]) else None
-            control_participants = int(row["healthyControls"]) if pd.notna(row["healthyControls"]) else None
-            prodromal_participants = int(row["prodromalPatients"]) if pd.notna(row["prodromalPatients"]) else None
-            pd_participants = int(row["pdPatients"]) if pd.notna(row["pdPatients"]) else None
-            longitudinal_participants = (
-                int(row["longitudinalPatients"]) if pd.notna(row["longitudinalPatients"]) else None
+        cohorts_data = []
+        for row in df.itertuples(index=False):
+            cohorts_data.append(
+                {
+                    "name": str(row.cohort).strip(),
+                    "participants": cast(int, row.participants) if pd.notna(row.participants) else None,
+                    "control_participants": cast(int, row.healthyControls) if pd.notna(row.healthyControls) else None,
+                    "prodromal_participants": (
+                        cast(int, row.prodromalPatients) if pd.notna(row.prodromalPatients) else None
+                    ),
+                    "pd_participants": cast(int, row.pdPatients) if pd.notna(row.pdPatients) else None,
+                    "longitudinal_participants": (
+                        cast(int, row.longitudinalPatients) if pd.notna(row.longitudinalPatients) else None
+                    ),
+                    "follow_up_interval": (
+                        (str(row.followUpInterval).strip() or None) if pd.notna(row.followUpInterval) else None
+                    ),
+                    "location": (str(row.location).strip() or None) if pd.notna(row.location) else None,
+                    "doi": (str(row.doi).strip() or None) if pd.notna(row.doi) else None,
+                    "link": (str(row.link).strip() or None) if pd.notna(row.link) else None,
+                    "color": str(row.color).strip(),
+                }
             )
-            follow_up_interval = (
-                (str(row["followUpInterval"]).strip() or None) if pd.notna(row["followUpInterval"]) else None
-            )
-            location = (str(row["location"]).strip() or None) if pd.notna(row["location"]) else None
-            doi = (str(row["doi"]).strip() or None) if pd.notna(row["doi"]) else None
-            link = (str(row["link"]).strip() or None) if pd.notna(row["link"]) else None
-            color = str(row["color"]).strip()
 
-            self.add_cohort(
-                name=cohort_name,
-                participants=participants,
-                control_participants=control_participants,
-                prodromal_participants=prodromal_participants,
-                pd_participants=pd_participants,
-                longitudinal_participants=longitudinal_participants,
-                follow_up_interval=follow_up_interval,
-                location=location,
-                doi=doi,
-                link=link,
-                color=color,
-            )
+        if not cohorts_data:
+            return
+
+        stmt = pg_insert(Cohort).values(cohorts_data)
+        stmt = stmt.on_conflict_do_nothing(index_elements=["name"])
+
+        self.session.execute(stmt)
+        self.session.commit()
 
     def import_cdm(
         self,
@@ -600,28 +341,90 @@ class PostgreSQLRepository:
         """
         df = pd.read_csv(io.BytesIO(csv_data))
 
-        for _, row in df.iterrows():
-            cdm_concept = self.add_concept(variable_name=row["Feature"], cohort=None, source_type=ConceptSource.CDM)
+        cohort_map = {c.name: c.id for c in self.session.query(Cohort).all()}
+        cdm_vars = set(df["Feature"].dropna().astype(str).str.strip())
+        cdm_concepts_data = [
+            {"variable": var, "source_type": ConceptSource.CDM, "cohort_id": None} for var in cdm_vars if var
+        ]
 
-            # Skip metadata columns
-            for column in df.columns:
-                if column in columns_to_ignore:
-                    continue
+        if cdm_concepts_data:
+            stmt = pg_insert(Concept).values(cdm_concepts_data)
+            stmt = stmt.on_conflict_do_nothing(constraint="uq_variable_source_cohort")
+            self.session.execute(stmt)
+            self.session.commit()
 
-                cell_value = row[column]
-                # Skip empty cells
+        cdm_concept_map = {
+            c.variable: c.id
+            for c in self.session.query(Concept)
+            .filter(Concept.source_type == ConceptSource.CDM, Concept.variable.in_(cdm_vars))
+            .all()
+        }
+
+        cohort_concepts_to_create = []
+        raw_mappings = []
+        valid_cohort_columns = [c for c in df.columns if c not in columns_to_ignore and c in cohort_map]
+        col_to_idx = {name: i for i, name in enumerate(df.columns)}
+        feature_idx = col_to_idx["Feature"]
+
+        for row in df.itertuples(index=False, name=None):
+            cdm_var = str(row[feature_idx]).strip()
+            if not cdm_var or cdm_var not in cdm_concept_map:
+                continue
+
+            for col in valid_cohort_columns:
+                cell_value = row[col_to_idx[col]]
                 if pd.isna(cell_value) or str(cell_value).strip() == "":
                     continue
 
-                # Split by comma if multiple concepts
+                # Split comma-separated variables
                 values = [v.strip() for v in str(cell_value).split(",") if v.strip()]
 
-                for value in values:
-                    cohort = self.get_cohort(column)
-                    cohort_concept = self.add_concept(
-                        variable_name=str(value), cohort=cohort, source_type=ConceptSource.COHORT
+                for val in values:
+                    cohort_concepts_to_create.append(
+                        {"variable": val, "source_type": ConceptSource.COHORT, "cohort_id": cohort_map[col]}
                     )
-                    self.add_mapping(cdm_concept, cohort_concept, modality)
+                    raw_mappings.append((cdm_var, col, val))
+
+        if cohort_concepts_to_create:
+            # Deduplicate dicts (concepts might appear multiple times in CSV)
+            # A set of tuples is used for deduplication
+            unique_concepts = {(d["variable"], d["cohort_id"]): d for d in cohort_concepts_to_create}.values()
+
+            stmt = pg_insert(Concept).values(list(unique_concepts))
+            stmt = stmt.on_conflict_do_nothing(constraint="uq_variable_source_cohort")
+            self.session.execute(stmt)
+            self.session.commit()
+
+        # Fetch IDs for Cohort Concepts
+        cohort_ids_involved = [cohort_map[c] for c in valid_cohort_columns]
+        target_concept_map = {}
+
+        target_concepts_db = (
+            self.session.query(Concept)
+            .filter(Concept.cohort_id.in_(cohort_ids_involved), Concept.source_type == ConceptSource.COHORT)
+            .all()
+        )
+
+        for c in target_concepts_db:
+            target_concept_map[(c.variable, c.cohort_id)] = c.id
+
+        mappings_data = []
+        for cdm_var, cohort_name, cohort_var in raw_mappings:
+            cdm_id = cdm_concept_map.get(cdm_var)
+            cohort_id = cohort_map.get(cohort_name)
+            target_id = target_concept_map.get((cohort_var, cohort_id))
+
+            if cdm_id and target_id:
+                mappings_data.append({"source_id": cdm_id, "target_id": target_id, "modality": modality})
+
+        if mappings_data:
+            # Deduplicate mappings
+            unique_mappings = {(m["source_id"], m["target_id"], m["modality"]): m for m in mappings_data}.values()
+
+            stmt = pg_insert(Mapping).values(list(unique_mappings))
+            stmt = stmt.on_conflict_do_nothing(constraint="uq_mapping_source_target_modality")
+            self.session.execute(stmt)
+            self.session.commit()
 
     def import_longitudinal_measurements(self, csv_data: bytes, variable_name: str):
         """Import longitudinal measurements from a CSV file.
@@ -629,25 +432,34 @@ class PostgreSQLRepository:
         :param csv_data: Longitudinal measurements CSV file content in bytes.
         """
         df = pd.read_csv(io.BytesIO(csv_data))
-
         required_columns = {"months", "cohort", "patientCount", "totalPatientCount"}
-        missing = required_columns - set(df.columns)
-        if missing:
-            raise ValueError(f"Missing required columns: {missing}")
+        if required_columns - set(df.columns):
+            raise ValueError(f"Missing columns: {required_columns - set(df.columns)}")
 
-        for _, row in df.iterrows():
-            cohort_name = str(row["cohort"]).strip()
-            months = float(row["months"])
-            patient_count = int(row["patientCount"])
-            total_patient_count = int(row["totalPatientCount"])
+        cohort_map = {c.name: c.id for c in self.session.query(Cohort).all()}
+        batch_data = []
+        for row in df.itertuples(index=False):
+            cohort_name = str(row.cohort).strip()
+            if cohort_name not in cohort_map:
+                continue
 
-            self.add_longitudinal_measurement(
-                variable=variable_name,
-                months=months,
-                cohort_name=cohort_name,
-                patient_count=patient_count,
-                total_patient_count=total_patient_count,
+            batch_data.append(
+                {
+                    "variable": variable_name,
+                    "months": cast(float, row.months),
+                    "cohort_id": cohort_map[cohort_name],
+                    "patient_count": cast(int, row.patientCount),
+                    "total_patient_count": cast(int, row.totalPatientCount),
+                }
             )
+
+        if not batch_data:
+            return
+
+        stmt = pg_insert(LongitudinalMeasurement).values(batch_data)
+        stmt = stmt.on_conflict_do_nothing(constraint="uq_variable_months_cohort")
+        self.session.execute(stmt)
+        self.session.commit()
 
     def import_biomarker_measurements(self, csv_data: bytes, variable_name: str):
         """Import biomarker measurements from a CSV file.
@@ -656,24 +468,33 @@ class PostgreSQLRepository:
         """
         df = pd.read_csv(io.BytesIO(csv_data))
 
-        required_columns = {"participantNumber", "cohort", "measurement", "diagnosis"}
-        missing = required_columns - set(df.columns)
-        if missing:
-            raise ValueError(f"Missing required columns: {missing}")
+        cohort_map = {c.name: c.id for c in self.session.query(Cohort).all()}
 
+        records_to_insert = []
         for _, row in df.iterrows():
             cohort_name = str(row["cohort"]).strip()
-            participant_id = int(row["participantNumber"])
-            measurement = float(row["measurement"])
-            diagnosis = str(row["diagnosis"])
+            if cohort_name not in cohort_map:
+                continue  # Or handle error
 
-            self.add_biomarker_measurement(
-                variable=variable_name,
-                participant_id=participant_id,
-                cohort_name=cohort_name,
-                measurement=measurement,
-                diagnosis=diagnosis,
+            records_to_insert.append(
+                {
+                    "variable": variable_name,
+                    "participant_id": int(row["participantNumber"]),
+                    "cohort_id": cohort_map[cohort_name],
+                    "measurement": float(row["measurement"]),
+                    "diagnosis": str(row["diagnosis"]),
+                }
             )
+
+        if not records_to_insert:
+            return
+
+        stmt = pg_insert(BiomarkerMeasurement).values(records_to_insert)
+
+        stmt = stmt.on_conflict_do_nothing(constraint="uq_participant_cohort_variable")
+
+        self.session.execute(stmt)
+        self.session.commit()
 
     def get_chord_diagram(self, modality: str) -> dict:
         """Build a chord diagram data based on the current mappings.
@@ -806,6 +627,7 @@ class PostgreSQLRepository:
         """
         Clear all database tables: vocabularies, concepts, CDMs, and mappings.
         """
+        self.session.close()
         Base.metadata.drop_all(self.engine)
         Base.metadata.create_all(self.engine)
 
