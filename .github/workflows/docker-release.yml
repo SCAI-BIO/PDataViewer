@@ -5,10 +5,10 @@ on:
     types: [published]
 
 jobs:
-  build:
+  build_docker_image:
     permissions:
       contents: read
-      pull-requests: write
+      packages: write
 
     runs-on: ubuntu-latest
 
