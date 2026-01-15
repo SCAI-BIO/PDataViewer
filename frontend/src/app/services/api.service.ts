@@ -28,7 +28,7 @@ export class ApiService {
   }
 
   fetchBiomarkers(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/biomarkers`);
+    return this.http.get<string[]>(`${this.apiUrl}/biomarkers/`);
   }
 
   fetchChordsData(modality: string): Observable<ChordData> {
@@ -74,7 +74,7 @@ export class ApiService {
   }
 
   fetchLongitudinalTables(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/longitudinal`);
+    return this.http.get<string[]>(`${this.apiUrl}/longitudinal/`);
   }
 
   fetchMetadata(): Observable<Metadata> {
