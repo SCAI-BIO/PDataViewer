@@ -13,10 +13,36 @@
       name="keywords"
       content="Bioinformatics, Parkinson's disease, Neurodegeneration, Datasets, Interoperability, FAIR principles"
     />
+    <meta name="author" content="Mehmet Can Ay, Tim Adams" />
+
+    <!-- Open Graph / Facebook Meta Info -->
+    <meta property="og:title" content="PDataViewer" />
     <meta
-      name="author"
-      content="Mehmet Can Ay, Tim Adams, Yasamin Salimi, Marjan Niazpoor, Marc Jacobs, Martin Hofmann-Apitius"
+      property="og:description"
+      content="A web application to landscape Parkinson's disease cohorts, and to enhance FAIRness of the medical data"
     />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pdata.scai.fraunhofer.de/#/" />
+    <meta property="og:image" content="https://pdata.scai.fraunhofer.de/logo_white.png" />
+
+    <!-- Google+ / Schema.org Meta Info -->
+    <meta itemprop="name" content="PDataViewer" />
+    <meta
+      itemprop="description"
+      content="A web application to landscape Parkinson's disease cohorts, and to enhance FAIRness of the medical data"
+    />
+    <meta itemprop="image" content="https://pdata.scai.fraunhofer.de/logo_white.png" />
+
+    <!-- Twitter Card Meta Info -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PDataViewer" />
+    <meta
+      name="twitter:description"
+      content="A web application to landscape Parkinson's disease cohorts, and to enhance FAIRness of the medical data"
+    />
+    <meta name="twitter:image" content="https://pdata.scai.fraunhofer.de/logo_white.png" />
+
+    <!-- Favicon and Fonts -->
     <link rel="icon" type="image/x-icon" href="logos/logo.svg" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -26,8 +52,18 @@
       rel="stylesheet"
     />
   </head>
-
   <body>
     <app-root></app-root>
   </body>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RWW9930KEG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'G-RWW9930KEG');
+  </script>
 </html>
