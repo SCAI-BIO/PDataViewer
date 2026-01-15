@@ -64,6 +64,7 @@ export class LineplotService {
       legend: { orientation: 'v', x: 1.05, y: 1 },
       margin: { t: 50, r: 200, b: 60, l: 80 },
       hovermode: 'x unified',
+      showlegend: true,
     };
 
     const config: Partial<Plotly.Config> = {

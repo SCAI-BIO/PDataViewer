@@ -17,27 +17,22 @@
   }
 
   <div class="input-container">
-    <mat-form-field>
-      <mat-chip-listbox [multiple]="false" aria-label="Longitudinal selection">
-        @if (selectedVariable) {
-        <mat-chip-option [removable]="true" [selectable]="false" (removed)="removeVariable()">
-          {{ selectedVariable }}
-          <mat-icon matChipRemove>cancel</mat-icon>
-        </mat-chip-option>
-        }
-        <input
-          matInput
-          placeholder="Enter a variable"
-          [matAutocomplete]="autoLongitudinal"
-          [formControl]="variableCtrl"
-        />
-      </mat-chip-listbox>
+    <mat-form-field appearance="outline">
+      <mat-label>Variable selection</mat-label>
+      <input
+        type="text"
+        placeholder="Enter a variable"
+        aria-label="Variable selection"
+        matInput
+        [formControl]="variableCtrl"
+        [matAutocomplete]="autoLongitudinal"
+      />
       <mat-autocomplete
+        autoActivateFirstOption
         #autoLongitudinal="matAutocomplete"
-        [displayWith]="displayFn"
-        (optionSelected)="variableSelected($event)"
+        (optionSelected)="onVariableSelect($event)"
       >
-        @for (option of filteredVariables | async; track option) {
+        @for (option of filteredVariables(); track option) {
         <mat-option [value]="option">
           {{ option }}
         </mat-option>
