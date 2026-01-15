@@ -40,7 +40,7 @@ jobs:
 
       - name: Update Angular App Version
         run: npm --no-git-tag-version version from-git
-        working-directory: backend
+        working-directory: frontend
 
       - name: Docker Login
         uses: docker/login-action@v3
