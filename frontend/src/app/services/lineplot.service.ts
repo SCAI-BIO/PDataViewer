@@ -15,7 +15,7 @@ export class LineplotService {
     elementId: string
   ): void {
     // group data by cohort
-    const cohorts = Array.from(
+    const cohortEntries = Array.from(
       data.reduce((map, d) => {
         if (!map.has(d.cohort)) {
           map.set(d.cohort, []);
@@ -26,20 +26,23 @@ export class LineplotService {
     );
 
     // build traces
-    const traces = cohorts.map(([cohort, values]) => {
+    const traces = cohortEntries.map(([cohort, values]) => {
+      const percentValues = values.map((v) =>
+        v.totalPatientCount > 0 ? (v.patientCount / v.totalPatientCount) * 100 : 0
+      );
       return {
         x: values.map((v) => v.months),
-        y: values.map((v) => (v.patientCount / v.totalPatientCount) * 100),
+        y: percentValues,
         mode: 'lines+markers',
         name: cohort,
         line: { color: colors[cohort] || undefined, width: 2 },
         marker: { size: 6, color: colors[cohort] || undefined },
-        text: values.map(
-          (v) =>
-            `${cohort}<br>${((v.patientCount / v.totalPatientCount) * 100).toFixed(1)}% (${
-              v.patientCount
-            }/${v.totalPatientCount})`
-        ),
+        text: values.map((v, idx) => {
+          const percent = percentValues[idx];
+          const percentText =
+            typeof percent === 'number' && isFinite(percent) ? `${percent.toFixed(1)}%` : 'N/A';
+          return `${cohort}<br>${percentText}% (${v.patientCount}/${v.totalPatientCount})`;
+        }),
         hoverinfo: 'text+x',
       };
     });
@@ -73,6 +76,13 @@ export class LineplotService {
     };
 
     // clear and render
+    const targetElement = document.getElementById(elementId);
+    if (!targetElement) {
+      const errorMessage = `LineplotService: No DOM element found with id "${elementId}". Plot will not be rendered.`;
+      console.error(errorMessage);
+      alert(errorMessage);
+      return;
+    }
     Plotly.newPlot(elementId, traces, layout, config);
   }
 }
