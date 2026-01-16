@@ -16,32 +16,34 @@ export class LineplotService {
   ): void {
     // group data by cohort
     const cohortEntries = Array.from(
-      data.reduce((map, d) => {
-        if (!map.has(d.cohort)) {
-          map.set(d.cohort, []);
+      data.reduce((map, dataPoint) => {
+        if (!map.has(dataPoint.cohort)) {
+          map.set(dataPoint.cohort, []);
         }
-        map.get(d.cohort)!.push(d);
+        map.get(dataPoint.cohort)!.push(dataPoint);
         return map;
       }, new Map<string, LongitudinalData[]>())
     );
 
     // build traces
     const traces = cohortEntries.map(([cohort, values]) => {
-      const percentValues = values.map((v) =>
-        v.totalPatientCount > 0 ? (v.patientCount / v.totalPatientCount) * 100 : 0
+      const percentValues = values.map((dataPoint) =>
+        dataPoint.totalPatientCount > 0
+          ? (dataPoint.patientCount / dataPoint.totalPatientCount) * 100
+          : 0
       );
       return {
-        x: values.map((v) => v.months),
+        x: values.map((dataPoint) => dataPoint.months),
         y: percentValues,
         mode: 'lines+markers',
         name: cohort,
         line: { color: colors[cohort] || undefined, width: 2 },
         marker: { size: 6, color: colors[cohort] || undefined },
-        text: values.map((v, idx) => {
-          const percent = percentValues[idx];
+        text: values.map((dataPoint, index) => {
+          const percent = percentValues[index];
           const percentText =
             typeof percent === 'number' && isFinite(percent) ? `${percent.toFixed(1)}%` : 'N/A';
-          return `${cohort}<br>${percentText}% (${v.patientCount}/${v.totalPatientCount})`;
+          return `${cohort}<br>${percentText}% (${dataPoint.patientCount}/${dataPoint.totalPatientCount})`;
         }),
         hoverinfo: 'text+x',
       };
@@ -80,8 +82,7 @@ export class LineplotService {
     if (!targetElement) {
       const errorMessage = `LineplotService: No DOM element found with id "${elementId}". Plot will not be rendered.`;
       console.error(errorMessage);
-      alert(errorMessage);
-      return;
+      throw new Error(errorMessage);
     }
     Plotly.newPlot(elementId, traces, layout, config);
   }
