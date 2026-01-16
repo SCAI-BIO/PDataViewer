@@ -8,7 +8,7 @@ from api.dependencies import get_client
 router = APIRouter(prefix="/visualization", tags=["visualization"], dependencies=[Depends(get_client)])
 
 
-@router.post(
+@router.get(
     "/chords/",
     description="Generates links between mappings to visualize with chord diagram.",
 )

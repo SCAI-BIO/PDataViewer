@@ -22,7 +22,9 @@ export class ApiService {
       .set('cohort', cohort)
       .set('diagnosis', diagnosis);
     return this.http.get<number[]>(
-      `${this.apiUrl}/biomarkers/cohorts/${cohort}/diagnoses/${diagnosis}`,
+      `${this.apiUrl}/biomarkers/cohorts/${encodeURIComponent(
+        cohort
+      )}/diagnoses/${encodeURIComponent(diagnosis)}`,
       { params }
     );
   }
@@ -33,7 +35,7 @@ export class ApiService {
 
   fetchChordsData(modality: string): Observable<ChordData> {
     const params = new HttpParams().set('modality', modality);
-    return this.http.post<ChordData>(`${this.apiUrl}/visualization/chords/`, null, {
+    return this.http.get<ChordData>(`${this.apiUrl}/visualization/chords/`, {
       params,
     });
   }
@@ -61,7 +63,9 @@ export class ApiService {
   }
 
   fetchLongitudinalTable(tableName: string): Observable<LongitudinalData[]> {
-    return this.http.get<LongitudinalData[]>(`${this.apiUrl}/longitudinal/${tableName}`);
+    return this.http.get<LongitudinalData[]>(
+      `${this.apiUrl}/longitudinal/${encodeURIComponent(tableName)}`
+    );
   }
 
   fetchLongitudinalTableForCohort(
@@ -69,7 +73,9 @@ export class ApiService {
     cohortName: string
   ): Observable<LongitudinalData[]> {
     return this.http.get<LongitudinalData[]>(
-      `${this.apiUrl}/longitudinal/${tableName}/${cohortName}`
+      `${this.apiUrl}/longitudinal/${encodeURIComponent(tableName)}/${encodeURIComponent(
+        cohortName
+      )}`
     );
   }
 
