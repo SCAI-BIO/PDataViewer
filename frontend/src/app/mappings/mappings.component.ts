@@ -33,11 +33,11 @@ export class MappingsComponent implements OnInit {
 
   // Signals
   cohorts = signal<string[]>([]);
+  currentIndex = signal(0);
   modalities = signal<string[]>([]);
   dataChunks = signal<ChordData[]>([]);
   selectedModality = signal<string>('');
   isLoading = signal(false);
-  currentIndex = 0;
 
   constructor() {
     effect(() => {
@@ -58,12 +58,12 @@ export class MappingsComponent implements OnInit {
       )
       .subscribe({
         next: (v) => {
-          this.currentIndex = 0;
+          this.currentIndex.set(0);
           const chunks = this.chordService.chunkData(v, 40);
           this.dataChunks.set(chunks);
           this.cdr.detectChanges();
           setTimeout(() => {
-            this.chordService.createChordDiagrams(this.dataChunks(), this.currentIndex);
+            this.chordService.createChordDiagrams(this.dataChunks(), this.currentIndex());
           });
         },
         error: (err) => this.errorHandler.handleError(err, 'fetching chord data'),
@@ -91,9 +91,9 @@ export class MappingsComponent implements OnInit {
   }
 
   next(): void {
-    if (this.currentIndex < this.dataChunks().length - 1) {
-      this.currentIndex++;
-      this.chordService.createChordDiagrams(this.dataChunks(), this.currentIndex);
+    if (this.currentIndex() < this.dataChunks().length - 1) {
+      this.currentIndex.update((index) => index + 1);
+      this.chordService.createChordDiagrams(this.dataChunks(), this.currentIndex());
     }
   }
 
@@ -106,9 +106,9 @@ export class MappingsComponent implements OnInit {
   }
 
   previous(): void {
-    if (this.currentIndex > 0) {
-      this.currentIndex--;
-      this.chordService.createChordDiagrams(this.dataChunks(), this.currentIndex);
+    if (this.currentIndex() > 0) {
+      this.currentIndex.update((index) => index - 1);
+      this.chordService.createChordDiagrams(this.dataChunks(), this.currentIndex());
     }
   }
 }

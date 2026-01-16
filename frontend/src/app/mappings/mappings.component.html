@@ -54,13 +54,13 @@
   </div>
   } @if (dataChunks().length > 0 ) {
   <div class="navigation-buttons">
-    <button (click)="previous()" [disabled]="currentIndex === 0" class="button-style">
+    <button (click)="previous()" [disabled]="currentIndex() === 0" class="button-style">
       Previous
     </button>
-    <span>{{ currentIndex + 1 }} / {{ dataChunks().length }}</span>
+    <span>{{ currentIndex() + 1 }} / {{ dataChunks().length }}</span>
     <button
       (click)="next()"
-      [disabled]="currentIndex === dataChunks().length - 1"
+      [disabled]="currentIndex() === dataChunks().length - 1"
       class="button-style"
     >
       Next
