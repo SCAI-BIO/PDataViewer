@@ -1,11 +1,11 @@
 ---
 name: Documentation update request
-about: Request updates or corrections to project documentation, specifying what needs
+about:
+  Request updates or corrections to project documentation, specifying what needs
   to be changed and why.
 title: "[DOCUMENTATION]"
-labels: documentation
+labels: docs
 assignees: mehmetcanay
-
 ---
 
 ## Documentation Update

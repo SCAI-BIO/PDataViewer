@@ -1,11 +1,11 @@
 ---
 name: Question/Help request
-about: Ask questions or seek help regarding the project, including what you’ve tried
+about:
+  Ask questions or seek help regarding the project, including what you’ve tried
   and what you’re trying to achieve.
 title: "[HELP]"
 labels: question
 assignees: mehmetcanay
-
 ---
 
 ## Question/Help Request
