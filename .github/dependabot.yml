@@ -16,3 +16,12 @@ updates:
       all-dependencies:
         patterns:
           - "*"
+  - package-ecosystem: "docker"
+    directories:
+      - "/backend"
+      - "/frontend"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "docker"
