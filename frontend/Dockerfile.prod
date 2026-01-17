@@ -17,7 +17,7 @@ RUN npm install -g @angular/cli
 RUN ng build --configuration=production
 
 # SECOND STAGE: Serve the application using Nginx
-FROM nginx:1.29.1-alpine
+FROM nginx:1.29.4-alpine
 
 # Copy the built application from the previous stage
 COPY --from=build /app/dist/pdataviewer/browser /usr/share/nginx/html
