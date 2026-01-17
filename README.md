@@ -2,7 +2,7 @@
 
 <img src="./frontend/public/logos/logo_white.svg" width="100" alt="logo"/>
 
-![backend-tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/python-tests.yml/badge.svg) ![frontend-tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-tests.yml/badge.svg) ![version](https://img.shields.io/github/v/release/SCAI-BIO/PDataViewer) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![DOI](https://zenodo.org/badge/785700235.svg)](https://zenodo.org/doi/10.5281/zenodo.13629127) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9409/badge)](https://www.bestpractices.dev/projects/9409) [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8B%20%20%E2%97%8B-orange)](https://fair-software.eu)
+![backend-tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/python-tests.yml/badge.svg) ![frontend-tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-tests.yml/badge.svg) ![version](https://img.shields.io/github/v/release/SCAI-BIO/PDataViewer) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![DOI](https://zenodo.org/badge/785700235.svg)](https://zenodo.org/doi/10.5281/zenodo.13629127)
 
 PDataViewer is a web application that lets you explore the PD data landscape and identify cohort datasets that suit your research needs.
 
