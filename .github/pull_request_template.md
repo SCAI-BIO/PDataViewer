@@ -6,7 +6,7 @@ A brief summary of the changes and their purpose.
 **Related Issue**  
 Link to the issue(s) this PR addresses (e.g., `#123`).
 
-**Type of Change**  
+**Type of Change**
 
 - [ ] Bugfix
 - [ ] New Feature
@@ -14,7 +14,7 @@ Link to the issue(s) this PR addresses (e.g., `#123`).
 - [ ] Refactoring
 - [ ] Other (please specify):
 
-**Proposed Changes**  
+**Proposed Changes**
 
 - Bullet points outlining the main changes made in this PR.
 
@@ -24,7 +24,7 @@ Instructions or steps to test the changes made.
 **Screenshots**  
 (If applicable) Add screenshots to help explain your changes.
 
-**Checklist**  
+**Checklist**
 
 - [ ] My code follows the project's coding style.
 - [ ] I have tested my changes locally.

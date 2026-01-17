@@ -1,11 +1,11 @@
 ---
 name: General issue
-about: Report any general issue or provide feedback on the project, including a summary,
+about:
+  Report any general issue or provide feedback on the project, including a summary,
   details, and expected vs. actual outcomes.
 title: "[GENERAL]"
-labels: ''
+labels: ""
 assignees: mehmetcanay
-
 ---
 
 ## Issue Title

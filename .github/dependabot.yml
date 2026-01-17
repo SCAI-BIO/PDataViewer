@@ -1,21 +1,33 @@
 version: 2
 updates:
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "ci/cd"
   - package-ecosystem: "uv"
-    directory: "/backend" 
+    directory: "/backend"
     schedule:
       interval: "weekly"
     groups:
       all-dependencies:
         patterns:
           - "*"
+    labels:
+      - "chore"
+      - "python:uv"
   - package-ecosystem: "npm"
-    directory: "/frontend" 
+    directory: "/frontend"
     schedule:
       interval: "weekly"
     groups:
       all-dependencies:
         patterns:
           - "*"
+    labels:
+      - "chore"
+      - "typescript"
   - package-ecosystem: "docker"
     directories:
       - "/backend"
@@ -23,5 +35,5 @@ updates:
     schedule:
       interval: "weekly"
     labels:
-      - "dependencies"
+      - "chore"
       - "docker"
