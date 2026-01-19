@@ -1,0 +1,53 @@
+{
+  "creators": [
+    {
+      "name": "Ay, Mehmet Can",
+      "affiliation": "Fraunhofer Institute for Algorithms and Scientific Computing SCAI",
+      "orcid": "https://orcid.org/0000-0002-2977-7695"
+    },
+    {
+      "name": "Adams, Tim",
+      "affiliation": "Fraunhofer Institute for Algorithms and Scientific Computing SCAI",
+      "orcid": "https://orcid.org/0000-0002-2823-0102"
+    },
+    {
+      "name": "Salimi, Yasamin",
+      "affiliation": "Fraunhofer Institute for Algorithms and Scientific Computing SCAI",
+      "orcid": "https://orcid.org/0000-0002-7773-7786"
+    },
+    {
+      "name": "Niazpoor, Marjan",
+      "affiliation": "Fraunhofer Institute for Algorithms and Scientific Computing SCAI",
+      "orcid": "https://orcid.org/0009-0000-1455-6569"
+    },
+    {
+      "name": "Jacobs, Marc",
+      "affiliation": "Fraunhofer Institute for Algorithms and Scientific Computing SCAI",
+      "orcid": "https://orcid.org/0000-0003-4153-3930"
+    },
+    {
+      "name": "Hofmann-Apitius, Martin",
+      "affiliation": "Fraunhofer Institute for Algorithms and Scientific Computing SCAI",
+      "orcid": "https://orcid.org/0000-0001-9012-6720"
+    }
+  ],
+  "title": "PDataViewer",
+  "description": "A web application for Parkinson's disease cohort landscape visualization.",
+  "access_right": "open",
+  "related_identifiers": [
+    {
+      "identifier": "10.1038/s41598-025-06447-2",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-article"
+    }
+  ],
+  "keywords": [
+    "Parkinson's disease",
+    "Neurodegeneration",
+    "Interoperability",
+    "FAIR principles"
+  ],
+  "license": "Apache-2.0",
+  "upload_type": "software",
+  "language": "eng"
+}
