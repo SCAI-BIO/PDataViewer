@@ -3,55 +3,52 @@
 
 cff-version: 1.2.0
 title: PDataViewer
+message: If you use this software, please cite it using the metadata from this file.
 type: software
-message: If you use this software, please cite it as below.
-license: Apache-2.0
-language: en
 authors:
   - given-names: Mehmet Can
     family-names: Ay
     email: mehmet.ay@scai.fraunhofer.de
     affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
-    orcid: https://orcid.org/0000-0002-2977-7695
+    orcid: "https://orcid.org/0000-0002-2977-7695"
   - given-names: Tim
     family-names: Adams
     email: tim.adams@scai.fraunhofer.de
     affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
-    orcid: https://orcid.org/0000-0002-2823-0102
+    orcid: "https://orcid.org/0000-0002-2823-0102"
   - given-names: Yasamin
     family-names: Salimi
     email: yasamin.salimi@scai.fraunhofer.de
     affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
-    orcid: https://orcid.org/0000-0002-7773-7786
+    orcid: "https://orcid.org/0000-0002-7773-7786"
   - given-names: Marjan
     family-names: Niazpoor
     email: marjan.niazpoor@scai-extern.fraunhofer.de
     affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
-    orcid: https://orcid.org/0009-0000-1455-6569
+    orcid: "https://orcid.org/0009-0000-1455-6569"
   - given-names: Marc
     family-names: Jacobs
     email: marc.jacobs@scai.fraunhofer.de
     affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
-    orcid: https://orcid.org/0000-0003-4153-3930
+    orcid: "https://orcid.org/0000-0003-4153-3930"
   - given-names: Martin
     family-names: Hofmann-Apitius
     email: martin.hofmann-apitius@scai.fraunhofer.de
     affiliation: Fraunhofer Institute for Algorithms and Scientific Computing
-    orcid: https://orcid.org/0000-0001-9012-6720
+    orcid: "https://orcid.org/0000-0001-9012-6720"
 identifiers:
   - type: doi
     value: 10.5281/zenodo.13629128
     description: Zenodo
-repository-code: https://github.com/SCAI-BIO/PDataViewer
-abstract: >-
-  A web application for Parkinson's disease cohort landscape
-  visualization.
+repository-code: "https://github.com/SCAI-BIO/PDataViewer"
+url: "https://pdata.scai.fraunhofer.de/#/"
+abstract: A web application for Parkinson's disease cohort landscape visualization.
 keywords:
   - Parkinson's disease
   - Neurodegeneration
   - Interoperability
   - FAIR principles
-
+license: Apache-2.0
 preferred-citation:
   type: article
   authors:
@@ -67,7 +64,9 @@ preferred-citation:
       family-names: Jacobs
     - given-names: Martin
       family-names: Hofmann-Apitius
-  title: Evaluating language model embeddings for Parkinson's disease cohort harmonization using a novel manually curated variable mapping schema
+  title: >-
+    Evaluating language model embeddings for Parkinson's disease cohort harmonization
+    using a novel manually curated variable mapping schema
   journal: Scientific Reports
   year: 2025
   doi: 10.1038/s41598-025-06447-2
