@@ -12,7 +12,7 @@ export class LineplotService {
     data: LongitudinalData[],
     colors: Record<string, string> = {},
     title: string,
-    elementId: string
+    elementId: string,
   ): void {
     // group data by cohort
     const cohortEntries = Array.from(
@@ -22,7 +22,7 @@ export class LineplotService {
         }
         map.get(dataPoint.cohort)!.push(dataPoint);
         return map;
-      }, new Map<string, LongitudinalData[]>())
+      }, new Map<string, LongitudinalData[]>()),
     );
 
     // build traces
@@ -30,7 +30,7 @@ export class LineplotService {
       const percentValues = values.map((dataPoint) =>
         dataPoint.totalPatientCount > 0
           ? (dataPoint.patientCount / dataPoint.totalPatientCount) * 100
-          : 0
+          : 0,
       );
       return {
         x: values.map((dataPoint) => dataPoint.months),
@@ -43,7 +43,7 @@ export class LineplotService {
           const percent = percentValues[index];
           const percentText =
             typeof percent === 'number' && isFinite(percent) ? `${percent.toFixed(1)}%` : 'N/A';
-          return `${cohort}<br>${percentText}% (${dataPoint.patientCount}/${dataPoint.totalPatientCount})`;
+          return `${cohort}<br>${percentText} (${dataPoint.patientCount}/${dataPoint.totalPatientCount})`;
         }),
         hoverinfo: 'text+x',
       };
