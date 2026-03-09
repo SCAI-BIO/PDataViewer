@@ -6,18 +6,18 @@ from fastapi import APIRouter, Depends
 from api.dependencies import get_client
 from api.model import CohortMetadata
 
-router = APIRouter(prefix="/cohorts", tags=["cohorts"], dependencies=[Depends(get_client)])
+router = APIRouter(prefix="/cohorts", tags=["cohorts"])
 
 
 @router.get("/", description="Get all cohort names")
-def get_cohorts(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
-    cohorts = database.get_cohorts()
+async def get_cohorts(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
+    cohorts = await database.get_cohorts()
     return [cohort.name for cohort in cohorts]
 
 
 @router.get("/metadata", description="Get cohort metadata")
-def get_metadata(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
-    cohort_metadata = database.get_cohorts()
+async def get_metadata(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
+    cohort_metadata = await database.get_cohorts()
 
     return {
         cm.name: CohortMetadata(

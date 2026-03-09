@@ -3,6 +3,8 @@ services:
     image: postgres:18
     container_name: pdataviewer-postgres
     environment:
+      USER_NAME: admin
+      PASSWORD: admin
       POSTGRES_USER: testuser
       POSTGRES_PASSWORD: testpass
       POSTGRES_DB: testdb
