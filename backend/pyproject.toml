@@ -33,7 +33,7 @@ dependencies = [
     "fastapi[standard]>=0.128.0",
     "numpy>=2.4.0",
     "pandas>=2.3.3",
-    "psycopg>=3.3.3",
+    "psycopg[binary]>=3.3.3",
     "sqlalchemy>=2.0.45",
 ]
 
