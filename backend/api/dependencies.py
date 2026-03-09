@@ -15,7 +15,9 @@ POSTGRES_DB = os.getenv("POSTGRES_DB", "testdb")
 connection_string = (
     f"postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 )
-engine = create_async_engine(connection_string, pool_size=10, max_overflow=20, pool_timeout=30)
+engine = create_async_engine(
+    connection_string, pool_size=10, max_overflow=20, pool_timeout=30, pool_pre_ping=True, pool_recycle=1800
+)
 AsyncSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
 security = HTTPBasic()
 
