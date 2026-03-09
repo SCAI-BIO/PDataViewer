@@ -480,26 +480,32 @@ class PostgreSQLRepository:
             cohort_name = str(getattr(row, "cohort", "")).strip()
             if cohort_name not in cohort_map:
                 continue
-
-            records_to_insert.append(
-                {
-                    "variable": variable_name,
-                    "participant_id": int(getattr(row, "participantNumber", 0)),
-                    "cohort_id": cohort_map[cohort_name],
-                    "measurement": float(getattr(row, "measurement", 0.0)),
-                    "diagnosis": str(getattr(row, "diagnosis", "")),
-                }
-            )
+            try:
+                records_to_insert.append(
+                    {
+                        "variable": variable_name,
+                        "participant_id": int(getattr(row, "participantNumber", 0)),
+                        "cohort_id": cohort_map[cohort_name],
+                        "measurement": float(getattr(row, "measurement", 0.0)),
+                        "diagnosis": str(getattr(row, "diagnosis", "")),
+                    }
+                )
+            except ValueError as e:
+                print(f"Skipping row due to data format error: {row}. Error: {e}")
+                continue
 
         if not records_to_insert:
             return
 
-        stmt = (
-            pg_insert(BiomarkerMeasurement)
-            .values(records_to_insert)
-            .on_conflict_do_nothing(constraint="uq_participant_cohort_variable")
-        )
-        await self.session.execute(stmt)
+        batch_size = 5000
+        for i in range(0, len(records_to_insert), batch_size):
+            batch = records_to_insert[i : i + batch_size]
+            stmt = (
+                pg_insert(BiomarkerMeasurement)
+                .values(batch)
+                .on_conflict_do_nothing(constraint="uq_participant_cohort_variable")
+            )
+            await self.session.execute(stmt)
         await self.session.commit()
 
     async def get_chord_diagram(self, modality: str) -> dict:
