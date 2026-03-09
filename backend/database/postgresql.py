@@ -6,9 +6,10 @@ from typing import Optional, cast
 import pandas as pd
 from argon2 import PasswordHasher
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, select
+from sqlalchemy import delete, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
+from sqlalchemy.orm import selectinload
 
 from database.models import (
     Base,
@@ -29,7 +30,7 @@ ph = PasswordHasher()
 
 
 class PostgreSQLRepository:
-    def __init__(self, connection_string: str, pool_size: int = 10, max_overflow: int = 20, pool_timeout: int = 30):
+    def __init__(self, session: AsyncSession, engine: Optional[AsyncEngine] = None):
         """Initialize the PostgreSQL database engine and session.
 
         :param connection_string: SQLAlchemy-compatible PostgreSQL connection URI.
@@ -37,24 +38,17 @@ class PostgreSQLRepository:
         :param max_overflow: Maximum overflow connections beyond pool_size, defaults to 20
         :param pool_timeout: Maximum wait time (in seconds) for a connection from the pool, defaults to 30
         """
-        self.engine = create_engine(
-            connection_string, pool_size=pool_size, max_overflow=max_overflow, pool_timeout=pool_timeout
-        )
+        self.session = session
+        self.engine = engine
 
-        Base.metadata.create_all(self.engine)
-        Session = sessionmaker(bind=self.engine, autoflush=False)
-        self.session = Session()
-        if USER_NAME and PASSWORD:
-            self.add_user(USER_NAME, PASSWORD)
-
-    def __enter__(self):
-        """Enter the runtime context for use in a `with` statement.
+    async def __aenter__(self):
+        """Enter the runtime context for use in an `asycn with` statement.
 
         :return: The current repository instance
         """
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    async def __aexit__(self, exc_type, exc_value, traceback):
         """Exit the runtime context. Rolls back session on error and closes it.
 
         :param exc_type: Exception type if raised.
@@ -62,30 +56,31 @@ class PostgreSQLRepository:
         :param traceback: Exception traceback if raise.
         """
         if exc_type:
-            self.session.rollback()
-        self.close()
+            await self.session.rollback()
+        await self.close()
 
-    def get_cohorts(self) -> list[Cohort]:
+    async def get_cohorts(self) -> list[Cohort]:
         """Retrieve all cohort metadata from the database.
 
         :return: List of all cohort metadata.
         """
-        return self.session.query(Cohort).all()
+        result = await self.session.execute(select(Cohort))
+        return list(result.scalars().all())
 
-    def get_cohort(self, name: str) -> Cohort:
+    async def get_cohort(self, name: str) -> Cohort:
         """Retrieve a cohort metadata from the database.
 
         :param name: Name of the cohort.
         :raises ValueError: If no model with the given name exists.
         :return: The corresponding cohort metadata.
         """
-
-        cohort = self.session.query(Cohort).filter_by(name=name).first()
+        result = await self.session.execute(select(Cohort).filter_by(name=name))
+        cohort = result.scalar_one_or_none()
         if cohort is None:
             raise ValueError(f"Cohort '{name}' not found.")
         return cohort
 
-    def get_concepts(
+    async def get_concepts(
         self, cohort_name: Optional[str] = None, source_type: Optional[ConceptSource] = None
     ) -> list[Concept]:
         """Retrieve all concepts from the database.
@@ -94,26 +89,25 @@ class PostgreSQLRepository:
         :param source_type: Optional source type of concept, defaults to None.
         :return: List of all concepts.
         """
-        query = self.session.query(Concept)
+        query = select(Concept)
         if cohort_name:
-            cohort = self.get_cohort(cohort_name)
+            cohort = await self.get_cohort(cohort_name)
             query = query.filter_by(cohort_id=cohort.id)
         if source_type:
             query = query.filter_by(source_type=source_type)
-        concepts = query.all()
-        return concepts
 
-    def get_modalities(self) -> list[str]:
+        result = await self.session.execute(query)
+        return list(result.scalars().all())
+
+    async def get_modalities(self) -> list[str]:
         """Retrieve all unique modalities from the mapping table.
 
         :return: List of unique modality names.
         """
-        modalities = list(
-            self.session.execute(select(Mapping.modality).distinct().order_by(Mapping.modality)).scalars().all()
-        )
-        return modalities
+        result = await self.session.execute(select(Mapping.modality).distinct().order_by(Mapping.modality))
+        return list(result.scalars().all())
 
-    def get_longitudinal_measurements(
+    async def get_longitudinal_measurements(
         self, variable: Optional[str] = None, cohort_name: Optional[str] = None
     ) -> list[LongitudinalMeasurement]:
         """Retrieve all longitudinal measurements
@@ -122,13 +116,17 @@ class PostgreSQLRepository:
         :param cohort_name: Optional name of a cohort, defaults to None.
         :return: List of all longitudinal measurements in the database.
         """
-        query = self.session.query(LongitudinalMeasurement)
+        query = select(LongitudinalMeasurement).options(selectinload(LongitudinalMeasurement.cohort))
+
         if variable:
             query = query.filter(LongitudinalMeasurement.variable == variable)
         if cohort_name:
-            cohort = self.get_cohort(cohort_name)
+            cohort = await self.get_cohort(cohort_name)
             query = query.filter(LongitudinalMeasurement.cohort_id == cohort.id)
-        longitudinal_measurements = query.all()
+
+        result = await self.session.execute(query)
+        longitudinal_measurements = result.scalars().all()
+
         results = []
         for lm in longitudinal_measurements:
             results.append(
@@ -143,21 +141,17 @@ class PostgreSQLRepository:
             )
         return results
 
-    def get_longitudinal_measurement_variables(self) -> list[str]:
+    async def get_longitudinal_measurement_variables(self) -> list[str]:
         """Retrieve all unique longitudinal measurement variables from the LongitudinalMeasurement table.
 
         :return: List of unique longitudinal measurement varialbes.
         """
-        longitudinal_measurement_variables = list(
-            self.session.execute(
-                select(LongitudinalMeasurement.variable).distinct().order_by(LongitudinalMeasurement.variable)
-            )
-            .scalars()
-            .all()
+        result = await self.session.execute(
+            select(LongitudinalMeasurement.variable).distinct().order_by(LongitudinalMeasurement.variable)
         )
-        return longitudinal_measurement_variables
+        return list(result.scalars().all())
 
-    def get_biomarker_measurements(
+    async def get_biomarker_measurements(
         self, variable: Optional[str] = None, cohort_name: Optional[str] = None, diagnosis: Optional[str] = None
     ) -> list[BiomarkerMeasurement]:
         """Retrieve all biomarker measurements
@@ -167,72 +161,61 @@ class PostgreSQLRepository:
         :param diagnosis: Optional diagnosis of participants, defaults to None.
         :return: List of all biomarker measurements in the database.
         """
-        query = self.session.query(BiomarkerMeasurement)
+        query = select(BiomarkerMeasurement)
         if variable:
             query = query.filter(BiomarkerMeasurement.variable == variable)
         if cohort_name:
-            cohort = self.get_cohort(cohort_name)
+            cohort = await self.get_cohort(cohort_name)
             query = query.filter(BiomarkerMeasurement.cohort_id == cohort.id)
         if diagnosis:
             query = query.filter(BiomarkerMeasurement.diagnosis == diagnosis)
-        biomarker_measurements = query.all()
-        return biomarker_measurements
 
-    def get_biomarker_variables(self) -> list[str]:
+        result = await self.session.execute(query)
+        return list(result.scalars().all())
+
+    async def get_biomarker_variables(self) -> list[str]:
         """Retrieve all unique biomarker variables from the BiomarkerMeasurement table.
 
         :return: List of unique biomarker names.
         """
-        biomarkers = list(
-            self.session.execute(
-                select(BiomarkerMeasurement.variable).distinct().order_by(BiomarkerMeasurement.variable)
-            )
-            .scalars()
-            .all()
+        result = await self.session.execute(
+            select(BiomarkerMeasurement.variable).distinct().order_by(BiomarkerMeasurement.variable)
         )
-        return biomarkers
+        return list(result.scalars().all())
 
-    def get_cohorts_for_biomarker(self, variable: str) -> list[str]:
+    async def get_cohorts_for_biomarker(self, variable: str) -> list[str]:
         """Retrieve all unique cohort names for a biomarker from the BiomarkerMeasurement table.
 
         :param variable: Name of the biomarker variable
         :return: List of unique cohort names.
         """
-        cohorts = list(
-            self.session.execute(
-                select(Cohort.name)
-                .join(BiomarkerMeasurement, Cohort.id == BiomarkerMeasurement.cohort_id)
-                .where(BiomarkerMeasurement.variable == variable)
-                .distinct()
-                .order_by(Cohort.name)
-            )
-            .scalars()
-            .all()
+        result = await self.session.execute(
+            select(Cohort.name)
+            .join(BiomarkerMeasurement, Cohort.id == BiomarkerMeasurement.cohort_id)
+            .where(BiomarkerMeasurement.variable == variable)
+            .distinct()
+            .order_by(Cohort.name)
         )
-        return cohorts
+        return list(result.scalars().all())
 
-    def get_diagnoses_for_biomarker_in_cohort(self, variable: str, cohort_name: str) -> list[str]:
+    async def get_diagnoses_for_biomarker_in_cohort(self, variable: str, cohort_name: str) -> list[str]:
         """Retrieve all unique diagnoses for a biomarker within a given cohort.
 
         :param variable: Name of the biomarker variable.
         :param cohort_name: Name of the cohort.
         :return: List of unique diagnoses.
         """
-        diagnoses = (
-            self.session.execute(
-                select(BiomarkerMeasurement.diagnosis)
-                .join(Cohort, Cohort.id == BiomarkerMeasurement.cohort_id)
-                .where(BiomarkerMeasurement.variable == variable)
-                .where(Cohort.name == cohort_name)
-                .distinct()
-                .order_by(BiomarkerMeasurement.diagnosis)
-            )
-            .scalars()
-            .all()
+        result = await self.session.execute(
+            select(BiomarkerMeasurement.diagnosis)
+            .join(Cohort, Cohort.id == BiomarkerMeasurement.cohort_id)
+            .where(BiomarkerMeasurement.variable == variable)
+            .where(Cohort.name == cohort_name)
+            .distinct()
+            .order_by(BiomarkerMeasurement.diagnosis)
         )
-        return list(diagnoses)
+        return list(result.scalars().all())
 
-    def get_user(self, user_name: str, password: str) -> User:
+    async def get_user(self, user_name: str, password: str) -> User:
         """Retrieve a user from the database.
 
         :param user_name: Name of the user.
@@ -240,35 +223,52 @@ class PostgreSQLRepository:
         :raises ValueError: Incorrect user name or password.
         :return: The authenticated user.
         """
-        user = self.session.query(User).filter_by(name=user_name).first()
+        result = await self.session.execute(select(User).filter_by(name=user_name))
+        user = result.scalar_one_or_none()
         if user is None or not ph.verify(user.hashed_password, password):
             raise ValueError("Incorrect user_name or password.")
         return user
 
-    def add_user(self, user_name: str, password: str) -> User:
+    async def add_user(self, user_name: str, password: str) -> User:
         """Add a user.
 
         :param user_name: The name of the user.
         :param password: The password of the user.
         """
         # Skip if user already exists
-        user = self.session.query(User).filter_by(name=user_name).first()
+        result = await self.session.execute(select(User).filter_by(name=user_name))
+        user = result.scalar_one_or_none()
         if user:
             return user
 
         hashed_password = ph.hash(password)
         user = User(name=user_name, hashed_password=hashed_password)
         self.session.add(user)
-        self.session.commit()
+        await self.session.commit()
         return user
 
-    def import_metadata(self, csv_data: bytes):
+    async def initialize_default_user(self):
+        """Create a default user if credentials are provided in the environment."""
+        if USER_NAME and PASSWORD:
+            await self.session.execute(delete(User).where(User.name != USER_NAME))
+            result = await self.session.execute(select(User).filter_by(name=USER_NAME))
+            user = result.scalar_one_or_none()
+
+            if user:
+                user.hashed_password = ph.hash(PASSWORD)
+            else:
+                hashed_password = ph.hash(PASSWORD)
+                user = User(name=USER_NAME, hashed_password=hashed_password)
+                self.session.add(user)
+
+            await self.session.commit()
+
+    async def import_metadata(self, csv_data: bytes):
         """Import cohort metadata via a CSV file.
 
         :param csv_data: Cohort metadata CSV file content in bytes.
         """
         df = pd.read_csv(io.BytesIO(csv_data))
-
         required_columns = {
             "cohort",
             "participants",
@@ -313,13 +313,11 @@ class PostgreSQLRepository:
         if not cohorts_data:
             return
 
-        stmt = pg_insert(Cohort).values(cohorts_data)
-        stmt = stmt.on_conflict_do_nothing(index_elements=["name"])
+        stmt = pg_insert(Cohort).values(cohorts_data).on_conflict_do_nothing(index_elements=["name"])
+        await self.session.execute(stmt)
+        await self.session.commit()
 
-        self.session.execute(stmt)
-        self.session.commit()
-
-    def import_cdm(
+    async def import_cdm(
         self,
         csv_data: bytes,
         modality: str,
@@ -340,25 +338,27 @@ class PostgreSQLRepository:
         :param modality: Modality of the mappings.
         """
         df = pd.read_csv(io.BytesIO(csv_data))
+        cohorts = await self.get_cohorts()
+        cohort_map = {c.name: c.id for c in cohorts}
 
-        cohort_map = {c.name: c.id for c in self.session.query(Cohort).all()}
         cdm_vars = set(df["Feature"].dropna().astype(str).str.strip())
         cdm_concepts_data = [
             {"variable": var, "source_type": ConceptSource.CDM, "cohort_id": None} for var in cdm_vars if var
         ]
 
         if cdm_concepts_data:
-            stmt = pg_insert(Concept).values(cdm_concepts_data)
-            stmt = stmt.on_conflict_do_nothing(constraint="uq_variable_source_cohort")
-            self.session.execute(stmt)
-            self.session.commit()
+            stmt = (
+                pg_insert(Concept)
+                .values(cdm_concepts_data)
+                .on_conflict_do_nothing(constraint="uq_variable_source_cohort")
+            )
+            await self.session.execute(stmt)
+            await self.session.commit()
 
-        cdm_concept_map = {
-            c.variable: c.id
-            for c in self.session.query(Concept)
-            .filter(Concept.source_type == ConceptSource.CDM, Concept.variable.in_(cdm_vars))
-            .all()
-        }
+        result = await self.session.execute(
+            select(Concept).filter(Concept.source_type == ConceptSource.CDM, Concept.variable.in_(cdm_vars))
+        )
+        cdm_concept_map = {c.variable: c.id for c in result.scalars().all()}
 
         cohort_concepts_to_create = []
         raw_mappings = []
@@ -378,7 +378,6 @@ class PostgreSQLRepository:
 
                 # Split comma-separated variables
                 values = [v.strip() for v in str(cell_value).split(",") if v.strip()]
-
                 for val in values:
                     cohort_concepts_to_create.append(
                         {"variable": val, "source_type": ConceptSource.COHORT, "cohort_id": cohort_map[col]}
@@ -389,24 +388,23 @@ class PostgreSQLRepository:
             # Deduplicate dicts (concepts might appear multiple times in CSV)
             # A set of tuples is used for deduplication
             unique_concepts = {(d["variable"], d["cohort_id"]): d for d in cohort_concepts_to_create}.values()
-
-            stmt = pg_insert(Concept).values(list(unique_concepts))
-            stmt = stmt.on_conflict_do_nothing(constraint="uq_variable_source_cohort")
-            self.session.execute(stmt)
-            self.session.commit()
+            stmt = (
+                pg_insert(Concept)
+                .values(list(unique_concepts))
+                .on_conflict_do_nothing(constraint="uq_variable_source_cohort")
+            )
+            await self.session.execute(stmt)
+            await self.session.commit()
 
         # Fetch IDs for Cohort Concepts
         cohort_ids_involved = [cohort_map[c] for c in valid_cohort_columns]
-        target_concept_map = {}
 
-        target_concepts_db = (
-            self.session.query(Concept)
-            .filter(Concept.cohort_id.in_(cohort_ids_involved), Concept.source_type == ConceptSource.COHORT)
-            .all()
+        result = await self.session.execute(
+            select(Concept).filter(
+                Concept.cohort_id.in_(cohort_ids_involved), Concept.source_type == ConceptSource.COHORT
+            )
         )
-
-        for c in target_concepts_db:
-            target_concept_map[(c.variable, c.cohort_id)] = c.id
+        target_concept_map = {(c.variable, c.cohort_id): c.id for c in result.scalars().all()}
 
         mappings_data = []
         for cdm_var, cohort_name, cohort_var in raw_mappings:
@@ -420,13 +418,15 @@ class PostgreSQLRepository:
         if mappings_data:
             # Deduplicate mappings
             unique_mappings = {(m["source_id"], m["target_id"], m["modality"]): m for m in mappings_data}.values()
+            stmt = (
+                pg_insert(Mapping)
+                .values(list(unique_mappings))
+                .on_conflict_do_nothing(constraint="uq_mapping_source_target_modality")
+            )
+            await self.session.execute(stmt)
+            await self.session.commit()
 
-            stmt = pg_insert(Mapping).values(list(unique_mappings))
-            stmt = stmt.on_conflict_do_nothing(constraint="uq_mapping_source_target_modality")
-            self.session.execute(stmt)
-            self.session.commit()
-
-    def import_longitudinal_measurements(self, csv_data: bytes, variable_name: str):
+    async def import_longitudinal_measurements(self, csv_data: bytes, variable_name: str):
         """Import longitudinal measurements from a CSV file.
 
         :param csv_data: Longitudinal measurements CSV file content in bytes.
@@ -436,7 +436,9 @@ class PostgreSQLRepository:
         if required_columns - set(df.columns):
             raise ValueError(f"Missing columns: {required_columns - set(df.columns)}")
 
-        cohort_map = {c.name: c.id for c in self.session.query(Cohort).all()}
+        cohorts = await self.get_cohorts()
+        cohort_map = {c.name: c.id for c in cohorts}
+
         batch_data = []
         for row in df.itertuples(index=False):
             cohort_name = str(row.cohort).strip()
@@ -456,53 +458,72 @@ class PostgreSQLRepository:
         if not batch_data:
             return
 
-        stmt = pg_insert(LongitudinalMeasurement).values(batch_data)
-        stmt = stmt.on_conflict_do_nothing(constraint="uq_variable_months_cohort")
-        self.session.execute(stmt)
-        self.session.commit()
+        stmt = (
+            pg_insert(LongitudinalMeasurement)
+            .values(batch_data)
+            .on_conflict_do_nothing(constraint="uq_variable_months_cohort")
+        )
+        await self.session.execute(stmt)
+        await self.session.commit()
 
-    def import_biomarker_measurements(self, csv_data: bytes, variable_name: str):
+    async def import_biomarker_measurements(self, csv_data: bytes, variable_name: str):
         """Import biomarker measurements from a CSV file.
 
         :param csv_data: Biomarker measurements CSV file content in bytes.
         """
         df = pd.read_csv(io.BytesIO(csv_data))
-
-        cohort_map = {c.name: c.id for c in self.session.query(Cohort).all()}
+        cohorts = await self.get_cohorts()
+        cohort_map = {c.name: c.id for c in cohorts}
 
         records_to_insert = []
-        for _, row in df.iterrows():
-            cohort_name = str(row["cohort"]).strip()
+        for row in df.itertuples(index=False):
+            cohort_name = str(getattr(row, "cohort", "")).strip()
             if cohort_name not in cohort_map:
-                continue  # Or handle error
-
-            records_to_insert.append(
-                {
-                    "variable": variable_name,
-                    "participant_id": int(row["participantNumber"]),
-                    "cohort_id": cohort_map[cohort_name],
-                    "measurement": float(row["measurement"]),
-                    "diagnosis": str(row["diagnosis"]),
-                }
-            )
+                continue
+            try:
+                records_to_insert.append(
+                    {
+                        "variable": variable_name,
+                        "participant_id": int(getattr(row, "participantNumber", 0)),
+                        "cohort_id": cohort_map[cohort_name],
+                        "measurement": float(getattr(row, "measurement", 0.0)),
+                        "diagnosis": str(getattr(row, "diagnosis", "")),
+                    }
+                )
+            except ValueError as e:
+                print(f"Skipping row due to data format error: {row}. Error: {e}")
+                continue
 
         if not records_to_insert:
             return
 
-        stmt = pg_insert(BiomarkerMeasurement).values(records_to_insert)
+        batch_size = 5000
+        for i in range(0, len(records_to_insert), batch_size):
+            batch = records_to_insert[i : i + batch_size]
+            stmt = (
+                pg_insert(BiomarkerMeasurement)
+                .values(batch)
+                .on_conflict_do_nothing(constraint="uq_participant_cohort_variable")
+            )
+            await self.session.execute(stmt)
+        await self.session.commit()
 
-        stmt = stmt.on_conflict_do_nothing(constraint="uq_participant_cohort_variable")
-
-        self.session.execute(stmt)
-        self.session.commit()
-
-    def get_chord_diagram(self, modality: str) -> dict:
+    async def get_chord_diagram(self, modality: str) -> dict:
         """Build a chord diagram data based on the current mappings.
 
         :param modality: The modality of the mappings.
         :return: A dictionary containing the nodes and the links of the chord diagram.
         """
-        cdm_concepts = self.session.query(Concept).filter(Concept.source_type == ConceptSource.CDM).all()
+        stmt = (
+            select(Concept)
+            .filter(Concept.source_type == ConceptSource.CDM)
+            .options(
+                selectinload(Concept.mappings_as_source).selectinload(Mapping.target).selectinload(Concept.cohort),
+                selectinload(Concept.mappings_as_target).selectinload(Mapping.source).selectinload(Concept.cohort),
+            )
+        )
+        result = await self.session.execute(stmt)
+        cdm_concepts = result.scalars().all()
 
         node_seen: set[tuple[str, str]] = set()  # (name, group)
         link_seen: set[tuple[str, str]] = set()  # (min_name, max_name) for undirected
@@ -569,7 +590,7 @@ class PostgreSQLRepository:
 
         return {"nodes": nodes, "links": links}
 
-    def rank_cohorts(self, variables: list[str]) -> pd.DataFrame:
+    async def rank_cohorts(self, variables: list[str]) -> pd.DataFrame:
         """Rank cohorts based on availability of requested CDM variables.
 
         :param variables: A list of CDM variable names.
@@ -585,11 +606,16 @@ class PostgreSQLRepository:
         cohort_stats: dict[str, CohortStats] = defaultdict(lambda: CohortStats(found=0, missing=[]))
 
         for var in variables:
-            cdm_concept = (
-                self.session.query(Concept)
+            stmt = (
+                select(Concept)
                 .filter(Concept.variable == var, Concept.source_type == ConceptSource.CDM)
-                .first()
+                .options(
+                    selectinload(Concept.mappings_as_source).selectinload(Mapping.target).selectinload(Concept.cohort)
+                )
             )
+            result = await self.session.execute(stmt)
+            cdm_concept = result.scalar_one_or_none()
+
             if not cdm_concept:
                 raise ValueError(f"Requested CDM variable '{var}' does not exist in the database.")
 
@@ -601,7 +627,8 @@ class PostgreSQLRepository:
                 if m.target and m.target.cohort:
                     cohort_stats[m.target.cohort.name]["found"] += 1
 
-            for cohort in self.get_cohorts():
+            cohorts = await self.get_cohorts()
+            for cohort in cohorts:
                 if cohort.id not in mapped_cohort_ids:
                     cohort_stats[cohort.name]["missing"].append(var)
 
@@ -618,21 +645,24 @@ class PostgreSQLRepository:
             rows.append({"cohort": cohort_name, "found": found_str, "missing": missing_vars})
 
         df = pd.DataFrame(rows)
-        df.sort_values(by="found", ascending=False, inplace=True)
-        df.reset_index(drop=True, inplace=True)
-
+        if not df.empty:
+            df.sort_values(by="found", ascending=False, inplace=True)
+            df.reset_index(drop=True, inplace=True)
         return df
 
-    def clear_all(self):
+    async def clear_all(self):
         """
         Clear all database tables: vocabularies, concepts, CDMs, and mappings.
         """
-        self.session.close()
-        Base.metadata.drop_all(self.engine)
-        Base.metadata.create_all(self.engine)
+        if not self.engine:
+            raise RuntimeError("Engine must be provided during repository initialization to use clear_all()")
+        await self.session.close()
+        async with self.engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)
 
-    def close(self):
+    async def close(self):
         """
         Close the active database session.
         """
-        self.session.close()
+        await self.session.close()

@@ -1,6 +1,6 @@
-from typing import List, TypedDict
+from typing import TypedDict
 
 
 class CohortStats(TypedDict):
     found: int
-    missing: List[str]
+    missing: list[str]

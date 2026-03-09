@@ -1,8 +1,12 @@
+from contextlib import asynccontextmanager
 
+from database.models import Base
+from database.postgresql import PostgreSQLRepository
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from starlette.middleware.cors import CORSMiddleware
 
+from api.dependencies import AsyncSessionLocal, engine
 from api.routers import (
     biomarkers,
     cdm,
@@ -12,6 +16,19 @@ from api.routers import (
     stupdypicker,
     visualization,
 )
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    async with AsyncSessionLocal() as session:
+        async with PostgreSQLRepository(session) as repo:
+            await repo.initialize_default_user()
+    yield
+    await engine.dispose()
+
 
 app = FastAPI(
     title="PDATAVIEWER API",
@@ -26,9 +43,10 @@ app = FastAPI(
         "name": "Apache 2.0",
         "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
     },
+    lifespan=lifespan,
 )
 
-origins = ["*"]
+origins = ["https://pdata.scai.fraunhofer.de", "http://localhost:4200"]
 
 app.add_middleware(
     CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"]
@@ -54,6 +72,6 @@ def swagger_redirect():
     return RedirectResponse(url="/docs")
 
 
-@app.get("v1", include_in_schema=False)
+@app.get("/v1", include_in_schema=False)
 def v1_redirect():
     return RedirectResponse(url="/docs")

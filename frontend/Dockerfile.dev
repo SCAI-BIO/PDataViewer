@@ -1,5 +1,5 @@
 # FIRST STAGE: Build the Angular Application
-FROM node:24.13.0 AS build
+FROM node:24.14.0 AS build
 
 # Set the working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ RUN npm install -g @angular/cli
 RUN ng build --configuration=development
 
 # SECOND STAGE: Serve the application using Nginx
-FROM nginx:1.29.4-alpine
+FROM nginx:1.29.5-alpine
 
 # Copy the built application from the previous stage
 COPY --from=build /app/dist/pdataviewer/browser /usr/share/nginx/html
