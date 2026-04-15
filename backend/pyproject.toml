@@ -1,5 +1,5 @@
 [build-system]
-requires = ['uv_build>=0.9.10,<0.11.0']
+requires = ['uv_build>=0.11.6,<0.12.0']
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
@@ -30,11 +30,11 @@ classifiers = [
 
 dependencies = [
     "argon2-cffi>=25.1.0",
-    "fastapi[standard]>=0.128.0",
-    "numpy>=2.4.0",
-    "pandas>=2.3.3",
+    "fastapi[standard]>=0.135.3",
+    "numpy>=2.4.4",
+    "pandas>=3.0.2",
     "psycopg[binary]>=3.3.3",
-    "sqlalchemy>=2.0.45",
+    "sqlalchemy>=2.0.49",
 ]
 
 [dependency-groups]
