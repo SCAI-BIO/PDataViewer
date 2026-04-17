@@ -1,46 +1,47 @@
 import { Routes } from '@angular/router';
-import { BiomarkersComponent } from './biomarkers/biomarkers.component';
-import { CohortsComponent } from './cohorts/cohorts.component';
-import { ContactUsComponent } from './contact-us/contact-us.component';
-import { HomeComponent } from './home/home.component';
-import { LongitudinalComponent } from './longitudinal/longitudinal.component';
-import { MappingsComponent } from './mappings/mappings.component';
-import { PlotLongitudinalComponent } from './plot-longitudinal/plot-longitudinal.component';
-import { StudyPickerComponent } from './study-picker/study-picker.component';
+
+import { Biomarkers } from '@features/biomarkers/biomarkers';
+import { Cohorts } from '@features/cohorts/cohorts';
+import { ContactUs } from '@features/contact-us/contact-us';
+import { Home } from '@features/home/home';
+import { Longitudinal } from '@features/longitudinal/longitudinal';
+import { Mappings } from '@features/mappings/mappings';
+import { PlotLongitudinal } from '@features/plot-longitudinal/plot-longitudinal';
+import { StudyPicker } from '@features/study-picker/study-picker';
 
 export const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    component: Home,
     pathMatch: 'full',
   },
   {
     path: 'biomarkers',
-    component: BiomarkersComponent,
+    component: Biomarkers,
   },
   {
     path: 'cohorts',
-    component: CohortsComponent,
+    component: Cohorts,
   },
   {
     path: 'contact-us',
-    component: ContactUsComponent,
+    component: ContactUs,
   },
   {
     path: 'longitudinal',
-    component: LongitudinalComponent,
+    component: Longitudinal,
   },
   {
     path: 'mappings',
-    component: MappingsComponent,
+    component: Mappings,
   },
   {
     path: 'plot-longitudinal',
-    component: PlotLongitudinalComponent,
+    component: PlotLongitudinal,
   },
   {
     path: 'study-picker',
-    component: StudyPickerComponent,
+    component: StudyPicker,
   },
   {
     path: '**',
