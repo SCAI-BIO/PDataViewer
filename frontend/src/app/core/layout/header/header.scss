@@ -107,18 +107,16 @@
 
 // ─── GitHub Link ─────────────────────────────────────────────────────────────
 
-.github-logo {
-  height: 28px;
-  width: 28px;
-  transition: opacity 200ms ease;
-}
+.github-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-a[mat-icon-button] {
-  --mdc-icon-button-state-layer-size: 40px;
-  --mat-icon-button-state-layer-color: #ffffff;
-
-  &:hover .github-logo {
-    opacity: 0.8;
+  .github-logo {
+    width: 24px;
+    height: 24px;
+    display: block;
+    object-fit: contain;
   }
 }
 

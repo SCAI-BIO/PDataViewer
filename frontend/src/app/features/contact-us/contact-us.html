@@ -1,325 +1,62 @@
-<main class="main-container">
-  <div class="section-title">
-    <h1>Contact Us</h1>
-  </div>
+<main class="contact-page">
+  <section class="page-header">
+    <h1 class="page-title">Contact Us</h1>
+    <p class="page-description">Meet the team behind PDataViewer at Fraunhofer SCAI.</p>
+  </section>
+
   <div class="cards-container">
-    <!-- Prof. Dr. Martin Hofmann-Apitius -->
-    <div class="card-container">
-      <div class="card-front-container">
-        <div class="card-image">
-          <img class="image" src="contact/martin.jpg" alt="Prof. Dr. Martin Hofmann-Apitius" />
-        </div>
-        <div class="card-title">
-          <h3>Prof. Dr. Martin Hofmann-Apitius</h3>
-        </div>
-        <div class="card-text">
-          <p>Head of the Bioinformatics Department</p>
-        </div>
-      </div>
-      <div class="card-back-container">
-        <div class="card-text">
-          <p>
-            Martin is leading the Department of Bioinformatics at the Fraunhofer Institute for
-            Algorithms and Scientific Computing (SCAI) in Sankt Augustin (Germany), a governmental
-            not-for-profit, applied research institute. He is also Professor for Applied Life
-            Science Informatics at Bonn-Aachen International Center for Information Technology
-            (B-IT). He is (co-) author of more than 250 scientific publications.
-          </p>
-        </div>
-        <div class="card-actions">
-          <a href="https://x.com/apitiushofmann" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="x" style="fill: black"></mat-icon>
-            </button>
-          </a>
-          <a href="https://www.linkedin.com/in/hofmannapitius" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="linkedin"></mat-icon>
-            </button>
-          </a>
-          <a
-            href="https://scholar.google.de/citations?user=n2XWGsQAAAAJ&hl=en&oi=ao"
-            target="_blank"
-          >
-            <button class="icon-button">
-              <mat-icon svgIcon="google-scholar"></mat-icon>
-            </button>
-          </a>
-          <a href="https://orcid.org/0000-0001-9012-6720" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="orcid"></mat-icon>
-            </button>
-          </a>
-          <a href="mailto:martin.hofmann-apitius@scai.fraunhofer.de" target="_blank">
-            <button class="icon-button">
-              <mat-icon aria-label="Mail to" fontIcon="email" style="color: black"></mat-icon>
-            </button>
-          </a>
-        </div>
-      </div>
-    </div>
+    @for (member of teamMembers; track member.name) {
+      <article
+        class="team-card"
+        [class.flipped]="member.flipped"
+        (click)="member.flipped = !member.flipped"
+        (keydown.enter)="member.flipped = !member.flipped"
+        (keydown.space)="$event.preventDefault(); member.flipped = !member.flipped"
+        tabindex="0"
+        role="button"
+        [attr.aria-expanded]="member.flipped"
+        [attr.aria-label]="'View details about ' + member.name"
+      >
+        <div class="card-inner">
+          <!-- Front -->
+          <div class="card-front">
+            <img [src]="member.image" [alt]="member.name" class="member-photo" />
+            <h3 class="member-name">{{ member.name }}</h3>
+            @if (member.role) {
+              <p class="member-role">{{ member.role }}</p>
+            }
+            <span class="flip-hint">
+              <mat-icon>touch_app</mat-icon>
+              Tap to learn more
+            </span>
+          </div>
 
-    <!-- Dr. Marc Jacobs -->
-    <div class="card-container">
-      <div class="card-front-container">
-        <div class="card-image">
-          <img class="image" src="contact/marc.jpg" alt="Dr. Marc Jacobs" />
+          <!-- Back -->
+          <div class="card-back">
+            <p class="member-bio">{{ member.bio }}</p>
+            <nav class="social-links" [attr.aria-label]="'Social links for ' + member.name">
+              @for (link of member.links; track link.url) {
+                <a
+                  [href]="link.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [attr.aria-label]="link.label"
+                  mat-icon-button
+                  (click)="$event.stopPropagation()"
+                  (keydown.enter)="$event.stopPropagation()"
+                  (keydown.space)="$event.stopPropagation()"
+                >
+                  @if (link.isMaterialIcon) {
+                    <mat-icon>{{ link.icon }}</mat-icon>
+                  } @else {
+                    <mat-icon [svgIcon]="link.icon"></mat-icon>
+                  }
+                </a>
+              }
+            </nav>
+          </div>
         </div>
-        <div class="card-title">
-          <h3>Dr. Marc Jacobs</h3>
-        </div>
-        <div class="card-text">
-          <p>
-            Group leader of Software and Scientific Computing, Deputy Head of Business Area
-            Bioinformatics
-          </p>
-        </div>
-      </div>
-      <div class="card-back-container">
-        <div class="card-text">
-          <p>
-            Marc is leading the Software and Scientific Computing Team and also the Deputy Head of
-            Business Area Bioinformatics at the Fraunhofer Institute for Algorithms and Scientific
-            Computing (SCAI) in Sankt Augustin (Germany), a governmental not-for-profit, applied
-            research institute.
-          </p>
-        </div>
-        <div class="card-actions">
-          <a href="https://www.linkedin.com/in/marc-jacobs-801938242/" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="linkedin"></mat-icon>
-            </button>
-          </a>
-          <a href="https://orcid.org/0000-0003-4153-3930" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="orcid"></mat-icon>
-            </button>
-          </a>
-          <a href="https://github.com/MarcZimmermann" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="github" style="fill: black"></mat-icon>
-            </button>
-          </a>
-          <a href="mailto:marc.jacobs@scai.fraunhofer.de" target="_blank">
-            <button class="icon-button">
-              <mat-icon aria-label="Mail to" fontIcon="email" style="color: black"></mat-icon>
-            </button>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Dr. Yasamin Salimi -->
-    <div class="card-container">
-      <div class="card-front-container">
-        <div class="card-image">
-          <img class="image" src="contact/yasamin.png" alt="Dr. Yasamin Salimi" />
-        </div>
-        <div class="card-title">
-          <h3>Dr. Yasamin Salimi</h3>
-        </div>
-        <div class="card-text">
-          <p>Postdoctoral Researcher</p>
-        </div>
-      </div>
-      <div class="card-back-container">
-        <div class="card-text">
-          <p>
-            Yasamin joined Fraunhofer SCAI in 2019, where she completed her master's thesis and PhD
-            studies in biomedical data science. As a postdoctoral researcher, she focuses on data
-            integration, patient stratification, predictive modeling, and federated learning in
-            healthcare. In the EU project CERTAINTY, she develops AI models to support
-            individualized treatment decisions and advance precision medicine.
-          </p>
-        </div>
-        <div class="card-actions">
-          <a href="https://x.com/SalimiYasamin" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="x" style="fill: black"></mat-icon>
-            </button>
-          </a>
-          <a href="https://www.linkedin.com/in/yasamin-salimi-27488662" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="linkedin"></mat-icon>
-            </button>
-          </a>
-          <a href="https://scholar.google.com/citations?user=cSR6XQsAAAAJ" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="google-scholar"></mat-icon>
-            </button>
-          </a>
-          <a href="https://orcid.org/0000-0002-7773-7786" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="orcid"></mat-icon>
-            </button>
-          </a>
-          <a href="https://github.com/Yasaminsali" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="github" style="fill: black"></mat-icon>
-            </button>
-          </a>
-          <a href="mailto:yasamin.salimi@scai.fraunhofer.de" target="_blank">
-            <button class="icon-button">
-              <mat-icon aria-label="Mail to" fontIcon="email" style="color: black"></mat-icon>
-            </button>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tim Adams -->
-    <div class="card-container">
-      <div class="card-front-container">
-        <div class="card-image">
-          <img class="image" src="contact/tim.jpg" alt="Tim Adams" />
-        </div>
-        <div class="card-title">
-          <h3>Tim Adams</h3>
-        </div>
-        <div class="card-text">
-          <p>Scientific Software Developer</p>
-        </div>
-      </div>
-      <div class="card-back-container">
-        <div class="card-text">
-          <p>
-            Tim Adams joined Fraunhofer SCAI in late 2017 as a researcher. His main research focus
-            is the development of applications for exploration, evaluation and visualization of data
-            in the biomedical domain.
-          </p>
-        </div>
-        <div class="card-actions">
-          <a href="https://www.linkedin.com/in/tim-adams-747b821b0/" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="linkedin"></mat-icon>
-            </button>
-          </a>
-          <a
-            href="https://scholar.google.de/citations?user=RULeMEYAAAAJ&hl=de&oi=ao"
-            target="_blank"
-          >
-            <button class="icon-button">
-              <mat-icon svgIcon="google-scholar"></mat-icon>
-            </button>
-          </a>
-          <a href="https://orcid.org/0000-0002-2823-0102" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="orcid"></mat-icon>
-            </button>
-          </a>
-          <a href="https://stackoverflow.com/users/6436977/t-a" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="stack-overflow"></mat-icon>
-            </button>
-          </a>
-          <a href="https://github.com/tiadams" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="github" style="fill: black"></mat-icon>
-            </button>
-          </a>
-          <a href="mailto:tim.adams@scai.fraunhofer.de" target="_blank">
-            <button class="icon-button">
-              <mat-icon aria-label="Mail to" fontIcon="email" style="color: black"></mat-icon>
-            </button>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mehmet Can Ay -->
-    <div class="card-container">
-      <div class="card-front-container">
-        <div class="card-image">
-          <img class="image" src="contact/can.jpg" alt="Mehmet Can Ay" />
-        </div>
-        <div class="card-title">
-          <h3>Mehmet Can Ay</h3>
-        </div>
-        <div class="card-text">
-          <p>Research Associate</p>
-        </div>
-      </div>
-      <div class="card-back-container">
-        <div class="card-text">
-          <p>
-            Mehmet Can Ay joined Fraunhofer SCAI as a student research assistant in March 2023.
-            After successfully completing his Master's thesis, "PDataViewer: Investigation of
-            Parkinson's Disease Landscape and Enabling Semantic Data Harmonization Through Large
-            Language Models", he joined the Software and Scientific Computing team as a research
-            associate in January 2025.
-          </p>
-        </div>
-        <div class="card-actions">
-          <a href="https://www.linkedin.com/in/mehmet-can-ay/" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="linkedin"></mat-icon>
-            </button>
-          </a>
-          <a
-            href="https://scholar.google.com/citations?user=1NMMi9AAAAAJ&hl=en&oi=ao"
-            target="_blank"
-          >
-            <button class="icon-button">
-              <mat-icon svgIcon="google-scholar"></mat-icon>
-            </button>
-          </a>
-          <a href="https://orcid.org/0000-0002-2977-7695" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="orcid"></mat-icon>
-            </button>
-          </a>
-          <a href="https://github.com/mehmetcanay" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="github" style="fill: black"></mat-icon>
-            </button>
-          </a>
-          <a href="mailto:mehmet.ay@scai.fraunhofer.de" target="_blank">
-            <button class="icon-button">
-              <mat-icon aria-label="Mail to" fontIcon="email" style="color: black"></mat-icon>
-            </button>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Marjan Niazpoor -->
-    <div class="card-container">
-      <div class="card-front-container">
-        <div class="card-image">
-          <img class="image" src="contact/marjan.jpg" alt="Marjan Niazpoor" />
-        </div>
-        <div class="card-title">
-          <h3>Marjan Niazpoor</h3>
-        </div>
-      </div>
-      <div class="card-back-container">
-        <div class="card-text">
-          <p>
-            Marjan joined Fraunhofer SCAI as a student research assistant in March 2024. In 2025,
-            she successfully completed her Master's thesis in Life Science Informatics, titled
-            "Bringing Biomedical Artificial Intelligence into Practice: Supporting Experimental
-            Hypothesis Validation through Graph-Based Bioassay Retrieval and Large Language Model
-            Reasoning".
-          </p>
-        </div>
-        <div class="card-actions">
-          <a href="https://www.linkedin.com/in/marjanniazpoor/" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="linkedin"></mat-icon>
-            </button>
-          </a>
-          <a href="https://orcid.org/0009-0000-1455-6569" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="orcid"></mat-icon>
-            </button>
-          </a>
-          <a href="https://github.com/marjanniazpoor" target="_blank">
-            <button class="icon-button">
-              <mat-icon svgIcon="github" style="fill: black"></mat-icon>
-            </button>
-          </a>
-        </div>
-      </div>
-    </div>
+      </article>
+    }
   </div>
 </main>

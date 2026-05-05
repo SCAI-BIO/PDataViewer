@@ -357,3 +357,30 @@ th {
     margin-bottom: $spacing-sm;
   }
 }
+
+// ─── Mat Icon SVG Centering Fix (global) ─────────────────────────────────────
+
+.mat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: inherit;
+    height: inherit;
+    display: block;
+  }
+}
+
+// Ensure icon buttons center their content
+.mat-mdc-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  .mat-icon {
+    margin: 0;
+    padding: 0;
+    position: static;
+  }
+}

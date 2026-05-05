@@ -1,62 +1,262 @@
-/* Section Title */
-.section-title {
-  margin-bottom: 40px;
+// contact.component.scss
+@use 'sass:color';
+
+$color-primary: #610030;
+$color-surface: #f9f9f9;
+$color-text: #1a1a1a;
+$color-text-muted: #5f6368;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 40px;
+$transition-normal: 250ms ease-in-out;
+
+// ─── Page Layout ─────────────────────────────────────────────────────────────
+
+:host {
+  display: block;
 }
+
+.contact-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-xl $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// ─── Page Header ─────────────────────────────────────────────────────────────
+
+.page-header {
+  text-align: center;
+  margin-bottom: $spacing-xl;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $color-primary;
+  margin: 0 0 $spacing-sm;
+}
+
+.page-description {
+  font-size: 1rem;
+  color: $color-text-muted;
+  margin: 0;
+}
+
+// ─── Cards Grid ──────────────────────────────────────────────────────────────
 
 .cards-container {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  width: 80%;
-  margin-bottom: 50px;
-  gap: 50px;
-}
-
-.card-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-lg;
   width: 100%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  height: 400px;
+}
+
+// ─── Team Card ───────────────────────────────────────────────────────────────
+
+.team-card {
+  perspective: 1000px;
+  height: 420px;
+  cursor: pointer;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.8s;
-  &:hover {
-    transform: rotateY(180deg);
-  }
+  transition: transform 0.6s ease;
 }
 
-.card-front-container,
-.card-back-container {
-  position: absolute;
-  backface-visibility: hidden;
-  width: 80%;
-  height: 80%;
-}
-
-.card-back-container {
-  display: grid;
-  grid-template-rows: 6fr 1fr;
+.team-card.flipped .card-inner {
   transform: rotateY(180deg);
 }
 
-.image {
-  border-radius: 50%;
-  width: 150px;
-  height: 150px;
-  margin-bottom: 20px;
+// ─── Card Faces ──────────────────────────────────────────────────────────────
+
+.card-front,
+.card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
 }
 
-.icon-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  gap: 10px;
+.card-front {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  background-color: #ffffff;
+  text-align: center;
+  transition: box-shadow $transition-normal;
+
+  .team-card:hover & {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.card-back {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, #610030, #4d0063);
+  color: #ffffff;
+  transform: rotateY(180deg);
+  text-align: center;
+}
+
+// ─── Card Front Content ──────────────────────────────────────────────────────
+
+.member-photo {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: $spacing-md;
+  border: 3px solid rgba($color-primary, 0.1);
+  transition: transform 300ms ease;
+
+  .team-card:hover & {
+    transform: scale(1.05);
+  }
+}
+
+.member-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $color-text;
+  margin: 0 0 $spacing-xs;
+}
+
+.member-role {
+  font-size: 0.85rem;
+  color: $color-text-muted;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.flip-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.35);
+  margin-top: $spacing-md;
+  transition: opacity $transition-normal;
+
   mat-icon {
-    font-size: 36px;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// ─── Card Back Content ───────────────────────────────────────────────────────
+
+.member-bio {
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 $spacing-md;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: $spacing-xs;
+
+  // Subtle scrollbar
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+}
+
+// ─── Social Links ────────────────────────────────────────────────────────────
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: $spacing-xs;
+  padding-top: $spacing-sm;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  width: 100%;
+
+  a[mat-icon-button] {
+    --mdc-icon-button-state-layer-size: 36px;
+    --mdc-icon-button-icon-size: 20px;
+    --mat-icon-button-state-layer-color: #ffffff;
+    --mat-icon-button-hover-state-layer-opacity: 0.15;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 36px;
     height: 36px;
+    transition: transform 200ms ease;
+
+    &:hover {
+      transform: scale(1.15);
+    }
+
+    mat-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.85);
+      fill: rgba(255, 255, 255, 0.85);
+
+      svg {
+        width: 20px;
+        height: 20px;
+        display: block;
+      }
+    }
+
+    &:hover mat-icon {
+      color: #ffffff;
+      fill: #ffffff;
+    }
+  }
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+
+@media (max-width: 1024px) {
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .cards-container {
+    grid-template-columns: 1fr;
+    max-width: 380px;
+  }
+
+  .team-card {
+    height: 400px;
   }
 }
