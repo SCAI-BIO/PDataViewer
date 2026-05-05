@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 420" fill="none">
+  <defs>
+    <linearGradient id="funnelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#610030" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#610030" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="cohortGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#610030" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#4d0063" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Input shapes (scattered variables/features entering the funnel) -->
+  <circle cx="120" cy="55" r="18" fill="#610030" opacity="0.55"/>
+  <rect x="182" y="38" width="32" height="32" rx="4" fill="#4d0063" opacity="0.45"/>
+  <polygon points="290,70 272,38 308,38" fill="#610030" opacity="0.4"/>
+  <rect x="140" y="95" width="22" height="22" rx="2" transform="rotate(45 151 106)" fill="#4d0063" opacity="0.5"/>
+  <circle cx="250" cy="90" r="12" fill="#610030" opacity="0.4"/>
+  <polygon points="320,95 332,103 332,119 320,127 308,119 308,103" fill="#4d0063" opacity="0.3"/>
+  <circle cx="95" cy="100" r="9" fill="#610030" opacity="0.3"/>
+  <rect x="215" y="83" width="16" height="16" rx="2" fill="#610030" opacity="0.3"/>
+
+  <!-- Dotted motion lines (shapes falling into funnel) -->
+  <line x1="120" y1="75" x2="165" y2="140" stroke="#610030" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.25"/>
+  <line x1="198" y1="72" x2="195" y2="140" stroke="#610030" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.25"/>
+  <line x1="290" y1="72" x2="230" y2="140" stroke="#610030" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.25"/>
+
+  <!-- Funnel -->
+  <path
+    d="M 100 150 L 295 150 L 220 265 L 220 310 L 175 310 L 175 265 Z"
+    fill="url(#funnelGrad)"
+    stroke="#610030"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Funnel horizontal filter lines inside -->
+  <line x1="135" y1="180" x2="260" y2="180" stroke="#610030" stroke-width="1" opacity="0.18" stroke-dasharray="4 3"/>
+  <line x1="155" y1="210" x2="240" y2="210" stroke="#610030" stroke-width="1" opacity="0.15" stroke-dasharray="4 3"/>
+  <line x1="168" y1="240" x2="225" y2="240" stroke="#610030" stroke-width="1" opacity="0.12" stroke-dasharray="4 3"/>
+
+  <!-- Small downward arrow between funnel and cohort -->
+  <path
+    d="M 197 315 L 197 332 M 191 326 L 197 332 L 203 326"
+    fill="none"
+    stroke="#610030"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.5"
+  />
+
+  <!-- Output: Cohort group (simplified from cohorts2.svg) -->
+  <g transform="translate(197, 380) scale(0.55)" fill="url(#cohortGrad)">
+    <!-- Center person (head) -->
+    <circle cx="0" cy="-20" r="9" />
+    <!-- Center person (body) -->
+    <path d="M -12 0 C -12 -8 12 -8 12 0 L 12 12 L -12 12 Z" />
+
+    <!-- Left person (head) -->
+    <circle cx="-28" cy="-14" r="7.5" />
+    <!-- Left person (body) -->
+    <path d="M -38 4 C -38 -3 -18 -3 -18 4 L -18 14 L -38 14 Z" />
+
+    <!-- Right person (head) -->
+    <circle cx="28" cy="-14" r="7.5" />
+    <!-- Right person (body) -->
+    <path d="M 18 4 C 18 -3 38 -3 38 4 L 38 14 L 18 14 Z" />
+  </g>
+
+  <!-- Subtle label arc under the cohort -->
+  <path
+    d="M 165 408 Q 197 418 229 408"
+    fill="none"
+    stroke="#610030"
+    stroke-width="1"
+    opacity="0.25"
+  />
+</svg>
