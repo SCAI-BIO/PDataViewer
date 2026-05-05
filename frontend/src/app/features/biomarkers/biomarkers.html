@@ -1,119 +1,158 @@
-<main class="main-container">
-  <div class="description-box">
-    <h1>Biomarkers</h1>
-    <p>
-      <br />
-      The Biomarkers is designed to help users explore the distribution of a specific variable
-      across various cohorts in an intuitive manner. <br />
-      Users can begin by inputting a variable of interest, which prompts the component to display a
-      list of available cohorts associated with that variable. <br />
-      From this list, users can select multiple cohorts or focus on specific diagnosis groups within
-      those cohorts, allowing for targeted analysis.
-      <br />
-      Once the selections are made, the component generates a boxplot that visually represents the
-      distribution of the chosen variable among the selected groups. <br />This powerful
-      visualization enables users to easily compare and analyze differences in data distributions,
-      ultimately enhancing their ability to gain insights from the data.<br />
+<main class="biomarkers-page">
+  <section class="page-header">
+    <h1 class="page-title">Biomarkers</h1>
+    <p class="page-description">
+      Explore the distribution of variables across cohorts. Select a biomarker to see which cohorts
+      have data available, then choose specific cohorts or diagnosis groups to generate a
+      comparative boxplot visualization.
     </p>
-  </div>
+  </section>
 
-  <!-- loading Spinner -->
+  <!-- Loading Overlay -->
   @if (isLoading()) {
-  <div class="loading-spinner">
-    <mat-spinner diameter="40"></mat-spinner>
-  </div>
-  }
-
-  <div class="input-container">
-    <mat-form-field appearance="outline">
-      <mat-label>Biomarker selection</mat-label>
-      <input
-        type="text"
-        placeholder="Enter a variable"
-        aria-label="Biomarker selection"
-        matInput
-        [formControl]="biomarkerCtrl"
-        [matAutocomplete]="auto"
-      />
-      <mat-autocomplete
-        autoActivateFirstOption
-        #auto="matAutocomplete"
-        (optionSelected)="onBiomarkerSelect($event)"
-      >
-        @for (option of filteredBiomarkers(); track option) {
-        <mat-option [value]="option">
-          {{ option }}
-        </mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
-  </div>
-
-  @if (selectedBiomarker()) {
-  <div class="cohort-container">
-    <h4>Available Cohorts for {{ selectedBiomarker() }}:</h4>
-    <div
-      class="cohort-list"
-      [style.grid-template-columns]="'repeat(' + getCohortColumns() + ', 1fr)'"
-    >
-      @for (cohort of cohorts(); track cohort) {
-      <div>
-        <p>
-          <span class="color-circle" [style.background-color]="colors()[cohort]"></span>
-          {{ cohort }}
-        </p>
-      </div>
-      }
+    <div class="loading-overlay" role="status" aria-live="polite">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span class="loading-label">Loading biomarker data…</span>
     </div>
-  </div>
-  } @if (selectedBiomarker()) {
-  <div class="cohort-selection-container">
-    <mat-form-field class="full-width" appearance="outline">
-      <mat-label>Select Cohorts</mat-label>
-      <mat-chip-grid #cohortGrid aria-label="Cohort selection">
-        @for (cohort of selectedCohorts(); track cohort) {
-        <mat-chip-row [removable]="true" [editable]="false" (removed)="removeCohort(cohort)">
-          {{ cohort }}
-          <mat-icon matChipRemove>cancel</mat-icon>
-        </mat-chip-row>
-        }
+  }
+
+  <!-- Step 1: Biomarker Selection -->
+  <section class="step-section">
+    <div class="step-indicator">
+      <span class="step-number">1</span>
+      <span class="step-label">Select a biomarker</span>
+    </div>
+    <div class="input-container">
+      <mat-form-field appearance="outline">
+        <mat-label>Biomarker selection</mat-label>
         <input
+          type="text"
+          placeholder="Start typing a variable name…"
+          aria-label="Biomarker selection"
           matInput
-          [placeholder]="selectedCohorts().length === 0 ? 'Select at least one cohort' : ''"
-          [matAutocomplete]="autoCohort"
-          [formControl]="cohortCtrl"
-          [matChipInputFor]="cohortGrid"
-          (matChipInputTokenEnd)="addCohort($any($event))"
+          [formControl]="biomarkerCtrl"
+          [matAutocomplete]="auto"
         />
-      </mat-chip-grid>
-      <mat-autocomplete
-        #autoCohort="matAutocomplete"
-        [displayWith]="displayFn"
-        (optionSelected)="onCohortSelect($event)"
-      >
-        @for (option of filteredDiagnoses(); track option) {
-        <mat-option [value]="option">
-          {{ option }}
-        </mat-option>
+        <mat-icon matSuffix>search</mat-icon>
+        <mat-autocomplete
+          autoActivateFirstOption
+          #auto="matAutocomplete"
+          (optionSelected)="onBiomarkerSelect($event)"
+        >
+          @for (option of filteredBiomarkers(); track option) {
+            <mat-option [value]="option">
+              {{ option }}
+            </mat-option>
+          }
+        </mat-autocomplete>
+        <mat-hint>Type to search from available variables</mat-hint>
+      </mat-form-field>
+    </div>
+  </section>
+
+  <!-- Step 2: Available Cohorts Display -->
+  @if (selectedBiomarker()) {
+    <section class="step-section">
+      <div class="step-indicator">
+        <span class="step-number">2</span>
+        <span class="step-label"
+          >Available cohorts for <strong>{{ selectedBiomarker() }}</strong></span
+        >
+      </div>
+      <div class="cohort-chips">
+        @for (cohort of cohorts(); track cohort) {
+          <span class="cohort-chip">
+            <span
+              class="color-indicator"
+              [style.background-color]="colors()[cohort]"
+              aria-hidden="true"
+            ></span>
+            {{ cohort }}
+          </span>
         }
-      </mat-autocomplete>
-    </mat-form-field>
-  </div>
+      </div>
+    </section>
   }
 
-  <!-- Button container for ranking cohorts -->
+  <!-- Step 3: Cohort Selection -->
+  @if (selectedBiomarker()) {
+    <section class="step-section">
+      <div class="step-indicator">
+        <span class="step-number">3</span>
+        <span class="step-label">Select cohorts to compare</span>
+      </div>
+      <div class="input-container">
+        <mat-form-field appearance="outline">
+          <mat-label>Select Cohorts</mat-label>
+          <mat-chip-grid #cohortGrid aria-label="Cohort selection">
+            @for (cohort of selectedCohorts(); track cohort) {
+              <mat-chip-row [removable]="true" [editable]="false" (removed)="removeCohort(cohort)">
+                {{ cohort }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip-row>
+            }
+            <input
+              matInput
+              [placeholder]="selectedCohorts().length === 0 ? 'Type or select cohorts…' : ''"
+              [matAutocomplete]="autoCohort"
+              [formControl]="cohortCtrl"
+              [matChipInputFor]="cohortGrid"
+              (matChipInputTokenEnd)="addCohort($any($event))"
+            />
+          </mat-chip-grid>
+          <mat-autocomplete
+            #autoCohort="matAutocomplete"
+            [displayWith]="displayFn"
+            (optionSelected)="onCohortSelect($event)"
+          >
+            @for (option of filteredDiagnoses(); track option) {
+              <mat-option [value]="option">
+                {{ option }}
+              </mat-option>
+            }
+          </mat-autocomplete>
+          <mat-hint>
+            @if (selectedCohorts().length === 0) {
+              Select at least one cohort to continue
+            } @else {
+              {{ selectedCohorts().length }} cohort(s) selected
+            }
+          </mat-hint>
+        </mat-form-field>
+      </div>
+    </section>
+  }
+
+  <!-- Step 4: Generate Visualization -->
   @if (selectedCohorts().length > 0) {
-  <div class="button-container">
-    <mat-slide-toggle (change)="onToggleDataPoints($event.checked)">
-      Show Data Points
-    </mat-slide-toggle>
-    <button class="button-style" (click)="generateBoxplot()">
-      Visualize variable distribution
-    </button>
-  </div>
+    <section class="step-section">
+      <div class="step-indicator">
+        <span class="step-number">4</span>
+        <span class="step-label">Generate visualization</span>
+      </div>
+      <div class="actions-container">
+        <mat-slide-toggle (change)="onToggleDataPoints($event.checked)">
+          Show data points
+        </mat-slide-toggle>
+        <button
+          mat-flat-button
+          color="primary"
+          class="visualize-button"
+          (click)="generateBoxplot()"
+        >
+          <mat-icon>bar_chart</mat-icon>
+          Visualize distribution
+        </button>
+      </div>
+    </section>
   }
 
-  <div class="output-box">
-    <div id="boxplot"></div>
-  </div>
+  <!-- Output -->
+  @if (selectedCohorts().length > 0) {
+    <section class="output-section">
+      <div class="output-box">
+        <div id="boxplot" class="plot-area"></div>
+      </div>
+    </section>
+  }
 </main>

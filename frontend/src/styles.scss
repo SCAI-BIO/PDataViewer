@@ -384,3 +384,25 @@ th {
     position: static;
   }
 }
+
+// ─── Global Slide Toggle Ripple Fix ──────────────────────────────────────────
+
+.mat-mdc-slide-toggle {
+  .mdc-switch {
+    overflow: hidden;
+  }
+
+  .mdc-switch__ripple,
+  .mdc-switch__handle::before,
+  .mdc-switch__handle::after {
+    transform: scale(0.8) !important;
+  }
+
+  // Prevent state layer from bleeding into the label
+  .mdc-switch__state-layer {
+    width: 40px !important;
+    height: 40px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+}

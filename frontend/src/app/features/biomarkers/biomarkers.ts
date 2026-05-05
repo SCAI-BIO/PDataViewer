@@ -17,11 +17,13 @@ import { finalize, forkJoin, map } from 'rxjs';
 import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
 import { BoxplotBuilder } from './services/boxplot-builder';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-biomarkers',
   imports: [
     MatAutocompleteModule,
+    MatButtonModule,
     MatChipsModule,
     MatFormFieldModule,
     MatIconModule,

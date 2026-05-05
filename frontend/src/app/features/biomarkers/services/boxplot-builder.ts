@@ -11,7 +11,7 @@ export class BoxplotBuilder {
     title: string,
     colors: Record<string, string>,
     showDataPoints = false,
-    ɵlementId: string
+    ɵlementId: string,
   ): void {
     // Transform input data
     const labels = Object.keys(data);
@@ -68,6 +68,8 @@ export class BoxplotBuilder {
           font: { size: 14 },
         },
       },
+      autosize: true,
+      width: undefined,
       margin: { t: 40, r: 150, b: 60, l: 60 },
       boxmode: 'group', // group cohorts side-by-side
       showlegend: true,
