@@ -104,6 +104,45 @@ export class ContactUs {
       ],
     },
     {
+      name: 'Mehmet Can Ay',
+      role: 'Research Associate',
+      image: 'contact/can.jpg',
+      bio: 'Mehmet Can Ay joined Fraunhofer SCAI as a student research assistant in March 2023. After successfully completing his Master\'s thesis, "PDataViewer: Investigation of Parkinson\'s Disease Landscape and Enabling Semantic Data Harmonization Through Large Language Models", he joined the Software and Scientific Computing team as a research associate in January 2025.',
+      flipped: false,
+      links: [
+        {
+          url: 'https://www.linkedin.com/in/mehmet-can-ay/',
+          icon: 'linkedin',
+          label: 'LinkedIn',
+          isMaterialIcon: false,
+        },
+        {
+          url: 'https://scholar.google.com/citations?user=1NMMi9AAAAAJ&hl=en&oi=ao',
+          icon: 'google-scholar',
+          label: 'Google Scholar',
+          isMaterialIcon: false,
+        },
+        {
+          url: 'https://orcid.org/0000-0002-2977-7695',
+          icon: 'orcid',
+          label: 'ORCID',
+          isMaterialIcon: false,
+        },
+        {
+          url: 'https://github.com/mehmetcanay',
+          icon: 'github',
+          label: 'GitHub',
+          isMaterialIcon: false,
+        },
+        {
+          url: 'mailto:mehmet.ay@scai.fraunhofer.de',
+          icon: 'email',
+          label: 'Email',
+          isMaterialIcon: true,
+        },
+      ],
+    },
+    {
       name: 'Dr. Yasamin Salimi',
       role: 'Postdoctoral Researcher',
       image: 'contact/yasamin.png',
@@ -187,45 +226,6 @@ export class ContactUs {
         },
         {
           url: 'mailto:tim.adams@scai.fraunhofer.de',
-          icon: 'email',
-          label: 'Email',
-          isMaterialIcon: true,
-        },
-      ],
-    },
-    {
-      name: 'Mehmet Can Ay',
-      role: 'Research Associate',
-      image: 'contact/can.jpg',
-      bio: 'Mehmet Can Ay joined Fraunhofer SCAI as a student research assistant in March 2023. After successfully completing his Master\'s thesis, "PDataViewer: Investigation of Parkinson\'s Disease Landscape and Enabling Semantic Data Harmonization Through Large Language Models", he joined the Software and Scientific Computing team as a research associate in January 2025.',
-      flipped: false,
-      links: [
-        {
-          url: 'https://www.linkedin.com/in/mehmet-can-ay/',
-          icon: 'linkedin',
-          label: 'LinkedIn',
-          isMaterialIcon: false,
-        },
-        {
-          url: 'https://scholar.google.com/citations?user=1NMMi9AAAAAJ&hl=en&oi=ao',
-          icon: 'google-scholar',
-          label: 'Google Scholar',
-          isMaterialIcon: false,
-        },
-        {
-          url: 'https://orcid.org/0000-0002-2977-7695',
-          icon: 'orcid',
-          label: 'ORCID',
-          isMaterialIcon: false,
-        },
-        {
-          url: 'https://github.com/mehmetcanay',
-          icon: 'github',
-          label: 'GitHub',
-          isMaterialIcon: false,
-        },
-        {
-          url: 'mailto:mehmet.ay@scai.fraunhofer.de',
           icon: 'email',
           label: 'Email',
           isMaterialIcon: true,

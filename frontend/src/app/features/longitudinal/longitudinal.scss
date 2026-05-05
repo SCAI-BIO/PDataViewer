@@ -1,10 +1,17 @@
+// longitudinal.component.scss
 @use 'tokens' as *;
 
 :host {
   display: block;
 }
 
-// ─── Visualize Button ────────────────────────────────────────────────────────
+.input-container {
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+}
 
 .visualize-button {
   mat-icon {

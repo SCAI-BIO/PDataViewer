@@ -13,11 +13,11 @@
     <app-loading-spinner></app-loading-spinner>
   }
 
-  <!-- Variable Selection -->
+  <!-- Variable Selection + Visualize -->
   <section class="step-section">
     <div class="step-indicator">
       <span class="step-number">1</span>
-      <span class="step-label">Select a variable (optional)</span>
+      <span class="step-label">Select a variable and visualize</span>
     </div>
     <div class="input-container">
       <mat-form-field appearance="outline">
@@ -44,19 +44,18 @@
         </mat-autocomplete>
         <mat-hint>Filter follow-up by a specific variable</mat-hint>
       </mat-form-field>
-    </div>
-  </section>
 
-  <!-- Generate Visualization -->
-  <section class="step-section">
-    <div class="step-indicator">
-      <span class="step-number">2</span>
-      <span class="step-label">Generate visualization</span>
+      <button
+        mat-flat-button
+        color="primary"
+        class="visualize-button"
+        [disabled]="!selectedVariable()"
+        (click)="generateLineplot()"
+      >
+        <mat-icon>show_chart</mat-icon>
+        Visualize
+      </button>
     </div>
-    <button mat-flat-button color="primary" class="visualize-button" (click)="generateLineplot()">
-      <mat-icon>show_chart</mat-icon>
-      Visualize participant follow-up
-    </button>
   </section>
 
   <!-- Output -->
