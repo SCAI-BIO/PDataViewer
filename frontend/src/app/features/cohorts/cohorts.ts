@@ -1,8 +1,11 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, DestroyRef, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule, MatSort } from '@angular/material/sort';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 
 import { finalize, map } from 'rxjs';
 
@@ -12,7 +15,14 @@ import type { CohortData } from '@shared/interfaces/metadata';
 
 @Component({
   selector: 'app-cohorts',
-  imports: [MatProgressSpinnerModule, MatSortModule, MatTableModule],
+  imports: [
+    DecimalPipe,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatSortModule,
+    MatTableModule,
+  ],
   templateUrl: './cohorts.html',
   styleUrl: './cohorts.scss',
 })
@@ -28,7 +38,13 @@ export class Cohorts implements OnInit {
 
   // Table Elements
   dataSource = new MatTableDataSource<CohortData>();
-  @ViewChild(MatSort) sort!: MatSort;
+
+  // Use a setter to assign sort whenever the directive becomes available
+  @ViewChild(MatSort) set matSort(sort: MatSort) {
+    if (sort) {
+      this.dataSource.sort = sort;
+    }
+  }
 
   // Constants
   readonly displayedColumns: string[] = [
@@ -62,7 +78,6 @@ export class Cohorts implements OnInit {
         next: (v) => {
           this.metadata.set(v);
           this.dataSource.data = v;
-          if (this.sort) this.dataSource.sort = this.sort;
         },
         error: (err) => this.errorHandler.handleError(err, 'fetching initial data'),
       });
