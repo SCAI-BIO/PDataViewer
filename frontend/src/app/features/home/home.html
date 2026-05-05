@@ -1,8 +1,8 @@
-<main class="main-container">
-  <!-- About Container -->
-  <div class="section-container about">
+<main class="home-page">
+  <!-- About Section -->
+  <section class="section-container about">
     <div class="section-inner-container">
-      <h1>About</h1>
+      <h1 class="section-heading">About</h1>
       <p>
         Data collected in cohort studies lay the groundwork for a plethora of Parkinson's disease
         (PD) research endeavors. PDataViewer lets you explore this PD data landscape and identify
@@ -13,62 +13,50 @@
         of characterizing their underlying data, assessing the quantity and availability of data,
         and evaluating the interoperability across these distinct cohort datasets.
       </p>
-      <h2>How to Cite Us</h2>
-      <strong>
-        <a
-          href="https://doi.org/10.1038/s41598-025-06447-2"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="citation-link"
-        >
-          Salimi, Y., Adams, T., Ay, M. C., Balabin, H., Jacobs, M., & Hofmann-Apitius, M. (2025).
-          Evaluating language model embeddings for Parkinson's disease cohort harmonization using a
-          novel manually curated variable mapping schema. Scientific Reports, 15(1), 20210.
-        </a>
-      </strong>
+      <h2 class="section-subheading">How to Cite Us</h2>
+      <a
+        href="https://doi.org/10.1038/s41598-025-06447-2"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="citation-link"
+      >
+        Salimi, Y., Adams, T., Ay, M. C., Balabin, H., Jacobs, M., & Hofmann-Apitius, M. (2025).
+        Evaluating language model embeddings for Parkinson's disease cohort harmonization using a
+        novel manually curated variable mapping schema. Scientific Reports, 15(1), 20210.
+      </a>
     </div>
-  </div>
+  </section>
 
-  <!-- Loading Spinner -->
+  <!-- Loading Overlay -->
   @if (isLoading()) {
-  <div class="loading-spinner">
-    <mat-spinner diameter="40"></mat-spinner>
-  </div>
+    <app-loading-spinner></app-loading-spinner>
   }
 
-  <!-- Counter Container -->
-  <div class="section-container counter-container colored-bg">
+  <!-- Statistics Counter Section -->
+  <section class="section-container counter-container colored-bg" aria-label="Key statistics">
     <div class="section-inner-container">
-      <div class="counter-title">
-        <h2>Content</h2>
-      </div>
+      <h2 class="counter-title">Content</h2>
       <div class="counter-content">
         <div class="statistics-container">
           <strong>{{ (cohortCount() | number) ?? '--' }}</strong>
-          <span> Cohorts </span>
+          <span>Cohorts</span>
         </div>
 
-        <div class="image-between">
-          <img src="home/circle-dec.png" alt="" role="presentation" />
-        </div>
+        <div class="counter-divider" aria-hidden="true"></div>
 
         <div class="statistics-container">
           <strong>{{ (participantCount() | number) ?? '--' }}</strong>
           <span>Participants</span>
         </div>
 
-        <div class="image-between">
-          <img src="home/circle-dec.png" alt="" role="presentation" />
-        </div>
+        <div class="counter-divider" aria-hidden="true"></div>
 
         <div class="statistics-container">
           <strong>{{ (variableCount() | number) ?? '--' }}</strong>
           <span>Variables Mapped</span>
         </div>
 
-        <div class="image-between">
-          <img src="home/circle-dec.png" alt="" role="presentation" />
-        </div>
+        <div class="counter-divider" aria-hidden="true"></div>
 
         <div class="statistics-container">
           <strong>{{ (modalityCount() | number) ?? '--' }}</strong>
@@ -76,131 +64,136 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Cohort Container -->
-  <div class="section-container">
+  <!-- Cohort Section -->
+  <section class="section-container">
     <div class="section-inner-container">
       <div class="content-container">
         <div class="title-description-button">
-          <div class="title-container">
-            <h2>Cohorts</h2>
-          </div>
-          <div class="description-container">
-            <p>
-              Here you can find an overview on the investigated cohorts, references to the study
-              design and links for data access application. Additionally, there are summary
-              statistics on key Parkinson's disease biomarkers displayed.
-            </p>
-          </div>
-          <div class="button-container">
-            <button class="button-style" [routerLink]="'/cohorts'">Explore</button>
-          </div>
+          <h2 class="section-subheading">Cohorts</h2>
+          <p>
+            Here you can find an overview on the investigated cohorts, references to the study
+            design and links for data access application. Additionally, there are summary statistics
+            on key Parkinson's disease biomarkers displayed.
+          </p>
+          <a mat-flat-button color="primary" routerLink="/cohorts">
+            Explore
+            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </a>
         </div>
         <div class="image-container">
-          <img src="home/cohorts.png" class="image" alt="Cohort Comparison" />
+          <img
+            src="home/cohorts.svg"
+            class="image"
+            alt="Cohort comparison chart showing key demographics across studies"
+          />
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Biomarker Container -->
-  <div class="section-container colored-bg">
+  <!-- Biomarker Section -->
+  <section class="section-container colored-bg">
     <div class="section-inner-container">
-      <div class="content-container">
+      <div class="content-container content-container--reversed">
         <div class="image-container">
-          <img src="home/biomarkers.png" class="image" alt="Heatmap Screenshot" />
+          <img
+            src="home/biomarkers.svg"
+            class="image"
+            alt="Heatmap showing biomarker distribution across cohorts"
+          />
         </div>
         <div class="title-description-button">
-          <div class="title-container">
-            <h2>Biomarker Overview</h2>
-          </div>
-          <div class="description-container">
-            <p>Explore and compare variable distributions across cohorts.</p>
-          </div>
-          <div class="button-container">
-            <button class="inverted-button-style" [routerLink]="'/biomarkers'">Explore</button>
-          </div>
+          <h2 class="section-subheading">Biomarker Overview</h2>
+          <p>Explore and compare variable distributions across cohorts.</p>
+          <a mat-stroked-button class="inverted-nav-button" routerLink="/biomarkers">
+            Explore
+            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </a>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Study Picker Container -->
-  <div class="section-container">
-    <div class="section-inner-container">
-      <div class="content-container">
-        <div class="title-description-button">
-          <div class="title-container">
-            <h2>Study Picker</h2>
-          </div>
-          <div class="description-container">
-            <p>
-              The Study Picker assists you in identifying suited PD data resources for your research
-              plans. Rank cohorts based on their available variables and investigate further
-              properties.
-            </p>
-          </div>
-          <div class="button-container">
-            <button class="button-style" [routerLink]="'/study-picker'">Explore</button>
-          </div>
-        </div>
-        <div class="image-container">
-          <img src="home/study-picker.png" class="image" alt="Study Picker" />
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Longitudinal Container -->
-  <div class="section-container colored-bg">
-    <div class="section-inner-container">
-      <div class="content-container">
-        <div class="image-container">
-          <img src="home/longitudinal.png" class="image" alt="Longitudinal" />
-        </div>
-        <div class="title-description-button">
-          <div class="title-container">
-            <h2>Longitudinal Follow-up</h2>
-          </div>
-          <div class="description-container">
-            <p>
-              This section lets you explore interactive visualizations of the longitudinal follow-up
-              and participant drop-out encountered in the included studies. Additionally, you can
-              visualize the longitudinal coverage of individual variables per study.
-            </p>
-          </div>
-          <div class="button-container">
-            <button class="inverted-button-style" [routerLink]="'/longitudinal'">Explore</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Mapping Container -->
-  <div class="section-container">
+  <!-- Study Picker Section -->
+  <section class="section-container">
     <div class="section-inner-container">
       <div class="content-container">
         <div class="title-description-button">
-          <div class="title-container">
-            <h2>Variable Mappings</h2>
-          </div>
-          <div class="description-container">
-            <p>
-              Following the link, you will find semantic mappings between variables of the
-              investigated datasets. Equivalent variables have been connected and highlight semantic
-              interoperability.
-            </p>
-          </div>
-          <div class="button-container">
-            <button class="button-style" [routerLink]="'/mappings'">Explore</button>
-          </div>
+          <h2 class="section-subheading">Study Picker</h2>
+          <p>
+            The Study Picker assists you in identifying suited PD data resources for your research
+            plans. Rank cohorts based on their available variables and investigate further
+            properties.
+          </p>
+          <a mat-flat-button color="primary" routerLink="/study-picker">
+            Explore
+            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </a>
         </div>
         <div class="image-container">
-          <img src="home/mappings.svg" class="image" alt="Variable Mapping" />
+          <img
+            src="home/study-picker.svg"
+            class="image"
+            alt="Study Picker interface ranking cohorts by variable availability"
+          />
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Longitudinal Section -->
+  <section class="section-container colored-bg">
+    <div class="section-inner-container">
+      <div class="content-container content-container--reversed">
+        <div class="image-container">
+          <img
+            src="home/longitudinal.svg"
+            class="image"
+            alt="Longitudinal follow-up timeline visualization"
+          />
+        </div>
+        <div class="title-description-button">
+          <h2 class="section-subheading">Longitudinal Follow-up</h2>
+          <p>
+            This section lets you explore interactive visualizations of the longitudinal follow-up
+            and participant drop-out encountered in the included studies. Additionally, you can
+            visualize the longitudinal coverage of individual variables per study.
+          </p>
+          <a mat-stroked-button class="inverted-nav-button" routerLink="/longitudinal">
+            Explore
+            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mapping Section -->
+  <section class="section-container">
+    <div class="section-inner-container">
+      <div class="content-container">
+        <div class="title-description-button">
+          <h2 class="section-subheading">Variable Mappings</h2>
+          <p>
+            Following the link, you will find semantic mappings between variables of the
+            investigated datasets. Equivalent variables have been connected and highlight semantic
+            interoperability.
+          </p>
+          <a mat-flat-button color="primary" routerLink="/mappings">
+            Explore
+            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </a>
+        </div>
+        <div class="image-container">
+          <img
+            src="home/mappings.svg"
+            class="image"
+            alt="Network graph of variable semantic mappings between datasets"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
 </main>

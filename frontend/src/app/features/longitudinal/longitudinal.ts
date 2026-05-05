@@ -5,28 +5,31 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+import Plotly from 'plotly.js-dist-min';
 import { finalize, forkJoin } from 'rxjs';
 
 import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
 import { LineplotBuilder } from '@core/services/lineplot-builder';
+import { LoadingSpinner } from '@shared/components/loading-spinner/loading-spinner';
 import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
 
 @Component({
   selector: 'app-longitudinal',
   imports: [
+    LoadingSpinner,
     MatAutocompleteModule,
+    MatButtonModule,
     MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatProgressSpinnerModule,
     ReactiveFormsModule,
   ],
   templateUrl: './longitudinal.html',
@@ -108,6 +111,14 @@ export class Longitudinal implements OnInit {
 
     const title = `Longitudinal data for ${this.selectedVariable()}`;
     this.lineplotBuilder.createLineplot(this.data(), this.colors(), title, 'lineplot');
+
+    // Force Plotly to resize to container
+    setTimeout(() => {
+      const plotEl = document.getElementById('lineplot');
+      if (plotEl) {
+        Plotly.Plots.resize(plotEl);
+      }
+    }, 100);
   }
 
   ngOnInit() {

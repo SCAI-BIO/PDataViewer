@@ -5,28 +5,31 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
+import Plotly from 'plotly.js-dist-min';
 import { finalize, forkJoin, map } from 'rxjs';
 
 import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
+import { LoadingSpinner } from '@shared/components/loading-spinner/loading-spinner';
 import { BoxplotBuilder } from './services/boxplot-builder';
 
 @Component({
   selector: 'app-biomarkers',
   imports: [
+    LoadingSpinner,
     MatAutocompleteModule,
+    MatButtonModule,
     MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatProgressSpinnerModule,
     MatSlideToggleModule,
     ReactiveFormsModule,
   ],
@@ -176,6 +179,14 @@ export class Biomarkers implements OnInit {
       this.showDataPoints(),
       'boxplot',
     );
+
+    // Force Plotly to resize to container
+    setTimeout(() => {
+      const plotEl = document.getElementById('boxplot');
+      if (plotEl) {
+        Plotly.Plots.resize(plotEl);
+      }
+    }, 100);
   }
 
   getCohortColumns(): number {

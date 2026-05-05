@@ -1,47 +1,224 @@
-.input-container {
-  padding: 20px;
-  border-radius: 4px;
-  width: 80%;
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+// ─── Page Note (unique to mappings) ──────────────────────────────────────────
+
+.page-note {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $color-text;
+  background-color: rgba($color-primary, 0.04);
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  border: 1px solid rgba($color-primary, 0.1);
+  margin: 0;
+
+  .note-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $color-primary;
+    flex-shrink: 0;
+  }
 }
 
 .zenodo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: $color-primary;
+  font-weight: 600;
   text-decoration: none;
-  color: #610030;
-  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: border-color $transition-normal;
 
-  &:visited, &:active, &:hover {
-    color: #610030;
-    text-decoration: none;
+  &:hover {
+    border-bottom-color: $color-primary;
+  }
+
+  &:visited {
+    color: $color-primary;
+  }
+
+  .external-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
   }
 }
 
-/* Styles for modality buttons */
-.modality-buttons {
+// ─── Modality Grid ───────────────────────────────────────────────────────────
+
+.modality-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  margin-bottom: 20px;
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: $spacing-sm;
+  width: 100%;
 }
 
-.navigation-buttons {
+.modality-button {
+  --mdc-outlined-button-outline-color: #{$color-border};
+  --mdc-outlined-button-label-text-color: #{$color-text};
+  --mdc-outlined-button-label-text-size: 0.875rem;
+
+  border-radius: 8px;
+  transition:
+    background-color $transition-normal,
+    border-color $transition-normal,
+    box-shadow $transition-normal;
+
+  &:hover {
+    --mdc-outlined-button-outline-color: #{$color-primary};
+    --mdc-outlined-button-label-text-color: #{$color-primary};
+    background-color: rgba($color-primary, 0.04);
+  }
+
+  &--active {
+    --mdc-outlined-button-outline-color: #{$color-primary};
+    --mdc-outlined-button-label-text-color: #{$color-primary};
+    background-color: rgba($color-primary, 0.08);
+    box-shadow: 0 0 0 1px $color-primary;
+    font-weight: 600;
+  }
+}
+
+// ─── No Data Banner ──────────────────────────────────────────────────────────
+
+.no-data-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  width: 100%;
+  max-width: 600px;
+  padding: $spacing-md;
+  margin: $spacing-lg 0;
+  border-radius: 8px;
+  background-color: rgba($color-primary, 0.04);
+  border-left: 4px solid $color-primary;
+
+  .banner-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: $color-primary;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .banner-content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    strong {
+      font-size: 0.9rem;
+      color: $color-text;
+    }
+
+    span {
+      font-size: 0.85rem;
+      color: $color-text-muted;
+      line-height: 1.5;
+    }
+  }
+}
+
+// ─── Diagram Section ─────────────────────────────────────────────────────────
+
+.diagram-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: $spacing-lg;
+}
+
+// ─── Pagination ──────────────────────────────────────────────────────────────
+
+.pagination {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
 
-  .button-style {
-    width: 110px; // To make the button sizes equal. Otherwise, looks off-center.
+  button[mat-icon-button] {
+    --mdc-icon-button-icon-color: #{$color-primary};
+
+    &:disabled {
+      --mdc-icon-button-icon-color: #{$color-border};
+    }
   }
 }
 
-.chord-diagram-container {
-  width: 60%;
+.pagination-info {
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: $color-text;
+  min-width: 48px;
+  text-align: center;
+}
+
+.pagination-separator {
+  color: $color-text-muted;
+  margin: 0 2px;
+}
+
+// ─── Diagram Container ───────────────────────────────────────────────────────
+
+.diagram-container {
+  width: 100%;
+  max-width: 800px;
+  border-radius: 8px;
+  border: 1px solid $color-border;
+  background-color: #ffffff;
+  padding: $spacing-lg;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .chord-diagram {
-  height: auto;
+  width: 100%;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  svg {
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+  }
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+
+@media (max-width: 1024px) {
+  .diagram-container {
+    max-width: 100%;
+    padding: $spacing-md;
+  }
+}
+
+@media (max-width: 768px) {
+  .modality-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .page-note {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .modality-grid {
+    grid-template-columns: 1fr;
+  }
 }

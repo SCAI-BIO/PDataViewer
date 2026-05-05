@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import type { ApiError } from '@shared/interfaces/api-error';
 
@@ -6,9 +7,9 @@ import type { ApiError } from '@shared/interfaces/api-error';
   providedIn: 'root',
 })
 export class ApiErrorHandler {
-  handleError(err: ApiError, context: string): string {
-    console.error(`Error ${context}:`, err);
+  private snackBar = inject(MatSnackBar);
 
+  handleError(err: ApiError, context: string): string {
     const detail = err.error?.detail;
     const message = err.error?.message || err.message;
     const errorMessage =
@@ -16,7 +17,14 @@ export class ApiErrorHandler {
         ? `${message} — ${detail}`
         : detail || message || 'An unknown error occurred.';
 
-    alert(`An error occurred while fetching data: ${errorMessage}`);
+    console.error(`[${context}]`, errorMessage, err);
+
+    this.snackBar.open(errorMessage, 'Dismiss', {
+      duration: 8000,
+      panelClass: 'error-snackbar',
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
 
     return errorMessage;
   }

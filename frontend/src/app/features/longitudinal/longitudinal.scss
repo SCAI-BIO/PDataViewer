@@ -1,18 +1,20 @@
-/* Longitudinal container */
+// longitudinal.component.scss
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
 .input-container {
+  max-width: 480px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 20%;
-  margin-bottom: 20px;
+  gap: $spacing-md;
 }
 
-mat-form-field {
-  width: 100%;
-}
-
-.output-box {
-  width: 100%;
-  max-width: 1400px;
-  margin: 20px 0;
+.visualize-button {
+  mat-icon {
+    margin-right: $spacing-xs;
+  }
 }

@@ -1,43 +1,96 @@
-/* Input container */
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+// ─── Input Container Override ────────────────────────────────────────────────
+
 .input-container {
+  max-width: 560px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  width: 30%;
-  margin: 20px 0;
+  gap: $spacing-md;
 }
 
-a {
-  text-decoration: none;
+// ─── Rank Button ─────────────────────────────────────────────────────────────
+
+.rank-button {
+  align-self: center;
+
+  mat-icon {
+    margin-right: $spacing-xs;
+  }
 }
 
-mat-form-field {
+// ─── Results Section ─────────────────────────────────────────────────────────
+
+.results-section {
   width: 100%;
+  margin-top: $spacing-lg;
 }
 
-/* Chip listbox wrapping */
-mat-chip-grid {
-  padding: 10px;
-}
+// ─── Rank Badge (unique to study picker) ─────────────────────────────────────
 
-.table-container {
-  min-width: 80%;
-}
-
-/* Color circle for display */
-.color-circle {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  margin-right: 5px;
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  vertical-align: middle;
+  background-color: rgba($color-primary, 0.08);
+  color: $color-primary;
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
-/* Missing variables cell */
-.missing-variables-cell {
-  max-width: 100px;
-  word-wrap: break-word;
+// ─── Found Count ─────────────────────────────────────────────────────────────
+
+.found-count {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: $color-primary;
+}
+
+// ─── Missing Variables ───────────────────────────────────────────────────────
+
+.missing-text {
+  font-size: 0.8rem;
+  color: $color-text-muted;
+  display: inline-block;
+  max-width: 200px;
   white-space: normal;
+  line-height: 1.5;
+}
+
+.all-found {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 0.8rem;
+  color: $color-success;
+  font-weight: 500;
+
+  .all-found-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .missing-text {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rank-badge {
+    display: none;
+  }
 }

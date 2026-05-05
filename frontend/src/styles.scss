@@ -1,37 +1,40 @@
 @use 'sass:color';
+@use '@angular/material' as mat;
+@use '_theme' as theme;
+@use '_tokens' as *;
 
-// Define global button variables
-$max-width: 100%;
-$font-size: 16px;
-$bold-font-weight: 600;
+// ─── Angular Material Theme Application ──────────────────────────────────────
 
-// Button variables
-$button-primary: #610030;
-$button-secondary: #f9f9f9;
-$button-padding: 10px 20px;
-$button-radius: 5px;
-
-// Base button styles
-%button-base {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: $button-padding;
-  font-size: $font-size;
-  font-weight: bold;
-  border: none;
-  border-radius: $button-radius;
-  text-align: center;
-  white-space: nowrap;
-  transition: background 0.3s ease-in-out;
-  cursor: pointer;
+html {
+  @include mat.all-component-themes(theme.$app-theme);
 }
 
-body {
-  font-family: 'Robot', sans-serif;
-  font-size: $font-size;
-  line-height: 1.6;
-  margin: 0;
+// ─── Brand Color Overrides (M3 CSS tokens) ───────────────────────────────────
+
+:root {
+  --mat-sys-primary: #{$color-primary};
+  --mat-sys-on-primary: #{$color-surface};
+  --mat-sys-primary-container: #8a1450;
+  --mat-sys-on-primary-container: #ffffff;
+  --mat-sys-surface: #ffffff;
+  --mat-sys-on-surface: #{$color-text};
+  --mat-sys-outline: #{$color-border};
+  --mat-sys-outline-variant: #e8e0e4;
+  --mat-sys-surface-container-low: #{$color-surface};
+  --mat-sys-error: #{$color-error};
+  --mat-sys-on-error: #ffffff;
+}
+
+// ─── Base Reset & Globals ────────────────────────────────────────────────────
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html,
@@ -39,106 +42,579 @@ body {
   height: 100%;
 }
 
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-text;
+  background-color: var(--mat-sys-surface);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 strong,
 b {
-  font-weight: $bold-font-weight;
+  font-weight: $font-weight-bold;
 }
 
-.button-style {
-  @extend %button-base;
-  background: $button-primary;
-  color: $button-secondary;
-
-  &:hover {
-    background: color.adjust($button-primary, $lightness: 10%);
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-.inverted-button-style {
-  @extend %button-base;
-  background: $button-secondary;
-  color: $button-primary;
+// ─── Angular Material Button Overrides ───────────────────────────────────────
 
-  &:hover {
-    background: color.adjust($button-primary, $lightness: 70%);
-  }
+.mat-mdc-button.mat-primary,
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-flat-button.mat-primary,
+.mat-mdc-outlined-button.mat-primary,
+.mat-tonal-button.mat-primary {
+  --mat-button-filled-container-color: #{$color-primary};
+  --mat-button-filled-label-text-color: #{$color-surface};
+  --mat-button-filled-ripple-color: #{color-mix(in srgb, $color-surface 12%, transparent)};
+  --mat-button-filled-state-layer-color: #{$color-surface};
+
+  --mat-button-outlined-label-text-color: #{$color-primary};
+  --mat-button-outlined-outline-color: #{$color-primary};
+  --mat-button-outlined-ripple-color: #{color-mix(in srgb, $color-primary 12%, transparent)};
+  --mat-button-outlined-state-layer-color: #{$color-primary};
+
+  --mat-button-protected-container-color: #{$color-primary};
+  --mat-button-protected-label-text-color: #{$color-surface};
+  --mat-button-protected-ripple-color: #{color-mix(in srgb, $color-surface 12%, transparent)};
+  --mat-button-protected-state-layer-color: #{$color-surface};
+
+  --mat-button-text-label-text-color: #{$color-primary};
+  --mat-button-text-ripple-color: #{color-mix(in srgb, $color-primary 12%, transparent)};
+  --mat-button-text-state-layer-color: #{$color-primary};
+
+  --mat-button-tonal-container-color: #{$color-primary};
+  --mat-button-tonal-label-text-color: #{$color-surface};
+  --mat-button-tonal-ripple-color: #{color-mix(in srgb, $color-surface 12%, transparent)};
+  --mat-button-tonal-state-layer-color: #{$color-surface};
 }
 
-// Layout utilities
-.main-container {
+.mat-mdc-button.mat-warn,
+.mat-mdc-unelevated-button.mat-warn,
+.mat-mdc-raised-button.mat-warn,
+.mat-mdc-flat-button.mat-warn,
+.mat-tonal-button.mat-warn {
+  --mat-button-filled-container-color: #{$color-error};
+  --mat-button-filled-label-text-color: #ffffff;
+  --mat-button-filled-ripple-color: color-mix(in srgb, #ffffff 12%, transparent);
+  --mat-button-filled-state-layer-color: #ffffff;
+}
+
+.button-full-width {
+  width: 100%;
+}
+
+// ─── Focus & Accessibility ───────────────────────────────────────────────────
+
+:focus-visible {
+  outline: 3px solid rgba($color-primary, 0.24);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background-color: rgba($color-primary, 0.15);
+  color: $color-text;
+}
+
+// ─── Shared Page Layout ──────────────────────────────────────────────────────
+
+.page-layout {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 50px 0;
-  max-width: $max-width;
+  padding: $spacing-xl $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-// Description Box
-.description-box {
-  max-width: 80%;
-  margin-bottom: 20px;
+.page-header {
   text-align: center;
-  align-self: center;
+  margin-bottom: $spacing-xl;
+  max-width: 720px;
+}
 
-  ul {
-    padding: 0;
-    margin: 0;
-    display: inline-block;
-    text-align: left;
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $color-primary;
+  margin: 0 0 $spacing-sm;
+}
 
-    li {
-      padding-left: 8px;
-      list-style: none;
-      margin-bottom: 6px;
-      text-align: center;
-      text-indent: -12px;
-    }
+.page-description {
+  font-size: 0.95rem;
+  color: $color-text-muted;
+  line-height: 1.7;
+  margin: 0;
+}
+
+// ─── Shared Step Sections ────────────────────────────────────────────────────
+
+.step-section {
+  width: 100%;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  align-self: flex-start;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: $color-primary;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.step-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: $color-text;
+
+  strong {
+    color: $color-primary;
   }
 }
 
-// Table Styles
+// ─── Shared Input Container ──────────────────────────────────────────────────
+
+.input-container {
+  width: 100%;
+  max-width: 500px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+// ─── Shared Table Styles ─────────────────────────────────────────────────────
+
 .table-container {
   overflow: auto;
-  max-height: 800px;
-  margin-top: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  max-height: 70vh;
+  border-radius: 8px;
+  border: 1px solid $color-border;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  width: 100%;
 
   table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    font-size: $font-size-small;
   }
-}
-
-// Table Column Borders
-.mat-table th,
-.mat-table td {
-  border-right: 1px solid #e0e0e0;
-  padding: 12px 16px;
-  line-height: 1.4;
 }
 
 thead,
 th {
-  background-color: $button-primary !important;
-  color: $button-secondary !important;
-}
-
-.mat-mdc-row:hover {
-  background-color: color.adjust(white, $lightness: -5%);
-}
-
-// Loading spinner
-.loading-spinner {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
+  z-index: 2;
+  background-color: $color-primary !important;
+  color: $color-surface !important;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.02em;
+}
+
+.mat-mdc-header-cell {
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.mat-mdc-cell {
+  font-size: 0.875rem;
+  padding: 12px $spacing-md;
+  vertical-align: middle;
+}
+
+.mat-table th,
+.mat-table td {
+  border-right: 1px solid $color-border;
+  padding: 12px $spacing-md;
+  line-height: 1.5;
+  vertical-align: middle;
+
+  &:last-child {
+    border-right: none;
+  }
+}
+
+.mat-mdc-row:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.mat-mdc-row {
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: $color-hover;
+  }
+}
+
+// ─── Shared Table Action Buttons ─────────────────────────────────────────────
+
+.table-action-button {
+  --mdc-outlined-button-label-text-size: 0.75rem;
+  --mdc-outlined-button-container-height: 32px;
+  --mdc-outlined-button-outline-color: #{$color-border};
+  --mdc-outlined-button-label-text-color: #{$color-text-muted};
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: 0 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  min-width: auto;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover {
+    --mdc-outlined-button-label-text-color: #{$color-primary};
+    --mdc-outlined-button-outline-color: #{$color-primary};
+  }
+
+  &--primary {
+    --mat-button-filled-container-color: #{$color-primary};
+    --mat-button-filled-label-text-color: #{$color-surface};
+    --mdc-filled-button-label-text-size: 0.75rem;
+    --mdc-filled-button-container-height: 32px;
+
+    &:hover {
+      --mat-button-filled-container-color: #{color.adjust($color-primary, $lightness: 8%)};
+    }
+  }
+}
+
+// ─── Shared Cell Styles ──────────────────────────────────────────────────────
+
+.cohort-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.color-indicator {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
+}
+
+.cohort-name {
+  font-weight: 600;
+  color: $color-text;
+  white-space: nowrap;
+}
+
+.numeric-cell {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.not-reported,
+.not-available {
+  color: rgba(0, 0, 0, 0.3);
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+.access-label {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 0.8rem;
+  color: $color-text-muted;
+  background-color: rgba(0, 0, 0, 0.04);
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+
+  .access-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// ─── Shared Output / Plot Section ────────────────────────────────────────────
+
+.output-section {
   width: 100%;
-  height: 100%;
+  margin-top: $spacing-lg;
+  display: flex;
+  justify-content: center;
+}
+
+.output-box {
+  width: 100%;
+  max-width: 1400px;
+  border-radius: 8px;
+  border: 1px solid $color-border;
+  background-color: #ffffff;
+  padding: $spacing-md;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.plot-area {
+  width: 100%;
+  min-height: 450px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+
+  &:empty {
+    min-height: 0;
+    display: none;
+  }
+}
+
+// ─── Shared Colored Background ───────────────────────────────────────────────
+
+.colored-bg {
+  background: linear-gradient(135deg, #610030, #4d0063);
+  color: $color-surface;
+}
+
+// ─── Shared Inverted Button (on dark bg) ─────────────────────────────────────
+
+.inverted-nav-button {
+  --mdc-outlined-button-label-text-color: #ffffff !important;
+  --mdc-outlined-button-outline-color: rgba(255, 255, 255, 0.7) !important;
+  --mat-button-outlined-label-text-color: #ffffff;
+  --mat-button-outlined-outline-color: rgba(255, 255, 255, 0.7);
+  --mat-button-outlined-state-layer-color: #ffffff;
+  --mat-button-outlined-ripple-color: rgba(255, 255, 255, 0.12);
+
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.7);
+
+  &:hover {
+    --mdc-outlined-button-outline-color: #ffffff !important;
+    --mat-button-outlined-outline-color: #ffffff;
+    border-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+// ─── Feedback & Status Utilities ─────────────────────────────────────────────
+
+.status-success {
+  color: $color-success;
+  font-weight: $font-weight-bold;
+}
+
+.status-warning {
+  color: $color-warning;
+  font-weight: $font-weight-bold;
+}
+
+.status-error {
+  color: $color-error;
+  font-weight: $font-weight-bold;
+}
+
+.notification-banner {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-size: $font-size-small;
+  font-weight: 500;
+  margin-bottom: $spacing-md;
+
+  &--success {
+    background-color: rgba($color-success, 0.1);
+    border-left: 4px solid $color-success;
+    color: $color-success;
+  }
+
+  &--warning {
+    background-color: rgba($color-warning, 0.1);
+    border-left: 4px solid $color-warning;
+    color: color.adjust($color-warning, $lightness: -15%);
+  }
+
+  &--error {
+    background-color: rgba($color-error, 0.1);
+    border-left: 4px solid $color-error;
+    color: $color-error;
+  }
+}
+
+// ─── Empty State ─────────────────────────────────────────────────────────────
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+  color: $color-text-muted;
+  text-align: center;
+
+  &__icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: $spacing-md;
+    opacity: 0.4;
+  }
+
+  &__message {
+    font-size: $font-size-base;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+// ─── Mat Icon SVG Centering Fix ──────────────────────────────────────────────
+
+.mat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: inherit;
+    height: inherit;
+    display: block;
+  }
+}
+
+.mat-mdc-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  .mat-icon {
+    margin: 0;
+    padding: 0;
+    position: static;
+  }
+}
+
+// ─── Global Slide Toggle Fix ─────────────────────────────────────────────────
+
+.mat-mdc-slide-toggle {
+  .mdc-switch {
+    overflow: hidden;
+    margin-right: 12px;
+  }
+
+  .mdc-switch__icons,
+  .mdc-switch__icon,
+  .mdc-switch__icon--on,
+  .mdc-switch__icon--off {
+    display: none !important;
+  }
+
+  .mdc-switch__ripple,
+  .mdc-switch__handle::before,
+  .mdc-switch__handle::after {
+    transform: scale(0.8) !important;
+  }
+
+  .mdc-switch__state-layer {
+    width: 40px !important;
+    height: 40px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+}
+
+// ─── Shared Chip Grid ────────────────────────────────────────────────────────
+
+mat-chip-grid {
+  padding: $spacing-sm;
+}
+
+mat-chip-row {
+  --mdc-chip-label-text-size: 0.85rem;
+}
+
+// ─── Plotly Override (global) ─────────────────────────────────────────────────
+
+.js-plotly-plot,
+.plot-container,
+.plotly,
+.svg-container,
+.main-svg {
+  width: 100% !important;
+}
+
+// ─── Responsive Shared ──────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .page-layout {
+    padding: $spacing-lg $spacing-md;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .page-description {
+    font-size: 0.875rem;
+  }
+
+  .input-container {
+    max-width: 100%;
+  }
+
+  .table-container {
+    max-height: 60vh;
+  }
+
+  .plot-area {
+    min-height: 300px;
+  }
+
+  .step-indicator {
+    align-self: center;
+  }
+}
+
+// ─── Error Snackbar ──────────────────────────────────────────────────────────
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #{$color-error};
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
 }

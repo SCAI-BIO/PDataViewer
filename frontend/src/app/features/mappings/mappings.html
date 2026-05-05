@@ -1,77 +1,101 @@
-<div class="main-container">
-  <div class="description-box">
-    <h1>Mappings</h1>
-    <p>
-      <br />
-      The Mappings helps you to identify semantic equivalent of the variable(s) of your interest in
-      another cohort. <br />
-
-      You can hover over the variable of your interest to highlight its semantic equivalent(s).
-      Unfortunately, due to data limitation, there might be no mappings to showcase for some
-      modalities. Please keep in touch, as we are trying to collect more data each day! <br />
-      <strong
-        >You can find all of the mappings in our Parkinson's Disease Variable Mapping Schema -
-        PASSIONATE on
-        <a
-          href="https://zenodo.org/records/10218362"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="zenodo-link"
-          >Zenodo</a
-        ></strong
-      >
-      <br />
-
-      Please select a modality to continue.
+<main class="page-layout">
+  <section class="page-header">
+    <h1 class="page-title">Mappings</h1>
+    <p class="page-description">
+      Identify semantically equivalent variables across cohorts. Hover over a variable to highlight
+      its mappings. Select a modality below to explore available connections.
     </p>
-  </div>
+    <p class="page-note">
+      <mat-icon class="note-icon">dataset_linked</mat-icon>
+      All mappings are available in our Parkinson's Disease Variable Mapping Schema — PASSIONATE on
+      <a
+        href="https://zenodo.org/records/10218362"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="zenodo-link"
+        >Zenodo<mat-icon class="external-icon">open_in_new</mat-icon></a
+      >
+    </p>
+  </section>
 
-  <!-- Loading Spinner -->
+  <!-- Loading Overlay -->
   @if (isLoading()) {
-  <div class="loading-spinner">
-    <mat-spinner diameter="40"></mat-spinner>
-  </div>
+    <app-loading-spinner></app-loading-spinner>
   }
 
-  <div class="input-container">
-    <!-- Container for modality buttons -->
-    <div class="modality-buttons">
-      <!-- Loop through each modality and create a button -->
+  <!-- Modality Selection -->
+  <section class="step-section">
+    <div class="step-indicator">
+      <span class="step-number">1</span>
+      <span class="step-label">Select a modality</span>
+    </div>
+    <div class="modality-grid">
       @for (modality of modalities(); track modality) {
-      <button class="button-style" (click)="onModalityClick(modality)">
-        <!-- Interpolate modality name -->
-        {{ modality }}
-      </button>
+        <button
+          mat-stroked-button
+          class="modality-button"
+          [class.modality-button--active]="selectedModality() === modality"
+          (click)="onModalityClick(modality)"
+        >
+          {{ modality }}
+        </button>
       }
     </div>
-  </div>
+  </section>
 
-  <!-- Conditional display of no-data message -->
+  <!-- No Data Message -->
   @if (selectedModality() && !(dataChunks().length > 0)) {
-  <div class="no-data-message">
-    Sorry, no mapping to showcase for this modality currently. We are collecting more data, keep in
-    touch!
-  </div>
-  } @if (dataChunks().length > 0 ) {
-  <div class="navigation-buttons">
-    <button (click)="previous()" [disabled]="currentIndex() === 0" class="button-style">
-      Previous
-    </button>
-    <span>{{ currentIndex() + 1 }} / {{ dataChunks().length }}</span>
-    <button
-      (click)="next()"
-      [disabled]="currentIndex() === dataChunks().length - 1"
-      class="button-style"
-    >
-      Next
-    </button>
-  </div>
-
-  <!-- Render one diagram per chunk -->
-  <div class="chord-diagram-container">
-    <div class="chord-diagram">
-      <svg></svg>
+    <div class="no-data-banner" role="alert">
+      <mat-icon class="banner-icon">info</mat-icon>
+      <div class="banner-content">
+        <strong>No mappings available</strong>
+        <span
+          >No mapping to showcase for this modality currently. We are collecting more data — check
+          back soon.</span
+        >
+      </div>
     </div>
-  </div>
   }
-</div>
+
+  <!-- Diagram Section -->
+  @if (dataChunks().length > 0) {
+    <section class="diagram-section">
+      <div class="step-indicator">
+        <span class="step-number">2</span>
+        <span class="step-label">Explore variable mappings</span>
+      </div>
+
+      <!-- Pagination -->
+      <nav class="pagination" aria-label="Mapping diagram pagination">
+        <button
+          mat-icon-button
+          (click)="previous()"
+          [disabled]="currentIndex() === 0"
+          aria-label="Previous diagram"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span class="pagination-info">
+          {{ currentIndex() + 1 }}
+          <span class="pagination-separator">/</span>
+          {{ dataChunks().length }}
+        </span>
+        <button
+          mat-icon-button
+          (click)="next()"
+          [disabled]="currentIndex() === dataChunks().length - 1"
+          aria-label="Next diagram"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </nav>
+
+      <!-- Chord Diagram — keep original class and structure for the builder -->
+      <div class="diagram-container">
+        <div class="chord-diagram">
+          <svg></svg>
+        </div>
+      </div>
+    </section>
+  }
+</main>

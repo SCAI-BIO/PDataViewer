@@ -1,0 +1,36 @@
+// _tokens.scss (place next to styles.scss)
+@use 'sass:color';
+
+// Colors
+$color-primary: #610030;
+$color-surface: #f9f9f9;
+$color-text: #1a1a1a;
+$color-text-muted: #5f6368;
+$color-border: #dadce0;
+$color-hover: rgba($color-primary, 0.06);
+$color-success: #1e7e34;
+$color-warning: #e6a200;
+$color-error: #c62828;
+
+// Typography
+$font-size-base: 16px;
+$font-size-small: 14px;
+$font-weight-bold: 600;
+$line-height-base: 1.6;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 40px;
+
+// Shadows
+$shadow-sm:
+  0 1px 3px rgba(0, 0, 0, 0.12),
+  0 1px 2px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+// Transitions
+$transition-fast: 150ms ease-in-out;
+$transition-normal: 250ms ease-in-out;

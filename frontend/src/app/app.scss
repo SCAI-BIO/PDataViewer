@@ -1,17 +1,10 @@
-.body {
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
   flex: 1;
-  overflow: auto;
-  padding-bottom: 300px;
-  background: #f9f9f9;
-}
-
-.container {
-  min-height: 100%;
-  position: relative;
-}
-
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
+  background-color: var(--mat-sys-surface, #f9f9f9);
 }

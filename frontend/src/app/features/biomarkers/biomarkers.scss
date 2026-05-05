@@ -1,61 +1,74 @@
-/* Biomarker Input Container */
-.input-container {
+@use 'sass:color';
+@use '_tokens' as *;
+
+:host {
+  display: block;
+}
+
+.biomarkers-page {
+  max-width: 1000px;
+}
+
+// ─── Cohort Chips (unique to biomarkers) ─────────────────────────────────────
+
+.cohort-chips {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
-  width: 30%;
-}
-
-/* Cohort Container */
-.cohort-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  gap: $spacing-sm;
   width: 100%;
-  margin-bottom: 20px;
 }
 
-/* Cohort List */
-.cohort-list {
-  display: grid;
+.cohort-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background-color: rgba($color-primary, 0.06);
+  border: 1px solid rgba($color-primary, 0.12);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: $color-text;
+  transition: background-color $transition-normal;
 
-  p {
-    margin: 0 10px;
-    text-align: center;
+  &:hover {
+    background-color: rgba($color-primary, 0.1);
   }
 }
 
-/* Color Circle */
-.color-circle {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 2px;
-}
+// ─── Actions ─────────────────────────────────────────────────────────────────
 
-/* Cohort and Button Containers */
-.cohort-selection-container,
-.button-container {
+.actions-container {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  width: 40%;
-  padding: 10px 0;
+  gap: $spacing-lg;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-mat-form-field {
-  width: 100%;
+.visualize-button {
+  mat-icon {
+    margin-right: $spacing-xs;
+  }
 }
 
-/* Chip Listbox */
-mat-chip-grid {
-  padding: 10px;
+// ─── Responsive ──────────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .actions-container {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
 }
 
-.output-box {
-  width: 100%;
-  max-width: 1400px;
-  margin: 20px 0;
+@media (max-width: 480px) {
+  .cohort-chips {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cohort-chip {
+    justify-content: center;
+  }
 }

@@ -8,18 +8,20 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { finalize, forkJoin } from 'rxjs';
 
 import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
+import { LoadingSpinner } from '@shared/components/loading-spinner/loading-spinner';
 import type { ChordData } from '@shared/interfaces/chord-diagram';
 import { ChordBuilder } from './services/chord-builder';
 
 @Component({
   selector: 'app-mappings',
-  imports: [MatProgressSpinnerModule],
+  imports: [LoadingSpinner, MatButtonModule, MatIconModule],
   templateUrl: './mappings.html',
   styleUrl: './mappings.scss',
 })

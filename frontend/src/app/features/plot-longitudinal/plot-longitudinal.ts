@@ -1,19 +1,20 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute } from '@angular/router';
 
+import Plotly from 'plotly.js-dist-min';
 import { forkJoin } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
 import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
 import { LineplotBuilder } from '@core/services/lineplot-builder';
+import { LoadingSpinner } from '@shared/components/loading-spinner/loading-spinner';
 import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
 
 @Component({
   selector: 'app-plot-longitudinal',
-  imports: [MatProgressSpinnerModule],
+  imports: [LoadingSpinner],
   templateUrl: './plot-longitudinal.html',
   styleUrl: './plot-longitudinal.scss',
 })
@@ -87,6 +88,14 @@ export class PlotLongitudinal implements OnInit {
     const title = `Longitudinal follow-ups for ${varsString} in the ${this.cohort()} cohort`;
 
     this.lineplotBuilder.createLineplot(this.data(), {}, title, 'lineplot');
+
+    // Force Plotly to resize to container
+    setTimeout(() => {
+      const plotEl = document.getElementById('lineplot');
+      if (plotEl) {
+        Plotly.Plots.resize(plotEl);
+      }
+    }, 100);
   }
 
   ngOnInit(): void {

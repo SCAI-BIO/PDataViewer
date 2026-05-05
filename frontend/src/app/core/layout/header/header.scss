@@ -1,59 +1,139 @@
-@use 'sass:color';
+@use 'tokens' as *;
 
-/* Header Area */
-.button-style {
-  min-width: 150px;
-  background: none;
-
-  &:hover {
-    color: #fe0fb0;
-  }
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .banner {
   background: linear-gradient(135deg, #610030, #4d0063);
   color: white;
-  display: grid;
-  grid-template-columns: 1fr 1fr 50fr 1fr;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 20px;
+  gap: $spacing-md;
+  padding: 0 $spacing-lg;
+  height: 64px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .logo-box {
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding-right: 20px;
+
+  a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    border-radius: 4px;
+    padding: $spacing-xs;
+    transition: opacity 200ms ease;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+
   .logo {
-    height: 70px;
+    height: 40px;
     width: auto;
   }
 }
 
-.site-title-box {
-  .site-title {
-    text-align: left;
+.site-title {
+  font-size: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  margin-right: $spacing-sm;
+}
+
+.routing-menu {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  a {
+    --mat-button-text-label-text-color: #ffffff;
+    --mat-button-text-state-layer-color: #ffffff;
+    --mat-button-text-ripple-color: rgba(255, 255, 255, 0.12);
+
+    color: #ffffff;
+    border-radius: 6px;
+    position: relative;
+    font-size: $font-size-small;
+    font-weight: 500;
+    transition:
+      color 200ms ease,
+      background-color 200ms ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    &.nav-active {
+      font-weight: 600;
+      background-color: rgba(255, 255, 255, 0.12);
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60%;
+        height: 3px;
+        background-color: #fe6fcf;
+        border-radius: 3px 3px 0 0;
+      }
+    }
   }
 }
 
-.routing-menu-box {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-
-  .button-style {
-    font-size: 18px;
-  }
+.spacer {
+  flex: 1;
 }
 
-.github-logo-box {
-  display: flex;
+.github-button {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  align-content: center;
+
   .github-logo {
-    height: 55px;
+    height: 40px;
     width: auto;
-    cursor: pointer;
+    display: block;
+    object-fit: contain;
+  }
+}
+
+@media (max-width: 1024px) {
+  .site-title {
+    display: none;
+  }
+
+  .routing-menu {
+    gap: 2px;
+
+    a {
+      padding: 0 12px;
+      font-size: 13px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .banner {
+    padding: 0 $spacing-md;
+  }
+
+  .routing-menu {
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }

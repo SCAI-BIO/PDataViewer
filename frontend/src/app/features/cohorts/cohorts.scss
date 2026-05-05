@@ -1,11 +1,47 @@
-.color-circle {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 8px;
+@use '_tokens' as *;
+
+:host {
+  display: block;
 }
 
-.cohort-name {
-  font-weight: bold;
+// Only page-specific max-width override
+.page-layout {
+  max-width: 1400px;
+}
+
+// Cohort-specific styles (not shared)
+.found-count {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: $color-primary;
+}
+
+.total-count {
+  font-size: 0.8rem;
+  color: $color-text-muted;
+  margin-left: 2px;
+}
+
+.missing-text {
+  font-size: 0.8rem;
+  color: $color-text-muted;
+  display: inline-block;
+  max-width: 200px;
+  white-space: normal;
+  line-height: 1.5;
+}
+
+.all-found {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 0.8rem;
+  color: $color-success;
+  font-weight: 500;
+
+  .all-found-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
 }
