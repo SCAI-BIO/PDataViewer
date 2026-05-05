@@ -8,6 +8,8 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { finalize, forkJoin } from 'rxjs';
@@ -19,7 +21,7 @@ import { ChordBuilder } from './services/chord-builder';
 
 @Component({
   selector: 'app-mappings',
-  imports: [MatProgressSpinnerModule],
+  imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './mappings.html',
   styleUrl: './mappings.scss',
 })

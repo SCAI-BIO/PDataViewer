@@ -5,6 +5,7 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { finalize, forkJoin } from 'rxjs';
+import Plotly from 'plotly.js-dist-min';
 
 import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
@@ -22,6 +24,7 @@ import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
   selector: 'app-longitudinal',
   imports: [
     MatAutocompleteModule,
+    MatButtonModule,
     MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
@@ -108,6 +111,14 @@ export class Longitudinal implements OnInit {
 
     const title = `Longitudinal data for ${this.selectedVariable()}`;
     this.lineplotBuilder.createLineplot(this.data(), this.colors(), title, 'lineplot');
+
+    // Force Plotly to resize to container
+    setTimeout(() => {
+      const plotEl = document.getElementById('lineplot');
+      if (plotEl) {
+        Plotly.Plots.resize(plotEl);
+      }
+    }, 100);
   }
 
   ngOnInit() {

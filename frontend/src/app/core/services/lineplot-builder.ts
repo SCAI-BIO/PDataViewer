@@ -67,6 +67,8 @@ export class LineplotBuilder {
         range: [0, 100],
       },
       legend: { orientation: 'v', x: 1.05, y: 1 },
+      autosize: true,
+      width: undefined,
       margin: { t: 50, r: 200, b: 60, l: 80 },
       hovermode: 'x unified',
       showlegend: true,

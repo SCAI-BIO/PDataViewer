@@ -1,18 +1,221 @@
-/* Longitudinal container */
-.input-container {
+// longitudinal.component.scss
+@use 'sass:color';
+
+$color-primary: #610030;
+$color-surface: #f9f9f9;
+$color-text: #1a1a1a;
+$color-text-muted: #5f6368;
+$color-border: #dadce0;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 40px;
+$transition-normal: 250ms ease-in-out;
+
+// ─── Page Layout ─────────────────────────────────────────────────────────────
+
+:host {
+  display: block;
+}
+
+.longitudinal-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 20%;
-  margin-bottom: 20px;
+  padding: $spacing-xl $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-mat-form-field {
+// ─── Page Header ─────────────────────────────────────────────────────────────
+
+.page-header {
+  text-align: center;
+  margin-bottom: $spacing-xl;
+  max-width: 720px;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $color-primary;
+  margin: 0 0 $spacing-sm;
+}
+
+.page-description {
+  font-size: 0.95rem;
+  color: $color-text-muted;
+  line-height: 1.7;
+  margin: 0;
+}
+
+// ─── Step Sections ───────────────────────────────────────────────────────────
+
+.step-section {
   width: 100%;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  align-self: flex-start;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: $color-primary;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.step-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: $color-text;
+}
+
+// ─── Input Container ─────────────────────────────────────────────────────────
+
+.input-container {
+  width: 100%;
+  max-width: 420px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+// ─── Visualize Button ────────────────────────────────────────────────────────
+
+.visualize-button {
+  --mat-button-filled-container-color: #{$color-primary};
+  --mat-button-filled-label-text-color: #{$color-surface};
+
+  mat-icon {
+    margin-right: $spacing-xs;
+  }
+
+  &:hover {
+    --mat-button-filled-container-color: #{color.adjust($color-primary, $lightness: 8%)};
+  }
+}
+
+// ─── Output Section ──────────────────────────────────────────────────────────
+
+.output-section {
+  width: 100%;
+  margin-top: $spacing-lg;
+  display: flex;
+  justify-content: center;
 }
 
 .output-box {
   width: 100%;
   max-width: 1400px;
-  margin: 20px 0;
+  border-radius: 8px;
+  border: 1px solid $color-border;
+  background-color: #ffffff;
+  padding: $spacing-md;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  &:has(.plot-area:empty) {
+    display: none;
+  }
+}
+
+.plot-area {
+  width: 100%;
+  min-height: 450px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  // Force Plotly to fill container width
+  ::ng-deep {
+    .js-plotly-plot {
+      width: 100% !important;
+    }
+
+    .plot-container {
+      width: 100% !important;
+    }
+
+    .plotly {
+      width: 100% !important;
+    }
+
+    .main-svg {
+      width: 100% !important;
+    }
+
+    // Override any inline width Plotly sets
+    .svg-container {
+      width: 100% !important;
+    }
+  }
+
+  &:empty {
+    min-height: 0;
+    display: none;
+  }
+}
+
+// ─── Loading Overlay ─────────────────────────────────────────────────────────
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+
+  .loading-label {
+    color: $color-surface;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .longitudinal-page {
+    padding: $spacing-lg $spacing-md;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .input-container {
+    max-width: 100%;
+  }
+
+  .plot-area {
+    min-height: 300px;
+  }
 }
