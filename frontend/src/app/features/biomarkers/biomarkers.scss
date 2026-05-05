@@ -1,110 +1,15 @@
-// biomarkers.component.scss
 @use 'sass:color';
-
-$color-primary: #610030;
-$color-surface: #f9f9f9;
-$color-text: #1a1a1a;
-$color-text-muted: #5f6368;
-$color-border: #dadce0;
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 40px;
-$transition-normal: 250ms ease-in-out;
-
-// ─── Page Layout ─────────────────────────────────────────────────────────────
+@use '_tokens' as *;
 
 :host {
   display: block;
 }
 
 .biomarkers-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: $spacing-xl $spacing-lg;
   max-width: 1000px;
-  margin: 0 auto;
-  width: 100%;
 }
 
-// ─── Page Header ─────────────────────────────────────────────────────────────
-
-.page-header {
-  text-align: center;
-  margin-bottom: $spacing-xl;
-  max-width: 700px;
-}
-
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: $color-primary;
-  margin: 0 0 $spacing-sm;
-}
-
-.page-description {
-  font-size: 0.95rem;
-  color: $color-text-muted;
-  line-height: 1.7;
-  margin: 0;
-}
-
-// ─── Step Sections ───────────────────────────────────────────────────────────
-
-.step-section {
-  width: 100%;
-  margin-bottom: $spacing-lg;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.step-indicator {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  margin-bottom: $spacing-md;
-  align-self: flex-start;
-}
-
-.step-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: $color-primary;
-  color: #ffffff;
-  font-size: 0.8rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.step-label {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: $color-text;
-
-  strong {
-    color: $color-primary;
-  }
-}
-
-// ─── Input Container ─────────────────────────────────────────────────────────
-
-.input-container {
-  width: 100%;
-  max-width: 500px;
-
-  mat-form-field {
-    width: 100%;
-  }
-}
-
-// ─── Cohort Chips Display ────────────────────────────────────────────────────
+// ─── Cohort Chips (unique to biomarkers) ─────────────────────────────────────
 
 .cohort-chips {
   display: flex;
@@ -132,16 +37,7 @@ $transition-normal: 250ms ease-in-out;
   }
 }
 
-.color-indicator {
-  display: block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
-}
-
-// ─── Actions Container ───────────────────────────────────────────────────────
+// ─── Actions ─────────────────────────────────────────────────────────────────
 
 .actions-container {
   display: flex;
@@ -152,95 +48,21 @@ $transition-normal: 250ms ease-in-out;
 }
 
 .visualize-button {
-  --mat-button-filled-container-color: #{$color-primary};
-  --mat-button-filled-label-text-color: #{$color-surface};
-
   mat-icon {
     margin-right: $spacing-xs;
   }
-
-  &:hover {
-    --mat-button-filled-container-color: #{color.adjust($color-primary, $lightness: 8%)};
-  }
-}
-
-// ─── Output Section ──────────────────────────────────────────────────────────
-
-.output-section {
-  width: 100%;
-  margin-top: $spacing-lg;
-}
-
-.output-box {
-  width: 100%;
-  min-height: 300px;
-  border-radius: 8px;
-  border: 1px solid $color-border;
-  background-color: #ffffff;
-  padding: $spacing-md;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  &:empty {
-    display: none;
-  }
-}
-
-.plot-area {
-  width: 100%;
-  min-height: 400px;
-
-  ::ng-deep {
-    .js-plotly-plot,
-    .plot-container,
-    .plotly {
-      width: 100% !important;
-    }
-  }
-}
-
-// ─── Chip Grid Styling ───────────────────────────────────────────────────────
-
-mat-chip-grid {
-  padding: $spacing-sm;
-}
-
-mat-chip-row {
-  --mdc-chip-label-text-size: 0.85rem;
 }
 
 // ─── Responsive ──────────────────────────────────────────────────────────────
 
 @media (max-width: 768px) {
-  .biomarkers-page {
-    padding: $spacing-lg $spacing-md;
-  }
-
-  .page-title {
-    font-size: 1.5rem;
-  }
-
-  .input-container {
-    max-width: 100%;
-  }
-
   .actions-container {
     flex-direction: column;
     gap: $spacing-md;
   }
-
-  .output-section {
-    max-width: 100%;
-  }
 }
 
 @media (max-width: 480px) {
-  .step-indicator {
-    align-self: center;
-  }
-
   .cohort-chips {
     flex-direction: column;
     align-items: stretch;

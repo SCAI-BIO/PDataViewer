@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
+import Plotly from 'plotly.js-dist-min';
 import { finalize, forkJoin, map } from 'rxjs';
 
 import { Api } from '@core/services/api';
@@ -178,6 +179,14 @@ export class Biomarkers implements OnInit {
       this.showDataPoints(),
       'boxplot',
     );
+
+    // Force Plotly to resize to container
+    setTimeout(() => {
+      const plotEl = document.getElementById('boxplot');
+      if (plotEl) {
+        Plotly.Plots.resize(plotEl);
+      }
+    }, 100);
   }
 
   getCohortColumns(): number {

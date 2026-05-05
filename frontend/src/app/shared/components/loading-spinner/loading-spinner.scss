@@ -1,8 +1,4 @@
-$color-surface: #f9f9f9;
-$font-size-small: 14px;
-$font-weight-bold: 600;
-$spacing-sm: 8px;
-$spacing-md: 16px;
+@use '_tokens' as *;
 
 :host {
   position: fixed;

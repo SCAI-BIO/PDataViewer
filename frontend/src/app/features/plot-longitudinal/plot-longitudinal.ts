@@ -2,6 +2,7 @@ import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 
+import Plotly from 'plotly.js-dist-min';
 import { forkJoin } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
@@ -87,6 +88,14 @@ export class PlotLongitudinal implements OnInit {
     const title = `Longitudinal follow-ups for ${varsString} in the ${this.cohort()} cohort`;
 
     this.lineplotBuilder.createLineplot(this.data(), {}, title, 'lineplot');
+
+    // Force Plotly to resize to container
+    setTimeout(() => {
+      const plotEl = document.getElementById('lineplot');
+      if (plotEl) {
+        Plotly.Plots.resize(plotEl);
+      }
+    }, 100);
   }
 
   ngOnInit(): void {

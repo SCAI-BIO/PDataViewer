@@ -1,51 +1,7 @@
-// contact.component.scss
-@use 'sass:color';
-
-$color-primary: #610030;
-$color-surface: #f9f9f9;
-$color-text: #1a1a1a;
-$color-text-muted: #5f6368;
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 40px;
-$transition-normal: 250ms ease-in-out;
-
-// ─── Page Layout ─────────────────────────────────────────────────────────────
+@use 'tokens' as *;
 
 :host {
   display: block;
-}
-
-.contact-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: $spacing-xl $spacing-md;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-// ─── Page Header ─────────────────────────────────────────────────────────────
-
-.page-header {
-  text-align: center;
-  margin-bottom: $spacing-xl;
-}
-
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: $color-primary;
-  margin: 0 0 $spacing-sm;
-}
-
-.page-description {
-  font-size: 1rem;
-  color: $color-text-muted;
-  margin: 0;
 }
 
 // ─── Cards Grid ──────────────────────────────────────────────────────────────
@@ -63,6 +19,12 @@ $transition-normal: 250ms ease-in-out;
   perspective: 1000px;
   height: 420px;
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 3px solid rgba($color-primary, 0.4);
+    outline-offset: 4px;
+    border-radius: 12px;
+  }
 }
 
 .card-inner {
@@ -71,10 +33,10 @@ $transition-normal: 250ms ease-in-out;
   height: 100%;
   transform-style: preserve-3d;
   transition: transform 0.6s ease;
-}
 
-.team-card.flipped .card-inner {
-  transform: rotateY(180deg);
+  .team-card.flipped & {
+    transform: rotateY(180deg);
+  }
 }
 
 // ─── Card Faces ──────────────────────────────────────────────────────────────
@@ -91,14 +53,14 @@ $transition-normal: 250ms ease-in-out;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.06);
   overflow: hidden;
-}
-
-.card-front {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: $spacing-lg;
+}
+
+.card-front {
   background-color: #ffffff;
   text-align: center;
   transition: box-shadow $transition-normal;
@@ -109,11 +71,6 @@ $transition-normal: 250ms ease-in-out;
 }
 
 .card-back {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: $spacing-lg;
   background: linear-gradient(135deg, #610030, #4d0063);
   color: #ffffff;
   transform: rotateY(180deg);
@@ -157,7 +114,6 @@ $transition-normal: 250ms ease-in-out;
   font-size: 0.75rem;
   color: rgba(0, 0, 0, 0.35);
   margin-top: $spacing-md;
-  transition: opacity $transition-normal;
 
   mat-icon {
     font-size: 14px;
@@ -177,7 +133,6 @@ $transition-normal: 250ms ease-in-out;
   flex: 1;
   padding-right: $spacing-xs;
 
-  // Subtle scrollbar
   &::-webkit-scrollbar {
     width: 3px;
   }
@@ -206,11 +161,12 @@ $transition-normal: 250ms ease-in-out;
     --mat-icon-button-state-layer-color: #ffffff;
     --mat-icon-button-hover-state-layer-opacity: 0.15;
 
+    width: 36px;
+    height: 36px;
+    padding: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
     transition: transform 200ms ease;
 
     &:hover {
@@ -218,20 +174,20 @@ $transition-normal: 250ms ease-in-out;
     }
 
     mat-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       width: 20px;
       height: 20px;
       font-size: 20px;
-      line-height: 1;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: rgba(255, 255, 255, 0.85);
       fill: rgba(255, 255, 255, 0.85);
 
       svg {
         width: 20px;
         height: 20px;
-        display: block;
       }
     }
 

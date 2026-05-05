@@ -1,55 +1,10 @@
-// mappings.component.scss
-@use 'sass:color';
-
-$color-primary: #610030;
-$color-surface: #f9f9f9;
-$color-text: #1a1a1a;
-$color-text-muted: #5f6368;
-$color-border: #dadce0;
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 40px;
-$transition-normal: 250ms ease-in-out;
-
-// ─── Page Layout ─────────────────────────────────────────────────────────────
+@use 'tokens' as *;
 
 :host {
   display: block;
 }
 
-.mappings-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: $spacing-xl $spacing-lg;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-// ─── Page Header ─────────────────────────────────────────────────────────────
-
-.page-header {
-  text-align: center;
-  margin-bottom: $spacing-xl;
-  max-width: 720px;
-}
-
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: $color-primary;
-  margin: 0 0 $spacing-sm;
-}
-
-.page-description {
-  font-size: 0.95rem;
-  color: $color-text-muted;
-  line-height: 1.7;
-  margin: 0 0 $spacing-md;
-}
+// ─── Page Note (unique to mappings) ──────────────────────────────────────────
 
 .page-note {
   display: inline-flex;
@@ -96,44 +51,6 @@ $transition-normal: 250ms ease-in-out;
     width: 14px;
     height: 14px;
   }
-}
-
-// ─── Step Sections ───────────────────────────────────────────────────────────
-
-.step-section {
-  width: 100%;
-  margin-bottom: $spacing-lg;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.step-indicator {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  margin-bottom: $spacing-md;
-  align-self: flex-start;
-}
-
-.step-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: $color-primary;
-  color: #ffffff;
-  font-size: 0.8rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.step-label {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: $color-text;
 }
 
 // ─── Modality Grid ───────────────────────────────────────────────────────────
@@ -282,10 +199,6 @@ $transition-normal: 250ms ease-in-out;
 // ─── Responsive ──────────────────────────────────────────────────────────────
 
 @media (max-width: 1024px) {
-  .mappings-page {
-    padding: $spacing-lg $spacing-md;
-  }
-
   .diagram-container {
     max-width: 100%;
     padding: $spacing-md;
@@ -293,10 +206,6 @@ $transition-normal: 250ms ease-in-out;
 }
 
 @media (max-width: 768px) {
-  .page-title {
-    font-size: 1.5rem;
-  }
-
   .modality-grid {
     grid-template-columns: repeat(2, 1fr);
   }

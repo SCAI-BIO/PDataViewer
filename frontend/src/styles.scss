@@ -1,7 +1,8 @@
 // styles.scss
 @use 'sass:color';
 @use '@angular/material' as mat;
-@use './_theme' as theme;
+@use '_theme' as theme;
+@use '_tokens' as *;
 
 // ─── Angular Material Theme Application ──────────────────────────────────────
 
@@ -10,52 +11,20 @@ html {
 }
 
 // ─── Brand Color Overrides (M3 CSS tokens) ───────────────────────────────────
-// Override Material's generated palette with exact brand values
 
 :root {
-  --mat-sys-primary: #610030;
-  --mat-sys-on-primary: #f9f9f9;
+  --mat-sys-primary: #{$color-primary};
+  --mat-sys-on-primary: #{$color-surface};
   --mat-sys-primary-container: #8a1450;
   --mat-sys-on-primary-container: #ffffff;
   --mat-sys-surface: #ffffff;
-  --mat-sys-on-surface: #1a1a1a;
-  --mat-sys-outline: #dadce0;
+  --mat-sys-on-surface: #{$color-text};
+  --mat-sys-outline: #{$color-border};
   --mat-sys-outline-variant: #e8e0e4;
-  --mat-sys-surface-container-low: #f9f9f9;
-  --mat-sys-error: #c62828;
+  --mat-sys-surface-container-low: #{$color-surface};
+  --mat-sys-error: #{$color-error};
   --mat-sys-on-error: #ffffff;
 }
-
-// ─── Design Tokens ───────────────────────────────────────────────────────────
-
-$font-size-base: 16px;
-$font-size-small: 14px;
-$font-weight-bold: 600;
-$line-height-base: 1.6;
-
-$color-primary: #610030;
-$color-surface: #f9f9f9;
-$color-text: #1a1a1a;
-$color-text-muted: #5f6368;
-$color-border: #dadce0;
-$color-hover: rgba($color-primary, 0.06);
-$color-success: #1e7e34;
-$color-warning: #e6a200;
-$color-error: #c62828;
-
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 40px;
-
-$shadow-sm:
-  0 1px 3px rgba(0, 0, 0, 0.12),
-  0 1px 2px rgba(0, 0, 0, 0.08);
-$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-
-$transition-fast: 150ms ease-in-out;
-$transition-normal: 250ms ease-in-out;
 
 // ─── Base Reset & Globals ────────────────────────────────────────────────────
 
@@ -101,7 +70,6 @@ b {
 }
 
 // ─── Angular Material Button Overrides ───────────────────────────────────────
-// Override the correct --mat-button-* tokens used in Angular Material v21
 
 .mat-mdc-button.mat-primary,
 .mat-mdc-unelevated-button.mat-primary,
@@ -134,7 +102,6 @@ b {
   --mat-button-tonal-state-layer-color: #{$color-surface};
 }
 
-// Warn / Danger buttons
 .mat-mdc-button.mat-warn,
 .mat-mdc-unelevated-button.mat-warn,
 .mat-mdc-raised-button.mat-warn,
@@ -146,7 +113,6 @@ b {
   --mat-button-filled-state-layer-color: #ffffff;
 }
 
-// Full-width utility for buttons
 .button-full-width {
   width: 100%;
 }
@@ -164,60 +130,99 @@ b {
   color: $color-text;
 }
 
-// ─── Layout Utilities ────────────────────────────────────────────────────────
+// ─── Shared Page Layout ──────────────────────────────────────────────────────
 
-.main-container {
+.page-layout {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: $spacing-xl $spacing-md;
-  max-width: 100%;
+  padding: $spacing-xl $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
   width: 100%;
 }
 
-// ─── Description Box ─────────────────────────────────────────────────────────
-
-.description-box {
-  max-width: 720px;
-  width: 100%;
-  margin-bottom: $spacing-lg;
+.page-header {
   text-align: center;
-  align-self: center;
+  margin-bottom: $spacing-xl;
+  max-width: 720px;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $color-primary;
+  margin: 0 0 $spacing-sm;
+}
+
+.page-description {
+  font-size: 0.95rem;
   color: $color-text-muted;
   line-height: 1.7;
+  margin: 0;
+}
 
-  ul {
-    padding: 0;
-    margin: $spacing-md 0;
-    display: inline-block;
-    text-align: left;
+// ─── Shared Step Sections ────────────────────────────────────────────────────
 
-    li {
-      list-style: none;
-      margin-bottom: $spacing-sm;
-      position: relative;
-      padding-left: $spacing-md;
+.step-section {
+  width: 100%;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-      &::before {
-        content: '•';
-        position: absolute;
-        left: 0;
-        color: $color-primary;
-        font-weight: bold;
-      }
-    }
+.step-indicator {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  align-self: flex-start;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: $color-primary;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.step-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: $color-text;
+
+  strong {
+    color: $color-primary;
   }
 }
 
-// ─── Table Styles ────────────────────────────────────────────────────────────
+// ─── Shared Input Container ──────────────────────────────────────────────────
+
+.input-container {
+  width: 100%;
+  max-width: 500px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+// ─── Shared Table Styles ─────────────────────────────────────────────────────
 
 .table-container {
   overflow: auto;
   max-height: 70vh;
-  margin-top: $spacing-lg;
   border-radius: 8px;
   border: 1px solid $color-border;
-  box-shadow: $shadow-md;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   width: 100%;
 
   table {
@@ -237,6 +242,20 @@ th {
   color: $color-surface !important;
   font-weight: $font-weight-bold;
   letter-spacing: 0.02em;
+}
+
+.mat-mdc-header-cell {
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.mat-mdc-cell {
+  font-size: 0.875rem;
+  padding: 12px $spacing-md;
+  vertical-align: middle;
 }
 
 .mat-table th,
@@ -260,6 +279,158 @@ th {
 
   &:hover {
     background-color: $color-hover;
+  }
+}
+
+// ─── Shared Table Action Buttons ─────────────────────────────────────────────
+
+.table-action-button {
+  --mdc-outlined-button-label-text-size: 0.75rem;
+  --mdc-outlined-button-container-height: 32px;
+  --mdc-outlined-button-outline-color: #{$color-border};
+  --mdc-outlined-button-label-text-color: #{$color-text-muted};
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: 0 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  min-width: auto;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover {
+    --mdc-outlined-button-label-text-color: #{$color-primary};
+    --mdc-outlined-button-outline-color: #{$color-primary};
+  }
+
+  &--primary {
+    --mat-button-filled-container-color: #{$color-primary};
+    --mat-button-filled-label-text-color: #{$color-surface};
+    --mdc-filled-button-label-text-size: 0.75rem;
+    --mdc-filled-button-container-height: 32px;
+
+    &:hover {
+      --mat-button-filled-container-color: #{color.adjust($color-primary, $lightness: 8%)};
+    }
+  }
+}
+
+// ─── Shared Cell Styles ──────────────────────────────────────────────────────
+
+.cohort-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.color-indicator {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
+}
+
+.cohort-name {
+  font-weight: 600;
+  color: $color-text;
+  white-space: nowrap;
+}
+
+.numeric-cell {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.not-reported,
+.not-available {
+  color: rgba(0, 0, 0, 0.3);
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+.access-label {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 0.8rem;
+  color: $color-text-muted;
+  background-color: rgba(0, 0, 0, 0.04);
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 4px;
+
+  .access-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// ─── Shared Output / Plot Section ────────────────────────────────────────────
+
+.output-section {
+  width: 100%;
+  margin-top: $spacing-lg;
+  display: flex;
+  justify-content: center;
+}
+
+.output-box {
+  width: 100%;
+  max-width: 1400px;
+  border-radius: 8px;
+  border: 1px solid $color-border;
+  background-color: #ffffff;
+  padding: $spacing-md;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.plot-area {
+  width: 100%;
+  min-height: 450px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:empty {
+    min-height: 0;
+    display: none;
+  }
+}
+
+// ─── Shared Colored Background ───────────────────────────────────────────────
+
+.colored-bg {
+  background: linear-gradient(135deg, #610030, #4d0063);
+  color: $color-surface;
+}
+
+// ─── Shared Inverted Button (on dark bg) ─────────────────────────────────────
+
+.inverted-nav-button {
+  --mdc-outlined-button-label-text-color: #ffffff !important;
+  --mdc-outlined-button-outline-color: rgba(255, 255, 255, 0.7) !important;
+  --mat-button-outlined-label-text-color: #ffffff;
+  --mat-button-outlined-outline-color: rgba(255, 255, 255, 0.7);
+  --mat-button-outlined-state-layer-color: #ffffff;
+  --mat-button-outlined-ripple-color: rgba(255, 255, 255, 0.12);
+
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.7);
+
+  &:hover {
+    --mdc-outlined-button-outline-color: #ffffff !important;
+    --mat-button-outlined-outline-color: #ffffff;
+    border-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.08);
   }
 }
 
@@ -322,6 +493,8 @@ th {
 
   &__icon {
     font-size: 48px;
+    width: 48px;
+    height: 48px;
     margin-bottom: $spacing-md;
     opacity: 0.4;
   }
@@ -332,7 +505,7 @@ th {
   }
 }
 
-// ─── Mat Icon SVG Centering Fix (global) ─────────────────────────────────────
+// ─── Mat Icon SVG Centering Fix ──────────────────────────────────────────────
 
 .mat-icon {
   display: inline-flex;
@@ -346,7 +519,6 @@ th {
   }
 }
 
-// Ensure icon buttons center their content
 .mat-mdc-icon-button {
   display: inline-flex;
   align-items: center;
@@ -359,11 +531,19 @@ th {
   }
 }
 
-// ─── Global Slide Toggle Ripple Fix ──────────────────────────────────────────
+// ─── Global Slide Toggle Fix ─────────────────────────────────────────────────
 
 .mat-mdc-slide-toggle {
   .mdc-switch {
     overflow: hidden;
+    margin-right: 12px;
+  }
+
+  .mdc-switch__icons,
+  .mdc-switch__icon,
+  .mdc-switch__icon--on,
+  .mdc-switch__icon--off {
+    display: none !important;
   }
 
   .mdc-switch__ripple,
@@ -372,11 +552,62 @@ th {
     transform: scale(0.8) !important;
   }
 
-  // Prevent state layer from bleeding into the label
   .mdc-switch__state-layer {
     width: 40px !important;
     height: 40px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
+  }
+}
+
+// ─── Shared Chip Grid ────────────────────────────────────────────────────────
+
+mat-chip-grid {
+  padding: $spacing-sm;
+}
+
+mat-chip-row {
+  --mdc-chip-label-text-size: 0.85rem;
+}
+
+// ─── Plotly Override (global) ─────────────────────────────────────────────────
+
+.js-plotly-plot,
+.plot-container,
+.plotly,
+.svg-container,
+.main-svg {
+  width: 100% !important;
+}
+
+// ─── Responsive Shared ──────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .page-layout {
+    padding: $spacing-lg $spacing-md;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .page-description {
+    font-size: 0.875rem;
+  }
+
+  .input-container {
+    max-width: 100%;
+  }
+
+  .table-container {
+    max-height: 60vh;
+  }
+
+  .plot-area {
+    min-height: 300px;
+  }
+
+  .step-indicator {
+    align-self: center;
   }
 }

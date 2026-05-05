@@ -11,8 +11,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
-import { finalize, forkJoin } from 'rxjs';
 import Plotly from 'plotly.js-dist-min';
+import { finalize, forkJoin } from 'rxjs';
 
 import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';

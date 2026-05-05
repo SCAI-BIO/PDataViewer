@@ -1,240 +1,47 @@
-// cohorts.component.scss
-@use 'sass:color';
-
-$color-primary: #610030;
-$color-surface: #f9f9f9;
-$color-text: #1a1a1a;
-$color-text-muted: #5f6368;
-$color-border: #dadce0;
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 40px;
-$transition-normal: 250ms ease-in-out;
-
-// ─── Page Layout ─────────────────────────────────────────────────────────────
+@use '_tokens' as *;
 
 :host {
   display: block;
 }
 
-.cohorts-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: $spacing-xl $spacing-lg;
+// Only page-specific max-width override
+.page-layout {
   max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
 }
 
-// ─── Page Header ─────────────────────────────────────────────────────────────
-
-.page-header {
-  text-align: center;
-  margin-bottom: $spacing-lg;
-  max-width: 800px;
-}
-
-.page-title {
-  font-size: 2rem;
+// Cohort-specific styles (not shared)
+.found-count {
   font-weight: 700;
-  color: $color-primary;
-  margin: 0 0 $spacing-sm;
-}
-
-.page-description {
-  font-size: 0.95rem;
-  color: $color-text-muted;
-  line-height: 1.7;
-  margin: 0;
-}
-
-// ─── Table Wrapper ───────────────────────────────────────────────────────────
-
-.table-wrapper {
-  width: 100%;
-}
-
-.table-container {
-  overflow: auto;
-  max-height: 70vh;
-  border-radius: 8px;
-  border: 1px solid $color-border;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-
-  table {
-    width: 100%;
-  }
-}
-
-// ─── Table Cells ─────────────────────────────────────────────────────────────
-
-.mat-mdc-header-cell {
-  font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.mat-mdc-cell {
-  font-size: 0.875rem;
-  padding: 12px $spacing-md;
-  vertical-align: middle;
-}
-
-// ─── Cohort Cell ─────────────────────────────────────────────────────────────
-
-.cohort-cell {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-sm;
-}
-
-.color-indicator {
-  display: block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
-}
-
-.cohort-name {
-  font-weight: 600;
-  color: $color-text;
-  white-space: nowrap;
-}
-
-// ─── Numeric Cells ───────────────────────────────────────────────────────────
-
-.numeric-cell {
   font-variant-numeric: tabular-nums;
+  color: $color-primary;
+}
+
+.total-count {
+  font-size: 0.8rem;
+  color: $color-text-muted;
+  margin-left: 2px;
+}
+
+.missing-text {
+  font-size: 0.8rem;
+  color: $color-text-muted;
+  display: inline-block;
+  max-width: 200px;
+  white-space: normal;
+  line-height: 1.5;
+}
+
+.all-found {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 0.8rem;
+  color: $color-success;
   font-weight: 500;
-}
 
-// ─── Not Reported ────────────────────────────────────────────────────────────
-
-.not-reported {
-  color: rgba(0, 0, 0, 0.3);
-  font-style: italic;
-  font-size: 0.8rem;
-}
-
-// ─── Table Action Buttons ────────────────────────────────────────────────────
-
-.table-action-button {
-  --mdc-outlined-button-label-text-size: 0.75rem;
-  --mdc-outlined-button-container-height: 32px;
-  --mdc-outlined-button-outline-color: #{$color-border};
-  --mdc-outlined-button-label-text-color: #{$color-text-muted};
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: $spacing-xs;
-  padding: 0 12px;
-  text-decoration: none;
-  white-space: nowrap;
-  min-width: auto;
-
-  mat-icon {
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
-  }
-
-  &:hover {
-    --mdc-outlined-button-label-text-color: #{$color-primary};
-    --mdc-outlined-button-outline-color: #{$color-primary};
-  }
-
-  &--primary {
-    --mat-button-filled-container-color: #{$color-primary};
-    --mat-button-filled-label-text-color: #{$color-surface};
-    --mdc-filled-button-label-text-size: 0.75rem;
-    --mdc-filled-button-container-height: 32px;
-
-    &:hover {
-      --mat-button-filled-container-color: #{color.adjust($color-primary, $lightness: 8%)};
-    }
-  }
-}
-
-// ─── Access Label ────────────────────────────────────────────────────────────
-
-.access-label {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  font-size: 0.8rem;
-  color: $color-text-muted;
-  background-color: rgba(0, 0, 0, 0.04);
-  padding: $spacing-xs $spacing-sm;
-  border-radius: 4px;
-
-  .access-icon {
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
-  }
-}
-
-// ─── Row Hover ───────────────────────────────────────────────────────────────
-
-.mat-mdc-row {
-  transition: background-color 150ms ease;
-
-  &:hover {
-    background-color: rgba($color-primary, 0.03);
-  }
-}
-
-// ─── Empty State ─────────────────────────────────────────────────────────────
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: $spacing-xl * 2;
-  color: $color-text-muted;
-  text-align: center;
-
-  &__icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
-    margin-bottom: $spacing-md;
-    opacity: 0.4;
-  }
-
-  &__message {
-    font-size: 1rem;
-    margin: 0;
-  }
-}
-
-// ─── Responsive ──────────────────────────────────────────────────────────────
-
-@media (max-width: 1024px) {
-  .cohorts-page {
-    padding: $spacing-lg $spacing-md;
-  }
-
-  .table-container {
-    max-height: 60vh;
-  }
-}
-
-@media (max-width: 768px) {
-  .page-title {
-    font-size: 1.5rem;
-  }
-
-  .page-description {
-    font-size: 0.875rem;
+  .all-found-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
   }
 }

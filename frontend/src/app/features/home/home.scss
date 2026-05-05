@@ -1,29 +1,17 @@
-// home.component.scss
 @use 'sass:color';
-
-$color-primary: #610030;
-$color-surface: #f9f9f9;
-$color-text-muted: #5f6368;
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 40px;
-$transition-normal: 250ms ease-in-out;
-
-// ─── Main Container ──────────────────────────────────────────────────────────
+@use '_tokens' as *;
 
 :host {
   display: block;
 }
 
-.main-container {
+// ─── Home Page ───────────────
+
+.home-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 0;
-  margin: 0;
 }
 
 // ─── Section Layout ──────────────────────────────────────────────────────────
@@ -34,10 +22,10 @@ $transition-normal: 250ms ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
-}
 
-.section-container.about {
-  padding: $spacing-xl * 1.5 $spacing-md;
+  &.about {
+    padding: $spacing-xl * 1.5 $spacing-md;
+  }
 }
 
 .section-inner-container {
@@ -65,6 +53,10 @@ $transition-normal: 250ms ease-in-out;
 
 .section-container:not(.colored-bg) .section-subheading {
   color: $color-primary;
+}
+
+.colored-bg .section-subheading {
+  color: #ffffff;
 }
 
 p {
@@ -103,7 +95,7 @@ p {
   }
 }
 
-// ─── Content Grid (Image + Text) ─────────────────────────────────────────────
+// ─── Content Grid ────────────────────────────────────────────────────────────
 
 .content-container {
   display: grid;
@@ -111,13 +103,13 @@ p {
   align-items: center;
   gap: $spacing-xl;
   text-align: left;
-}
 
-.content-container--reversed {
-  direction: rtl;
+  &--reversed {
+    direction: rtl;
 
-  > * {
-    direction: ltr;
+    > * {
+      direction: ltr;
+    }
   }
 }
 
@@ -148,46 +140,6 @@ p {
 
   &:hover {
     transform: translateY(-4px);
-  }
-}
-
-// ─── Colored Background Sections ─────────────────────────────────────────────
-
-.colored-bg {
-  background: linear-gradient(135deg, #610030, #4d0063);
-  color: $color-surface;
-
-  .section-subheading {
-    color: #ffffff;
-  }
-}
-
-// Inverted button for colored sections (white outline on dark bg)
-.inverted-nav-button {
-  --mdc-outlined-button-label-text-color: #ffffff;
-  --mdc-outlined-button-outline-color: rgba(255, 255, 255, 0.7);
-  --mat-outlined-button-state-layer-color: #ffffff;
-  --mat-outlined-button-hover-state-layer-opacity: 0.1;
-
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.7);
-
-  &:hover {
-    --mdc-outlined-button-outline-color: #ffffff;
-    border-color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.08);
-  }
-}
-
-// ─── Button Overrides (force brand purple on white surfaces) ─────────────────
-
-a[mat-flat-button] {
-  --mat-button-filled-container-color: #{$color-primary};
-  --mat-button-filled-label-text-color: #{$color-surface};
-  --mat-button-filled-state-layer-color: #{$color-surface};
-
-  &:hover {
-    --mat-button-filled-container-color: #{color.adjust($color-primary, $lightness: 8%)};
   }
 }
 
@@ -278,10 +230,10 @@ a[mat-flat-button] {
   .content-container {
     grid-template-columns: 1fr;
     text-align: center;
-  }
 
-  .content-container--reversed {
-    direction: ltr;
+    &--reversed {
+      direction: ltr;
+    }
   }
 
   .title-description-button {
