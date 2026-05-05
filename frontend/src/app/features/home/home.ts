@@ -2,17 +2,19 @@ import { DecimalPipe } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 import { finalize, forkJoin } from 'rxjs';
 
 import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
 import type { CohortMetadata } from '@shared/interfaces/metadata';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-home',
-  imports: [DecimalPipe, MatProgressSpinnerModule, RouterModule],
+  imports: [RouterLink, DecimalPipe, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

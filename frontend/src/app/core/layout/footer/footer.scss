@@ -1,32 +1,142 @@
+// footer.component.scss
+@use 'sass:color';
+
+$color-primary: #610030;
+$color-surface: #f9f9f9;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 40px;
+$transition-normal: 250ms ease-in-out;
+
+// ─── Footer Base ─────────────────────────────────────────────────────────────
+
+:host {
+  display: block;
+  margin-top: auto; // Push to bottom in flex layouts
+}
+
 .footer {
   background: linear-gradient(135deg, #610030, #4d0063);
-  color: white;
-  display: block;
-  align-items: center;
-  align-content: center;
-  padding: 30px 0;
+  color: rgba(255, 255, 255, 0.9);
+  padding: $spacing-xl 0 0;
 }
 
-.main-headers {
+// ─── Footer Content ──────────────────────────────────────────────────────────
+
+.footer-content {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+}
+
+.footer-columns {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  font-size: 25px;
-  text-align: center;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-xl;
 }
 
-.copyright-container {
-  padding: 0 30px;
+// ─── Footer Column ───────────────────────────────────────────────────────────
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.footer-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 $spacing-sm;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+// ─── Footer Links ────────────────────────────────────────────────────────────
+
+.footer-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  li a {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: $spacing-xs 0;
+    transition:
+      color $transition-normal,
+      padding-left $transition-normal;
+
+    &:hover {
+      color: #ffffff;
+      padding-left: 4px;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.5);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+  }
+}
+
+.footer-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  opacity: 0.85;
+}
+
+// ─── Footer Bottom ───────────────────────────────────────────────────────────
+
+.footer-bottom {
+  margin-top: $spacing-xl;
+  padding: $spacing-md $spacing-lg;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .copyright {
   text-align: center;
-  border-top: 1px solid rgba(250, 250, 250, 0.2);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  font-size: 12px;
-  letter-spacing: 0.88px;
-  padding-top: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
 }
 
-::ng-deep .mat-mdc-list-item-unscoped-content {
-  color: white !important;
+// ─── Responsive ──────────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .footer-columns {
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-lg;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-columns {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+    text-align: center;
+  }
+
+  .footer-links li a {
+    justify-content: center;
+
+    &:hover {
+      padding-left: 0;
+    }
+  }
 }

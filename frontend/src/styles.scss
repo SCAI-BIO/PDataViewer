@@ -1,37 +1,72 @@
+// styles.scss
 @use 'sass:color';
+@use '@angular/material' as mat;
+@use './_theme' as theme;
 
-// Define global button variables
-$max-width: 100%;
-$font-size: 16px;
-$bold-font-weight: 600;
+// ─── Angular Material Theme Application ──────────────────────────────────────
 
-// Button variables
-$button-primary: #610030;
-$button-secondary: #f9f9f9;
-$button-padding: 10px 20px;
-$button-radius: 5px;
-
-// Base button styles
-%button-base {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: $button-padding;
-  font-size: $font-size;
-  font-weight: bold;
-  border: none;
-  border-radius: $button-radius;
-  text-align: center;
-  white-space: nowrap;
-  transition: background 0.3s ease-in-out;
-  cursor: pointer;
+html {
+  @include mat.all-component-themes(theme.$app-theme);
 }
 
-body {
-  font-family: 'Robot', sans-serif;
-  font-size: $font-size;
-  line-height: 1.6;
-  margin: 0;
+// ─── Brand Color Overrides (M3 CSS tokens) ───────────────────────────────────
+// Override Material's generated palette with exact brand values
+
+:root {
+  --mat-sys-primary: #610030;
+  --mat-sys-on-primary: #f9f9f9;
+  --mat-sys-primary-container: #8a1450;
+  --mat-sys-on-primary-container: #ffffff;
+  --mat-sys-surface: #ffffff;
+  --mat-sys-on-surface: #1a1a1a;
+  --mat-sys-outline: #dadce0;
+  --mat-sys-outline-variant: #e8e0e4;
+  --mat-sys-surface-container-low: #f9f9f9;
+  --mat-sys-error: #c62828;
+  --mat-sys-on-error: #ffffff;
+}
+
+// ─── Design Tokens ───────────────────────────────────────────────────────────
+
+$font-size-base: 16px;
+$font-size-small: 14px;
+$font-weight-bold: 600;
+$line-height-base: 1.6;
+
+$color-primary: #610030;
+$color-surface: #f9f9f9;
+$color-text: #1a1a1a;
+$color-text-muted: #5f6368;
+$color-border: #dadce0;
+$color-hover: rgba($color-primary, 0.06);
+$color-success: #1e7e34;
+$color-warning: #e6a200;
+$color-error: #c62828;
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 40px;
+
+$shadow-sm:
+  0 1px 3px rgba(0, 0, 0, 0.12),
+  0 1px 2px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+$transition-fast: 150ms ease-in-out;
+$transition-normal: 250ms ease-in-out;
+
+// ─── Base Reset & Globals ────────────────────────────────────────────────────
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html,
@@ -39,106 +74,286 @@ body {
   height: 100%;
 }
 
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-text;
+  background-color: var(--mat-sys-surface);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 strong,
 b {
-  font-weight: $bold-font-weight;
+  font-weight: $font-weight-bold;
 }
 
-.button-style {
-  @extend %button-base;
-  background: $button-primary;
-  color: $button-secondary;
-
-  &:hover {
-    background: color.adjust($button-primary, $lightness: 10%);
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-.inverted-button-style {
-  @extend %button-base;
-  background: $button-secondary;
-  color: $button-primary;
+// ─── Angular Material Button Overrides ───────────────────────────────────────
+// Override the correct --mat-button-* tokens used in Angular Material v21
 
-  &:hover {
-    background: color.adjust($button-primary, $lightness: 70%);
-  }
+.mat-mdc-button.mat-primary,
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-flat-button.mat-primary,
+.mat-mdc-outlined-button.mat-primary,
+.mat-tonal-button.mat-primary {
+  --mat-button-filled-container-color: #{$color-primary};
+  --mat-button-filled-label-text-color: #{$color-surface};
+  --mat-button-filled-ripple-color: #{color-mix(in srgb, $color-surface 12%, transparent)};
+  --mat-button-filled-state-layer-color: #{$color-surface};
+
+  --mat-button-outlined-label-text-color: #{$color-primary};
+  --mat-button-outlined-outline-color: #{$color-primary};
+  --mat-button-outlined-ripple-color: #{color-mix(in srgb, $color-primary 12%, transparent)};
+  --mat-button-outlined-state-layer-color: #{$color-primary};
+
+  --mat-button-protected-container-color: #{$color-primary};
+  --mat-button-protected-label-text-color: #{$color-surface};
+  --mat-button-protected-ripple-color: #{color-mix(in srgb, $color-surface 12%, transparent)};
+  --mat-button-protected-state-layer-color: #{$color-surface};
+
+  --mat-button-text-label-text-color: #{$color-primary};
+  --mat-button-text-ripple-color: #{color-mix(in srgb, $color-primary 12%, transparent)};
+  --mat-button-text-state-layer-color: #{$color-primary};
+
+  --mat-button-tonal-container-color: #{$color-primary};
+  --mat-button-tonal-label-text-color: #{$color-surface};
+  --mat-button-tonal-ripple-color: #{color-mix(in srgb, $color-surface 12%, transparent)};
+  --mat-button-tonal-state-layer-color: #{$color-surface};
 }
 
-// Layout utilities
+// Warn / Danger buttons
+.mat-mdc-button.mat-warn,
+.mat-mdc-unelevated-button.mat-warn,
+.mat-mdc-raised-button.mat-warn,
+.mat-mdc-flat-button.mat-warn,
+.mat-tonal-button.mat-warn {
+  --mat-button-filled-container-color: #{$color-error};
+  --mat-button-filled-label-text-color: #ffffff;
+  --mat-button-filled-ripple-color: color-mix(in srgb, #ffffff 12%, transparent);
+  --mat-button-filled-state-layer-color: #ffffff;
+}
+
+// Full-width utility for buttons
+.button-full-width {
+  width: 100%;
+}
+
+// ─── Focus & Accessibility ───────────────────────────────────────────────────
+
+:focus-visible {
+  outline: 3px solid rgba($color-primary, 0.24);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background-color: rgba($color-primary, 0.15);
+  color: $color-text;
+}
+
+// ─── Layout Utilities ────────────────────────────────────────────────────────
+
 .main-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 50px 0;
-  max-width: $max-width;
+  padding: $spacing-xl $spacing-md;
+  max-width: 100%;
+  width: 100%;
 }
 
-// Description Box
+// ─── Description Box ─────────────────────────────────────────────────────────
+
 .description-box {
-  max-width: 80%;
-  margin-bottom: 20px;
+  max-width: 720px;
+  width: 100%;
+  margin-bottom: $spacing-lg;
   text-align: center;
   align-self: center;
+  color: $color-text-muted;
+  line-height: 1.7;
 
   ul {
     padding: 0;
-    margin: 0;
+    margin: $spacing-md 0;
     display: inline-block;
     text-align: left;
 
     li {
-      padding-left: 8px;
       list-style: none;
-      margin-bottom: 6px;
-      text-align: center;
-      text-indent: -12px;
+      margin-bottom: $spacing-sm;
+      position: relative;
+      padding-left: $spacing-md;
+
+      &::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: $color-primary;
+        font-weight: bold;
+      }
     }
   }
 }
 
-// Table Styles
+// ─── Table Styles ────────────────────────────────────────────────────────────
+
 .table-container {
   overflow: auto;
-  max-height: 800px;
-  margin-top: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  max-height: 70vh;
+  margin-top: $spacing-lg;
+  border-radius: 8px;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-md;
+  width: 100%;
 
   table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    font-size: $font-size-small;
   }
-}
-
-// Table Column Borders
-.mat-table th,
-.mat-table td {
-  border-right: 1px solid #e0e0e0;
-  padding: 12px 16px;
-  line-height: 1.4;
 }
 
 thead,
 th {
-  background-color: $button-primary !important;
-  color: $button-secondary !important;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: $color-primary !important;
+  color: $color-surface !important;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.02em;
 }
 
-.mat-mdc-row:hover {
-  background-color: color.adjust(white, $lightness: -5%);
+.mat-table th,
+.mat-table td {
+  border-right: 1px solid $color-border;
+  padding: 12px $spacing-md;
+  line-height: 1.5;
+  vertical-align: middle;
+
+  &:last-child {
+    border-right: none;
+  }
 }
 
-// Loading spinner
-.loading-spinner {
+.mat-mdc-row:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.mat-mdc-row {
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: $color-hover;
+  }
+}
+
+// ─── Loading Spinner (uses mat-spinner) ──────────────────────────────────────
+
+.loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.4);
   z-index: 1000;
+  backdrop-filter: blur(2px);
+
+  .loading-label {
+    color: $color-surface;
+    font-size: $font-size-small;
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.05em;
+    margin-top: $spacing-sm;
+  }
+}
+
+// ─── Feedback & Status Utilities ─────────────────────────────────────────────
+
+.status-success {
+  color: $color-success;
+  font-weight: $font-weight-bold;
+}
+
+.status-warning {
+  color: $color-warning;
+  font-weight: $font-weight-bold;
+}
+
+.status-error {
+  color: $color-error;
+  font-weight: $font-weight-bold;
+}
+
+.notification-banner {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  font-size: $font-size-small;
+  font-weight: 500;
+  margin-bottom: $spacing-md;
+
+  &--success {
+    background-color: rgba($color-success, 0.1);
+    border-left: 4px solid $color-success;
+    color: $color-success;
+  }
+
+  &--warning {
+    background-color: rgba($color-warning, 0.1);
+    border-left: 4px solid $color-warning;
+    color: color.adjust($color-warning, $lightness: -15%);
+  }
+
+  &--error {
+    background-color: rgba($color-error, 0.1);
+    border-left: 4px solid $color-error;
+    color: $color-error;
+  }
+}
+
+// ─── Empty State ─────────────────────────────────────────────────────────────
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+  color: $color-text-muted;
+  text-align: center;
+
+  &__icon {
+    font-size: 48px;
+    margin-bottom: $spacing-md;
+    opacity: 0.4;
+  }
+
+  &__message {
+    font-size: $font-size-base;
+    margin-bottom: $spacing-sm;
+  }
 }

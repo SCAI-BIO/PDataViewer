@@ -1,75 +1,349 @@
-.citation-link {
-  text-decoration: none;
-  color: #610030;
-  cursor: pointer;
+// home.component.scss
+@use 'sass:color';
 
-  &:visited, &:active, &:hover {
-    color: #610030;
-    text-decoration: none;
-  }
+$color-primary: #610030;
+$color-surface: #f9f9f9;
+$color-text-muted: #5f6368;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 40px;
+$transition-normal: 250ms ease-in-out;
+
+// ─── Main Container ──────────────────────────────────────────────────────────
+
+:host {
+  display: block;
 }
 
-.counter-content {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
+.main-container {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
+
+// ─── Section Layout ──────────────────────────────────────────────────────────
 
 .section-container {
   width: 100%;
-  min-height: 370px;
-  margin-top: 10px 0;
-  padding: 10px;
-
-  align-content: center;
+  padding: $spacing-xl $spacing-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .section-container.about {
-  border-radius: 12px;
-  padding: 2rem 2rem;
+  padding: $spacing-xl * 1.5 $spacing-md;
 }
 
 .section-inner-container {
-  max-width: 60%;
+  max-width: 900px;
+  width: 100%;
   margin: 0 auto;
   text-align: center;
-  padding: 2rem;
+  padding: $spacing-lg;
 }
+
+// ─── Typography ──────────────────────────────────────────────────────────────
+
+.section-heading {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: $spacing-md;
+  color: $color-primary;
+}
+
+.section-subheading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: $spacing-sm;
+}
+
+.section-container:not(.colored-bg) .section-subheading {
+  color: $color-primary;
+}
+
+p {
+  color: $color-text-muted;
+  line-height: 1.75;
+  margin-bottom: $spacing-md;
+}
+
+.colored-bg p {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+// ─── Citation Link ───────────────────────────────────────────────────────────
+
+.citation-link {
+  display: inline-block;
+  text-decoration: none;
+  color: $color-primary;
+  font-weight: 600;
+  line-height: 1.6;
+  padding: $spacing-md;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition:
+    background-color $transition-normal,
+    border-color $transition-normal;
+
+  &:hover {
+    background-color: rgba($color-primary, 0.04);
+    border-color: rgba($color-primary, 0.15);
+    text-decoration: underline;
+  }
+
+  &:visited {
+    color: $color-primary;
+  }
+}
+
+// ─── Content Grid (Image + Text) ─────────────────────────────────────────────
 
 .content-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 2rem;
+  gap: $spacing-xl;
+  text-align: left;
 }
 
-.colored-bg {
-  background: linear-gradient(135deg, #610030, #4d0063);
-  color: #f9f9f9;
+.content-container--reversed {
+  direction: rtl;
+
+  > * {
+    direction: ltr;
+  }
+}
+
+.title-description-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-sm;
+
+  p {
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .image {
-  width: 300px;
+  width: 100%;
+  max-width: 380px;
   height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 300ms ease;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
 }
 
-/** Counter **/
-.counter-container {
-  font-size: 25px;
+// ─── Colored Background Sections ─────────────────────────────────────────────
+
+.colored-bg {
+  background: linear-gradient(135deg, #610030, #4d0063);
+  color: $color-surface;
+
+  .section-subheading {
+    color: #ffffff;
+  }
+}
+
+// Inverted button for colored sections (white outline on dark bg)
+.inverted-nav-button {
+  --mdc-outlined-button-label-text-color: #ffffff;
+  --mdc-outlined-button-outline-color: rgba(255, 255, 255, 0.7);
+  --mat-outlined-button-state-layer-color: #ffffff;
+  --mat-outlined-button-hover-state-layer-opacity: 0.1;
+
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.7);
+
+  &:hover {
+    --mdc-outlined-button-outline-color: #ffffff;
+    border-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+// ─── Button Overrides (force brand purple on white surfaces) ─────────────────
+
+a[mat-flat-button] {
+  --mat-button-filled-container-color: #{$color-primary};
+  --mat-button-filled-label-text-color: #{$color-surface};
+  --mat-button-filled-state-layer-color: #{$color-surface};
+
+  &:hover {
+    --mat-button-filled-container-color: #{color.adjust($color-primary, $lightness: 8%)};
+  }
+}
+
+// ─── Counter Section ─────────────────────────────────────────────────────────
+
+.counter-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: $spacing-lg;
+  color: #ffffff;
+}
+
+.counter-content {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  align-items: center;
+  justify-items: center;
+  gap: $spacing-md;
+  width: 100%;
 }
 
 .statistics-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-md $spacing-sm;
+  border-radius: 8px;
+  transition:
+    transform 300ms ease,
+    background-color 300ms ease;
+
   &:hover {
-    transform: scale(1.3);
+    transform: scale(1.08);
+    background-color: rgba(255, 255, 255, 0.08);
   }
+
   strong {
-    font-size: 40px;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
   }
+
   span {
-    font-size: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+}
+
+.counter-divider {
+  width: 1px;
+  height: 48px;
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 1px;
+}
+
+// ─── Loading Overlay ─────────────────────────────────────────────────────────
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+
+  .loading-label {
+    color: $color-surface;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+
+@media (max-width: 1024px) {
+  .section-inner-container {
+    max-width: 100%;
+    padding: $spacing-lg $spacing-md;
+  }
+
+  .content-container {
+    gap: $spacing-lg;
+  }
+
+  .image {
+    max-width: 300px;
+  }
+
+  .statistics-container strong {
+    font-size: 2rem;
+  }
+
+  .statistics-container span {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .content-container--reversed {
+    direction: ltr;
+  }
+
+  .title-description-button {
+    align-items: center;
+    text-align: center;
+  }
+
+  .image-container {
+    order: -1;
+  }
+
+  .counter-content {
+    grid-template-columns: 1fr auto 1fr;
+    row-gap: $spacing-lg;
+  }
+
+  .counter-divider:nth-of-type(2) {
+    display: none;
+  }
+
+  .counter-divider {
+    height: 40px;
+  }
+
+  .statistics-container strong {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .counter-content {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+
+  .counter-divider {
+    width: 48px;
+    height: 1px;
   }
 }

@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'http://localhost:5000',
+  apiUrl: 'https://api.pdata.scai.fraunhofer.de',
 };
