@@ -610,3 +610,11 @@ mat-chip-row {
     align-self: center;
   }
 }
+
+// ─── Error Snackbar ──────────────────────────────────────────────────────────
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #{$color-error};
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}
