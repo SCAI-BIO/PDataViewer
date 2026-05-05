@@ -1,20 +1,8 @@
-// footer.component.scss
-@use 'sass:color';
-
-$color-primary: #610030;
-$color-surface: #f9f9f9;
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 40px;
-$transition-normal: 250ms ease-in-out;
-
-// ─── Footer Base ─────────────────────────────────────────────────────────────
+@use 'tokens' as *;
 
 :host {
   display: block;
-  margin-top: auto; // Push to bottom in flex layouts
+  margin-top: auto;
 }
 
 .footer {
@@ -22,8 +10,6 @@ $transition-normal: 250ms ease-in-out;
   color: rgba(255, 255, 255, 0.9);
   padding: $spacing-xl 0 0;
 }
-
-// ─── Footer Content ──────────────────────────────────────────────────────────
 
 .footer-content {
   max-width: 900px;
@@ -38,8 +24,6 @@ $transition-normal: 250ms ease-in-out;
   gap: $spacing-xl;
 }
 
-// ─── Footer Column ───────────────────────────────────────────────────────────
-
 .footer-column {
   display: flex;
   flex-direction: column;
@@ -47,17 +31,14 @@ $transition-normal: 250ms ease-in-out;
 }
 
 .footer-heading {
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: #ffffff;
   margin: 0 0 $spacing-sm;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  font-size: 0.75rem;
   opacity: 0.7;
 }
-
-// ─── Footer Links ────────────────────────────────────────────────────────────
 
 .footer-links {
   list-style: none;
@@ -83,12 +64,6 @@ $transition-normal: 250ms ease-in-out;
       color: #ffffff;
       padding-left: 4px;
     }
-
-    &:focus-visible {
-      outline: 2px solid rgba(255, 255, 255, 0.5);
-      outline-offset: 2px;
-      border-radius: 2px;
-    }
   }
 }
 
@@ -98,8 +73,6 @@ $transition-normal: 250ms ease-in-out;
   height: 18px;
   opacity: 0.85;
 }
-
-// ─── Footer Bottom ───────────────────────────────────────────────────────────
 
 .footer-bottom {
   margin-top: $spacing-xl;
@@ -115,8 +88,6 @@ $transition-normal: 250ms ease-in-out;
   color: rgba(255, 255, 255, 0.5);
   margin: 0;
 }
-
-// ─── Responsive ──────────────────────────────────────────────────────────────
 
 @media (max-width: 768px) {
   .footer-columns {

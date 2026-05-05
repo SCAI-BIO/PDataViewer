@@ -1,4 +1,4 @@
-// header.component.scss
+@use 'tokens' as *;
 
 :host {
   display: block;
@@ -12,13 +12,11 @@
   color: white;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 0 24px;
+  gap: $spacing-md;
+  padding: 0 $spacing-lg;
   height: 64px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
-
-// ─── Logo ────────────────────────────────────────────────────────────────────
 
 .logo-box {
   display: flex;
@@ -29,7 +27,7 @@
     align-items: center;
     text-decoration: none;
     border-radius: 4px;
-    padding: 4px;
+    padding: $spacing-xs;
     transition: opacity 200ms ease;
 
     &:hover {
@@ -43,22 +41,18 @@
   }
 }
 
-// ─── Title ───────────────────────────────────────────────────────────────────
-
 .site-title {
   font-size: 20px;
   font-weight: 600;
   white-space: nowrap;
   letter-spacing: 0.01em;
-  margin-right: 8px;
+  margin-right: $spacing-sm;
 }
-
-// ─── Navigation ──────────────────────────────────────────────────────────────
 
 .routing-menu {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: $spacing-xs;
 
   a {
     --mat-button-text-label-text-color: #ffffff;
@@ -68,7 +62,7 @@
     color: #ffffff;
     border-radius: 6px;
     position: relative;
-    font-size: 14px;
+    font-size: $font-size-small;
     font-weight: 500;
     transition:
       color 200ms ease,
@@ -78,9 +72,7 @@
       background-color: rgba(255, 255, 255, 0.1);
     }
 
-    // Active route indicator
     &.nav-active {
-      --mdc-text-button-label-text-color: #ffffff;
       font-weight: 600;
       background-color: rgba(255, 255, 255, 0.12);
 
@@ -99,13 +91,9 @@
   }
 }
 
-// ─── Spacer ──────────────────────────────────────────────────────────────────
-
 .spacer {
   flex: 1;
 }
-
-// ─── GitHub Link ─────────────────────────────────────────────────────────────
 
 .github-button {
   display: inline-flex;
@@ -119,8 +107,6 @@
     object-fit: contain;
   }
 }
-
-// ─── Responsive ──────────────────────────────────────────────────────────────
 
 @media (max-width: 1024px) {
   .site-title {
@@ -139,7 +125,7 @@
 
 @media (max-width: 768px) {
   .banner {
-    padding: 0 16px;
+    padding: 0 $spacing-md;
   }
 
   .routing-menu {
