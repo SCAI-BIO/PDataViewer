@@ -1,0 +1,29 @@
+$color-surface: #f9f9f9;
+$font-size-small: 14px;
+$font-weight-bold: 600;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+
+:host {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.loading-label {
+  color: $color-surface;
+  font-size: $font-size-small;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.05em;
+  margin-top: $spacing-sm;
+}

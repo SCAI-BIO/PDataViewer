@@ -1,10 +1,7 @@
 <main class="plot-page">
   <!-- Loading Overlay -->
   @if (isLoading()) {
-    <div class="loading-overlay" role="status" aria-live="polite">
-      <mat-spinner diameter="40"></mat-spinner>
-      <span class="loading-label">Generating plot…</span>
-    </div>
+    <app-loading-spinner></app-loading-spinner>
   }
 
   <section class="page-header">

@@ -175,31 +175,6 @@ $transition-normal: 250ms ease-in-out;
   }
 }
 
-// ─── Loading Overlay ─────────────────────────────────────────────────────────
-
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 1000;
-  backdrop-filter: blur(2px);
-
-  .loading-label {
-    color: $color-surface;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-}
-
 // ─── Responsive ──────────────────────────────────────────────────────────────
 
 @media (max-width: 768px) {

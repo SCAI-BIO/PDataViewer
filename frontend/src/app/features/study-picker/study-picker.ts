@@ -14,6 +14,7 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,13 +28,14 @@ import { finalize } from 'rxjs/operators';
 
 import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
+import { LoadingSpinner } from '@shared/components/loading-spinner/loading-spinner';
 import type { Metadata } from '@shared/interfaces/metadata';
 import type { RankData } from '@shared/interfaces/rankdata';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-study-picker',
   imports: [
+    LoadingSpinner,
     MatFormFieldModule,
     MatAutocompleteModule,
     MatButtonModule,

@@ -11,10 +11,7 @@
 
   <!-- Loading Overlay -->
   @if (isLoading()) {
-    <div class="loading-overlay" role="status" aria-live="polite">
-      <mat-spinner diameter="40"></mat-spinner>
-      <span class="loading-label">Loading cohort data…</span>
-    </div>
+    <app-loading-spinner></app-loading-spinner>
   }
 
   <!-- Table -->
