@@ -1,4 +1,13 @@
-import { Component, OnInit, inject, signal, DestroyRef, computed } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  DestroyRef,
+  computed,
+  viewChild,
+  ElementRef,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -20,12 +29,14 @@ import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
 import type { Metadata } from '@shared/interfaces/metadata';
 import type { RankData } from '@shared/interfaces/rankdata';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-study-picker',
   imports: [
     MatFormFieldModule,
     MatAutocompleteModule,
+    MatButtonModule,
     MatInputModule,
     MatChipsModule,
     MatProgressSpinnerModule,
@@ -81,6 +92,7 @@ export class StudyPicker implements OnInit {
     SPARX: true,
   };
   readonly displayedColumns: string[] = ['cohort', 'found', 'missing', 'plot', 'dataAccess'];
+  variableInput = viewChild<ElementRef<HTMLInputElement>>('variableInput');
 
   addVariable(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
@@ -159,6 +171,10 @@ export class StudyPicker implements OnInit {
       this.selectedVariables.update((vars) => [...vars, variable]);
     }
     this.variableCtrl.setValue('');
+    const inputEl = this.variableInput()?.nativeElement;
+    if (inputEl) {
+      inputEl.value = '';
+    }
   }
 
   removeVariable(variable: string): void {

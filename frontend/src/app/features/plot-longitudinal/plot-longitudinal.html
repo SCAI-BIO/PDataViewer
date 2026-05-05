@@ -1,13 +1,19 @@
-<main class="main-container">
-  <!-- Loading Spinner -->
+<main class="plot-page">
+  <!-- Loading Overlay -->
   @if (isLoading()) {
-  <div class="loading-spinner">
-    <mat-spinner diameter="40"></mat-spinner>
-  </div>
+    <div class="loading-overlay" role="status" aria-live="polite">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span class="loading-label">Generating plot…</span>
+    </div>
   }
 
-  <h1>Variable-specific Follow-up</h1>
-  <div class="output-box">
-    <div id="lineplot"></div>
-  </div>
+  <section class="page-header">
+    <h1 class="page-title">Variable-specific Follow-up</h1>
+  </section>
+
+  <section class="output-section">
+    <div class="output-box">
+      <div id="lineplot" class="plot-area"></div>
+    </div>
+  </section>
 </main>
