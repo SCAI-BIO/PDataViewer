@@ -42,6 +42,7 @@
     "@angular/build": "^22.0.0",
     "@angular/cli": "^22.0.0",
     "@angular/compiler-cli": "^22.0.0",
+    "@eslint/js": "^10.0.1",
     "@types/d3": "^7.4.3",
     "@types/plotly.js-dist-min": "^2.3.4",
     "@vitest/browser-playwright": "^4.1.8",
