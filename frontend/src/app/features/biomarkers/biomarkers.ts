@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -34,6 +34,7 @@ import { BoxplotBuilder } from './services/boxplot-builder';
     ReactiveFormsModule,
   ],
   templateUrl: './biomarkers.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './biomarkers.scss',
 })
 export class Biomarkers implements OnInit {

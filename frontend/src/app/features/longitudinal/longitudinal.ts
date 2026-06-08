@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -33,6 +33,7 @@ import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
     ReactiveFormsModule,
   ],
   templateUrl: './longitudinal.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './longitudinal.scss',
 })
 export class Longitudinal implements OnInit {

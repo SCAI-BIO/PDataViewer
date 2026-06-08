@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, DestroyRef, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, ViewChild, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,6 +24,7 @@ import type { CohortData } from '@shared/interfaces/metadata';
     MatTableModule,
   ],
   templateUrl: './cohorts.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './cohorts.scss',
 })
 export class Cohorts implements OnInit {

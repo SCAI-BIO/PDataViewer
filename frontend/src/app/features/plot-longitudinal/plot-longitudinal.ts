@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 
@@ -16,6 +16,7 @@ import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
   selector: 'app-plot-longitudinal',
   imports: [LoadingSpinner],
   templateUrl: './plot-longitudinal.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './plot-longitudinal.scss',
 })
 export class PlotLongitudinal implements OnInit {

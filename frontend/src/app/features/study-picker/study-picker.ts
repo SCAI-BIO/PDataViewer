@@ -7,6 +7,7 @@ import {
   computed,
   viewChild,
   ElementRef,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -48,6 +49,7 @@ import type { RankData } from '@shared/interfaces/rankdata';
     RouterModule,
   ],
   templateUrl: './study-picker.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './study-picker.scss',
 })
 export class StudyPicker implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
@@ -24,6 +24,7 @@ interface TeamMember {
   selector: 'app-contact-us',
   imports: [MatButtonModule, MatCardModule, MatIconModule],
   templateUrl: './contact-us.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './contact-us.scss',
 })
 export class ContactUs {

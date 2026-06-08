@@ -6,6 +6,7 @@ import {
   effect,
   inject,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +24,7 @@ import { ChordBuilder } from './services/chord-builder';
   selector: 'app-mappings',
   imports: [LoadingSpinner, MatButtonModule, MatIconModule],
   templateUrl: './mappings.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './mappings.scss',
 })
 export class Mappings implements OnInit {
