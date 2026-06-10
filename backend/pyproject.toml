@@ -29,11 +29,12 @@ classifiers = [
 ]
 
 dependencies = [
-    "argon2-cffi>=25.1.0",
+    "cryptography>=48.0.1",
     "fastapi[standard]>=0.136.3",
     "numpy>=2.4.6",
     "pandas>=3.0.3",
     "psycopg[binary]>=3.3.4",
+    "pyjwt>=2.13.0",
     "sqlalchemy>=2.0.50",
 ]
 
