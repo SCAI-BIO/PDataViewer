@@ -1,12 +1,10 @@
 import io
-import os
 from collections import defaultdict
 from typing import Optional, cast
 
 import pandas as pd
-from argon2 import PasswordHasher
 from dotenv import load_dotenv
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.orm import selectinload
@@ -19,14 +17,10 @@ from database.models import (
     ConceptSource,
     LongitudinalMeasurement,
     Mapping,
-    User,
 )
 from database.typeddicts import CohortStats
 
 load_dotenv()
-USER_NAME = os.getenv("USER_NAME")
-PASSWORD = os.getenv("PASSWORD")
-ph = PasswordHasher()
 
 
 class PostgreSQLRepository:
@@ -214,54 +208,6 @@ class PostgreSQLRepository:
             .order_by(BiomarkerMeasurement.diagnosis)
         )
         return list(result.scalars().all())
-
-    async def get_user(self, user_name: str, password: str) -> User:
-        """Retrieve a user from the database.
-
-        :param user_name: Name of the user.
-        :param password: Password of the user.
-        :raises ValueError: Incorrect user name or password.
-        :return: The authenticated user.
-        """
-        result = await self.session.execute(select(User).filter_by(name=user_name))
-        user = result.scalar_one_or_none()
-        if user is None or not ph.verify(user.hashed_password, password):
-            raise ValueError("Incorrect user_name or password.")
-        return user
-
-    async def add_user(self, user_name: str, password: str) -> User:
-        """Add a user.
-
-        :param user_name: The name of the user.
-        :param password: The password of the user.
-        """
-        # Skip if user already exists
-        result = await self.session.execute(select(User).filter_by(name=user_name))
-        user = result.scalar_one_or_none()
-        if user:
-            return user
-
-        hashed_password = ph.hash(password)
-        user = User(name=user_name, hashed_password=hashed_password)
-        self.session.add(user)
-        await self.session.commit()
-        return user
-
-    async def initialize_default_user(self):
-        """Create a default user if credentials are provided in the environment."""
-        if USER_NAME and PASSWORD:
-            await self.session.execute(delete(User).where(User.name != USER_NAME))
-            result = await self.session.execute(select(User).filter_by(name=USER_NAME))
-            user = result.scalar_one_or_none()
-
-            if user:
-                user.hashed_password = ph.hash(PASSWORD)
-            else:
-                hashed_password = ph.hash(PASSWORD)
-                user = User(name=USER_NAME, hashed_password=hashed_password)
-                self.session.add(user)
-
-            await self.session.commit()
 
     async def import_metadata(self, csv_data: bytes):
         """Import cohort metadata via a CSV file.
