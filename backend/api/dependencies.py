@@ -1,39 +1,46 @@
-import os
-from typing import Annotated
-
+import jwt
 from database.postgresql import PostgreSQLRepository
-from fastapi import Depends, HTTPException
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jwt import PyJWKClient
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-POSTGRES_USER = os.getenv("POSTGRES_USER", "testuser")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "testpass")
-POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
-POSTGRES_DB = os.getenv("POSTGRES_DB", "testdb")
-
-connection_string = (
-    f"postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+from api.config import (
+    CONNECTION_STRING,
+    KEYCLOAK_CERTS_URL,
+    KEYCLOAK_CLIENT_ID,
+    KEYCLOAK_ISSUER,
 )
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{KEYCLOAK_ISSUER}/protocol/openid-connect/token")
+jwks_client = PyJWKClient(KEYCLOAK_CERTS_URL)
+
+
+def get_current_user_payload(token: str = Depends(oauth2_scheme)) -> dict:
+    """Validates the JWT signature and returns the decoded payload"""
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
+        payload = jwt.decode(
+            token, signing_key.key, algorithms=["RS256"], audience=KEYCLOAK_CLIENT_ID, options={"verify_iss": False}
+        )
+        return payload
+    except jwt.exceptions.PyJWTError:
+        raise credentials_exception
+
+
 engine = create_async_engine(
-    connection_string, pool_size=10, max_overflow=20, pool_timeout=30, pool_pre_ping=True, pool_recycle=1800
+    CONNECTION_STRING, pool_size=10, max_overflow=20, pool_timeout=30, pool_pre_ping=True, pool_recycle=1800
 )
 AsyncSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
-security = HTTPBasic()
 
 
 async def get_client():
     session = AsyncSessionLocal()
     async with PostgreSQLRepository(session=session, engine=engine) as client:
         yield client
-
-
-async def authenticate_user(
-    credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-    db: Annotated[PostgreSQLRepository, Depends(get_client)],
-):
-    try:
-        await db.get_user(credentials.username, credentials.password)
-    except ValueError:
-        raise HTTPException(status_code=401, detail="Incorrect username or password")
-    return True
