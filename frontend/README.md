@@ -19,9 +19,10 @@ For a detailed guide on using Angular, refer to the official [Angular Tutorial](
 
 ## Requirements
 
-- [Angular == 21.x.x](https://angular.dev/installation)
-- [Node.js >= 20.19.0](https://nodejs.org/en/download/package-manager)
-- TypeScript >= 5.9.0
+- [Angular 22.x.x](https://angular.dev/installation)
+- [Node.js ^22.22.3 || ^24.15.0 || ^26.0.0](https://nodejs.org/en/download/package-manager)
+- TypeScript >=6.0.0, <6.1.0
+- RxJS ^6.5.3 || ^7.4.0
 
 ## Installation
 
