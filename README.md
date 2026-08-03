@@ -30,10 +30,10 @@ Data collected in cohort studies lay the groundwork for a plethora of Parkinsonâ
 
 ## Requirements
 
-- Python >= 3.14
-- [Angular == 22.x.x](https://angular.io/guide/setup-local)
-- [Node.js >= 22.22.3](https://nodejs.org/en/download/package-manager)
-- TypeScript >= 6.0.0
+- Python >=3.14, <3.15
+- [Angular 22.x.x](https://angular.io/guide/setup-local)
+- [Node.js ^22.22.3 || ^24.15.0 || ^26.0.0](https://nodejs.org/en/download/package-manager)
+- TypeScript >=6.0.0, <6.1.0
 - RxJS ^6.5.3 || ^7.4.0
 
 ## Installation
