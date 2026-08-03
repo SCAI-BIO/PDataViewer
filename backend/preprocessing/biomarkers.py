@@ -111,10 +111,10 @@ cohort_studies = {
 }
 
 # Drop empty columns from the dataframes
-for cohort, _ in cohort_studies.items():
+for df in cohort_studies.values():
     # Please make the patient ID column naming consistent
     # and set it as the index
-    cohort_studies[cohort].dropna(axis=1, how="all", inplace=True)
+    df.dropna(axis=1, how="all", inplace=True)
 
 result = extract_variables(cohort_studies, numeric_variables)
 

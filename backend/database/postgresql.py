@@ -1,6 +1,6 @@
 import io
 from collections import defaultdict
-from typing import Optional, cast
+from typing import cast
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -24,7 +24,7 @@ load_dotenv()
 
 
 class PostgreSQLRepository:
-    def __init__(self, session: AsyncSession, engine: Optional[AsyncEngine] = None):
+    def __init__(self, session: AsyncSession, engine: AsyncEngine | None = None):
         """Initialize the PostgreSQL database engine and session.
 
         :param connection_string: SQLAlchemy-compatible PostgreSQL connection URI.
@@ -75,7 +75,7 @@ class PostgreSQLRepository:
         return cohort
 
     async def get_concepts(
-        self, cohort_name: Optional[str] = None, source_type: Optional[ConceptSource] = None
+        self, cohort_name: str | None = None, source_type: ConceptSource | None = None
     ) -> list[Concept]:
         """Retrieve all concepts from the database.
 
@@ -102,7 +102,7 @@ class PostgreSQLRepository:
         return list(result.scalars().all())
 
     async def get_longitudinal_measurements(
-        self, variable: Optional[str] = None, cohort_name: Optional[str] = None
+        self, variable: str | None = None, cohort_name: str | None = None
     ) -> list[LongitudinalMeasurement]:
         """Retrieve all longitudinal measurements
 
@@ -146,7 +146,7 @@ class PostgreSQLRepository:
         return list(result.scalars().all())
 
     async def get_biomarker_measurements(
-        self, variable: Optional[str] = None, cohort_name: Optional[str] = None, diagnosis: Optional[str] = None
+        self, variable: str | None = None, cohort_name: str | None = None, diagnosis: str | None = None
     ) -> list[BiomarkerMeasurement]:
         """Retrieve all biomarker measurements
 
@@ -263,26 +263,24 @@ class PostgreSQLRepository:
         await self.session.execute(stmt)
         await self.session.commit()
 
-    async def import_cdm(
-        self,
-        csv_data: bytes,
-        modality: str,
-        columns_to_ignore: list[str] = [
-            "Feature",
-            "CURIE",
-            "Definition",
-            "Synonyms",
-            "OMOP",
-            "UMLS",
-            "UK Biobank",
-            "Rank",
-        ],
-    ):
+    async def import_cdm(self, csv_data: bytes, modality: str, columns_to_ignore: list[str] | None = None):
         """Import a CDM modality mapping file (e.g., Clinical.csv)
 
         :param csv_data: Modality CSV file content in bytes.
         :param modality: Modality of the mappings.
         """
+        if columns_to_ignore is None:
+            columns_to_ignore = [
+                "Feature",
+                "CURIE",
+                "Definition",
+                "Synonyms",
+                "OMOP",
+                "UMLS",
+                "UK Biobank",
+                "Rank",
+            ]
+
         df = pd.read_csv(io.BytesIO(csv_data))
         cohorts = await self.get_cohorts()
         cohort_map = {c.name: c.id for c in cohorts}

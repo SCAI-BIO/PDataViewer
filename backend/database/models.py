@@ -26,15 +26,15 @@ class Cohort(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
-    participants: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    control_participants: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    prodromal_participants: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    pd_participants: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    longitudinal_participants: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    follow_up_interval: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-    location: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-    doi: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    link: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    participants: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    control_participants: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    prodromal_participants: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    pd_participants: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    longitudinal_participants: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    follow_up_interval: Mapped[str | None] = mapped_column(String, nullable=True)
+    location: Mapped[str | None] = mapped_column(String, nullable=True)
+    doi: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    link: Mapped[str | None] = mapped_column(String(255), nullable=True)
     color: Mapped[str] = mapped_column(String, nullable=False)
 
     concepts: Mapped[list["Concept"]] = relationship(
@@ -57,7 +57,7 @@ class Concept(Base):
     source_type: Mapped[ConceptSource] = mapped_column(
         Enum(ConceptSource), nullable=False, default=ConceptSource.COHORT
     )
-    cohort_id: Mapped[Optional[int]] = mapped_column(ForeignKey("cohorts.id", ondelete="CASCADE"), nullable=True)
+    cohort_id: Mapped[int | None] = mapped_column(ForeignKey("cohorts.id", ondelete="CASCADE"), nullable=True)
 
     mappings_as_source: Mapped[list["Mapping"]] = relationship(
         foreign_keys="Mapping.source_id", back_populates="source", cascade="all, delete-orphan", passive_deletes=True

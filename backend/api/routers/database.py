@@ -15,7 +15,7 @@ async def import_data(
     user: Annotated[dict, Depends(get_current_user_payload)],
     background_tasks: BackgroundTasks,
     upload_type: UploadType,
-    file: UploadFile = File(...),
+    file: Annotated[UploadFile, File()],
 ):
     if not file.filename:
         raise HTTPException(status_code=400, detail="No file uploaded.")
