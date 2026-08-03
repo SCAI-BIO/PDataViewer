@@ -47,11 +47,12 @@ def extract_longitudinal_variables(
         longitudinal_variable: pd.DataFrame = pd.DataFrame(
             columns=["months", "patientCount", "totalPatientCount", "cohort"]
         )
-        for cohort in participant_data:
-            total_participant_count = len(participant_data[cohort].ID.unique())
+        for cohort, cohort_data in participant_data.items():
+            total_participant_count = len(cohort_data.ID.unique())
             mapping = cdm.loc[variable, cohort]
-            if mapping and mapping in participant_data[cohort].columns:
-                data = participant_data[cohort].loc[:, ["ID", "Months", mapping]]
+
+            if mapping and mapping in cohort_data.columns:
+                data = cohort_data.loc[:, ["ID", "Months", mapping]]
                 data.dropna(subset=mapping, inplace=True)
 
                 for months in sorted(data.Months.unique().tolist()):
@@ -105,8 +106,8 @@ datasets = [pd.read_csv(file, low_memory=False) for file in participant_level_fi
 cohort_studies = {cohort: df for cohort, df in zip(cohorts, datasets)}
 
 # Drop empty columns
-for cohort, df in cohort_studies.items():
-    cohort_studies[cohort].dropna(axis=1, how="all", inplace=True)
+for df in cohort_studies.values():
+    df.dropna(axis=1, how="all", inplace=True)
 
 longitudinal_variable_data = extract_longitudinal_variables(cdm, cohort_studies)
 
@@ -114,9 +115,8 @@ longitudinal_variable_data = extract_longitudinal_variables(cdm, cohort_studies)
 output_path = base_path / "processed/longitudinal"
 output_path.mkdir(exist_ok=True)
 
-for variable in longitudinal_variable_data:
-    df = longitudinal_variable_data[variable]
+for variable, df in longitudinal_variable_data.items():
     if not df.empty:
-        variable = re.sub(r'[\\/*?:"<>|]', "-", variable)
+        safe_variable = re.sub(r'[\\/*?:"<>|]', "-", variable)
         df.set_index(["months", "cohort"], inplace=True)
         df.to_csv(output_path / f"{variable}.csv")
