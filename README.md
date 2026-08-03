@@ -1,8 +1,17 @@
 # PDataViewer
 
-<img src="./frontend/public/logos/logo_white.svg" width="100" alt="logo"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./frontend/public/logos/logo_white.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./frontend/public/logos/logo.svg">
+  <img src="./frontend/public/logos/logo.svg" width="100" alt="PDataViewer logo">
+</picture>
 
-![backend-tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/python-tests.yml/badge.svg) ![frontend-tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-tests.yml/badge.svg) ![version](https://img.shields.io/github/v/release/SCAI-BIO/PDataViewer) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![DOI](https://zenodo.org/badge/785700235.svg)](https://zenodo.org/doi/10.5281/zenodo.13629127)
+[![Backend linting](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/backend-linting.yml/badge.svg?branch=main)](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/backend-linting.yml)
+[![Frontend linting](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-linting.yml/badge.svg?branch=main)](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-linting.yml)
+[![Frontend tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-tests.yml/badge.svg?branch=main)](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-tests.yml)
+[![Version](https://img.shields.io/github/v/release/SCAI-BIO/PDataViewer)](https://github.com/SCAI-BIO/PDataViewer/releases)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![DOI](https://zenodo.org/badge/785700235.svg)](https://zenodo.org/doi/10.5281/zenodo.13629127)
 
 PDataViewer is a web application that lets you explore the PD data landscape and identify cohort datasets that suit your research needs.
 
@@ -11,14 +20,19 @@ PDataViewer is a web application that lets you explore the PD data landscape and
   - [Requirements](#requirements)
   - [Installation](#installation)
     - [Clone the Repository](#clone-the-repository)
-    - [Install the Backend Requirements](#install-the-backend-requirements)
-    - [Install the Frontend Requirements](#install-the-frontend-requirements)
+    - [Install the Backend Dependencies](#install-the-backend-dependencies)
+    - [Install the Frontend Dependencies](#install-the-frontend-dependencies)
   - [Usage](#usage)
-    - [Starting the Backend Locally](#starting-the-backend-locally)
+    - [Run the Backend Locally](#run-the-backend-locally)
     - [Run the Backend via Docker](#run-the-backend-via-docker)
-    - [Starting the Frontend Locally](#starting-the-frontend-locally)
+    - [Run the Frontend Locally](#run-the-frontend-locally)
     - [Run the Frontend via Docker](#run-the-frontend-via-docker)
     - [Run both the Frontend and Backend via Docker](#run-both-the-frontend-and-backend-via-docker)
+  - [Development Checks](#development-checks)
+    - [Frontend Linting](#frontend-linting)
+    - [Frontend Tests](#frontend-tests)
+    - [Backend Linting](#backend-linting)
+  - [Published Container Images](#published-container-images)
 
 ## Introduction
 
@@ -30,11 +44,18 @@ Data collected in cohort studies lay the groundwork for a plethora of Parkinsonâ
 
 ## Requirements
 
-- Python >=3.14, <3.15
-- [Angular 22.x.x](https://angular.io/guide/setup-local)
-- [Node.js ^22.22.3 || ^24.15.0 || ^26.0.0](https://nodejs.org/en/download/package-manager)
-- TypeScript >=6.0.0, <6.1.0
-- RxJS ^6.5.3 || ^7.4.0
+For local development:
+
+- [Python](https://www.python.org/) >=3.14, <3.15
+- Install [uv](https://docs.astral.sh/uv/getting-started/installation/) before installing the backend dependencies.
+- [Node.js](https://nodejs.org/) 26
+- npm
+- Git
+
+For containerized deployment:
+
+- Docker
+- Docker Compose
 
 ## Installation
 
@@ -45,53 +66,55 @@ git clone https://github.com/SCAI-BIO/PDataViewer
 cd PDataViewer
 ```
 
-### Install the Backend Requirements
+### Install the Backend Dependencies
 
 Please consult [uv documentation](https://docs.astral.sh/uv/getting-started/installation/#__tabbed_1_1) for uv package manager installation.
 
 ```bash
 cd backend
-uv sync
+uv sync --locked
 ```
 
-### Install the Frontend Requirements
+### Install the Frontend Dependencies
+
+Install Node.js 26 and then run:
 
 ```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-nvm install 26
-npm install -g @angular/cli
+cd frontend
+npm ci
 ```
 
 ## Usage
 
-### Starting the Backend Locally
+### Run the Backend Locally
 
-You can access the backend functionalities by accessing the provided REST API.
-
-Run the Backend API on port 5000:
+Start the backend API on port 5000:
 
 ```bash
 cd backend
-uvicorn api.main:app --reload --port 5000
+uv run uvicorn api.main:app --reload --port 5000
 ```
 
 ### Run the Backend via Docker
 
-The API can also be run via docker.
-
-To build the Docker container locally:
+From the repository root, build the backend image:
 
 ```bash
-docker build -t ghcr.io/scai-bio/pdataviewer/backend:latest .
+docker build \
+   -f backend/Dockerfile \
+   -t pdataviewer-backend:local \
+   backend
 ```
 
-After building, you will be able to start the container and access the PDataViewer API on [localhost:8000](http://localhost:8000) with the following command:
+Start the container:
 
 ```bash
-docker run -p 8000:80 ghcr.io/pdataviewer/scai-bio/backend:latest
+docker run --rm -p 8000:80 pdataviewer-backend:local
 ```
 
-### Starting the Frontend Locally
+The API will be available at [localhost:8000](http://localhost:8000).
+
+### Run the Frontend Locally
 
 You can deploy a local version of the web application via Angular CLI.
 
@@ -99,8 +122,7 @@ You can access the web application on [localhost:4200](http://localhost:4200):
 
 ```bash
 cd frontend
-npm install
-ng serve
+npm start
 ```
 
 ### Run the Frontend via Docker
@@ -108,14 +130,19 @@ ng serve
 To build the Docker container locally:
 
 ```bash
-docker build -t ghcr.io/scai-bio/pdataviewer/frontend:latest .
+docker build \
+   -f frontend/Dockerfile.prod \
+   -t pdataviewer-frontend:local \
+   frontend
 ```
 
-After building, you will be able to start the container and access the PDataViewer web application on [localhost:8080](http://localhost:8080) via the following command:
+Start the container:
 
 ```bash
-docker run -p 8080:80 ghcr.io/scai-bio/pdataviewer/frontend:latest
+docker run --rm -p 8080:80 pdataviewer-frontend:local
 ```
+
+The application will be available at [localhost:8080](http://localhost:8080).
 
 ### Run both the Frontend and Backend via Docker
 
@@ -125,22 +152,75 @@ You can deploy a local version of the API and the web application together.
    Make sure you have Docker Compose installed on your machine. You can verify this by running:
 
    ```bash
-   docker-compose --version
+   docker compose --version
    ```
 
-2. Navigate to the Root (PDataViewer) Folder
-3. Build and Run the Containers:
+2. Navigate to the repository root.
+3. Build and start the containers:
 
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
-4. Verify that the Containers are Running:
+4. Verify that the containers are running:
 
    ```bash
-   docker ps
+   docker compose ps
    ```
 
-This command lists all running containers. You should be able to see your containers with the name `pdataviewer-frontend`, `pdataviewer-backend`, and `postgres:18`.
+This command lists all running containers.
 
-You can access the web application on [localhost:3000](http://localhost:3000) and the API on [localhost:5000](http://localhost:5000)
+You can access the web application on [localhost:3000](http://localhost:3000) and the API on [localhost:5000](http://localhost:5000).
+
+## Development Checks
+
+### Frontend Linting
+
+```bash
+cd frontend
+npm run lint
+```
+
+### Frontend Tests
+
+```bash
+cd frontend
+npm test -- --watch=false
+```
+
+### Backend Linting
+
+```bash
+cd backend
+
+uv run flake8 api database preprocessing \
+   --count \
+   --select=E9,F63,F7,F82 \
+   --show-source \
+   --statistics
+
+uv run flake8 api database preprocessing \
+   --count \
+   --exit-zero \
+   --max-complexity=10 \
+   --max-line-length=127 \
+   --statistics
+```
+
+## Published Container Images
+
+Release images are published to GitHub Container Registry:
+
+```text
+ghcr.io/scai-bio/pdataviewer/frontend:<version>
+ghcr.io/scai-bio/pdataviewer/backend:<version>
+```
+
+For example:
+
+```bash
+docker pull ghcr.io/scai-bio/pdataviewer/frontend:0.4.2
+docker pull ghcr.io/scai-bio/pdataviewer/backend:0.4.2
+```
+
+Stable releases are also available with the `latest` tag.
