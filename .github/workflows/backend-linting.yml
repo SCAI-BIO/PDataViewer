@@ -23,6 +23,10 @@ jobs:
   lint:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: backend
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -50,7 +54,6 @@ jobs:
         run: >
           uv tool run flake8 api database preprocessing
           --count
-          --exit-zero
           --max-complexity=10
           --max-line-length=127
           --statistics
