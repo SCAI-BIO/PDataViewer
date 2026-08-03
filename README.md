@@ -31,9 +31,10 @@ Data collected in cohort studies lay the groundwork for a plethora of Parkinsonâ
 ## Requirements
 
 - Python >= 3.14
-- [Angular == 21.x.x](https://angular.io/guide/setup-local)
-- [Node.js >= 20.19.0](https://nodejs.org/en/download/package-manager)
-- TypeScript >= 5.9.0
+- [Angular == 22.x.x](https://angular.io/guide/setup-local)
+- [Node.js >= 22.22.3](https://nodejs.org/en/download/package-manager)
+- TypeScript >= 6.0.0
+- RxJS ^6.5.3 || ^7.4.0
 
 ## Installation
 
@@ -57,7 +58,7 @@ uv sync
 
 ```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-nvm install 24
+nvm install 26
 npm install -g @angular/cli
 ```
 
