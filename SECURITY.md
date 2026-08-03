@@ -4,7 +4,7 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.x   | :white_check_mark: |
+| 1.x   | :white_check_mark: |
 
 Please report any security vulnerabilities to [pdataviewer@scai.fraunhofer.de](mailto:pdataviewer@scai.fraunhofer.de). We will review and address all reports promptly.
 
