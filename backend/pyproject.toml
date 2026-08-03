@@ -29,13 +29,13 @@ classifiers = [
 ]
 
 dependencies = [
-    "cryptography>=48.0.1",
-    "fastapi[standard]>=0.136.3",
-    "numpy>=2.4.6",
-    "pandas>=3.0.3",
+    "cryptography>=50.0.0",
+    "fastapi[standard]>=0.141.1",
+    "numpy>=2.5.1",
+    "pandas>=3.0.5",
     "psycopg[binary]>=3.3.4",
     "pyjwt>=2.13.0",
-    "sqlalchemy>=2.0.50",
+    "sqlalchemy>=2.0.51",
 ]
 
 [dependency-groups]
