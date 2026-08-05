@@ -92,6 +92,6 @@ export class Api {
   }
 
   fetchRankings(variables: string[]): Observable<RankData[]> {
-    return this.http.post<RankData[]>(`${this.apiUrl}/studypicker/rank`, variables);
+    return this.http.post<RankData[]>(`${this.apiUrl}/study-picker/rank`, variables);
   }
 }
