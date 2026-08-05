@@ -39,7 +39,16 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["flake8>=7.3.0"]
+dev = ["ruff>=0.16.1"]
+
+[tool.ruff]
+line-length = 127
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "C90", "B", "SIM", "PERF", "PLC", "PLE", "PLW", "RUF"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
 
 [project.urls]
 Homepage = "https://github.com/SCAI-BIO/PDataViewer"
