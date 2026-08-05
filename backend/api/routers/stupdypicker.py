@@ -1,14 +1,23 @@
 from typing import Annotated
 
-from database.postgresql import PostgreSQLRepository
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Body, Depends
 
-from api.dependencies import get_client
+from api.dependencies import get_analytics_repository
+from api.schemas import RankedCohort
+from database.repositories import AnalyticsRepository
 
 router = APIRouter(prefix="/studypicker", tags=["studypicker"])
 
 
-@router.post("/rank", description="Ranks cohorts based on the availability of given variables.")
-async def get_ranked_cohorts(variables: list[str], database: Annotated[PostgreSQLRepository, Depends(get_client)]):
-    rank = await database.rank_cohorts(variables)
-    return rank.to_dict(orient="records")
+@router.post(
+    "/rank",
+    description="Rank cohorts based on the availability of the requested CDM variables.",
+    response_model=list[RankedCohort],
+)
+async def get_ranked_cohorts(
+    variables: Annotated[list[str], Body(min_length=1, description="CDM variables used to rank cohorts.")],
+    repository: Annotated[AnalyticsRepository, Depends(get_analytics_repository)],
+) -> list[RankedCohort]:
+    """Return cohorts ranked by variable availability."""
+    ranking = await repository.rank_cohorts(variables)
+    return [RankedCohort.model_validate(record) for record in ranking.to_dict(orient="records")]

@@ -1,61 +1,53 @@
 from typing import Annotated
 
-from database.postgresql import PostgreSQLRepository
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path, Query
 
-from api.dependencies import get_client
+from api.dependencies import get_biomarker_service
+from api.dependencies.database import get_biomarker_repository
+from api.services import BiomarkerService
+from database.repositories.biomarkers import BiomarkerRepository
 
 router = APIRouter(prefix="/biomarkers", tags=["biomarkers"])
 
 
-@router.get("/")
-async def get_biomarkers(database: Annotated[PostgreSQLRepository, Depends(get_client)]):
-    """
-    Get all available biomarker variables.
-    """
-    return await database.get_biomarker_variables()
+@router.get("/", description="Get all available biomarker variables.", response_model=list[str])
+async def get_biomarkers(service: Annotated[BiomarkerRepository, Depends(get_biomarker_repository)]) -> list[str]:
+    """Return all available biomarker variables."""
+    return await service.get_variables()
 
 
-@router.get("/cohorts")
-async def get_biomarker_cohorts(biomarker: str, database: Annotated[PostgreSQLRepository, Depends(get_client)]):
-    """
-    Retrieve the list of available cohorts for a biomarker table.
-    """
-    return await database.get_cohorts_for_biomarker(biomarker)
+@router.get("/cohorts", description="Get all cohorts containing a biomarker.", response_model=list[str])
+async def get_biomarker_cohorts(
+    biomarker: Annotated[str, Query(min_length=1, description="Biomarker variable name")],
+    service: Annotated[BiomarkerRepository, Depends(get_biomarker_repository)],
+) -> list[str]:
+    """Return cohorts containing the requested biomarker."""
+    return await service.get_cohorts_for_variable(biomarker)
 
 
-@router.get("/diagnoses")
-async def get_cohort_biomarkers(biomarker: str, database: Annotated[PostgreSQLRepository, Depends(get_client)]):
-    """
-    Retrieve all unique diagnoses per cohort for the given biomarker.
-    If multiple diagnoses exist in a cohort, add "Complete".
-    """
-    diagnoses = []
-
-    cohorts = await database.get_cohorts_for_biomarker(biomarker)
-    for cohort in cohorts:
-        cohort_diagnoses = await database.get_diagnoses_for_biomarker_in_cohort(biomarker, cohort)
-        for diagnosis in cohort_diagnoses:
-            diagnoses.append(f"{cohort} ({diagnosis} Group)")
-        if len(cohort_diagnoses) > 1:
-            diagnoses.append(f"{cohort} (Complete)")
-
-    return diagnoses
+@router.get(
+    "/diagnoses",
+    description="Get all cohort and diagnosis combinations available for a biomarker.",
+    response_model=list[str],
+)
+async def get_biomarker_diagnoses(
+    biomarker: Annotated[str, Query(min_length=1, description="Biomarker variable name.")],
+    service: Annotated[BiomarkerService, Depends(get_biomarker_service)],
+) -> list[str]:
+    """Return selectable diagnosis groups for a biomarker."""
+    return await service.get_diagnosis_options(biomarker)
 
 
-@router.get("/cohorts/{cohort}/diagnoses/{diagnosis}", tags=["biomarkers"])
-async def get_filtered_data(
-    biomarker: str,
-    cohort: str,
-    diagnosis: str,
-    database: Annotated[PostgreSQLRepository, Depends(get_client)],
-):
-    """
-    Filter biomarker data based on the chosen diagnosis type
-    """
-    if diagnosis == "Complete":
-        biomarker_data = await database.get_biomarker_measurements(biomarker, cohort, None)
-    else:
-        biomarker_data = await database.get_biomarker_measurements(biomarker, cohort, diagnosis)
-
-    return [bd.measurement for bd in biomarker_data]
+@router.get(
+    "/cohorts/{cohort}/diagnoses/{diagnosis}",
+    description="Get biomarker measurements for a cohort and diagnosis group.",
+    response_model=list[float],
+)
+async def get_filtered_biomarker_data(
+    biomarker: Annotated[str, Query(min_length=1, description="Biomarker variable name.")],
+    cohort: Annotated[str, Path(min_length=1, description="Cohort name.")],
+    diagnosis: Annotated[str, Path(min_length=1, description="Diagnosis group, or Complete for all diagnosesas.")],
+    service: Annotated[BiomarkerService, Depends(get_biomarker_service)],
+) -> list[float]:
+    """Return matching biomarker measurement values."""
+    return await service.get_measurements(variable=biomarker, cohort_name=cohort, diagnosis=diagnosis)

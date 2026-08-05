@@ -2,73 +2,92 @@ import io
 import logging
 import zipfile
 
+from api.dependencies import AsyncSessionLocal
+from api.schemas import UploadType
+from api.upload_utils import CSV_SUFFIX, ZIP_SUFFIX, get_csv_members, get_file_suffix, get_variable_name
 from database.postgresql import PostgreSQLRepository
 
-from api.dependencies import AsyncSessionLocal
-from api.model import UploadType
-
-logger = logging.getLogger("background_tasks")
-logger.setLevel(logging.INFO)
-
-if not logger.handlers:
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+logger = logging.getLogger(__name__)
 
 
-async def process_import_background(file_contents: bytes, filename: str, upload_type: UploadType):
-    """
-    Background task to process file imports with detailed logging.
-    """
-    logger.info(f"START: Background import for '{filename}' (Type: {upload_type.value})")
+async def process_import_background(file_contents: bytes, filename: str, upload_type: UploadType) -> None:
+    """Process an uploaded CSV file or ZIP archive in the background."""
+    logger.info("Starting background import for %r with type %s", filename, upload_type.value)
 
     try:
-        async with AsyncSessionLocal() as session, PostgreSQLRepository(session) as repo:
-            logger.debug("Database connection established for background task.")
+        async with AsyncSessionLocal() as session:
+            repository = PostgreSQLRepository(session=session)
 
-            if filename.endswith(".zip") and file_contents.startswith(b"PK"):
-                logger.info("Processing ZIP archive: %s", filename)
-
-                with zipfile.ZipFile(io.BytesIO(file_contents)) as z:
-                    csv_files = [name for name in z.namelist() if name.endswith(".csv")]
-                    logger.info("Found %d CSV files in archive.", len(csv_files))
-
-                    for i, member_name in enumerate(csv_files, 1):
-                        logger.info("[%d/%d] Importing file: %s", i, len(csv_files), member_name)
-
-                        with z.open(member_name) as csv_file:
-                            csv_data = csv_file.read()
-
-                        variable_name = member_name[:-4]
-                        await _run_import(repo, upload_type, csv_data, variable_name)
-
-            elif filename.endswith(".csv"):
-                logger.info("Processing single CSV file: %s", filename)
-                variable_name = filename[:-4]
-                await _run_import(repo, upload_type, file_contents, variable_name)
-
-            logger.info("SUCCESS: Finished background import for '%s'", filename)
+            try:
+                await _process_import_file(repository, file_contents, filename, upload_type)
+            except Exception:
+                await session.rollback()
+                raise
 
     except Exception:
-        logger.exception(f"FAILURE: Error during import of '{filename}'")
+        logger.exception("Background import failed for %r", filename)
+    else:
+        logger.info("Background import completed successfully for %r", filename)
 
 
-async def _run_import(repo: PostgreSQLRepository, upload_type: UploadType, data: bytes, variable_name: str):
-    """Helper to route the import."""
-    try:
-        if upload_type == UploadType.LONGITUDINAL:
-            await repo.import_longitudinal_measurements(data, variable_name)
+async def _process_import_file(
+    repository: PostgreSQLRepository, file_contents: bytes, filename: str, upload_type: UploadType
+) -> None:
+    """Route an uploaded file according to its file type."""
+    suffix = get_file_suffix(filename)
 
-        elif upload_type == UploadType.BIOMARKERS:
-            await repo.import_biomarker_measurements(data, variable_name)
+    if suffix == ZIP_SUFFIX:
+        await _process_zip_archive(repository, file_contents, filename, upload_type)
+        return
 
-        elif upload_type == UploadType.METADATA:
-            await repo.import_metadata(data)
+    if suffix == CSV_SUFFIX:
+        logger.info("Processing single CSV file: %s", filename)
 
-        elif upload_type == UploadType.CDM:
-            await repo.import_cdm(data, modality=variable_name)
+        await _run_import(repository, upload_type, file_contents, get_variable_name(filename))
+        return
 
-    except Exception as e:
-        logger.error(f"Error processing sub-file '{variable_name}': {e!s}")
-        raise
+    raise ValueError(f"Unsupported file type for {filename!r}; " "expected a .csv or .zip file")
+
+
+async def _process_zip_archive(
+    repository: PostgreSQLRepository, file_contents: bytes, filename: str, upload_type: UploadType
+) -> None:
+    """Process all CSV members in a ZIP archive."""
+    archive_buffer = io.BytesIO(file_contents)
+
+    if not zipfile.is_zipfile(archive_buffer):
+        raise ValueError(f"Uploaded file {filename!r} is not a valid ZIP archive")
+
+    archive_buffer.seek(0)
+    logger.info("Processing ZIP archive: %s", filename)
+
+    with zipfile.ZipFile(archive_buffer) as archive:
+        csv_members = get_csv_members(archive)
+
+        if not csv_members:
+            raise ValueError(f"ZIP archive {filename!r} contains no CSV files")
+
+        logger.info("Found %d CSV files in archive %s", len(csv_members), filename)
+
+        for index, member in enumerate(csv_members, start=1):
+            logger.info("[%d/%d] Importing archive member: %s", index, len(csv_members), member.filename)
+            csv_data = archive.read(member)
+            await _run_import(repository, upload_type, csv_data, get_variable_name(member.filename))
+
+
+async def _run_import(
+    repository: PostgreSQLRepository, upload_type: UploadType, data: bytes, variable_name: str
+) -> None:
+    """Run the repository import matching the selected upload type."""
+    match upload_type:
+        case UploadType.LONGITUDINAL:
+            await repository.import_longitudinal_measurements(data, variable_name)
+
+        case UploadType.BIOMARKERS:
+            await repository.import_biomarker_measurements(data, variable_name)
+
+        case UploadType.METADATA:
+            await repository.import_metadata(data)
+
+        case UploadType.CDM:
+            await repository.import_cdm(data, modality=variable_name)
