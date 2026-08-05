@@ -46,6 +46,11 @@ class CohortRepository(BaseRepository):
 
         return cohort
 
+    async def get_names(self) -> list[str]:
+        """Return all cohort names in alphabetical order."""
+        result = await self.session.execute(select(Cohort.name).order_by(Cohort.name))
+        return list(result.scalars().all())
+
     async def get_name_to_id_map(self) -> dict[str, int]:
         """Return cohort database identifiers keyed by cohort name."""
         result = await self.session.execute(select(Cohort.name, Cohort.id))

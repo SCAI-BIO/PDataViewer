@@ -52,6 +52,16 @@ class ConceptRepository(BaseRepository):
         result = await self.session.execute(select(Mapping.modality).distinct().order_by(Mapping.modality))
         return list(result.scalars().all())
 
+    async def get_variable_names(self, source_type: ConceptSource | None = None) -> list[str]:
+        """Return unique concept variable names."""
+        statement = select(Concept.variable).distinct().order_by(Concept.variable)
+
+        if source_type is not None:
+            statement = statement.where(Concept.source_type == source_type)
+
+        result = await self.session.execute(statement)
+        return list(result.scalars().all())
+
     async def import_cdm(
         self, csv_data: bytes, modality: str, columns_to_ignore: Collection[str] | None = None
     ) -> None:
