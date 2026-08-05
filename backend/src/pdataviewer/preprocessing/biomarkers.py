@@ -1,6 +1,6 @@
 import secrets
 from pathlib import Path
-from typing import TypeAlias, TypedDict
+from typing import TypedDict
 
 import pandas as pd
 
@@ -24,7 +24,7 @@ class MeasurementRecord(TypedDict):
     diagnosis: ScalarValue
 
 
-ExtractedVariables: TypeAlias = dict[str, dict[str, list[MeasurementRecord]]]
+type ExtractedVariables = dict[str, dict[str, list[MeasurementRecord]]]
 
 
 def load_numeric_variable_mappings(cdm_directory: Path) -> pd.DataFrame:

@@ -1,7 +1,6 @@
 from collections import defaultdict
 from collections.abc import Iterable
 from itertools import combinations
-from typing import TypeAlias
 
 import pandas as pd
 from sqlalchemy import select
@@ -15,8 +14,8 @@ from pdataviewer.database.repositories.base import BaseRepository
 from pdataviewer.database.repositories.cohorts import CohortRepository
 from pdataviewer.database.typeddicts import ChordDiagramData, ChordLink, ChordNode
 
-StudyVariable: TypeAlias = tuple[str, str]
-VariablesByCdm: TypeAlias = dict[str, list[StudyVariable]]
+type StudyVariable = tuple[str, str]
+type VariablesByCdm = dict[str, list[StudyVariable]]
 
 
 def _build_chord_statement(modality: str):

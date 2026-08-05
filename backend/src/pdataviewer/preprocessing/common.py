@@ -1,7 +1,7 @@
 import os
 import re
 from pathlib import Path
-from typing import Any, TypeAlias
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -13,7 +13,7 @@ MISSING_TOTAL_SCORE = "No total score."
 MAPPING_SEPARATOR = ", "
 IGNORED_CDM_COLUMNS = ["CURIE", "Definition", "Synonyms"]
 INVALID_FILENAME_CHARACTERS = re.compile(r'[\\/*?:"<>|]')
-ScalarValue: TypeAlias = str | int | float | bool
+type ScalarValue = str | int | float | bool
 
 
 def require_columns(dataframe: pd.DataFrame, required_columns: set[str], source_name: str) -> None:
