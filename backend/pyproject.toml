@@ -52,7 +52,21 @@ Tracker = "https://github.com/SCAI-BIO/PDataViewer/issues"
 line-length = 127
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "C90", "B", "SIM", "PERF", "PLC", "PLE", "PLW", "RUF"]
+select = [
+    "E",
+    "F",
+    "W",
+    "UP",
+    "I",
+    "C90",
+    "B",
+    "SIM",
+    "PERF",
+    "PLC",
+    "PLE",
+    "PLW",
+    "RUF",
+]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
