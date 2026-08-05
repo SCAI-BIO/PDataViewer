@@ -1,612 +1,128 @@
-import io
-from collections import defaultdict
-from typing import cast
+from types import TracebackType
+from typing import Self
 
 import pandas as pd
-from dotenv import load_dotenv
-from sqlalchemy import select
-from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
-from sqlalchemy.orm import selectinload
 
-from database.models import (
-    Base,
-    BiomarkerMeasurement,
-    Cohort,
-    Concept,
-    ConceptSource,
-    LongitudinalMeasurement,
-    Mapping,
+from database.models import Base, BiomarkerMeasurement, Cohort, Concept, ConceptSource
+from database.repositories import (
+    AnalyticsRepository,
+    BiomarkerRepository,
+    CohortRepository,
+    ConceptRepository,
+    LongitudinalRepository,
 )
-from database.typeddicts import CohortStats
-
-load_dotenv()
+from database.typeddicts import ChordDiagramData, LongitudinalMeasurementRecord
 
 
 class PostgreSQLRepository:
-    def __init__(self, session: AsyncSession, engine: AsyncEngine | None = None):
-        """Initialize the PostgreSQL database engine and session.
+    """Compatibility facade over domain-specific repositories."""
 
-        :param connection_string: SQLAlchemy-compatible PostgreSQL connection URI.
-        :param pool_size: Maximum number of database connections to maintain in the pool, defaults to 10
-        :param max_overflow: Maximum overflow connections beyond pool_size, defaults to 20
-        :param pool_timeout: Maximum wait time (in seconds) for a connection from the pool, defaults to 30
-        """
+    def __init__(self, session: AsyncSession, engine: AsyncEngine | None = None) -> None:
         self.session = session
         self.engine = engine
 
-    async def __aenter__(self):
-        """Enter the runtime context for use in an `asycn with` statement.
+        self.cohorts = CohortRepository(session)
+        self.concepts = ConceptRepository(session, self.cohorts)
+        self.longitudinal = LongitudinalRepository(session, self.cohorts)
+        self.biomarkers = BiomarkerRepository(session, self.cohorts)
+        self.analytics = AnalyticsRepository(session, self.cohorts)
 
-        :return: The current repository instance
-        """
+    async def __aenter__(self) -> Self:
+        """Enter the asynchronous repository context."""
         return self
 
-    async def __aexit__(self, exc_type, exc_value, traceback):
-        """Exit the runtime context. Rolls back session on error and closes it.
-
-        :param exc_type: Exception type if raised.
-        :param exc_value: Exception value if raised.
-        :param traceback: Exception traceback if raise.
-        """
-        if exc_type:
+    async def __aexit__(
+        self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None
+    ) -> None:
+        """Rollback failed work and close the shared session."""
+        if exc_type is not None:
             await self.session.rollback()
+
         await self.close()
 
     async def get_cohorts(self) -> list[Cohort]:
-        """Retrieve all cohort metadata from the database.
-
-        :return: List of all cohort metadata.
-        """
-        result = await self.session.execute(select(Cohort))
-        return list(result.scalars().all())
+        """Return all cohorts."""
+        return await self.cohorts.get_all()
 
     async def get_cohort(self, name: str) -> Cohort:
-        """Retrieve a cohort metadata from the database.
-
-        :param name: Name of the cohort.
-        :raises ValueError: If no model with the given name exists.
-        :return: The corresponding cohort metadata.
-        """
-        result = await self.session.execute(select(Cohort).filter_by(name=name))
-        cohort = result.scalar_one_or_none()
-        if cohort is None:
-            raise ValueError(f"Cohort '{name}' not found.")
-        return cohort
+        """Return a cohort by name."""
+        return await self.cohorts.get_by_name(name)
 
     async def get_concepts(
         self, cohort_name: str | None = None, source_type: ConceptSource | None = None
     ) -> list[Concept]:
-        """Retrieve all concepts from the database.
-
-        :param cohort_name: Optional name of a cohort, defaults to None.
-        :param source_type: Optional source type of concept, defaults to None.
-        :return: List of all concepts.
-        """
-        query = select(Concept)
-        if cohort_name:
-            cohort = await self.get_cohort(cohort_name)
-            query = query.filter_by(cohort_id=cohort.id)
-        if source_type:
-            query = query.filter_by(source_type=source_type)
-
-        result = await self.session.execute(query)
-        return list(result.scalars().all())
+        """Return concepts matching the optional filters."""
+        return await self.concepts.get_all(cohort_name=cohort_name, source_type=source_type)
 
     async def get_modalities(self) -> list[str]:
-        """Retrieve all unique modalities from the mapping table.
-
-        :return: List of unique modality names.
-        """
-        result = await self.session.execute(select(Mapping.modality).distinct().order_by(Mapping.modality))
-        return list(result.scalars().all())
+        """Return all mapping modalities."""
+        return await self.concepts.get_modalities()
 
     async def get_longitudinal_measurements(
         self, variable: str | None = None, cohort_name: str | None = None
-    ) -> list[LongitudinalMeasurement]:
-        """Retrieve all longitudinal measurements
-
-        :param variable: Optional name of a variable, defaults to None.
-        :param cohort_name: Optional name of a cohort, defaults to None.
-        :return: List of all longitudinal measurements in the database.
-        """
-        query = select(LongitudinalMeasurement).options(selectinload(LongitudinalMeasurement.cohort))
-
-        if variable:
-            query = query.filter(LongitudinalMeasurement.variable == variable)
-        if cohort_name:
-            cohort = await self.get_cohort(cohort_name)
-            query = query.filter(LongitudinalMeasurement.cohort_id == cohort.id)
-
-        result = await self.session.execute(query)
-        longitudinal_measurements = result.scalars().all()
-
-        results = []
-        for lm in longitudinal_measurements:
-            results.append(
-                {
-                    "id": lm.id,
-                    "months": lm.months,
-                    "variable": lm.variable,
-                    "patientCount": lm.patient_count,
-                    "totalPatientCount": lm.total_patient_count,
-                    "cohort": lm.cohort.name if lm.cohort else None,  # relationship
-                }
-            )
-        return results
+    ) -> list[LongitudinalMeasurementRecord]:
+        """Return longitudinal measurements."""
+        return await self.longitudinal.get_all(variable=variable, cohort_name=cohort_name)
 
     async def get_longitudinal_measurement_variables(self) -> list[str]:
-        """Retrieve all unique longitudinal measurement variables from the LongitudinalMeasurement table.
-
-        :return: List of unique longitudinal measurement varialbes.
-        """
-        result = await self.session.execute(
-            select(LongitudinalMeasurement.variable).distinct().order_by(LongitudinalMeasurement.variable)
-        )
-        return list(result.scalars().all())
+        """Return all longitudinal variables."""
+        return await self.longitudinal.get_variables()
 
     async def get_biomarker_measurements(
         self, variable: str | None = None, cohort_name: str | None = None, diagnosis: str | None = None
     ) -> list[BiomarkerMeasurement]:
-        """Retrieve all biomarker measurements
-
-        :param variable: Optional name of a variable, defaults to None.
-        :param cohort_name: Optional name of a cohort, defaults to None.
-        :param diagnosis: Optional diagnosis of participants, defaults to None.
-        :return: List of all biomarker measurements in the database.
-        """
-        query = select(BiomarkerMeasurement)
-        if variable:
-            query = query.filter(BiomarkerMeasurement.variable == variable)
-        if cohort_name:
-            cohort = await self.get_cohort(cohort_name)
-            query = query.filter(BiomarkerMeasurement.cohort_id == cohort.id)
-        if diagnosis:
-            query = query.filter(BiomarkerMeasurement.diagnosis == diagnosis)
-
-        result = await self.session.execute(query)
-        return list(result.scalars().all())
+        """Return biomarker measurements."""
+        return await self.biomarkers.get_all(variable=variable, cohort_name=cohort_name, diagnosis=diagnosis)
 
     async def get_biomarker_variables(self) -> list[str]:
-        """Retrieve all unique biomarker variables from the BiomarkerMeasurement table.
-
-        :return: List of unique biomarker names.
-        """
-        result = await self.session.execute(
-            select(BiomarkerMeasurement.variable).distinct().order_by(BiomarkerMeasurement.variable)
-        )
-        return list(result.scalars().all())
+        """Return all biomarker variables."""
+        return await self.biomarkers.get_variables()
 
     async def get_cohorts_for_biomarker(self, variable: str) -> list[str]:
-        """Retrieve all unique cohort names for a biomarker from the BiomarkerMeasurement table.
-
-        :param variable: Name of the biomarker variable
-        :return: List of unique cohort names.
-        """
-        result = await self.session.execute(
-            select(Cohort.name)
-            .join(BiomarkerMeasurement, Cohort.id == BiomarkerMeasurement.cohort_id)
-            .where(BiomarkerMeasurement.variable == variable)
-            .distinct()
-            .order_by(Cohort.name)
-        )
-        return list(result.scalars().all())
+        """Return cohorts that contain a biomarker."""
+        return await self.biomarkers.get_cohorts_for_variable(variable)
 
     async def get_diagnoses_for_biomarker_in_cohort(self, variable: str, cohort_name: str) -> list[str]:
-        """Retrieve all unique diagnoses for a biomarker within a given cohort.
+        """Return diagnoses for a biomarker and cohort."""
+        return await self.biomarkers.get_diagnoses(variable, cohort_name)
 
-        :param variable: Name of the biomarker variable.
-        :param cohort_name: Name of the cohort.
-        :return: List of unique diagnoses.
-        """
-        result = await self.session.execute(
-            select(BiomarkerMeasurement.diagnosis)
-            .join(Cohort, Cohort.id == BiomarkerMeasurement.cohort_id)
-            .where(BiomarkerMeasurement.variable == variable)
-            .where(Cohort.name == cohort_name)
-            .distinct()
-            .order_by(BiomarkerMeasurement.diagnosis)
-        )
-        return list(result.scalars().all())
+    async def import_metadata(self, csv_data: bytes) -> None:
+        """Import cohort metadata."""
+        await self.cohorts.import_metadata(csv_data)
 
-    async def import_metadata(self, csv_data: bytes):
-        """Import cohort metadata via a CSV file.
+    async def import_cdm(self, csv_data: bytes, modality: str, columns_to_ignore: list[str] | None = None) -> None:
+        """Import a CDM modality."""
+        await self.concepts.import_cdm(csv_data, modality, columns_to_ignore)
 
-        :param csv_data: Cohort metadata CSV file content in bytes.
-        """
-        df = pd.read_csv(io.BytesIO(csv_data))
-        required_columns = {
-            "cohort",
-            "participants",
-            "healthyControls",
-            "prodromalPatients",
-            "pdPatients",
-            "longitudinalPatients",
-            "followUpInterval",
-            "location",
-            "doi",
-            "link",
-            "color",
-        }
-        missing = required_columns - set(df.columns)
-        if missing:
-            raise ValueError(f"Missing required columns: {missing}")
+    async def import_longitudinal_measurements(self, csv_data: bytes, variable_name: str) -> None:
+        """Import longitudinal measurements."""
+        await self.longitudinal.import_measurements(csv_data, variable_name)
 
-        cohorts_data = []
-        for row in df.itertuples(index=False):
-            cohorts_data.append(
-                {
-                    "name": str(row.cohort).strip(),
-                    "participants": cast(int, row.participants) if pd.notna(row.participants) else None,
-                    "control_participants": cast(int, row.healthyControls) if pd.notna(row.healthyControls) else None,
-                    "prodromal_participants": (
-                        cast(int, row.prodromalPatients) if pd.notna(row.prodromalPatients) else None
-                    ),
-                    "pd_participants": cast(int, row.pdPatients) if pd.notna(row.pdPatients) else None,
-                    "longitudinal_participants": (
-                        cast(int, row.longitudinalPatients) if pd.notna(row.longitudinalPatients) else None
-                    ),
-                    "follow_up_interval": (
-                        (str(row.followUpInterval).strip() or None) if pd.notna(row.followUpInterval) else None
-                    ),
-                    "location": (str(row.location).strip() or None) if pd.notna(row.location) else None,
-                    "doi": (str(row.doi).strip() or None) if pd.notna(row.doi) else None,
-                    "link": (str(row.link).strip() or None) if pd.notna(row.link) else None,
-                    "color": str(row.color).strip(),
-                }
-            )
+    async def import_biomarker_measurements(self, csv_data: bytes, variable_name: str) -> None:
+        """Import biomarker measurements."""
+        await self.biomarkers.import_measurements(csv_data, variable_name)
 
-        if not cohorts_data:
-            return
-
-        stmt = pg_insert(Cohort).values(cohorts_data).on_conflict_do_nothing(index_elements=["name"])
-        await self.session.execute(stmt)
-        await self.session.commit()
-
-    async def import_cdm(self, csv_data: bytes, modality: str, columns_to_ignore: list[str] | None = None):
-        """Import a CDM modality mapping file (e.g., Clinical.csv)
-
-        :param csv_data: Modality CSV file content in bytes.
-        :param modality: Modality of the mappings.
-        """
-        if columns_to_ignore is None:
-            columns_to_ignore = [
-                "Feature",
-                "CURIE",
-                "Definition",
-                "Synonyms",
-                "OMOP",
-                "UMLS",
-                "UK Biobank",
-                "Rank",
-            ]
-
-        df = pd.read_csv(io.BytesIO(csv_data))
-        cohorts = await self.get_cohorts()
-        cohort_map = {c.name: c.id for c in cohorts}
-
-        cdm_vars = set(df["Feature"].dropna().astype(str).str.strip())
-        cdm_concepts_data = [
-            {"variable": var, "source_type": ConceptSource.CDM, "cohort_id": None} for var in cdm_vars if var
-        ]
-
-        if cdm_concepts_data:
-            stmt = (
-                pg_insert(Concept)
-                .values(cdm_concepts_data)
-                .on_conflict_do_nothing(constraint="uq_variable_source_cohort")
-            )
-            await self.session.execute(stmt)
-            await self.session.commit()
-
-        result = await self.session.execute(
-            select(Concept).filter(Concept.source_type == ConceptSource.CDM, Concept.variable.in_(cdm_vars))
-        )
-        cdm_concept_map = {c.variable: c.id for c in result.scalars().all()}
-
-        cohort_concepts_to_create = []
-        raw_mappings = []
-        valid_cohort_columns = [c for c in df.columns if c not in columns_to_ignore and c in cohort_map]
-        col_to_idx = {name: i for i, name in enumerate(df.columns)}
-        feature_idx = col_to_idx["Feature"]
-
-        for row in df.itertuples(index=False, name=None):
-            cdm_var = str(row[feature_idx]).strip()
-            if not cdm_var or cdm_var not in cdm_concept_map:
-                continue
-
-            for col in valid_cohort_columns:
-                cell_value = row[col_to_idx[col]]
-                if pd.isna(cell_value) or str(cell_value).strip() == "":
-                    continue
-
-                # Split comma-separated variables
-                values = [v.strip() for v in str(cell_value).split(",") if v.strip()]
-                for val in values:
-                    cohort_concepts_to_create.append(
-                        {"variable": val, "source_type": ConceptSource.COHORT, "cohort_id": cohort_map[col]}
-                    )
-                    raw_mappings.append((cdm_var, col, val))
-
-        if cohort_concepts_to_create:
-            # Deduplicate dicts (concepts might appear multiple times in CSV)
-            # A set of tuples is used for deduplication
-            unique_concepts = {(d["variable"], d["cohort_id"]): d for d in cohort_concepts_to_create}.values()
-            stmt = (
-                pg_insert(Concept)
-                .values(list(unique_concepts))
-                .on_conflict_do_nothing(constraint="uq_variable_source_cohort")
-            )
-            await self.session.execute(stmt)
-            await self.session.commit()
-
-        # Fetch IDs for Cohort Concepts
-        cohort_ids_involved = [cohort_map[c] for c in valid_cohort_columns]
-
-        result = await self.session.execute(
-            select(Concept).filter(
-                Concept.cohort_id.in_(cohort_ids_involved), Concept.source_type == ConceptSource.COHORT
-            )
-        )
-        target_concept_map = {(c.variable, c.cohort_id): c.id for c in result.scalars().all()}
-
-        mappings_data = []
-        for cdm_var, cohort_name, cohort_var in raw_mappings:
-            cdm_id = cdm_concept_map.get(cdm_var)
-            cohort_id = cohort_map.get(cohort_name)
-            target_id = target_concept_map.get((cohort_var, cohort_id))
-
-            if cdm_id and target_id:
-                mappings_data.append({"source_id": cdm_id, "target_id": target_id, "modality": modality})
-
-        if mappings_data:
-            # Deduplicate mappings
-            unique_mappings = {(m["source_id"], m["target_id"], m["modality"]): m for m in mappings_data}.values()
-            stmt = (
-                pg_insert(Mapping)
-                .values(list(unique_mappings))
-                .on_conflict_do_nothing(constraint="uq_mapping_source_target_modality")
-            )
-            await self.session.execute(stmt)
-            await self.session.commit()
-
-    async def import_longitudinal_measurements(self, csv_data: bytes, variable_name: str):
-        """Import longitudinal measurements from a CSV file.
-
-        :param csv_data: Longitudinal measurements CSV file content in bytes.
-        """
-        df = pd.read_csv(io.BytesIO(csv_data))
-        required_columns = {"months", "cohort", "patientCount", "totalPatientCount"}
-        if required_columns - set(df.columns):
-            raise ValueError(f"Missing columns: {required_columns - set(df.columns)}")
-
-        cohorts = await self.get_cohorts()
-        cohort_map = {c.name: c.id for c in cohorts}
-
-        batch_data = []
-        for row in df.itertuples(index=False):
-            cohort_name = str(row.cohort).strip()
-            if cohort_name not in cohort_map:
-                continue
-
-            batch_data.append(
-                {
-                    "variable": variable_name,
-                    "months": cast(float, row.months),
-                    "cohort_id": cohort_map[cohort_name],
-                    "patient_count": cast(int, row.patientCount),
-                    "total_patient_count": cast(int, row.totalPatientCount),
-                }
-            )
-
-        if not batch_data:
-            return
-
-        stmt = (
-            pg_insert(LongitudinalMeasurement)
-            .values(batch_data)
-            .on_conflict_do_nothing(constraint="uq_variable_months_cohort")
-        )
-        await self.session.execute(stmt)
-        await self.session.commit()
-
-    async def import_biomarker_measurements(self, csv_data: bytes, variable_name: str):
-        """Import biomarker measurements from a CSV file.
-
-        :param csv_data: Biomarker measurements CSV file content in bytes.
-        """
-        df = pd.read_csv(io.BytesIO(csv_data))
-        cohorts = await self.get_cohorts()
-        cohort_map = {c.name: c.id for c in cohorts}
-
-        records_to_insert = []
-        for row in df.itertuples(index=False):
-            cohort_name = str(getattr(row, "cohort", "")).strip()
-            if cohort_name not in cohort_map:
-                continue
-            try:
-                records_to_insert.append(
-                    {
-                        "variable": variable_name,
-                        "participant_id": int(getattr(row, "participantNumber", 0)),
-                        "cohort_id": cohort_map[cohort_name],
-                        "measurement": float(getattr(row, "measurement", 0.0)),
-                        "diagnosis": str(getattr(row, "diagnosis", "")),
-                    }
-                )
-            except ValueError as e:
-                print(f"Skipping row due to data format error: {row}. Error: {e}")
-                continue
-
-        if not records_to_insert:
-            return
-
-        batch_size = 5000
-        for i in range(0, len(records_to_insert), batch_size):
-            batch = records_to_insert[i : i + batch_size]
-            stmt = (
-                pg_insert(BiomarkerMeasurement)
-                .values(batch)
-                .on_conflict_do_nothing(constraint="uq_participant_cohort_variable")
-            )
-            await self.session.execute(stmt)
-        await self.session.commit()
-
-    async def get_chord_diagram(self, modality: str) -> dict:
-        """Build a chord diagram data based on the current mappings.
-
-        :param modality: The modality of the mappings.
-        :return: A dictionary containing the nodes and the links of the chord diagram.
-        """
-        stmt = (
-            select(Concept)
-            .filter(Concept.source_type == ConceptSource.CDM)
-            .options(
-                selectinload(Concept.mappings_as_source).selectinload(Mapping.target).selectinload(Concept.cohort),
-                selectinload(Concept.mappings_as_target).selectinload(Mapping.source).selectinload(Concept.cohort),
-            )
-        )
-        result = await self.session.execute(stmt)
-        cdm_concepts = result.scalars().all()
-
-        node_seen: set[tuple[str, str]] = set()  # (name, group)
-        link_seen: set[tuple[str, str]] = set()  # (min_name, max_name) for undirected
-        nodes: list[dict[str, str]] = []
-        links: list[dict[str, str]] = []
-
-        def add_node(name: str, group: str) -> None:
-            key = (name, group)
-            if key not in node_seen:
-                node_seen.add(key)
-                nodes.append({"name": name, "group": group})
-
-        def add_link(a: str, b: str) -> None:
-            s, t = (a, b) if a <= b else (b, a)  # undirected de-dupe
-            key = (s, t)
-            if s != t and key not in link_seen:
-                link_seen.add(key)
-                links.append({"source": s, "target": t})
-
-        for cdm in cdm_concepts:
-            # collect mapped study variables (label, study_name) for this CDM
-            study_vars: list[tuple[str, str]] = []
-
-            for m in cdm.mappings_as_source:
-                if modality is not None and m.modality != modality:
-                    continue
-                tgt = m.target
-                if tgt and tgt.cohort:
-                    label = (tgt.variable or "").strip()
-                    study = tgt.cohort.name
-                    if label and study:
-                        study_vars.append((label, study))
-
-            for m in cdm.mappings_as_target:
-                if modality is not None and m.modality != modality:
-                    continue
-                src = m.source
-                if src and src.cohort:
-                    label = (src.variable or "").strip()
-                    study = src.cohort.name
-                    if label and study:
-                        study_vars.append((label, study))
-
-            # de-dupe study vars
-            per_cdm_unique = list(dict.fromkeys(study_vars))
-
-            # skip CDM concepts that only map to a single cohort
-            unique_cohorts = {study for _, study in per_cdm_unique}
-            if len(unique_cohorts) < 2:
-                continue
-
-            # add nodes
-            for label, study in per_cdm_unique:
-                add_node(label, study)
-
-            # link every pair across different studies (via this CDM)
-            n = len(per_cdm_unique)
-            for i in range(n):
-                li, si = per_cdm_unique[i]
-                for j in range(i + 1, n):
-                    lj, sj = per_cdm_unique[j]
-                    if si != sj:
-                        add_link(li, lj)
-
-        return {"nodes": nodes, "links": links}
+    async def get_chord_diagram(self, modality: str) -> ChordDiagramData:
+        """Return chord-diagram data for a modality."""
+        return await self.analytics.get_chord_diagram(modality)
 
     async def rank_cohorts(self, variables: list[str]) -> pd.DataFrame:
-        """Rank cohorts based on availability of requested CDM variables.
+        """Rank cohorts by requested variable availability."""
+        return await self.analytics.rank_cohorts(variables)
 
-        :param variables: A list of CDM variable names.
-        :return: pd.DataFrame with columns:
-            - cohort: cohort name
-            - found: "(found_variables)/(total_variables) (percentage%)"
-            - missing: comma-separated list of missing variables
-        """
-        if not variables:
-            raise ValueError("The 'variables' list cannot be empty")
+    async def clear_all(self) -> None:
+        """Drop and recreate all registered database tables."""
+        if self.engine is None:
+            raise RuntimeError("Engine must be provided during repository " "initialization to use clear_all()")
 
-        total_variables = len(variables)
-        cohort_stats: dict[str, CohortStats] = defaultdict(lambda: CohortStats(found=0, missing=[]))
-
-        for var in variables:
-            stmt = (
-                select(Concept)
-                .filter(Concept.variable == var, Concept.source_type == ConceptSource.CDM)
-                .options(
-                    selectinload(Concept.mappings_as_source).selectinload(Mapping.target).selectinload(Concept.cohort)
-                )
-            )
-            result = await self.session.execute(stmt)
-            cdm_concept = result.scalar_one_or_none()
-
-            if not cdm_concept:
-                raise ValueError(f"Requested CDM variable '{var}' does not exist in the database.")
-
-            mapped_cohort_ids = {
-                m.target.cohort_id for m in cdm_concept.mappings_as_source if m.target and m.target.cohort_id
-            }
-
-            for m in cdm_concept.mappings_as_source:
-                if m.target and m.target.cohort:
-                    cohort_stats[m.target.cohort.name]["found"] += 1
-
-            cohorts = await self.get_cohorts()
-            for cohort in cohorts:
-                if cohort.id not in mapped_cohort_ids:
-                    cohort_stats[cohort.name]["missing"].append(var)
-
-        # Build DataFrame, skip cohorts with 0 found
-        rows = []
-        for cohort_name, stats in cohort_stats.items():
-            found_count: int = stats["found"]  # type: ignore
-            if found_count == 0:
-                continue  # skip cohorts with 0 availability
-
-            missing_vars = ", ".join(stats["missing"])
-            percentage = round((found_count / total_variables) * 100, 2)
-            found_str = f"{found_count}/{total_variables} ({percentage}%)"
-            rows.append({"cohort": cohort_name, "found": found_str, "missing": missing_vars})
-
-        df = pd.DataFrame(rows)
-        if not df.empty:
-            df.sort_values(by="found", ascending=False, inplace=True)
-            df.reset_index(drop=True, inplace=True)
-        return df
-
-    async def clear_all(self):
-        """
-        Clear all database tables: vocabularies, concepts, CDMs, and mappings.
-        """
-        if not self.engine:
-            raise RuntimeError("Engine must be provided during repository initialization to use clear_all()")
+        await self.session.rollback()
         await self.session.close()
-        async with self.engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
 
-    async def close(self):
-        """
-        Close the active database session.
-        """
+        async with self.engine.begin() as connection:
+            await connection.run_sync(Base.metadata.drop_all)
+            await connection.run_sync(Base.metadata.create_all)
+
+    async def close(self) -> None:
+        """Close the shared database session."""
         await self.session.close()
