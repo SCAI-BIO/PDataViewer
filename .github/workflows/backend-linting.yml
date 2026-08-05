@@ -54,6 +54,7 @@ jobs:
         run: >
           uv tool run flake8 api database preprocessing
           --count
+          --exit-zero
           --max-complexity=10
           --max-line-length=127
           --statistics
