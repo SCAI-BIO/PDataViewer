@@ -1,4 +1,4 @@
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
 from api.config import (
+    ALLOWED_ORIGINS,
     APP_DESCRIPTION,
     APP_TITLE,
     APP_VERSION,
@@ -18,15 +19,10 @@ from api.routers import biomarkers, cdm, cohorts, longitudinal, stupdypicker, vi
 from api.routers import database as database_router
 from database.models import Base
 
-ALLOWED_ORIGINS = [
-    "https://pdata.scai.fraunhofer.de",
-    "http://localhost:4200",
-]
-
 
 @asynccontextmanager
-async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    """Initialize database tables and dispose of the engine on shutdown"""
+async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
+    """Initialize database tables and dispose of the engine on shutdown."""
     async with engine.begin() as connection:
         await connection.run_sync(Base.metadata.create_all)
 
