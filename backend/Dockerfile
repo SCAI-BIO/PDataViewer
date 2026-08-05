@@ -13,7 +13,7 @@ RUN uv sync \
     --no-install-project
 
 COPY src ./src
-COPY README.md ./
+COPY README.md LICENSE ./
 
 RUN uv sync \
     --locked \
