@@ -1,148 +1,153 @@
-import re
-from pathlib import Path
+from __future__ import annotations
 
-import numpy as np
+import secrets
+from pathlib import Path
+from typing import TypeAlias, TypedDict
+
 import pandas as pd
 
+from preprocessing.common import (
+    DEFAULT_DATA_DIRECTORY,
+    ScalarValue,
+    first_mapping_term,
+    is_missing_scalar,
+    load_cdm_mappings,
+    require_columns,
+    sanitize_filename,
+    to_python_scalar,
+)
 
-def extract_variables(
-    df_dict: dict[str, pd.DataFrame], mapping_df: pd.DataFrame
-) -> dict[str, dict[str, list[dict[str, int | float | str]]]]:
-    """Generates a nested dictionary containing measurements and diagnoses for mapped variables across cohorts.
+BASELINE_MONTH = 0
+NUMERIC_VARIABLE_RANK = 2
 
-    This function process cohort data and variable mappings to extract relevant measurement and diagnoses
-    for each variable and cohort. The result is a nested dictionary with the following structure:
 
-    - Outer dictionary keys: Variable names.
-    - Inner dictionary keys: Cohort names.
-    - Inner list items: Dictionaries containing measurements and diagnoses.
+class MeasurementRecord(TypedDict):
+    measurement: ScalarValue
+    diagnosis: ScalarValue
 
-    Args:
-        df_dict (dict[str, pd.DataFrame]): A dictionary where keys are cohort names and values are data frames
-            containing participant-level data for each cohort.
-        mapping_df (pd.DataFrame): A data frame containing mappings of variables to their corresponding cohort terms.
 
-    Returns:
-        dict[str, dict[str, list[dict[str, int | float | str]]]]: A nested dictionary structured as follows:
-            - Outer dictionary:
-                - Keys: Variable names.
-                - Values: Inner dictionaries for each cohort.
-            - Inner dictionary:
-                - Keys: Cohort names.
-                - Values: Lists of dictionaries containing:
-                    - "measurement" (int | float | str): The measured value for the variable.
-                    - "diagnoses" (str): The diagnosis associated with the measurement.
-    """
+ExtractedVariables: TypeAlias = dict[str, dict[str, list[MeasurementRecord]]]
 
-    result_dict = {}
 
-    for variable in mapping_df.Feature:
+def load_numeric_variable_mappings(cdm_directory: Path) -> pd.DataFrame:
+    """Load CDM mappings and retain variables with a numeric rank."""
+    merged_dataframe = load_cdm_mappings(cdm_directory)
+    numeric_rank = pd.to_numeric(merged_dataframe["Rank"], errors="coerce")
+    return merged_dataframe.loc[numeric_rank.eq(NUMERIC_VARIABLE_RANK)].copy()
 
-        # Extract only variable column from PASSIONATE
-        variable_row = mapping_df.loc[mapping_df["Feature"] == variable]
 
-        for cohort in mapping_df.columns.intersection(list(df_dict.keys())):
-            feat = variable_row[cohort].item()
+def load_baseline_cohorts(patient_level_directory: Path) -> dict[str, pd.DataFrame]:
+    """Load patient-level cohort data and retain baseline visits."""
+    patient_level_files = sorted(patient_level_directory.glob("*.csv"))
 
-            # If the mapping is empty continue
-            if pd.isna(feat):
+    if not patient_level_files:
+        raise FileNotFoundError("No patient-level CSV files found in " f"{patient_level_directory}")
+
+    cohorts: dict[str, pd.DataFrame] = {}
+
+    for cohort_file in patient_level_files:
+        dataframe = pd.read_csv(cohort_file, index_col=0, low_memory=False)
+        require_columns(dataframe, {"Months", "Diagnosis"}, cohort_file.name)
+        months = pd.to_numeric(dataframe["Months"], errors="coerce")
+        baseline_dataframe = dataframe.loc[months.eq(BASELINE_MONTH)].copy()
+        baseline_dataframe = baseline_dataframe.dropna(axis=1, how="all")
+        cohorts[cohort_file.stem] = baseline_dataframe
+
+    return cohorts
+
+
+def extract_variables(cohort_data: dict[str, pd.DataFrame], mapping_dataframe: pd.DataFrame) -> ExtractedVariables:
+    """Extract mapped measurements and diagnoses for each cohort."""
+    require_columns(mapping_dataframe, {"Feature"}, "Variable mapping data")
+    mapped_cohorts = [cohort for cohort in cohort_data if cohort in mapping_dataframe.columns]
+    extracted: ExtractedVariables = {}
+
+    for _, mapping_row in mapping_dataframe.iterrows():
+        raw_variable = mapping_row["Feature"]
+
+        if is_missing_scalar(raw_variable):
+            continue
+
+        variable = str(raw_variable).strip()
+
+        if not variable:
+            continue
+
+        for cohort in mapped_cohorts:
+            dataframe = cohort_data[cohort]
+            require_columns(dataframe, {"Diagnosis"}, f"Cohort {cohort}")
+            mapped_column = first_mapping_term(mapping_row[cohort])
+
+            if mapped_column is None or mapped_column not in dataframe.columns:
                 continue
 
-            # If the variable mapped to more than one term, take the first one
-            if ", " in feat:
-                feat = feat.split(", ")[0]
+            valid_rows = dataframe.loc[
+                dataframe[mapped_column].notna() & dataframe["Diagnosis"].notna(), [mapped_column, "Diagnosis"]
+            ]
 
-            # The mapped variable might not contain valid measurements
-            # In this case drop the column
-            if feat not in df_dict[cohort].columns:
+            if valid_rows.empty:
                 continue
 
-            # Filter rows where both the Measurement and the Diagnosis contain valid information.
-            valid_rows = df_dict[cohort][(df_dict[cohort][feat].notna()) & (df_dict[cohort]["Diagnosis"].notna())]
+            records = [
+                MeasurementRecord(measurement=to_python_scalar(measurement), diagnosis=to_python_scalar(diagnosis))
+                for measurement, diagnosis in valid_rows.itertuples(index=False, name=None)
+            ]
 
-            if not valid_rows.empty:
-                if variable not in result_dict:
-                    result_dict[variable] = {}
-                if cohort not in result_dict[variable]:
-                    result_dict[variable][cohort] = []
+            extracted.setdefault(variable, {}).setdefault(cohort, []).extend(records)
 
-                for _, row in valid_rows.iterrows():
-                    result_dict[variable][cohort].append(
-                        {
-                            "measurement": row[feat],
-                            "diagnosis": row["Diagnosis"],
-                        }
-                    )
-
-    return result_dict
+    return extracted
 
 
-# Define the base path
-base_path = Path("backend/data")
+def _build_output_dataframe(variable_data: dict[str, list[MeasurementRecord]]) -> pd.DataFrame:
+    """Create a randomly ordered dataframe for one variable."""
+    rows = [
+        {"cohort": cohort, "measurement": record["measurement"], "diagnosis": record["diagnosis"]}
+        for cohort, records in variable_data.items()
+        for record in records
+    ]
 
-### READ CDM MODALITIES ###
-cdm_files = sorted(base_path.glob("cdm/*.csv"))
-modalities = [file.stem for file in cdm_files]  # names of the data frames
-dataframes = [pd.read_csv(file) for file in cdm_files]  # the data frames
+    if not rows:
+        return pd.DataFrame(columns=["participantNumber", "cohort", "measurement", "diagnosis"])
 
-# Create a dictionary with all modalities as dataframes
-all_variables = {modality.lower(): df for modality, df in zip(modalities, dataframes)}
+    secrets.SystemRandom().shuffle(rows)
 
-# Drop irrelevant columns
-for df in all_variables.values():
-    df.drop(columns=["CURIE", "Definition", "Synonyms"], inplace=True, errors="ignore")
+    dataframe = pd.DataFrame(rows, columns=["cohort", "measurement", "diagnosis"])
+    dataframe.insert(0, "participantNumber", dataframe.groupby("cohort", sort=False).cumcount())
+    return dataframe
 
-# Combine the modalities into a single dataframe
-merged_df = pd.concat(all_variables.values(), ignore_index=True)
 
-# Replace "No total score." as the test was performed but the total score was not reported
-merged_df.replace({"No total score.": np.nan}, inplace=True)
+def write_variable_files(extracted_variables: ExtractedVariables, output_directory: Path) -> None:
+    """Write one randomly ordered CSV file for each variable."""
+    output_directory.mkdir(parents=True, exist_ok=True)
+    used_filenames: dict[str, str] = {}
 
-# Filter numeric variables
-numeric_variables = merged_df.loc[merged_df.Rank == 2]
+    for variable, variable_data in extracted_variables.items():
+        output_dataframe = _build_output_dataframe(variable_data)
 
-### READ PATIENT LEVEL DATA ###
-patient_level_files = sorted(base_path.glob("patient_level/*.csv"))
-cohorts = [file.stem for file in patient_level_files]  # names of the cohorts
-datasets = [pd.read_csv(file, index_col=0, low_memory=False) for file in patient_level_files]  # the actual dataframes
-# Create a dictionary with all cohorts as dataframes
-cohort_studies = {
-    cohort: df.loc[(df["Months"] == 0)] for cohort, df in zip(cohorts, datasets)  # Only utilizing baseline visit
-}
+        if output_dataframe.empty:
+            continue
 
-# Drop empty columns from the dataframes
-for df in cohort_studies.values():
-    # Please make the patient ID column naming consistent
-    # and set it as the index
-    df.dropna(axis=1, how="all", inplace=True)
+        filename = sanitize_filename(variable)
+        collision_key = filename.casefold()
 
-result = extract_variables(cohort_studies, numeric_variables)
+        existing_variable = used_filenames.setdefault(collision_key, variable)
 
-# Convert each variable dictionary into a dataframe and save it as csv file
-output_path = base_path / "processed/biomarker"
-output_path.mkdir(parents=True, exist_ok=True)
-
-for variable, variable_data in result.items():
-
-    # Create a list to store the data
-    data = []
-    for cohort, measurements in variable_data.items():
-        for i, measurement in enumerate(measurements):
-            data.append(
-                {
-                    "participantNumber": i,
-                    "cohort": cohort,
-                    "measurement": measurement["measurement"],
-                    "diagnosis": measurement["diagnosis"],
-                }
+        if existing_variable != variable:
+            raise ValueError(
+                f"Variables {existing_variable!r} and {variable!r} resolve to the same output filename: {filename}.csv"
             )
 
-    # Create the DataFrame
-    df = pd.DataFrame(data)
+        output_dataframe = output_dataframe.set_index(["participantNumber", "cohort"])
+        output_dataframe.to_csv(output_directory / f"{filename}.csv")
 
-    # Check if DataFrame is empty before saving
-    if not df.empty:
-        variable = re.sub(r'[\\/*?:"<>|]', "-", variable)
-        df = df.sample(frac=1)
-        df.set_index(["participantNumber", "cohort"], inplace=True)
-        df.to_csv(output_path / f"{variable}.csv")
+
+def main(data_directory: Path = DEFAULT_DATA_DIRECTORY) -> None:
+    """Generate processed biomarker data files."""
+    numeric_variables = load_numeric_variable_mappings(data_directory / "cdm")
+    cohort_studies = load_baseline_cohorts(data_directory / "patient_level")
+    extracted_variables = extract_variables(cohort_studies, numeric_variables)
+    write_variable_files(extracted_variables, data_directory / "processed" / "biomarker")
+
+
+if __name__ == "__main__":
+    main()

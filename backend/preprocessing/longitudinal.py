@@ -1,122 +1,174 @@
-import re
-from pathlib import Path
+from __future__ import annotations
 
-import numpy as np
+from pathlib import Path
+from typing import TypeAlias
+
 import pandas as pd
+
+from preprocessing.common import (
+    DEFAULT_DATA_DIRECTORY,
+    first_mapping_term,
+    is_missing_scalar,
+    load_cdm_mappings,
+    require_columns,
+    sanitize_filename,
+)
+
+IGNORED_VARIABLE_RANK = 0
+
+LongitudinalVariables: TypeAlias = dict[str, pd.DataFrame]
+VariableMappings: TypeAlias = dict[str, dict[str, list[str]]]
+
+LONGITUDINAL_COLUMNS = ["months", "patientCount", "totalPatientCount", "cohort"]
+
+
+def load_longitudinal_variable_mappings(cdm_directory: Path) -> pd.DataFrame:
+    """Load CDM mappings and exclude variables marked to be ignored."""
+    merged_dataframe = load_cdm_mappings(cdm_directory)
+    variable_rank = pd.to_numeric(merged_dataframe["Rank"], errors="coerce")
+    return merged_dataframe.loc[variable_rank.notna() & variable_rank.ne(IGNORED_VARIABLE_RANK)].copy()
+
+
+def load_participant_data(patient_level_directory: Path) -> dict[str, pd.DataFrame]:
+    """Load participant-level data for all cohorts."""
+    participant_level_files = sorted(patient_level_directory.glob("*.csv"))
+
+    if not participant_level_files:
+        raise FileNotFoundError("No patient-level CSV files found in " f"{patient_level_directory}")
+
+    participant_data: dict[str, pd.DataFrame] = {}
+
+    for cohort_file in participant_level_files:
+        dataframe = pd.read_csv(cohort_file, low_memory=False)
+        require_columns(dataframe, {"ID", "Months"}, cohort_file.name)
+        dataframe = dataframe.dropna(axis=1, how="all")
+        participant_data[cohort_file.stem] = dataframe
+
+    return participant_data
+
+
+def _collect_variable_mappings(cdm: pd.DataFrame, participant_data: dict[str, pd.DataFrame]) -> VariableMappings:
+    """Collect valid mapped columns for each variable and cohort."""
+    require_columns(cdm, {"Feature"}, "CDM mapping data")
+    mapped_cohorts = [cohort for cohort in participant_data if cohort in cdm.columns]
+
+    mappings: VariableMappings = {}
+
+    for _, mapping_row in cdm.iterrows():
+        raw_variable = mapping_row["Feature"]
+
+        if is_missing_scalar(raw_variable):
+            continue
+
+        variable = str(raw_variable).strip()
+
+        if not variable:
+            continue
+
+        variable_mappings = mappings.setdefault(variable, {})
+
+        for cohort in mapped_cohorts:
+            mapped_column = first_mapping_term(mapping_row[cohort])
+
+            if mapped_column is None:
+                continue
+
+            cohort_dataframe = participant_data[cohort]
+
+            if mapped_column not in cohort_dataframe.columns:
+                continue
+
+            cohort_mappings = variable_mappings.setdefault(cohort, [])
+
+            if mapped_column not in cohort_mappings:
+                cohort_mappings.append(mapped_column)
+
+    return mappings
+
+
+def _extract_cohort_counts(
+    cohort: str, cohort_data: pd.DataFrame, mapped_columns: list[str]
+) -> list[dict[str, object]]:
+    """Count participants with mapped data at each visit."""
+    require_columns(cohort_data, {"ID", "Months"}, f"Cohort {cohort}")
+    total_participant_count = int(cohort_data["ID"].nunique(dropna=True))
+    months = pd.to_numeric(cohort_data["Months"], errors="coerce")
+    has_measurement = cohort_data[mapped_columns].notna().any(axis=1)
+
+    valid_rows = pd.DataFrame({"ID": cohort_data["ID"], "Months": months}).loc[
+        cohort_data["ID"].notna() & months.notna() & has_measurement
+    ]
+
+    if valid_rows.empty:
+        return []
+
+    participant_counts = valid_rows.groupby("Months", sort=True)["ID"].nunique()
+
+    return [
+        {
+            "months": visit_month,
+            "patientCount": int(participant_count),
+            "totalPatientCount": total_participant_count,
+            "cohort": cohort,
+        }
+        for visit_month, participant_count in participant_counts.items()
+    ]
 
 
 def extract_longitudinal_variables(
     cdm: pd.DataFrame, participant_data: dict[str, pd.DataFrame]
-) -> dict[str, pd.DataFrame]:
-    """Extracts longitudinal participant counts for each variable across cohorts.
+) -> LongitudinalVariables:
+    """Extract longitudinal participant counts across cohorts."""
+    variable_mappings = _collect_variable_mappings(cdm, participant_data)
 
-    This function process participant-level data and a CDM (Common Data Model) to compute the number of participants
-    recorded for a specific variable at each visit across different cohorts. It returns a dictionary where keys
-    are variable names and values are data frames containing the longitudinal participant records.
+    longitudinal: LongitudinalVariables = {}
 
-    Args:
-        cdm (pd.DataFrame): A data frame representing the PASSIONATE CDM. Each row corresponds to a variable,
-            and columns correspond to cohort mappings.
-        participant_data (dict[str, pd.DataFrame]): A dictionary containing participant-level data for each cohort.
-            - Keys: Cohort names.
-            - Values: Data frames of participant data, which must include columns "ID" (participant identifier) and
-                "months".
+    for variable, cohort_mappings in variable_mappings.items():
+        rows = [
+            row
+            for cohort, mapped_columns in cohort_mappings.items()
+            for row in _extract_cohort_counts(cohort, participant_data[cohort], mapped_columns)
+        ]
 
-    Returns:
-        dict[str, pd.DataFrame]: A dictionary where:
-            - Keys are variable names as specified in the CDM.
-            - Values are data frames with the following columns:
-                - "months": The time point of the visit (in months).
-                - "patientCount": Number of participants recorded for the variable at that time point.
-                - "totalPatientCount": Total number of participants in the cohort.
-                - "cohort": The name of the cohort.
-
-    Example:
-        {
-            "VariableA": pd.DataFrame({
-                "months": [0, 6, 12],
-                "patientCount": [100, 90, 80],
-                "totalPatientCount": [120, 120, 120],
-                "cohort": ["Cohort1", "Cohort1", "Cohort1"]
-            }),
-            "VariableB": ...
-        }
-    """
-    longitudinal: dict[str, pd.DataFrame] = {}
-    for variable in cdm.index:
-        longitudinal_variable: pd.DataFrame = pd.DataFrame(
-            columns=["months", "patientCount", "totalPatientCount", "cohort"]
-        )
-        for cohort, cohort_data in participant_data.items():
-            total_participant_count = len(cohort_data.ID.unique())
-            mapping = cdm.loc[variable, cohort]
-
-            if mapping and mapping in cohort_data.columns:
-                data = cohort_data.loc[:, ["ID", "Months", mapping]]
-                data.dropna(subset=mapping, inplace=True)
-
-                for months in sorted(data.Months.unique().tolist()):
-                    participant_count = len(data.loc[data.Months == months].ID.unique())
-                    longitudinal_variable.loc[len(longitudinal_variable.index)] = [
-                        months,
-                        participant_count,
-                        total_participant_count,
-                        cohort,
-                    ]
-
-        longitudinal[variable] = longitudinal_variable
+        longitudinal[variable] = pd.DataFrame(rows, columns=LONGITUDINAL_COLUMNS)
 
     return longitudinal
 
 
-# Define the base path
-base_path = Path("backend/data")
+def write_longitudinal_files(longitudinal_variables: LongitudinalVariables, output_directory: Path) -> None:
+    """Write one longitudinal CSV file for each variable."""
+    output_directory.mkdir(parents=True, exist_ok=True)
 
-### READ CDM MODALITIES ###
-cdm_files = sorted(base_path.glob("cdm/*.csv"))
-modalities = [file.stem for file in cdm_files]
-dataframes = [pd.read_csv(file) for file in cdm_files]
+    used_filenames: dict[str, str] = {}
 
-# Create a dictionary with all modalities as dataframes
-all_variables = {modality: df for modality, df in zip(modalities, dataframes)}
+    for variable, dataframe in longitudinal_variables.items():
+        if dataframe.empty:
+            continue
 
-# Drop irrelevant columns
-for df in all_variables.values():
-    df.drop(columns=["CURIE", "Definition", "Synonyms"], inplace=True, errors="ignore")
+        filename = sanitize_filename(variable)
+        collision_key = filename.casefold()
 
-# Combine the modalities into a single dataframe
-cdm = pd.concat(all_variables.values(), ignore_index=True)
+        existing_variable = used_filenames.setdefault(collision_key, variable)
 
-# Replace "No total score." as the test was performed but the total score was not reported
-cdm.replace({"No total score.": np.nan}, inplace=True)
+        if existing_variable != variable:
+            raise ValueError(
+                f"Variables {existing_variable!r} and "
+                f"{variable!r} resolve to the same output "
+                f"filename: {filename}.csv"
+            )
 
-# Fill all the NaN cells with 0
-cdm.fillna(0, inplace=True)
+        output_dataframe = dataframe.set_index(["months", "cohort"])
 
-# Filter out variables to be ignored
-cdm = cdm.loc[cdm.Rank != 0]
-cdm.set_index("Feature", inplace=True)
+        output_dataframe.to_csv(output_directory / f"{filename}.csv")
 
-### READ PARTICIPANT-LEVEL DATA ###
-participant_level_files = sorted(base_path.glob("patient_level/*.csv"))
-cohorts = [file.stem for file in participant_level_files]
-datasets = [pd.read_csv(file, low_memory=False) for file in participant_level_files]
 
-# Create a dictionary with all cohorts as dataframes
-cohort_studies = {cohort: df for cohort, df in zip(cohorts, datasets)}
+def main(data_directory: Path = DEFAULT_DATA_DIRECTORY) -> None:
+    """Generate processed longitudinal data files."""
+    cdm = load_longitudinal_variable_mappings(data_directory / "cdm")
+    participant_data = load_participant_data(data_directory / "patient_level")
+    longitudinal_variables = extract_longitudinal_variables(cdm, participant_data)
+    write_longitudinal_files(longitudinal_variables, data_directory / "processed" / "longitudinal")
 
-# Drop empty columns
-for df in cohort_studies.values():
-    df.dropna(axis=1, how="all", inplace=True)
 
-longitudinal_variable_data = extract_longitudinal_variables(cdm, cohort_studies)
-
-# Save each variable dataframe as csv file
-output_path = base_path / "processed/longitudinal"
-output_path.mkdir(exist_ok=True)
-
-for variable, df in longitudinal_variable_data.items():
-    if not df.empty:
-        safe_variable = re.sub(r'[\\/*?:"<>|]', "-", variable)
-        df.set_index(["months", "cohort"], inplace=True)
-        df.to_csv(output_path / f"{variable}.csv")
+if __name__ == "__main__":
+    main()
