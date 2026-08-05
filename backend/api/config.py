@@ -120,6 +120,7 @@ KEYCLOAK_ISSUER = settings.keycloak_issuer
 KEYCLOAK_CERTS_URL = settings.keycloak_certs_url
 
 # Application metadata
+ALLOWED_ORIGINS = settings.allowed_origins
 APP_VERSION = "0.0.3"  # This string will be replaced by CI
 APP_TITLE = "PDATAVIEWER API"
 APP_DESCRIPTION = "API interface to access programmatic functionalities " "of PDATAVIEWER"
