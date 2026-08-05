@@ -56,9 +56,12 @@ jobs:
         run: |
           sed -i \
             "s/APP_VERSION = \"[^\"]*\"/APP_VERSION = \"$VERSION\"/" \
-            api/config.py
+            src/pdataviewer/api/config.py
 
-          grep -Fq "APP_VERSION = \"$VERSION\"" api/config.py
+          grep -Fq \
+            "APP_VERSION = \"$VERSION\"" \
+            src/pdataviewer/api/config.py
+
           uv version "$VERSION"
 
       - name: Update frontend Version
