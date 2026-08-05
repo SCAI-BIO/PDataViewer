@@ -7,7 +7,7 @@ name = "pdataviewer"
 version = "0.1.0"
 description = "PDataViewer is a web application designed to facilitate this process by ranking cohorts based on variables required in order to investigate specific research questions, providing summary statistics, showcasing the distribution of biomarkers, and participant drop-out rates."
 readme = "README.md"
-license = "Apache-2.0"
+license-files = ["LICENSE"]
 requires-python = ">=3.14,<3.15"
 
 authors = [
