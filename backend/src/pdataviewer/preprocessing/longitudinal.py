@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import TypeAlias
 
 import pandas as pd
 
@@ -14,8 +13,8 @@ from pdataviewer.preprocessing.common import (
 
 IGNORED_VARIABLE_RANK = 0
 
-LongitudinalVariables: TypeAlias = dict[str, pd.DataFrame]
-VariableMappings: TypeAlias = dict[str, dict[str, list[str]]]
+type LongitudinalVariables = dict[str, pd.DataFrame]
+type VariableMappings = dict[str, dict[str, list[str]]]
 
 LONGITUDINAL_COLUMNS = ["months", "patientCount", "totalPatientCount", "cohort"]
 
