@@ -6,37 +6,47 @@ build-backend = "uv_build"
 name = "pdataviewer"
 version = "0.1.0"
 description = "PDataViewer is a web application designed to facilitate this process by ranking cohorts based on variables required in order to investigate specific research questions, providing summary statistics, showcasing the distribution of biomarkers, and participant drop-out rates."
+readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.14,<3.15"
+
 authors = [
     { name = "Mehmet Can Ay", email = "mehmet.ay@scai.fraunhofer.de" },
     { name = "Tim Adams", email = "tim.adams@scai.fraunhofer.de" },
 ]
+
 keywords = [
     "visualization",
     "Parkinson's disease",
     "cohort selection",
     "common data model",
 ]
+
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3 :: Only",
 ]
 
 dependencies = [
-    "cryptography>=50.0.0",
     "fastapi[standard]>=0.141.1",
     "numpy>=2.5.1",
     "pandas>=3.0.5",
     "psycopg[binary]>=3.3.4",
     "pydantic-settings>=2.14.2",
-    "pyjwt>=2.13.0",
+    "pyjwt[crypto]>=2.13.0",
     "sqlalchemy>=2.0.51",
 ]
 
 [dependency-groups]
 dev = ["ruff>=0.16.1"]
+
+[project.urls]
+Homepage = "https://github.com/SCAI-BIO/PDataViewer"
+Repository = "https://github.com/SCAI-BIO/PDataViewer"
+Documentation = "https://github.com/SCAI-BIO/PDataViewer#readme"
+Tracker = "https://github.com/SCAI-BIO/PDataViewer/issues"
 
 [tool.ruff]
 line-length = 127
@@ -46,9 +56,3 @@ select = ["E", "F", "W", "C90", "B", "SIM", "PERF", "PLC", "PLE", "PLW", "RUF"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
-
-[project.urls]
-Homepage = "https://github.com/SCAI-BIO/PDataViewer"
-Repository = "https://github.com/SCAI-BIO/PDataViewer"
-Documentation = "https://github.com/SCAI-BIO/PDataViewer#readme"
-Tracker = "https://github.com/SCAI-BIO/PDataViewer/issues"
