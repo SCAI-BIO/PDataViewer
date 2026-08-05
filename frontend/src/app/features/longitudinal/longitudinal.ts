@@ -6,7 +6,6 @@ import {
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -14,8 +13,8 @@ import { MatInputModule } from '@angular/material/input';
 import Plotly from 'plotly.js-dist-min';
 import { finalize, forkJoin } from 'rxjs';
 
-import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
+import { Api } from '@core/services/api';
 import { LineplotBuilder } from '@core/services/lineplot-builder';
 import { LoadingSpinner } from '@shared/components/loading-spinner/loading-spinner';
 import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
@@ -26,7 +25,6 @@ import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
     LoadingSpinner,
     MatAutocompleteModule,
     MatButtonModule,
-    MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -36,33 +34,34 @@ import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
   styleUrl: './longitudinal.scss',
 })
 export class Longitudinal implements OnInit {
-  // Dependencies
-  private api = inject(Api);
-  private destroyRef = inject(DestroyRef);
-  private errorHandler = inject(ApiErrorHandler);
-  private lineplotBuilder = inject(LineplotBuilder);
+  private readonly api = inject(Api);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly errorHandler = inject(ApiErrorHandler);
+  private readonly lineplotBuilder = inject(LineplotBuilder);
 
-  // Signals
-  colors = signal<Record<string, string>>({});
-  data = signal<LongitudinalData[]>([]);
-  longitudinalTables = signal<string[]>([]);
-  isLoading = signal(false);
-  selectedVariable = signal('');
+  readonly colors = signal<Record<string, string>>({});
+  readonly data = signal<LongitudinalData[]>([]);
+  readonly hasVisualization = signal(false);
+  readonly longitudinalTables = signal<string[]>([]);
+  readonly isLoading = signal(false);
+  readonly selectedVariable = signal('');
 
-  // Form Control
-  variableCtrl = new FormControl('');
-
-  // Derived Signals
-  filteredVariables = computed(() => {
-    const rawQuery = this.variableQuery();
-    const query = (rawQuery || '').toLowerCase();
-    const tables = this.longitudinalTables();
-    return tables.filter((t) => t.toLowerCase().includes(query));
+  readonly variableCtrl = new FormControl('', {
+    nonNullable: true,
   });
-  private variableQuery = toSignal(this.variableCtrl.valueChanges, { initialValue: '' });
 
-  displayFn(option: string): string {
-    return option ? option : '';
+  private readonly variableQuery = toSignal(this.variableCtrl.valueChanges, {
+    initialValue: '',
+  });
+
+  readonly filteredVariables = computed(() => {
+    const query = this.variableQuery().toLowerCase().trim();
+
+    return this.longitudinalTables().filter((table) => table.toLowerCase().includes(query));
+  });
+
+  ngOnInit(): void {
+    this.fetchInitialData();
   }
 
   fetchInitialData(): void {
@@ -77,23 +76,22 @@ export class Longitudinal implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: (results) => {
-          this.longitudinalTables.set(results.tables);
-          const colors: Record<string, string> = {};
-          const metadata = results.metadata;
-          for (const key in metadata) {
-            if (Object.prototype.hasOwnProperty.call(metadata, key)) {
-              colors[key] = metadata[key].color;
-            }
-          }
+        next: ({ metadata, tables }) => {
+          this.longitudinalTables.set(tables);
+
+          const colors = Object.fromEntries(
+            Object.entries(metadata).map(([cohort, value]) => [cohort, value.color]),
+          );
+
           this.colors.set(colors);
         },
-        error: (err) => this.errorHandler.handleError(err, 'fetching initial data'),
+        error: (error) => this.errorHandler.handleError(error, 'fetching initial data'),
       });
   }
 
   fetchLongitudinalTable(tableName: string): void {
     this.isLoading.set(true);
+
     this.api
       .fetchLongitudinalTable(tableName)
       .pipe(
@@ -101,40 +99,70 @@ export class Longitudinal implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: (v) => this.data.set(v),
-        error: (err) => this.errorHandler.handleError(err, 'fetching longitudinal table'),
+        next: (data) => {
+          this.data.set(data);
+
+          if (this.hasVisualization()) {
+            this.renderLineplot();
+          }
+        },
+        error: (error) => this.errorHandler.handleError(error, 'fetching longitudinal table'),
       });
   }
 
   generateLineplot(): void {
-    if (this.data().length === 0) return;
+    if (this.data().length === 0) {
+      return;
+    }
 
-    const title = `Longitudinal data for ${this.selectedVariable()}`;
-    this.lineplotBuilder.createLineplot(this.data(), this.colors(), title, 'lineplot');
+    if (!this.hasVisualization()) {
+      this.hasVisualization.set(true);
 
-    // Force Plotly to resize to container
-    setTimeout(() => {
-      const plotEl = document.getElementById('lineplot');
-      if (plotEl) {
-        Plotly.Plots.resize(plotEl);
-      }
-    }, 100);
-  }
+      requestAnimationFrame(() => {
+        this.renderLineplot();
+      });
 
-  ngOnInit() {
-    this.fetchInitialData();
+      return;
+    }
+
+    this.renderLineplot();
   }
 
   onVariableSelect(event: MatAutocompleteSelectedEvent): void {
-    const variable = event.option.value;
-    if (variable) {
-      this.selectedVariable.set(variable);
-      this.fetchLongitudinalTable(variable);
+    const variable = String(event.option.value).trim();
+
+    if (!variable) {
+      return;
     }
+
+    this.selectedVariable.set(variable);
+    this.fetchLongitudinalTable(variable);
   }
 
   removeVariable(): void {
     this.selectedVariable.set('');
+    this.variableCtrl.setValue('');
     this.data.set([]);
+    this.hasVisualization.set(false);
+  }
+
+  private renderLineplot(): void {
+    const data = this.data();
+
+    if (data.length === 0) {
+      return;
+    }
+
+    const title = `Longitudinal data for ${this.selectedVariable()}`;
+
+    this.lineplotBuilder.createLineplot(data, this.colors(), title, 'lineplot');
+
+    requestAnimationFrame(() => {
+      const plotElement = document.getElementById('lineplot');
+
+      if (plotElement) {
+        Plotly.Plots.resize(plotElement);
+      }
+    });
   }
 }
