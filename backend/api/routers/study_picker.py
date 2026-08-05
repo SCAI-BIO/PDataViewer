@@ -6,7 +6,7 @@ from api.dependencies import get_analytics_repository
 from api.schemas import RankedCohort
 from database.repositories import AnalyticsRepository
 
-router = APIRouter(prefix="/studypicker", tags=["studypicker"])
+router = APIRouter(prefix="/study-picker", tags=["study-picker"])
 
 
 @router.post(

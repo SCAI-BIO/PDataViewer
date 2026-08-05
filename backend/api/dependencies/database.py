@@ -5,7 +5,6 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from api.config import DATABASE_URL
-from database.postgresql import PostgreSQLRepository
 from database.repositories import AnalyticsRepository, CohortRepository, LongitudinalRepository
 from database.repositories.biomarkers import BiomarkerRepository
 from database.repositories.concepts import ConceptRepository
@@ -25,11 +24,6 @@ async def get_session() -> AsyncIterator[AsyncSession]:
         except Exception:
             await session.rollback()
             raise
-
-
-def get_client(session: Annotated[AsyncSession, Depends(get_session)]) -> PostgreSQLRepository:
-    """Provide the database repository facade."""
-    return PostgreSQLRepository(session=session, engine=engine)
 
 
 def get_analytics_repository(session: Annotated[AsyncSession, Depends(get_session)]) -> AnalyticsRepository:

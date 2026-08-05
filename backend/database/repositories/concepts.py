@@ -33,20 +33,6 @@ class ConceptRepository(BaseRepository):
         super().__init__(session)
         self.cohort_repository = cohort_repository
 
-    async def get_all(self, cohort_name: str | None = None, source_type: ConceptSource | None = None) -> list[Concept]:
-        """Return concepts, optionally filtered by cohort and source."""
-        query = select(Concept)
-
-        if cohort_name is not None:
-            cohort = await self.cohort_repository.get_by_name(cohort_name)
-            query = query.where(Concept.cohort_id == cohort.id)
-
-        if source_type is not None:
-            query = query.where(Concept.source_type == source_type)
-
-        result = await self.session.execute(query.order_by(Concept.variable))
-        return list(result.scalars().all())
-
     async def get_modalities(self) -> list[str]:
         """Return all distinct mapping modalities."""
         result = await self.session.execute(select(Mapping.modality).distinct().order_by(Mapping.modality))

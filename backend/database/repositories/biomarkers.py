@@ -11,7 +11,7 @@ from database.repositories.base import BaseRepository
 from database.repositories.cohorts import CohortRepository
 
 LOGGER = logging.getLogger(__name__)
-BIOMARKER_BATCH_SIZE = 5_000
+BIOMARKER_BATCH_SIZE = 5000
 REQUIRED_BIOMARKER_COLUMNS = {"participantNumber", "cohort", "measurement", "diagnosis"}
 
 
@@ -21,26 +21,6 @@ class BiomarkerRepository(BaseRepository):
     def __init__(self, session: AsyncSession, cohort_repository: CohortRepository) -> None:
         super().__init__(session)
         self.cohort_repository = cohort_repository
-
-    async def get_all(
-        self, variable: str | None = None, cohort_name: str | None = None, diagnosis: str | None = None
-    ) -> list[BiomarkerMeasurement]:
-        """Return biomarker measurements matching the filters."""
-        statement = select(BiomarkerMeasurement)
-
-        if variable is not None:
-            statement = statement.where(BiomarkerMeasurement.variable == variable)
-
-        if cohort_name is not None:
-            statement = statement.join(Cohort, BiomarkerMeasurement.cohort_id == Cohort.id).where(
-                Cohort.name == cohort_name
-            )
-
-        if diagnosis is not None:
-            statement = statement.where(BiomarkerMeasurement.diagnosis == diagnosis)
-
-        result = await self.session.execute(statement)
-        return list(result.scalars().all())
 
     async def get_variables(self) -> list[str]:
         """Return all distinct biomarker variables."""
@@ -58,18 +38,6 @@ class BiomarkerRepository(BaseRepository):
             .where(BiomarkerMeasurement.variable == variable)
             .distinct()
             .order_by(Cohort.name)
-        )
-
-        return list(result.scalars().all())
-
-    async def get_diagnoses(self, variable: str, cohort_name: str) -> list[str]:
-        """Return diagnoses for a biomarker within a cohort."""
-        result = await self.session.execute(
-            select(BiomarkerMeasurement.diagnosis)
-            .join(Cohort, Cohort.id == BiomarkerMeasurement.cohort_id)
-            .where(BiomarkerMeasurement.variable == variable, Cohort.name == cohort_name)
-            .distinct()
-            .order_by(BiomarkerMeasurement.diagnosis)
         )
 
         return list(result.scalars().all())

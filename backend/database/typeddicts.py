@@ -1,11 +1,6 @@
 from typing import TypedDict
 
 
-class CohortStats(TypedDict):
-    found: int
-    missing: list[str]
-
-
 class ChordNode(TypedDict):
     name: str
     group: str

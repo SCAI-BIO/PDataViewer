@@ -36,16 +36,6 @@ class CohortRepository(BaseRepository):
         result = await self.session.execute(select(Cohort).order_by(Cohort.name))
         return list(result.scalars().all())
 
-    async def get_by_name(self, name: str) -> Cohort:
-        """Return a cohort by name."""
-        result = await self.session.execute(select(Cohort).where(Cohort.name == name))
-        cohort = result.scalar_one_or_none()
-
-        if cohort is None:
-            raise ValueError(f"Cohort {name!r} not found")
-
-        return cohort
-
     async def get_names(self) -> list[str]:
         """Return all cohort names in alphabetical order."""
         result = await self.session.execute(select(Cohort.name).order_by(Cohort.name))

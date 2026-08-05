@@ -15,7 +15,7 @@ from api.config import (
     SWAGGER_UI_OAUTH_CONFIG,
 )
 from api.dependencies import dispose_engine, engine
-from api.routers import biomarkers, cdm, cohorts, longitudinal, stupdypicker, visualization
+from api.routers import biomarkers, cdm, cohorts, longitudinal, study_picker, visualization
 from api.routers import database as database_router
 from database.models import Base
 
@@ -58,7 +58,7 @@ app.include_router(longitudinal.router)
 app.include_router(cdm.router)
 app.include_router(cohorts.router)
 app.include_router(visualization.router)
-app.include_router(stupdypicker.router)
+app.include_router(study_picker.router)
 app.include_router(database_router.router)
 
 

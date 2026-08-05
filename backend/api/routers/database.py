@@ -40,9 +40,7 @@ async def import_data(
     except ImportValidationError as error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
 
-    background_tasks.add_task(
-        process_import_background, prepared_import.contents, prepared_import.filename, prepared_import.upload_type
-    )
+    background_tasks.add_task(process_import_background, prepared_import)
     return MessageResponse(message=f"Import of {prepared_import.upload_type.value} started in the background.")
 
 
