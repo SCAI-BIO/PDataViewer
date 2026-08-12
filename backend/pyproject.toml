@@ -1,5 +1,5 @@
 [build-system]
-requires = ['uv_build>=0.12.1,<0.13.0']
+requires = ['uv_build>=0.12.3,<0.13.0']
 build-backend = "uv_build"
 
 [project]
@@ -34,13 +34,13 @@ dependencies = [
     "numpy>=2.5.1",
     "pandas>=3.0.5",
     "psycopg[binary]>=3.3.4",
-    "pydantic-settings>=2.14.2",
+    "pydantic-settings>=2.15.0",
     "pyjwt[crypto]>=2.13.0",
     "sqlalchemy>=2.0.51",
 ]
 
 [dependency-groups]
-dev = ["ruff>=0.16.1"]
+dev = ["ruff>=0.16.2"]
 
 [project.urls]
 Homepage = "https://github.com/SCAI-BIO/PDataViewer"
