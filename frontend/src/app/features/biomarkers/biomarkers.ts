@@ -171,22 +171,34 @@ export class Biomarkers implements OnInit {
       });
   }
 
-  generateBoxplot(): void {
-    this.boxplotBuilder.createBoxplot(
-      this.biomarkerData(),
-      this.selectedBiomarker(),
-      this.colors(),
-      this.showDataPoints(),
-      'boxplot',
-    );
+  async generateBoxplot(): Promise<void> {
+    if (this.destroyRef.destroyed) return;
 
-    // Force Plotly to resize to container
-    setTimeout(() => {
-      const plotEl = document.getElementById('boxplot');
-      if (plotEl) {
-        Plotly.Plots.resize(plotEl);
+    try {
+      await this.boxplotBuilder.createBoxplot(
+        this.biomarkerData(),
+        this.selectedBiomarker(),
+        this.colors(),
+        this.showDataPoints(),
+        'boxplot',
+      );
+
+      requestAnimationFrame(() => {
+        if (this.destroyRef.destroyed) return;
+        const plotElement = document.getElementById('boxplot');
+        if (!plotElement) return;
+
+        try {
+          Plotly.Plots.resize(plotElement);
+        } catch (error: unknown) {
+          console.error('Failed to resize biomarker boxplot.', error);
+        }
+      });
+    } catch (error: unknown) {
+      if (!this.destroyRef.destroyed) {
+        console.error('Failed to render biomarker boxplot.', error);
       }
-    }, 100);
+    }
   }
 
   getCohortColumns(): number {
@@ -205,7 +217,7 @@ export class Biomarkers implements OnInit {
       this.biomarkerData.set({});
       const plotContainer = document.getElementById('boxplot');
       if (plotContainer) {
-        plotContainer.innerHTML = '';
+        Plotly.purge(plotContainer);
       }
       this.fetchCohorts();
       this.fetchDiagnoses();

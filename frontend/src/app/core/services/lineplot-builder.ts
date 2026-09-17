@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
 
 import Plotly from 'plotly.js-dist-min';
+import type { Config, Layout, PlotlyHTMLElement, ScatterData } from 'plotly.js-dist-min';
 
 import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
 
 // Line dash patterns to visually distinguish overlapping traces
-const DASH_PATTERNS: string[] = ['solid', 'dash', 'dot', 'dashdot', 'longdash', 'longdashdot'];
+const DASH_PATTERNS = ['solid', 'dash', 'dot', 'dashdot', 'longdash', 'longdashdot'] as const;
 
 @Injectable({
   providedIn: 'root',
 })
 export class LineplotBuilder {
-  createLineplot(
+  async createLineplot(
     data: LongitudinalData[],
     colors: Record<string, string> = {},
     title: string,
     elementId: string,
-  ): void {
+  ): Promise<void> {
     // Group data by cohort
     const cohortEntries = Array.from(
       data.reduce((map, dataPoint) => {
@@ -35,7 +36,7 @@ export class LineplotBuilder {
     const overlapGroups = this.detectOverlaps(cohortEntries);
 
     // Build traces
-    const traces: Plotly.Data[] = cohortEntries.map(([cohort, values], index) => {
+    const traces: ScatterData[] = cohortEntries.map(([cohort, values], index): ScatterData => {
       // Sort by months for clean line rendering
       values.sort((a, b) => a.months - b.months);
 
@@ -47,9 +48,10 @@ export class LineplotBuilder {
 
       // Determine dash pattern based on overlap group
       const dashIndex = overlapGroups.get(cohort) ?? 0;
-      const dash = DASH_PATTERNS[dashIndex % DASH_PATTERNS.length];
+      const dash = DASH_PATTERNS[dashIndex % DASH_PATTERNS.length] ?? 'solid';
 
       return {
+        type: 'scatter',
         x: values.map((dataPoint) => dataPoint.months),
         y: percentValues,
         mode: 'lines+markers',
@@ -89,7 +91,7 @@ export class LineplotBuilder {
     });
 
     // Layout config
-    const layout: Partial<Plotly.Layout> = {
+    const layout: Partial<Layout> = {
       title: {
         text: title,
         x: 0.5,
@@ -179,7 +181,7 @@ export class LineplotBuilder {
       ],
     };
 
-    const config: Partial<Plotly.Config> = {
+    const config: Partial<Config> = {
       responsive: true,
       displayModeBar: true,
       displaylogo: false,
@@ -205,10 +207,8 @@ export class LineplotBuilder {
       throw new Error(errorMessage);
     }
 
-    Plotly.newPlot(elementId, traces, layout, config);
-
-    // Add hover interaction: highlight hovered trace, dim others
-    this.attachHoverHighlight(targetElement, traces.length);
+    const plotElement = await Plotly.newPlot(targetElement, traces, layout, config);
+    this.attachHoverHighlight(plotElement, traces.length);
   }
 
   /**
@@ -224,10 +224,9 @@ export class LineplotBuilder {
       const sorted = [...values].sort((a, b) => a.months - b.months);
       const sig = sorted
         .map((dp) => {
-          const pct =
-            dp.totalPatientCount > 0
-              ? ((dp.patientCount / dp.totalPatientCount) * 100).toFixed(1)
-              : '0';
+          const pct = (
+            dp.totalPatientCount > 0 ? (dp.patientCount / dp.totalPatientCount) * 100 : 0
+          ).toFixed(1);
           return `${dp.months}:${pct}`;
         })
         .join('|');
@@ -253,7 +252,7 @@ export class LineplotBuilder {
   /**
    * Returns a distinct marker symbol for each trace index
    */
-  private getMarkerSymbol(index: number): string {
+  private getMarkerSymbol(index: number) {
     const symbols = [
       'circle',
       'square',
@@ -265,39 +264,43 @@ export class LineplotBuilder {
       'star',
       'hexagon',
       'pentagon',
-    ];
-    return symbols[index % symbols.length];
+    ] as const;
+
+    return symbols[index % symbols.length] ?? 'circle';
   }
 
   /**
    * Attaches hover listeners to highlight the active trace
    * and dim all others for better readability.
    */
-  private attachHoverHighlight(plotElement: HTMLElement, traceCount: number): void {
+  private attachHoverHighlight(plotElement: PlotlyHTMLElement, traceCount: number): void {
     const dimmedOpacity = 0.2;
     const activeOpacity = 1;
     const defaultOpacity = 0.85;
 
-    const plotlyEl = plotElement as unknown as Plotly.PlotlyHTMLElement;
-
-    plotlyEl.on('plotly_hover', (eventData: Plotly.PlotHoverEvent) => {
+    plotElement.on('plotly_hover', (eventData) => {
       const hoveredTraceIndex = eventData.points[0]?.curveNumber;
       if (hoveredTraceIndex == null) return;
 
-      const opacities = Array.from({ length: traceCount }, (_, i) =>
-        i === hoveredTraceIndex ? activeOpacity : dimmedOpacity,
-      );
-
-      // Restyle each trace individually since opacity is per-trace, not an array
-      opacities.forEach((opacity, i) => {
-        Plotly.restyle(plotElement, { opacity }, [i]);
-      });
+      for (let i = 0; i < traceCount; i++) {
+        void Plotly.restyle(
+          plotElement,
+          {
+            opacity: i === hoveredTraceIndex ? activeOpacity : dimmedOpacity,
+          },
+          [i],
+        ).catch((error: unknown) => {
+          console.error('LineplotBuilder: Hover highlight failed.', error);
+        });
+      }
     });
 
-    plotlyEl.on('plotly_unhover', () => {
-      for (let i = 0; i < traceCount; i++) {
-        Plotly.restyle(plotElement, { opacity: defaultOpacity }, [i]);
-      }
+    plotElement.on('plotly_unhover', () => {
+      void Plotly.restyle(plotElement, {
+        opacity: defaultOpacity,
+      }).catch((error: unknown) => {
+        console.error('LineplotBuilder: Resetting opacity failed.', error);
+      });
     });
   }
 }
