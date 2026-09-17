@@ -103,7 +103,7 @@ export class Longitudinal implements OnInit {
           this.data.set(data);
 
           if (this.hasVisualization()) {
-            this.renderLineplot();
+            void this.renderLineplot();
           }
         },
         error: (error) => this.errorHandler.handleError(error, 'fetching longitudinal table'),
@@ -119,13 +119,13 @@ export class Longitudinal implements OnInit {
       this.hasVisualization.set(true);
 
       requestAnimationFrame(() => {
-        this.renderLineplot();
+        void this.renderLineplot();
       });
 
       return;
     }
 
-    this.renderLineplot();
+    void this.renderLineplot();
   }
 
   onVariableSelect(event: MatAutocompleteSelectedEvent): void {
@@ -146,23 +146,34 @@ export class Longitudinal implements OnInit {
     this.hasVisualization.set(false);
   }
 
-  private renderLineplot(): void {
+  private async renderLineplot(): Promise<void> {
     const data = this.data();
 
-    if (data.length === 0) {
+    if (data.length === 0 || this.destroyRef.destroyed) {
       return;
     }
 
     const title = `Longitudinal data for ${this.selectedVariable()}`;
 
-    this.lineplotBuilder.createLineplot(data, this.colors(), title, 'lineplot');
+    try {
+      await this.lineplotBuilder.createLineplot(data, this.colors(), title, 'lineplot');
 
-    requestAnimationFrame(() => {
-      const plotElement = document.getElementById('lineplot');
+      requestAnimationFrame(() => {
+        if (this.destroyRef.destroyed || !this.hasVisualization()) return;
 
-      if (plotElement) {
-        Plotly.Plots.resize(plotElement);
+        const plotElement = document.getElementById('lineplot');
+        if (!plotElement) return;
+
+        try {
+          Plotly.Plots.resize(plotElement);
+        } catch (error: unknown) {
+          console.error('Failed to resize longitudinal plot.', error);
+        }
+      });
+    } catch (error: unknown) {
+      if (!this.destroyRef.destroyed) {
+        console.error(error, 'rendering longitudinal plot.', error);
       }
-    });
+    }
   }
 }

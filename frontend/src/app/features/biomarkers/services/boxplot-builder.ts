@@ -1,36 +1,42 @@
 import { Injectable } from '@angular/core';
 
 import Plotly from 'plotly.js-dist-min';
+import type { BoxData, Config, Layout, PlotlyHTMLElement } from 'plotly.js-dist-min';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BoxplotBuilder {
-  createBoxplot(
+  async createBoxplot(
     data: Record<string, number[]>,
     title: string,
     colors: Record<string, string>,
     showDataPoints = false,
     elementId: string,
-  ): void {
+  ): Promise<void> {
+    const targetElement = document.getElementById(elementId);
+
+    if (!targetElement) {
+      throw new Error(`BoxplotBuilder: No DOM element found with id "${elementId}".`);
+    }
+
     const labels = Object.keys(data);
-    const traces: Partial<Plotly.PlotData>[] = [];
+    const traces: BoxData[] = [];
     const cohortsSeen = new Set<string>();
 
     labels.forEach((label) => {
-      const cohort = label.split(' (')[0];
-      const diagnosisGroup = label.match(/\(([^)]+)\)/)?.[1].replace(' Group', '') || '';
-
-      const values = (data[label] || []).filter((d): d is number => d !== undefined && isFinite(d));
-
+      const cohort = label.split(' (')[0] ?? label;
+      const diagnosisGroup = label.match(/\(([^)]+)\)/)?.[1].replace(' Group', '') ?? '';
+      const values = (data[label] ?? []).filter(Number.isFinite);
       const colorKey = Object.keys(colors).find((cohortName) => cohort.includes(cohortName));
-      const boxColor = colorKey ? colors[colorKey] : '#69b3a2';
+      const boxColor = (colorKey !== undefined ? colors[colorKey] : undefined) ?? '#69b3a2';
+      const categoryLabel = `${cohort}<br>(${diagnosisGroup} | n=${values.length})`;
 
       traces.push({
-        y: values,
         type: 'box',
+        y: values,
+        x: values.map(() => categoryLabel),
         name: cohort,
-        x: Array(values.length).fill(`${cohort}<br>(${diagnosisGroup} | n=${values.length})`),
         boxpoints: showDataPoints ? 'all' : 'outliers',
         jitter: showDataPoints ? 0.5 : 0.3,
         pointpos: showDataPoints ? -1.5 : 0,
@@ -57,7 +63,7 @@ export class BoxplotBuilder {
       cohortsSeen.add(cohort);
     });
 
-    const layout: Partial<Plotly.Layout> = {
+    const layout: Partial<Layout> = {
       title: {
         text: title,
         x: 0.5,
@@ -111,7 +117,7 @@ export class BoxplotBuilder {
       hovermode: 'closest',
     };
 
-    const config: Partial<Plotly.Config> = {
+    const config: Partial<Config> = {
       responsive: true,
       displayModeBar: true,
       displaylogo: false,
@@ -129,44 +135,34 @@ export class BoxplotBuilder {
       },
     };
 
-    // Clear and render
-    const targetElement = document.getElementById(elementId);
-    if (!targetElement) {
-      const errorMessage = `BoxplotBuilder: No DOM element found with id "${elementId}".`;
-      console.error(errorMessage);
-      throw new Error(errorMessage);
-    }
-
-    Plotly.newPlot(elementId, traces, layout, config);
-
-    // Hover highlight: dim other traces on hover
-    this.attachHoverHighlight(targetElement, traces.length);
+    const plotElement = await Plotly.newPlot(targetElement, traces, layout, config);
+    this.attachHoverHighlight(plotElement, traces.length);
   }
 
-  private attachHoverHighlight(plotElement: HTMLElement, traceCount: number): void {
+  private attachHoverHighlight(plotElement: PlotlyHTMLElement, traceCount: number): void {
     const dimmedOpacity = 0.3;
     const activeOpacity = 1;
     const defaultOpacity = 0.8;
 
-    const plotlyEl = plotElement as unknown as Plotly.PlotlyHTMLElement;
-
-    plotlyEl.on('plotly_hover', (eventData: Plotly.PlotHoverEvent) => {
+    plotElement.on('plotly_hover', (eventData) => {
       const hoveredTraceIndex = eventData.points[0]?.curveNumber;
       if (hoveredTraceIndex == null) return;
 
       for (let i = 0; i < traceCount; i++) {
-        Plotly.restyle(
+        void Plotly.restyle(
           plotElement,
           { opacity: i === hoveredTraceIndex ? activeOpacity : dimmedOpacity },
           [i],
-        );
+        ).catch((error: unknown) => {
+          console.error('BoxplotBuilder: Hover highlight failed.', error);
+        });
       }
     });
 
-    plotlyEl.on('plotly_unhover', () => {
-      for (let i = 0; i < traceCount; i++) {
-        Plotly.restyle(plotElement, { opacity: defaultOpacity }, [i]);
-      }
+    plotElement.on('plotly_unhover', () => {
+      void Plotly.restyle(plotElement, { opacity: defaultOpacity }).catch((error: unknown) => {
+        console.error('BoxplotBuilder: Resetting opacity failed.', error);
+      });
     });
   }
 }

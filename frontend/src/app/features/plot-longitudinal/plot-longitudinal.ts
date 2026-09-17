@@ -52,9 +52,8 @@ export class PlotLongitudinal implements OnInit {
       )
       .subscribe({
         next: (results) => {
-          const flatData = results.flat();
-          this.data.set(flatData);
-          this.generateLineplot();
+          this.data.set(results.flat());
+          void this.generateLineplot();
         },
         error: (err) => this.errorHandler.handleError(err, 'fetching longitudinal data'),
       });
@@ -78,7 +77,8 @@ export class PlotLongitudinal implements OnInit {
     });
   }
 
-  generateLineplot(): void {
+  async generateLineplot(): Promise<void> {
+    if (this.destroyRef.destroyed || this.data().length === 0) return;
     const vars = this.variables();
     const varsString =
       vars.length > 1
@@ -87,15 +87,25 @@ export class PlotLongitudinal implements OnInit {
 
     const title = `Longitudinal follow-ups for ${varsString} in the ${this.cohort()} cohort`;
 
-    this.lineplotBuilder.createLineplot(this.data(), {}, title, 'lineplot');
+    try {
+      await this.lineplotBuilder.createLineplot(this.data(), {}, title, 'lineplot');
 
-    // Force Plotly to resize to container
-    setTimeout(() => {
-      const plotEl = document.getElementById('lineplot');
-      if (plotEl) {
-        Plotly.Plots.resize(plotEl);
+      requestAnimationFrame(() => {
+        if (this.destroyRef.destroyed) return;
+        const plotElement = document.getElementById('lineplot');
+        if (!plotElement) return;
+
+        try {
+          Plotly.Plots.resize(plotElement);
+        } catch (error: unknown) {
+          console.error('Failed to resize longitudinal data.', error);
+        }
+      });
+    } catch (error: unknown) {
+      if (!this.destroyRef.destroyed) {
+        console.error('Failed to render longitudinal plot.', error);
       }
-    }, 100);
+    }
   }
 
   ngOnInit(): void {
