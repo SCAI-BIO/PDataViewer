@@ -1,11 +1,12 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/.github/workflows"
+    directory: "/"
     schedule:
       interval: "weekly"
     labels:
       - "ci/cd"
+
   - package-ecosystem: "uv"
     directory: "/backend"
     schedule:
@@ -17,17 +18,42 @@ updates:
     labels:
       - "chore"
       - "python:uv"
+
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
       interval: "weekly"
+
     groups:
-      all-dependencies:
+      angular:
+        applies-to: version-updates
+        patterns:
+          - "@angular/*"
+          - "@angular-devkit/*"
+        update-types:
+          - "minor"
+          - "patch"
+
+      other-dependencies:
+        applies-to: version-updates
         patterns:
           - "*"
+        exclude-patterns:
+          - "@angular/*"
+          - "@angular-devkit/*"
+
+    ignore:
+      - dependency-name: "@angular/*"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "@angular-devkit/*"
+        update-types:
+          - "version-update:semver-major"
+
     labels:
       - "chore"
       - "typescript"
+
   - package-ecosystem: "docker"
     directories:
       - "/backend"
