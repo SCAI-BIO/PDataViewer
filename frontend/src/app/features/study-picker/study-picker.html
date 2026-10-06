@@ -79,16 +79,115 @@
 
   <!-- Results Table -->
   @if (cohortRankings().length > 0) {
-    <section class="results-section">
+    <section
+      class="results-section responsive-collection"
+      [class.responsive-collection--table]="showMobileTable()"
+    >
       <div class="step-indicator">
         <span class="step-number">2</span>
         <span class="step-label">Results — cohorts ranked by variable match</span>
       </div>
 
-      <div class="table-container">
-        <table mat-table [dataSource]="cohortRankings()">
+      <div class="collection-mobile-toolbar">
+        <button
+          mat-stroked-button
+          class="view-switch"
+          (click)="showMobileTable.set(!showMobileTable())"
+          [attr.aria-pressed]="showMobileTable()"
+        >
+          <mat-icon>{{ showMobileTable() ? 'view_agenda' : 'table_chart' }}</mat-icon>
+          {{ showMobileTable() ? 'Show cards' : 'Compare in table' }}
+        </button>
+        @if (showMobileTable()) {
+          <p class="table-scroll-hint">Swipe across the table to see all columns.</p>
+        }
+      </div>
+
+      <div class="collection-cards" aria-label="Ranked cohorts">
+        @for (cohort of cohortRankings(); track cohort.cohort; let rank = $index) {
+          <article class="record-card">
+            <h2 class="record-heading">
+              <span class="mobile-rank" [attr.aria-label]="'Rank ' + (rank + 1)">{{
+                rank + 1
+              }}</span>
+              <span
+                class="color-indicator"
+                [style.background-color]="cohortColors()[cohort.cohort]"
+                aria-hidden="true"
+              ></span>
+              {{ cohort.cohort }}
+            </h2>
+            <p class="record-primary">
+              <span>Variable match</span><strong>{{ cohort.found }}</strong>
+            </p>
+
+            @if (cohort.missing) {
+              <details class="record-details">
+                <summary>Missing variables</summary>
+                <p class="record-missing">{{ cohort.missing }}</p>
+              </details>
+            } @else {
+              <p class="record-success">
+                <mat-icon>check_circle</mat-icon> All selected variables found
+              </p>
+            }
+
+            <div class="record-actions">
+              @if (isDataAvailable(cohort.cohort)) {
+                <a
+                  mat-stroked-button
+                  routerLink="/plot-longitudinal"
+                  [queryParams]="{
+                    cohort: cohort.cohort,
+                    variables: getAvailableVariables(cohort.missing),
+                  }"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [attr.aria-label]="'View longitudinal plot for ' + cohort.cohort"
+                >
+                  <mat-icon>timeline</mat-icon> Longitudinal plot
+                </a>
+              } @else {
+                <span class="record-note">Longitudinal plot not available.</span>
+              }
+
+              @if (cohortLinks()[cohort.cohort] === 'Shared by consortium') {
+                <span class="access-label"
+                  ><mat-icon class="access-icon">group</mat-icon> Consortium access</span
+                >
+              } @else if (cohortLinks()[cohort.cohort]) {
+                <a
+                  mat-flat-button
+                  color="primary"
+                  [href]="cohortLinks()[cohort.cohort]"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [attr.aria-label]="'Apply for data access to ' + cohort.cohort"
+                >
+                  <mat-icon>launch</mat-icon> Apply for access
+                </a>
+              } @else {
+                <span class="record-note">Data access link not available.</span>
+              }
+            </div>
+          </article>
+        }
+      </div>
+
+      <div
+        class="table-container collection-table"
+        role="region"
+        aria-label="Ranked cohort comparison table; scroll horizontally for more columns"
+        tabindex="0"
+      >
+        <table
+          mat-table
+          class="ranking-table"
+          [dataSource]="cohortRankings()"
+          aria-label="Cohorts ranked by variable availability"
+        >
           <!-- Cohort Column -->
-          <ng-container matColumnDef="cohort">
+          <ng-container matColumnDef="cohort" sticky>
             <th mat-header-cell *matHeaderCellDef>Cohort (Ranked)</th>
             <td mat-cell *matCellDef="let cohort; let i = index">
               <div class="cohort-cell">

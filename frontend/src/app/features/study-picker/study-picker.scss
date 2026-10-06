@@ -94,3 +94,31 @@
     display: none;
   }
 }
+
+.ranking-table {
+  min-width: 780px;
+}
+.ranking-table .mat-column-cohort {
+  min-width: 145px;
+  max-width: 185px;
+  background-color: #ffffff;
+  box-shadow: 1px 0 0 $color-border;
+}
+.ranking-table th.mat-column-cohort {
+  background-color: $color-primary;
+}
+.ranking-table .cohort-name {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.mobile-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: $color-hover;
+  color: $color-primary;
+  font-size: 0.85rem;
+}

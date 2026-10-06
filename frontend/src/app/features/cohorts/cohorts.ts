@@ -1,10 +1,12 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, DestroyRef, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSortModule, MatSort } from '@angular/material/sort';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSortModule, Sort } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 
 import { finalize, map } from 'rxjs';
 
@@ -12,6 +14,12 @@ import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
 import { LoadingSpinner } from '@shared/components/loading-spinner/loading-spinner';
 import type { CohortData } from '@shared/interfaces/metadata';
+import {
+  COHORT_SORT_OPTIONS,
+  sortCohorts,
+  type CohortSortColumn,
+  type CohortSortDirection,
+} from '@shared/utils/cohort-sort';
 
 @Component({
   selector: 'app-cohorts',
@@ -19,7 +27,9 @@ import type { CohortData } from '@shared/interfaces/metadata';
     DecimalPipe,
     LoadingSpinner,
     MatButtonModule,
+    MatFormFieldModule,
     MatIconModule,
+    MatSelectModule,
     MatSortModule,
     MatTableModule,
   ],
@@ -27,27 +37,21 @@ import type { CohortData } from '@shared/interfaces/metadata';
   styleUrl: './cohorts.scss',
 })
 export class Cohorts implements OnInit {
-  // Dependencies
-  private api = inject(Api);
-  private destroyRef = inject(DestroyRef);
-  private errorHandler = inject(ApiErrorHandler);
+  private readonly api = inject(Api);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly errorHandler = inject(ApiErrorHandler);
 
-  // Signals
-  metadata = signal<CohortData[]>([]);
-  isLoading = signal(false);
+  readonly metadata = signal<CohortData[]>([]);
+  readonly isLoading = signal(false);
+  readonly showMobileTable = signal(false);
+  readonly sortColumn = signal<CohortSortColumn>('cohort');
+  readonly sortDirection = signal<CohortSortDirection>('asc');
+  readonly sortOptions = COHORT_SORT_OPTIONS;
+  readonly sortedCohorts = computed(() =>
+    sortCohorts(this.metadata(), this.sortColumn(), this.sortDirection()),
+  );
 
-  // Table Elements
-  dataSource = new MatTableDataSource<CohortData>();
-
-  // Use a setter to assign sort whenever the directive becomes available
-  @ViewChild(MatSort) set matSort(sort: MatSort) {
-    if (sort) {
-      this.dataSource.sort = sort;
-    }
-  }
-
-  // Constants
-  readonly displayedColumns: string[] = [
+  readonly displayedColumns = [
     'cohort',
     'participants',
     'controlParticipants',
@@ -60,34 +64,37 @@ export class Cohorts implements OnInit {
     'link',
   ];
 
+  ngOnInit(): void {
+    this.fetchMetadata();
+  }
+
   fetchMetadata(): void {
     this.isLoading.set(true);
     this.api
       .fetchMetadata()
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        map((data) =>
-          Object.keys(data).map((key) => ({
-            cohort: key,
-            ...data[key],
-          })),
-        ),
+        map((data) => Object.entries(data).map(([cohort, values]) => ({ cohort, ...values }))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: (v) => {
-          this.metadata.set(v);
-          this.dataSource.data = v;
-        },
-        error: (err) => this.errorHandler.handleError(err, 'fetching initial data'),
+        next: (rows) => this.metadata.set(rows),
+        error: (error) => this.errorHandler.handleError(error, 'fetching cohort metadata'),
       });
   }
 
-  openLink(link: string) {
-    if (link) window.open(link, '_blank');
+  setSortColumn(value: CohortSortColumn): void {
+    this.sortColumn.set(value);
   }
 
-  ngOnInit() {
-    this.fetchMetadata();
+  toggleSortDirection(): void {
+    this.sortDirection.update((direction) => (direction === 'asc' ? 'desc' : 'asc'));
+  }
+
+  onSortChange(sort: Sort): void {
+    const option = this.sortOptions.find((item) => item.value === sort.active);
+    if (!option || !sort.direction) return;
+    this.sortColumn.set(option.value);
+    this.sortDirection.set(sort.direction);
   }
 }
