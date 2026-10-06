@@ -1,47 +1,51 @@
-@use '_tokens' as *;
+@use 'tokens' as *;
 
 :host {
   display: block;
+  min-width: 0;
 }
-
-// Only page-specific max-width override
 .page-layout {
   max-width: 1400px;
 }
-
-// Cohort-specific styles (not shared)
-.found-count {
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: $color-primary;
+.cohort-table {
+  min-width: 1050px;
 }
 
-.total-count {
-  font-size: 0.8rem;
-  color: $color-text-muted;
-  margin-left: 2px;
+.cohort-table .mat-column-cohort {
+  min-width: 140px;
+  max-width: 190px;
+  background-color: #ffffff;
+  box-shadow: 1px 0 0 $color-border;
 }
 
-.missing-text {
-  font-size: 0.8rem;
-  color: $color-text-muted;
-  display: inline-block;
-  max-width: 200px;
+.cohort-table th.mat-column-cohort {
+  background-color: $color-primary;
+}
+.cohort-table .cohort-name {
   white-space: normal;
-  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.mobile-sort {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  min-width: 0;
+}
+.mobile-sort mat-form-field {
+  flex: 1;
+  min-width: 0;
+}
+.sort-direction {
+  flex-shrink: 0;
+}
+.cohort-location {
+  margin: 0;
+  color: $color-text-muted;
+  overflow-wrap: anywhere;
 }
 
-.all-found {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  font-size: 0.8rem;
-  color: $color-success;
-  font-weight: 500;
-
-  .all-found-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+@media (max-width: 768px) {
+  .table-container {
+    max-height: none;
   }
 }

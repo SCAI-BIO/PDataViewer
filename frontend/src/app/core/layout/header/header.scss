@@ -5,89 +5,60 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  min-width: 0;
 }
 
 .banner {
-  background: linear-gradient(135deg, #610030, #4d0063);
-  color: white;
   display: flex;
   align-items: center;
-  gap: $spacing-md;
-  padding: 0 $spacing-lg;
+  gap: $spacing-sm;
+  width: 100%;
+  min-width: 0;
   height: 64px;
+  padding: 0 $spacing-lg;
+  background: linear-gradient(135deg, #610030, #4d0063);
+  color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.logo-box {
-  display: flex;
+.logo-link {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+}
 
-  a {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    border-radius: 4px;
-    padding: $spacing-xs;
-    transition: opacity 200ms ease;
-
-    &:hover {
-      opacity: 0.85;
-    }
-  }
-
-  .logo {
-    height: 40px;
-    width: auto;
-  }
+.logo {
+  width: auto;
+  height: 36px;
 }
 
 .site-title {
+  min-width: 0;
   font-size: 20px;
   font-weight: 600;
   white-space: nowrap;
-  letter-spacing: 0.01em;
-  margin-right: $spacing-sm;
 }
 
 .routing-menu {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
+  gap: 2px;
+  margin-left: $spacing-sm;
 
   a {
     --mat-button-text-label-text-color: #ffffff;
     --mat-button-text-state-layer-color: #ffffff;
-    --mat-button-text-ripple-color: rgba(255, 255, 255, 0.12);
-
     color: #ffffff;
-    border-radius: 6px;
-    position: relative;
     font-size: $font-size-small;
-    font-weight: 500;
-    transition:
-      color 200ms ease,
-      background-color 200ms ease;
+  }
 
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    &.nav-active {
-      font-weight: 600;
-      background-color: rgba(255, 255, 255, 0.12);
-
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60%;
-        height: 3px;
-        background-color: #fe6fcf;
-        border-radius: 3px 3px 0 0;
-      }
-    }
+  .nav-active {
+    background-color: rgba(255, 255, 255, 0.12);
+    text-decoration: underline;
+    text-underline-offset: 6px;
   }
 }
 
@@ -95,45 +66,44 @@
   flex: 1;
 }
 
-.github-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  .github-logo {
-    height: 40px;
-    width: auto;
-    display: block;
-    object-fit: contain;
-  }
+.github-button,
+.mobile-menu-trigger {
+  flex-shrink: 0;
+  color: #ffffff;
 }
 
-@media (max-width: 1024px) {
-  .site-title {
+.github-logo {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+.mobile-menu-trigger {
+  display: none;
+}
+.mobile-nav-active {
+  font-weight: 700;
+  background-color: $color-hover;
+}
+
+@media (max-width: 1100px) {
+  .routing-menu {
     display: none;
   }
-
-  .routing-menu {
-    gap: 2px;
-
-    a {
-      padding: 0 12px;
-      font-size: 13px;
-    }
+  .mobile-menu-trigger {
+    display: inline-flex;
   }
 }
 
 @media (max-width: 768px) {
   .banner {
-    padding: 0 $spacing-md;
+    height: 60px;
+    padding: 0 $spacing-sm;
+    gap: 4px;
   }
-
-  .routing-menu {
-    overflow-x: auto;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+  .site-title {
+    font-size: 18px;
+  }
+  .logo {
+    height: 30px;
   }
 }

@@ -16,11 +16,138 @@
 
   <!-- Table -->
   @if (!isLoading()) {
-    <div class="table-wrapper">
-      <div class="table-container">
-        <table mat-table [dataSource]="dataSource" matSort>
+    <div
+      class="table-wrapper responsive-collection"
+      [class.responsive-collection--table]="showMobileTable()"
+    >
+      <div class="collection-mobile-toolbar">
+        <div class="mobile-sort">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Sort cohorts by</mat-label>
+            <mat-select [value]="sortColumn()" (selectionChange)="setSortColumn($event.value)">
+              @for (option of sortOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <button
+            mat-icon-button
+            class="sort-direction"
+            (click)="toggleSortDirection()"
+            [attr.aria-label]="sortDirection() === 'asc' ? 'Sort descending' : 'Sort ascending'"
+          >
+            <mat-icon>{{ sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          </button>
+        </div>
+        <button
+          mat-stroked-button
+          class="view-switch"
+          (click)="showMobileTable.set(!showMobileTable())"
+          [attr.aria-pressed]="showMobileTable()"
+        >
+          <mat-icon>{{ showMobileTable() ? 'view_agenda' : 'table_chart' }}</mat-icon>
+          {{ showMobileTable() ? 'Show cards' : 'Compare in table' }}
+        </button>
+        @if (showMobileTable()) {
+          <p class="table-scroll-hint">Swipe across the table to see all columns.</p>
+        }
+      </div>
+      <div class="collection-cards" aria-label="Cohort studies">
+        @for (cohort of sortedCohorts(); track cohort.cohort) {
+          <article class="record-card">
+            <h2 class="record-heading">
+              <span
+                class="color-indicator"
+                [style.background-color]="cohort.color"
+                aria-hidden="true"
+              ></span>
+              {{ cohort.cohort }}
+            </h2>
+            <p class="record-primary">
+              <strong>{{ (cohort.participants | number) ?? 'N/R' }}</strong>
+              <span>participants</span>
+            </p>
+            <p class="cohort-location">{{ cohort.location || 'Location not reported' }}</p>
+            <details class="record-details">
+              <summary>Study details</summary>
+              <dl class="record-fields">
+                <div>
+                  <dt>Control participants</dt>
+                  <dd>{{ (cohort.controlParticipants | number) ?? 'N/R' }}</dd>
+                </div>
+                <div>
+                  <dt>Prodromal participants</dt>
+                  <dd>{{ (cohort.prodromalParticipants | number) ?? 'N/R' }}</dd>
+                </div>
+                <div>
+                  <dt>PD participants</dt>
+                  <dd>{{ (cohort.pdParticipants | number) ?? 'N/R' }}</dd>
+                </div>
+                <div>
+                  <dt>Participants with ≥ 2 visits</dt>
+                  <dd>{{ (cohort.longitudinalParticipants | number) ?? 'N/R' }}</dd>
+                </div>
+                <div>
+                  <dt>Follow-up interval</dt>
+                  <dd>{{ cohort.followUpInterval || 'N/R' }}</dd>
+                </div>
+              </dl>
+              <p class="record-note">N/R = not reported.</p>
+            </details>
+            <div class="record-actions">
+              @if (cohort.doi) {
+                <a
+                  mat-stroked-button
+                  [href]="cohort.doi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [attr.aria-label]="'Open reference for ' + cohort.cohort"
+                >
+                  <mat-icon>open_in_new</mat-icon> Reference
+                </a>
+              }
+              @if (cohort.link === 'Shared by consortium') {
+                <span class="access-label"
+                  ><mat-icon class="access-icon">group</mat-icon> Consortium access</span
+                >
+              } @else if (cohort.link) {
+                <a
+                  mat-flat-button
+                  color="primary"
+                  [href]="cohort.link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [attr.aria-label]="'Apply for data access to ' + cohort.cohort"
+                >
+                  <mat-icon>launch</mat-icon> Apply for access
+                </a>
+              } @else {
+                <span class="record-note">Data access link not available.</span>
+              }
+            </div>
+          </article>
+        }
+      </div>
+
+      <div
+        class="table-container collection-table"
+        role="region"
+        aria-label="Cohort comparison table; scroll horizontally for more columns"
+        tabindex="0"
+      >
+        <table
+          mat-table
+          class="cohort-table"
+          [dataSource]="sortedCohorts()"
+          matSort
+          [matSortActive]="sortColumn()"
+          [matSortDirection]="sortDirection()"
+          [matSortDisableClear]="true"
+          (matSortChange)="onSortChange($event)"
+          aria-label="Cohort study comparison"
+        >
           <!-- Cohort Name Column -->
-          <ng-container matColumnDef="cohort">
+          <ng-container matColumnDef="cohort" sticky>
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Cohort</th>
             <td mat-cell *matCellDef="let element">
               <div class="cohort-cell">
@@ -153,7 +280,7 @@
       </div>
 
       <!-- Empty state -->
-      @if (dataSource.data.length === 0 && !isLoading()) {
+      @if (sortedCohorts().length === 0 && !isLoading()) {
         <div class="empty-state">
           <mat-icon class="empty-state__icon">search_off</mat-icon>
           <p class="empty-state__message">No cohort data available.</p>

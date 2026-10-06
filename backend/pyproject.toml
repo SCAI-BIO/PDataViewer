@@ -31,6 +31,7 @@ classifiers = [
 
 dependencies = [
     "fastapi[standard]>=0.141.1",
+    "greenlet>=3.5.6",
     "numpy>=2.5.1",
     "pandas>=3.0.5",
     "psycopg[binary]>=3.3.4",

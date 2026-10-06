@@ -64,6 +64,7 @@ export class StudyPicker implements OnInit {
   selectedVariables = signal<string[]>([]);
   variables = signal<string[]>([]);
   isLoading = signal(false);
+  readonly showMobileTable = signal(false);
 
   // Form Controls
   variableCtrl = new FormControl('');

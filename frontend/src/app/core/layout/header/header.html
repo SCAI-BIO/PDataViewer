@@ -1,31 +1,52 @@
 <mat-toolbar class="banner">
-  <div class="logo-box">
-    <a [routerLink]="['/']" aria-label="Go to homepage">
-      <img class="logo" src="logos/logo_white.svg" alt="PDataViewer Logo" />
-    </a>
-  </div>
-
+  <a class="logo-link" routerLink="/" aria-label="PDataViewer home">
+    <img class="logo" src="logos/logo_white.svg" alt="" />
+  </a>
   <span class="site-title">PDataViewer</span>
 
   <nav class="routing-menu" aria-label="Main navigation">
-    <a mat-button [routerLink]="'/cohorts'" routerLinkActive="nav-active">Cohorts</a>
-    <a mat-button [routerLink]="'/biomarkers'" routerLinkActive="nav-active">Biomarkers</a>
-    <a mat-button [routerLink]="'/study-picker'" routerLinkActive="nav-active">Study Picker</a>
-    <a mat-button [routerLink]="'/mappings'" routerLinkActive="nav-active">Mappings</a>
-    <a mat-button [routerLink]="'/longitudinal'" routerLinkActive="nav-active">Longitudinal</a>
-    <a mat-button [routerLink]="'/contact-us'" routerLinkActive="nav-active">Contact Us</a>
+    @for (item of navigation; track item.path) {
+      <a
+        mat-button
+        [routerLink]="item.path"
+        routerLinkActive="nav-active"
+        ariaCurrentWhenActive="page"
+        >{{ item.label }}</a
+      >
+    }
   </nav>
 
-  <div class="spacer"></div>
+  <span class="spacer"></span>
 
   <a
     mat-icon-button
+    class="github-button"
     href="https://github.com/SCAI-BIO/PDataViewer"
     target="_blank"
     rel="noopener noreferrer"
-    aria-label="View project on GitHub"
-    class="github-button"
+    aria-label="View project on GitHub (opens a new tab)"
   >
-    <img src="social-media/github-mark-white.svg" alt="" class="github-logo" />
+    <img class="github-logo" src="social-media/github-mark-white.svg" alt="" />
   </a>
+
+  <button
+    mat-icon-button
+    class="mobile-menu-trigger"
+    [matMenuTriggerFor]="mobileNavigation"
+    aria-label="Open navigation menu"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <mat-menu #mobileNavigation="matMenu" xPosition="before">
+    @for (item of navigation; track item.path) {
+      <a
+        mat-menu-item
+        [routerLink]="item.path"
+        routerLinkActive="mobile-nav-active"
+        ariaCurrentWhenActive="page"
+        >{{ item.label }}</a
+      >
+    }
+  </mat-menu>
 </mat-toolbar>
