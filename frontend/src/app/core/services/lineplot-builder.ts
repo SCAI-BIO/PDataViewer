@@ -4,6 +4,11 @@ import Plotly from 'plotly.js-dist-min';
 import type { Config, Layout, PlotlyHTMLElement, ScatterData } from 'plotly.js-dist-min';
 
 import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
+import {
+  createResponsivePlot,
+  plotLegendHeight,
+  wrapPlotText,
+} from '@shared/utils/responsive-plot';
 
 // Line dash patterns to visually distinguish overlapping traces
 const DASH_PATTERNS = ['solid', 'dash', 'dot', 'dashdot', 'longdash', 'longdashdot'] as const;
@@ -55,7 +60,7 @@ export class LineplotBuilder {
         x: values.map((dataPoint) => dataPoint.months),
         y: percentValues,
         mode: 'lines+markers',
-        name: cohort,
+        name: wrapPlotText(cohort, 24),
         line: {
           color: colors[cohort] || undefined,
           width: 2.5,
@@ -103,6 +108,7 @@ export class LineplotBuilder {
         },
       },
       xaxis: {
+        automargin: true,
         title: {
           text: 'Months in Study',
           font: { size: 13, family: 'Roboto, sans-serif', color: '#5f6368' },
@@ -118,6 +124,7 @@ export class LineplotBuilder {
         tickfont: { size: 11, family: 'Roboto, sans-serif', color: '#5f6368' },
       },
       yaxis: {
+        automargin: true,
         title: {
           text: 'Participant Retention (% of Baseline)',
           font: { size: 13, family: 'Roboto, sans-serif', color: '#5f6368' },
@@ -182,7 +189,6 @@ export class LineplotBuilder {
     };
 
     const config: Partial<Config> = {
-      responsive: true,
       displayModeBar: true,
       displaylogo: false,
       modeBarButtonsToRemove: [
@@ -207,8 +213,44 @@ export class LineplotBuilder {
       throw new Error(errorMessage);
     }
 
-    const plotElement = await Plotly.newPlot(targetElement, traces, layout, config);
-    this.attachHoverHighlight(plotElement, traces.length);
+    const plotElement = await createResponsivePlot(
+      targetElement,
+      traces,
+      layout,
+      config,
+      (width, compact) => {
+        const titleText = wrapPlotText(title, Math.max(20, Math.floor((width - 32) / 8)));
+        const top = titleText.split('<br>').length * 20 + 48;
+        const bottom =
+          plotLegendHeight(
+            cohortEntries.map(([name]) => name),
+            width - 100,
+            compact,
+          ) + 50;
+        return {
+          height: Math.max(450, (compact ? 280 : 340) + top + bottom),
+          margin: { t: top, r: compact ? 12 : 24, b: bottom, l: compact ? 56 : 80 },
+          'title.text': titleText,
+          'title.font.size': compact ? 14 : 16,
+          'title.y': 1,
+          'title.yanchor': 'top',
+          'title.pad.t': 36,
+          'xaxis.tickmode': compact ? 'auto' : 'linear',
+          'xaxis.nticks': compact ? 5 : 0,
+          'xaxis.dtick': 6,
+          'yaxis.title.text': compact
+            ? 'Retention (% of baseline)'
+            : 'Participant Retention (% of Baseline)',
+          'legend.orientation': compact ? 'v' : 'h',
+          'legend.x': compact ? 0 : 0.5,
+          'legend.xanchor': compact ? 'left' : 'center',
+          'legend.yref': 'container',
+          'legend.y': 0,
+          'legend.yanchor': 'bottom',
+        };
+      },
+    );
+    if (plotElement) this.attachHoverHighlight(plotElement, traces.length);
   }
 
   /**

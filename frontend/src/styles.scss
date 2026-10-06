@@ -384,6 +384,7 @@ th {
 
 .output-box {
   width: 100%;
+  min-width: 0;
   max-width: 1400px;
   border-radius: 8px;
   border: 1px solid $color-border;
@@ -392,16 +393,29 @@ th {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
+.plot-scroll {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.plot-scroll-hint {
+  display: none;
+  margin: $spacing-sm;
+  font-size: 0.8rem;
+  color: $color-text-muted;
+}
+
+.output-box:has(.plot-scroll[data-scrollable='true']) .plot-scroll-hint {
+  display: block;
+}
+
 .plot-area {
   width: 100%;
-  min-height: 450px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  min-width: 0;
 
   &:empty {
-    min-height: 0;
-    display: none;
+    height: 0;
   }
 }
 
@@ -569,16 +583,6 @@ mat-chip-row {
   --mdc-chip-label-text-size: 0.85rem;
 }
 
-// ─── Plotly Override (global) ─────────────────────────────────────────────────
-
-.js-plotly-plot,
-.plot-container,
-.plotly,
-.svg-container,
-.main-svg {
-  width: 100% !important;
-}
-
 // ─── Responsive Shared ──────────────────────────────────────────────────────
 
 @media (max-width: 768px) {
@@ -602,8 +606,8 @@ mat-chip-row {
     max-height: 60vh;
   }
 
-  .plot-area {
-    min-height: 300px;
+  .output-box {
+    padding: $spacing-xs;
   }
 
   .step-indicator {

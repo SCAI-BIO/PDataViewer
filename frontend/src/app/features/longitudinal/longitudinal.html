@@ -64,7 +64,14 @@
   @if (hasVisualization()) {
     <section class="output-section">
       <div class="output-box">
-        <div id="lineplot" class="plot-area"></div>
+        <div
+          class="plot-scroll"
+          tabindex="0"
+          role="region"
+          aria-label="Participant follow-up chart"
+        >
+          <div id="lineplot" class="plot-area" appPlotHost></div>
+        </div>
       </div>
     </section>
   }

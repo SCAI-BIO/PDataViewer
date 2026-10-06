@@ -10,19 +10,20 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
-import Plotly from 'plotly.js-dist-min';
 import { finalize, forkJoin } from 'rxjs';
 
 import { ApiErrorHandler } from '@core/services/api-error-handler';
 import { Api } from '@core/services/api';
 import { LineplotBuilder } from '@core/services/lineplot-builder';
 import { LoadingSpinner } from '@shared/components/loading-spinner/loading-spinner';
+import { PlotHost } from '@shared/directives/plot-host';
 import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
 
 @Component({
   selector: 'app-longitudinal',
   imports: [
     LoadingSpinner,
+    PlotHost,
     MatAutocompleteModule,
     MatButtonModule,
     MatFormFieldModule,
@@ -157,19 +158,6 @@ export class Longitudinal implements OnInit {
 
     try {
       await this.lineplotBuilder.createLineplot(data, this.colors(), title, 'lineplot');
-
-      requestAnimationFrame(() => {
-        if (this.destroyRef.destroyed || !this.hasVisualization()) return;
-
-        const plotElement = document.getElementById('lineplot');
-        if (!plotElement) return;
-
-        try {
-          Plotly.Plots.resize(plotElement);
-        } catch (error: unknown) {
-          console.error('Failed to resize longitudinal plot.', error);
-        }
-      });
     } catch (error: unknown) {
       if (!this.destroyRef.destroyed) {
         console.error(error, 'rendering longitudinal plot.', error);

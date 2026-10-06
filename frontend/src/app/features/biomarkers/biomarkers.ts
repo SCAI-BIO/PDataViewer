@@ -12,18 +12,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import Plotly from 'plotly.js-dist-min';
 import { finalize, forkJoin, map } from 'rxjs';
 
 import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
 import { LoadingSpinner } from '@shared/components/loading-spinner/loading-spinner';
+import { PlotHost } from '@shared/directives/plot-host';
+import { purgeResponsivePlot } from '@shared/utils/responsive-plot';
 import { BoxplotBuilder } from './services/boxplot-builder';
 
 @Component({
   selector: 'app-biomarkers',
   imports: [
     LoadingSpinner,
+    PlotHost,
     MatAutocompleteModule,
     MatButtonModule,
     MatChipsModule,
@@ -182,18 +184,6 @@ export class Biomarkers implements OnInit {
         this.showDataPoints(),
         'boxplot',
       );
-
-      requestAnimationFrame(() => {
-        if (this.destroyRef.destroyed) return;
-        const plotElement = document.getElementById('boxplot');
-        if (!plotElement) return;
-
-        try {
-          Plotly.Plots.resize(plotElement);
-        } catch (error: unknown) {
-          console.error('Failed to resize biomarker boxplot.', error);
-        }
-      });
     } catch (error: unknown) {
       if (!this.destroyRef.destroyed) {
         console.error('Failed to render biomarker boxplot.', error);
@@ -217,7 +207,7 @@ export class Biomarkers implements OnInit {
       this.biomarkerData.set({});
       const plotContainer = document.getElementById('boxplot');
       if (plotContainer) {
-        Plotly.purge(plotContainer);
+        purgeResponsivePlot(plotContainer);
       }
       this.fetchCohorts();
       this.fetchDiagnoses();
