@@ -176,6 +176,22 @@ export class ChordBuilder {
     this.drawGroupLabels(svgGroup, grouped, outerRadius);
     this.drawNodeLabels(svgGroup, chords, nodes, outerRadius);
     this.drawRibbons(svgGroup, chords, innerRadius);
+
+    // Include the actual labels instead of scaling a fixed square with empty padding.
+    const bounds = svgGroup.node()?.getBBox();
+    if (bounds && bounds.width > 0 && bounds.height > 0) {
+      const padding = 24;
+      svgGroup.attr('transform', null);
+      svg.attr(
+        'viewBox',
+        `${bounds.x - padding} ${bounds.y - padding} ${bounds.width + padding * 2} ${bounds.height + padding * 2}`,
+      );
+      svg.style('min-width', `${Math.max(720, Math.ceil(bounds.width + padding * 2))}px`);
+    }
+
+    if (svgElement instanceof HTMLElement) {
+      svgElement.scrollLeft = (svgElement.scrollWidth - svgElement.clientWidth) / 2;
+    }
   }
 
   /**
@@ -252,7 +268,6 @@ export class ChordBuilder {
       .attr('width', '100%')
       .attr('height', '100%')
       .attr('viewBox', `0 0 ${width + extraPadding} ${height + extraPadding}`)
-      .style('overflow', 'visible') // prevents clipping of filter effects
       .append('g')
       .attr('transform', `translate(${(width + extraPadding) / 2},${(height + extraPadding) / 2})`);
   }

@@ -148,7 +148,15 @@
   @if (selectedCohorts().length > 0) {
     <section class="output-section">
       <div class="output-box">
-        <div id="boxplot" class="plot-area"></div>
+        <p class="plot-scroll-hint">Swipe or scroll sideways to compare all cohorts.</p>
+        <div
+          class="plot-scroll"
+          tabindex="0"
+          role="region"
+          aria-label="Biomarker distribution chart"
+        >
+          <div id="boxplot" class="plot-area" appPlotHost></div>
+        </div>
       </div>
     </section>
   }

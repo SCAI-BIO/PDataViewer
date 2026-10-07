@@ -2,6 +2,11 @@ import { Injectable } from '@angular/core';
 
 import Plotly from 'plotly.js-dist-min';
 import type { BoxData, Config, Layout, PlotlyHTMLElement } from 'plotly.js-dist-min';
+import {
+  createResponsivePlot,
+  plotLegendHeight,
+  wrapPlotText,
+} from '@shared/utils/responsive-plot';
 
 @Injectable({
   providedIn: 'root',
@@ -30,13 +35,13 @@ export class BoxplotBuilder {
       const values = (data[label] ?? []).filter(Number.isFinite);
       const colorKey = Object.keys(colors).find((cohortName) => cohort.includes(cohortName));
       const boxColor = (colorKey !== undefined ? colors[colorKey] : undefined) ?? '#69b3a2';
-      const categoryLabel = `${cohort}<br>(${diagnosisGroup} | n=${values.length})`;
+      const categoryLabel = `${wrapPlotText(cohort, 16)}<br>${wrapPlotText(diagnosisGroup, 16)}<br>n=${values.length}`;
 
       traces.push({
         type: 'box',
         y: values,
         x: values.map(() => categoryLabel),
-        name: cohort,
+        name: wrapPlotText(cohort, 24),
         boxpoints: showDataPoints ? 'all' : 'outliers',
         jitter: showDataPoints ? 0.5 : 0.3,
         pointpos: showDataPoints ? -1.5 : 0,
@@ -75,6 +80,7 @@ export class BoxplotBuilder {
         },
       },
       yaxis: {
+        automargin: true,
         title: {
           text: 'Values',
           font: { size: 13, family: 'Roboto, sans-serif', color: '#5f6368' },
@@ -88,6 +94,7 @@ export class BoxplotBuilder {
         tickfont: { size: 11, family: 'Roboto, sans-serif', color: '#5f6368' },
       },
       xaxis: {
+        automargin: true,
         title: {
           text: 'Cohort (Diagnosis Group)',
           font: { size: 13, family: 'Roboto, sans-serif', color: '#5f6368' },
@@ -118,7 +125,6 @@ export class BoxplotBuilder {
     };
 
     const config: Partial<Config> = {
-      responsive: true,
       displayModeBar: true,
       displaylogo: false,
       modeBarButtonsToRemove: [
@@ -135,8 +141,44 @@ export class BoxplotBuilder {
       },
     };
 
-    const plotElement = await Plotly.newPlot(targetElement, traces, layout, config);
-    this.attachHoverHighlight(plotElement, traces.length);
+    const plotElement = await createResponsivePlot(
+      targetElement,
+      traces,
+      layout,
+      config,
+      (width, compact, availableWidth) => {
+        const titleText = wrapPlotText(title, Math.max(20, Math.floor((availableWidth - 32) / 8)));
+        const top = titleText.split('<br>').length * 20 + 48;
+        const labelLines = Math.max(
+          1,
+          ...traces.map((trace) => String(trace.x?.[0] ?? '').split('<br>').length),
+        );
+        const bottom =
+          plotLegendHeight([...cohortsSeen], width - 100, compact) + labelLines * 15 + 55;
+        return {
+          height: Math.max(450, (compact ? 280 : 340) + top + bottom),
+          margin: { t: top, r: compact ? 12 : 24, b: bottom, l: compact ? 52 : 80 },
+          'title.text': titleText,
+          'title.xref': 'container',
+          'title.x': availableWidth / (2 * width),
+          'title.xanchor': 'center',
+          'title.font.size': compact ? 14 : 16,
+          'title.y': 1,
+          'title.yanchor': 'top',
+          'title.pad.t': 36,
+          'xaxis.tickangle': 0,
+          'xaxis.title.text': compact ? '' : 'Cohort (Diagnosis Group)',
+          'legend.orientation': compact ? 'v' : 'h',
+          'legend.x': compact ? 0 : 0.5,
+          'legend.xanchor': compact ? 'left' : 'center',
+          'legend.yref': 'container',
+          'legend.y': 0,
+          'legend.yanchor': 'bottom',
+        };
+      },
+      labels.length > 1 ? labels.length * 125 + 90 : 0,
+    );
+    if (plotElement) this.attachHoverHighlight(plotElement, traces.length);
   }
 
   private attachHoverHighlight(plotElement: PlotlyHTMLElement, traceCount: number): void {

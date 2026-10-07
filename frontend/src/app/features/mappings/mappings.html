@@ -92,7 +92,13 @@
 
       <!-- Chord Diagram — keep original class and structure for the builder -->
       <div class="diagram-container">
-        <div class="chord-diagram">
+        <p class="diagram-scroll-hint">Swipe or scroll sideways to explore the diagram.</p>
+        <div
+          class="chord-diagram"
+          tabindex="0"
+          role="region"
+          aria-label="Variable mapping diagram; scroll horizontally to explore"
+        >
           <svg></svg>
         </div>
       </div>

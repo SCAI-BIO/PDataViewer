@@ -2,7 +2,6 @@ import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 
-import Plotly from 'plotly.js-dist-min';
 import { forkJoin } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
@@ -10,11 +9,12 @@ import { Api } from '@core/services/api';
 import { ApiErrorHandler } from '@core/services/api-error-handler';
 import { LineplotBuilder } from '@core/services/lineplot-builder';
 import { LoadingSpinner } from '@shared/components/loading-spinner/loading-spinner';
+import { PlotHost } from '@shared/directives/plot-host';
 import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
 
 @Component({
   selector: 'app-plot-longitudinal',
-  imports: [LoadingSpinner],
+  imports: [LoadingSpinner, PlotHost],
   templateUrl: './plot-longitudinal.html',
   styleUrl: './plot-longitudinal.scss',
 })
@@ -89,18 +89,6 @@ export class PlotLongitudinal implements OnInit {
 
     try {
       await this.lineplotBuilder.createLineplot(this.data(), {}, title, 'lineplot');
-
-      requestAnimationFrame(() => {
-        if (this.destroyRef.destroyed) return;
-        const plotElement = document.getElementById('lineplot');
-        if (!plotElement) return;
-
-        try {
-          Plotly.Plots.resize(plotElement);
-        } catch (error: unknown) {
-          console.error('Failed to resize longitudinal data.', error);
-        }
-      });
     } catch (error: unknown) {
       if (!this.destroyRef.destroyed) {
         console.error('Failed to render longitudinal plot.', error);
