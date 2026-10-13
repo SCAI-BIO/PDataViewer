@@ -1,5 +1,7 @@
 import secrets
+from collections.abc import Iterator
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import TypedDict
 
 import pandas as pd
@@ -10,13 +12,16 @@ from pdataviewer.preprocessing.common import (
     first_mapping_term,
     is_missing_scalar,
     load_cdm_mappings,
+    publish_output_directory,
     require_columns,
     sanitize_filename,
     to_python_scalar,
+    validate_output_directory,
 )
 
 BASELINE_MONTH = 0
 NUMERIC_VARIABLE_RANK = 2
+OUTPUT_COLUMNS = ["participantNumber", "cohort", "measurement", "diagnosis"]
 
 
 class MeasurementRecord(TypedDict):
@@ -31,15 +36,15 @@ def load_numeric_variable_mappings(cdm_directory: Path) -> pd.DataFrame:
     """Load CDM mappings and retain variables with a numeric rank."""
     merged_dataframe = load_cdm_mappings(cdm_directory)
     numeric_rank = pd.to_numeric(merged_dataframe["Rank"], errors="coerce")
-    return merged_dataframe.loc[numeric_rank.eq(NUMERIC_VARIABLE_RANK)].copy()
+    return merged_dataframe.loc[numeric_rank.eq(NUMERIC_VARIABLE_RANK)]
 
 
 def load_baseline_cohorts(patient_level_directory: Path) -> dict[str, pd.DataFrame]:
-    """Load patient-level cohort data and retain baseline visits."""
+    """Load baseline visits without dropping required or all-missing columns."""
     patient_level_files = sorted(patient_level_directory.glob("*.csv"))
 
     if not patient_level_files:
-        raise FileNotFoundError("No patient-level CSV files found in " f"{patient_level_directory}")
+        raise FileNotFoundError(f"No patient-level CSV files found in {patient_level_directory}")
 
     cohorts: dict[str, pd.DataFrame] = {}
 
@@ -47,22 +52,19 @@ def load_baseline_cohorts(patient_level_directory: Path) -> dict[str, pd.DataFra
         dataframe = pd.read_csv(cohort_file, index_col=0, low_memory=False)
         require_columns(dataframe, {"Months", "Diagnosis"}, cohort_file.name)
         months = pd.to_numeric(dataframe["Months"], errors="coerce")
-        baseline_dataframe = dataframe.loc[months.eq(BASELINE_MONTH)].copy()
-        baseline_dataframe = baseline_dataframe.dropna(axis=1, how="all")
-        cohorts[cohort_file.stem] = baseline_dataframe
+        cohorts[cohort_file.stem] = dataframe.loc[months.eq(BASELINE_MONTH)]
 
     return cohorts
 
 
-def extract_variables(cohort_data: dict[str, pd.DataFrame], mapping_dataframe: pd.DataFrame) -> ExtractedVariables:
-    """Extract mapped measurements and diagnoses for each cohort."""
-    require_columns(mapping_dataframe, {"Feature"}, "Variable mapping data")
-    mapped_cohorts = [cohort for cohort in cohort_data if cohort in mapping_dataframe.columns]
-    extracted: ExtractedVariables = {}
+def _iter_variable_mappings(
+    mapping_dataframe: pd.DataFrame, mapped_cohorts: list[str]
+) -> Iterator[tuple[str, str, str]]:
+    """Yield normalized mappings and reject duplicate variable/cohort/column keys."""
+    mapping_columns = ["Feature", *mapped_cohorts]
+    seen_mappings: set[tuple[str, str, str]] = set()
 
-    for _, mapping_row in mapping_dataframe.iterrows():
-        raw_variable = mapping_row["Feature"]
-
+    for raw_variable, *mapping_terms in mapping_dataframe[mapping_columns].itertuples(index=False, name=None):
         if is_missing_scalar(raw_variable):
             continue
 
@@ -71,63 +73,88 @@ def extract_variables(cohort_data: dict[str, pd.DataFrame], mapping_dataframe: p
         if not variable:
             continue
 
-        for cohort in mapped_cohorts:
-            dataframe = cohort_data[cohort]
-            require_columns(dataframe, {"Diagnosis"}, f"Cohort {cohort}")
-            mapped_column = first_mapping_term(mapping_row[cohort])
+        for cohort, raw_mapping in zip(mapped_cohorts, mapping_terms, strict=True):
+            mapped_column = first_mapping_term(raw_mapping)
 
-            if mapped_column is None or mapped_column not in dataframe.columns:
+            if mapped_column is None:
                 continue
 
-            valid_rows = dataframe.loc[
-                dataframe[mapped_column].notna() & dataframe["Diagnosis"].notna(), [mapped_column, "Diagnosis"]
-            ]
+            mapping_key = (variable, cohort, mapped_column)
 
-            if valid_rows.empty:
-                continue
+            if mapping_key in seen_mappings:
+                raise ValueError(
+                    f"Duplicate mapping for variable {variable!r}, cohort {cohort!r}, "
+                    f"and source column {mapped_column!r}"
+                )
 
-            records = [
-                MeasurementRecord(measurement=to_python_scalar(measurement), diagnosis=to_python_scalar(diagnosis))
-                for measurement, diagnosis in valid_rows.itertuples(index=False, name=None)
-            ]
+            seen_mappings.add(mapping_key)
+            yield mapping_key
 
-            extracted.setdefault(variable, {}).setdefault(cohort, []).extend(records)
+
+def extract_variables(cohort_data: dict[str, pd.DataFrame], mapping_dataframe: pd.DataFrame) -> ExtractedVariables:
+    """Extract mapped measurements, preserving repeated values from different rows."""
+    require_columns(mapping_dataframe, {"Feature"}, "Variable mapping data")
+    mapped_cohorts = [cohort for cohort in cohort_data if cohort in mapping_dataframe.columns]
+    diagnosis_masks: dict[str, pd.Series] = {}
+
+    for cohort in mapped_cohorts:
+        dataframe = cohort_data[cohort]
+        require_columns(dataframe, {"Diagnosis"}, f"Cohort {cohort}")
+        diagnosis_masks[cohort] = dataframe["Diagnosis"].notna()
+
+    extracted: ExtractedVariables = {}
+
+    for variable, cohort, mapped_column in _iter_variable_mappings(mapping_dataframe, mapped_cohorts):
+        dataframe = cohort_data[cohort]
+
+        if mapped_column not in dataframe.columns:
+            continue
+
+        valid_rows = dataframe.loc[
+            dataframe[mapped_column].notna() & diagnosis_masks[cohort], [mapped_column, "Diagnosis"]
+        ]
+
+        if valid_rows.empty:
+            continue
+
+        records = extracted.setdefault(variable, {}).setdefault(cohort, [])
+        records.extend(
+            MeasurementRecord(measurement=to_python_scalar(measurement), diagnosis=to_python_scalar(diagnosis))
+            for measurement, diagnosis in valid_rows.itertuples(index=False, name=None)
+        )
 
     return extracted
 
 
 def _build_output_dataframe(variable_data: dict[str, list[MeasurementRecord]]) -> pd.DataFrame:
-    """Create a randomly ordered dataframe for one variable."""
+    """Shuffle rows and assign cohort-local numbers independently for each variable."""
     rows = [
-        {"cohort": cohort, "measurement": record["measurement"], "diagnosis": record["diagnosis"]}
+        (cohort, record["measurement"], record["diagnosis"])
         for cohort, records in variable_data.items()
         for record in records
     ]
 
     if not rows:
-        return pd.DataFrame(columns=["participantNumber", "cohort", "measurement", "diagnosis"])
+        return pd.DataFrame(columns=OUTPUT_COLUMNS)
 
     secrets.SystemRandom().shuffle(rows)
 
-    dataframe = pd.DataFrame(rows, columns=["cohort", "measurement", "diagnosis"])
+    dataframe = pd.DataFrame(rows, columns=OUTPUT_COLUMNS[1:])
     dataframe.insert(0, "participantNumber", dataframe.groupby("cohort", sort=False).cumcount())
     return dataframe
 
 
-def write_variable_files(extracted_variables: ExtractedVariables, output_directory: Path) -> None:
-    """Write one randomly ordered CSV file for each variable."""
-    output_directory.mkdir(parents=True, exist_ok=True)
+def _prepare_output_filenames(extracted_variables: ExtractedVariables) -> dict[str, str]:
+    """Validate all output filenames before writing any CSV files."""
+    filenames: dict[str, str] = {}
     used_filenames: dict[str, str] = {}
 
     for variable, variable_data in extracted_variables.items():
-        output_dataframe = _build_output_dataframe(variable_data)
-
-        if output_dataframe.empty:
+        if not any(variable_data.values()):
             continue
 
         filename = sanitize_filename(variable)
         collision_key = filename.casefold()
-
         existing_variable = used_filenames.setdefault(collision_key, variable)
 
         if existing_variable != variable:
@@ -135,8 +162,33 @@ def write_variable_files(extracted_variables: ExtractedVariables, output_directo
                 f"Variables {existing_variable!r} and {variable!r} resolve to the same output filename: {filename}.csv"
             )
 
-        output_dataframe = output_dataframe.set_index(["participantNumber", "cohort"])
-        output_dataframe.to_csv(output_directory / f"{filename}.csv")
+        filenames[variable] = f"{filename}.csv"
+
+    return filenames
+
+
+def write_variable_files(extracted_variables: ExtractedVariables, output_directory: Path) -> None:
+    """Replace a dedicated biomarker CSV export, removing stale files after generation.
+
+    An empty result publishes an empty directory. Run only one writer at a time;
+    the directory swap uses two renames and is not an atomic exchange for readers.
+    """
+    filenames = _prepare_output_filenames(extracted_variables)
+    validate_output_directory(output_directory)
+    output_directory.parent.mkdir(parents=True, exist_ok=True)
+
+    with TemporaryDirectory(
+        prefix=f".{output_directory.name}-staging-", dir=output_directory.parent
+    ) as temporary_directory:
+        staging_directory = Path(temporary_directory) / "export"
+        staging_directory.mkdir()
+
+        for variable, filename in filenames.items():
+            output_dataframe = _build_output_dataframe(extracted_variables[variable])
+            output_dataframe = output_dataframe.set_index(["participantNumber", "cohort"])
+            output_dataframe.to_csv(staging_directory / filename)
+
+        publish_output_directory(staging_directory, output_directory)
 
 
 def main(data_directory: Path = DEFAULT_DATA_DIRECTORY) -> None:

@@ -1,4 +1,6 @@
 import logging
+from asyncio import CancelledError
+from time import perf_counter
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,7 +11,7 @@ from pdataviewer.database.repositories.cohorts import CohortRepository
 from pdataviewer.database.repositories.concepts import ConceptRepository
 from pdataviewer.database.repositories.longitudinal import LongitudinalRepository
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 def _create_import_service(session: AsyncSession) -> ImportService:
@@ -25,22 +27,40 @@ def _create_import_service(session: AsyncSession) -> ImportService:
 
 
 async def process_import_background(prepared_import: PreparedImport) -> None:
-    """Process a prepared database import in the background."""
-    logger.info(
-        "Starting background import for %r with type %s", prepared_import.filename, prepared_import.upload_type.value
-    )
+    """Process an import in a dedicated session and log its outcome.
+
+    Repositories manage their own transactions, so a ZIP import may commit earlier CSV
+    files before a later file fails. Ordinary failures are logged; cancellation is logged
+    and propagated to the task owner.
+    """
+    started_at = perf_counter()
+    filename = prepared_import.filename
+    upload_type = prepared_import.upload_type.value
+    LOGGER.info("Starting background import for %r with type %s", filename, upload_type)
 
     try:
         async with AsyncSessionLocal() as session:
             import_service = _create_import_service(session)
-
-            try:
-                await import_service.process(prepared_import)
-            except Exception:
-                await session.rollback()
-                raise
-
+            await import_service.process(prepared_import)
+    except CancelledError:
+        LOGGER.warning(
+            "Background import cancelled for %r with type %s after %.2f seconds",
+            filename,
+            upload_type,
+            perf_counter() - started_at,
+        )
+        raise
     except Exception:
-        logger.exception("Background import failed for %r", prepared_import.filename)
+        LOGGER.exception(
+            "Background import failed for %r with type %s after %.2f seconds",
+            filename,
+            upload_type,
+            perf_counter() - started_at,
+        )
     else:
-        logger.info("Background import completed successfully for %r", prepared_import.filename)
+        LOGGER.info(
+            "Background import completed successfully for %r with type %s in %.2f seconds",
+            filename,
+            upload_type,
+            perf_counter() - started_at,
+        )

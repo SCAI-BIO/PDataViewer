@@ -2,13 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import (
-    Enum,
-    ForeignKey,
-    Integer,
-    String,
-    UniqueConstraint,
-)
+from sqlalchemy import Enum, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from pdataviewer.database.models.base import Base
@@ -34,29 +28,33 @@ class Concept(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     variable: Mapped[str] = mapped_column(String, nullable=False)
-
     source_type: Mapped[ConceptSource] = mapped_column(
         Enum(ConceptSource), nullable=False, default=ConceptSource.COHORT
     )
-
     cohort_id: Mapped[int | None] = mapped_column(ForeignKey("cohorts.id", ondelete="CASCADE"), nullable=True)
 
+    # Exclude refresh-expire to avoid implicitly expiring related objects in async sessions.
     mappings_as_source: Mapped[list[Mapping]] = relationship(
-        foreign_keys="Mapping.source_id", back_populates="source", cascade="all, delete-orphan", passive_deletes=True
+        foreign_keys="Mapping.source_id",
+        back_populates="source",
+        cascade="save-update, merge, expunge, delete, delete-orphan",
+        passive_deletes=True,
     )
 
     mappings_as_target: Mapped[list[Mapping]] = relationship(
-        foreign_keys="Mapping.target_id", back_populates="target", cascade="all, delete-orphan", passive_deletes=True
+        foreign_keys="Mapping.target_id",
+        back_populates="target",
+        cascade="save-update, merge, expunge, delete, delete-orphan",
+        passive_deletes=True,
     )
 
     cohort: Mapped[Cohort | None] = relationship(back_populates="concepts")
 
 
 class Mapping(Base):
-    """A mapping from a cohort concept to a target CDM concept."""
+    """A directed mapping from a source CDM concept to a target cohort concept."""
 
     __tablename__ = "mappings"
-
     __table_args__ = (
         UniqueConstraint("source_id", "target_id", "modality", name="uq_mapping_source_target_modality"),
     )

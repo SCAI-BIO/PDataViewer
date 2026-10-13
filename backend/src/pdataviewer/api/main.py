@@ -1,7 +1,7 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
@@ -22,11 +22,11 @@ from pdataviewer.database.models import Base
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
-    """Initialize database tables and dispose of the engine on shutdown."""
-    async with engine.begin() as connection:
-        await connection.run_sync(Base.metadata.create_all)
-
+    """Create missing tables adn dispose of the engine even if startup fails."""
     try:
+        async with engine.begin() as connection:
+            await connection.run_sync(Base.metadata.create_all)
+
         yield
     finally:
         await dispose_engine()
@@ -50,6 +50,7 @@ app.add_middleware(
 
 @app.get("/version", tags=["info"], description="Current API version.", response_model=str)
 def get_current_version() -> str:
+    """Return the current API version."""
     return APP_VERSION
 
 
@@ -63,6 +64,7 @@ app.include_router(database_router.router)
 
 
 @app.get("/", include_in_schema=False, response_class=RedirectResponse)
-def swagger_redirect() -> RedirectResponse:
-    """Redirect the application root to the Swagger documentation"""
-    return RedirectResponse(url="/docs")
+async def swagger_redirect(request: Request) -> RedirectResponse:
+    """Redirect to Swagger documentation, including any deployment path prefix"""
+    root_path = request.scope.get("root_path", "").rstrip("/")
+    return RedirectResponse(url=f"{root_path}/docs")

@@ -30,14 +30,21 @@ class Cohort(Base):
     link: Mapped[str | None] = mapped_column(String(255), nullable=True)
     color: Mapped[str] = mapped_column(String, nullable=False)
 
+    # Exclude refresh-expire to avoid implicitly expiring related objects in async sessions.
     concepts: Mapped[list[Concept]] = relationship(
-        back_populates="cohort", cascade="all, delete-orphan", passive_deletes=True
+        back_populates="cohort",
+        cascade="save-update, merge, expunge, delete, delete-orphan",
+        passive_deletes=True,
     )
 
     longitudinal_measurements: Mapped[list[LongitudinalMeasurement]] = relationship(
-        back_populates="cohort", cascade="all, delete-orphan", passive_deletes=True
+        back_populates="cohort",
+        cascade="save-update, merge, expunge, delete, delete-orphan",
+        passive_deletes=True,
     )
 
     biomarker_measurements: Mapped[list[BiomarkerMeasurement]] = relationship(
-        back_populates="cohort", cascade="all, delete-orphan", passive_deletes=True
+        back_populates="cohort",
+        cascade="save-update, merge, expunge, delete, delete-orphan",
+        passive_deletes=True,
     )

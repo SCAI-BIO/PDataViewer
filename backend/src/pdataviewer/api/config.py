@@ -1,15 +1,47 @@
 from functools import cache
 from urllib.parse import urlsplit
 
-from pydantic import Field, SecretStr, field_validator
+from pydantic import AnyHttpUrl, Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import URL
+
+
+def _validate_http_url(value: str, *, field_name: str, allow_path: bool) -> AnyHttpUrl:
+    """Validate an absolute HTTP URL before applying URL normalization."""
+    if "\\" in value or any(
+        character.isspace() or ord(character) < 32 or ord(character) == 127 for character in value
+    ):
+        raise ValueError(f"{field_name} cannot contain whitespace, control characters, or backslashes")
+
+    parsed_url = urlsplit(value)
+
+    if parsed_url.scheme not in {"http", "https"} or not parsed_url.hostname:
+        raise ValueError(f"{field_name} must be an absolute HTTP or HTTPS URL with a host")
+
+    if parsed_url.username is not None or parsed_url.password is not None:
+        raise ValueError(f"{field_name} cannot contain URL credentials")
+
+    if "?" in value or "#" in value:
+        raise ValueError(f"{field_name} cannot contain a query string or fragment")
+
+    if not allow_path and parsed_url.path not in {"", "/"}:
+        raise ValueError(f"{field_name} must contain only the scheme, host, and optional port")
+
+    # Validate the host and port as well as the URL structure.
+    return AnyHttpUrl(value)
 
 
 class Settings(BaseSettings):
     """Environment-dependent application settings."""
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        validate_by_name=True,
+        validate_by_alias=True,
+    )
+
     postgres_user: str = Field(default="testuser", validation_alias="POSTGRES_USER")
     postgres_password: SecretStr = Field(default=SecretStr("testpass"), validation_alias="POSTGRES_PASSWORD")
     postgres_host: str = Field(default="localhost", validation_alias="POSTGRES_HOST")
@@ -36,41 +68,34 @@ class Settings(BaseSettings):
     @field_validator("keycloak_url")
     @classmethod
     def normalize_keycloak_url(cls, value: str) -> str:
-        """Strip whitespace and trailing slashes from the Keycloak URL."""
+        """Validate the Keycloak base URL, retaining any deployment context path."""
         normalized_url = value.strip().rstrip("/")
+        _validate_http_url(normalized_url, field_name="KEYCLOAK_URL", allow_path=True)
 
-        if not normalized_url:
-            raise ValueError("KEYCLOAK_URL cannot be empty")
-
-        if not normalized_url.startswith(("http://", "https://")):
-            raise ValueError("KEYCLOAK_URL must start with http:// or https://")
-
+        # Preserve the configured spelling because JWT issuer matching is exact.
         return normalized_url
 
     @field_validator("allowed_origins")
     @classmethod
     def validate_allowed_origins(cls, origins: list[str]) -> list[str]:
-        """Validate and normalize the configured CORS origins."""
+        """Validate, normalize, and deduplicate the configured CORS origins."""
         if not origins:
             raise ValueError("ALLOWED_ORIGINS must contain at least one origin")
 
         normalized_origins: list[str] = []
+        seen_origins: set[str] = set()
 
         for origin in origins:
-            normalized_origin = origin.strip().rstrip("/")
+            stripped_origin = origin.strip()
 
-            if normalized_origin == "*":
-                raise ValueError("ALLOWED_ORIGINS cannot contain '*' while " "CORS credentials are enabled")
+            if stripped_origin == "*":
+                raise ValueError("ALLOWED_ORIGINS cannot contain '*' while CORS credentials are enabled")
 
-            parsed_origin = urlsplit(normalized_origin)
+            parsed_origin = _validate_http_url(stripped_origin, field_name="ALLOWED_ORIGINS", allow_path=False)
+            normalized_origin = str(parsed_origin).rstrip("/")
 
-            if parsed_origin.scheme not in {"http", "https"} or not parsed_origin.netloc:
-                raise ValueError(f"Invalid CORS origin: {origin!r}")
-
-            if parsed_origin.path or parsed_origin.query or parsed_origin.fragment:
-                raise ValueError("CORS origins must contain only the scheme, " f"host, and optional port: {origin!r}")
-
-            if normalized_origin not in normalized_origins:
+            if normalized_origin not in seen_origins:
+                seen_origins.add(normalized_origin)
                 normalized_origins.append(normalized_origin)
 
         return normalized_origins
@@ -90,12 +115,12 @@ class Settings(BaseSettings):
     @property
     def keycloak_issuer(self) -> str:
         """Return the configured Keycloak issuer URL."""
-        return f"{self.keycloak_url}/realms/" f"{self.keycloak_realm}"
+        return f"{self.keycloak_url}/realms/{self.keycloak_realm}"
 
     @property
     def keycloak_certs_url(self) -> str:
         """Return the Keycloak JSON Web Key Set URL."""
-        return f"{self.keycloak_issuer}" "/protocol/openid-connect/certs"
+        return f"{self.keycloak_issuer}/protocol/openid-connect/certs"
 
 
 @cache
@@ -123,7 +148,7 @@ KEYCLOAK_CERTS_URL = settings.keycloak_certs_url
 ALLOWED_ORIGINS = settings.allowed_origins
 APP_VERSION = "0.0.3"  # This string will be replaced by CI
 APP_TITLE = "PDATAVIEWER API"
-APP_DESCRIPTION = "API interface to access programmatic functionalities " "of PDATAVIEWER"
+APP_DESCRIPTION = "API interface to access programmatic functionalities of PDATAVIEWER"
 CONTACT_INFO = {"name": "Dr. Marc Jacobs", "email": "marc.jacobs@scai.fraunhofer.de"}
 LICENSE_INFO = {"name": "Apache 2.0", "url": "https://www.apache.org/licenses/LICENSE-2.0.html"}
 
