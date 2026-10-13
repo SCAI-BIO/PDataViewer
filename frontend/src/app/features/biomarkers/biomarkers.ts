@@ -95,7 +95,7 @@ export class Biomarkers implements OnInit {
     const { cohort, diagnosis } = this.splitDiagnosis(cohortAndDiagnosis);
 
     this.api
-      .fetchBiomarkerData(this.selectedBiomarker(), cohort, diagnosis)
+      .fetchBiomarkerData({ biomarker: this.selectedBiomarker(), cohort, diagnosis })
       .pipe(
         finalize(() => this.isLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),
