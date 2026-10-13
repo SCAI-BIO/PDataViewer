@@ -33,7 +33,7 @@ src/pdataviewer/
 
 ## Requirements
 
-- Python 3.14
+- Python 3.15
 - [uv](https://docs.astral.sh/uv/)
 - PostgreSQL 18
 - Docker, when running the application as a container

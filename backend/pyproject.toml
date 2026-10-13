@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "PDataViewer is a web application designed to facilitate this process by ranking cohorts based on variables required in order to investigate specific research questions, providing summary statistics, showcasing the distribution of biomarkers, and participant drop-out rates."
 readme = "README.md"
 license-files = ["LICENSE"]
-requires-python = ">=3.14,<3.15"
+requires-python = ">=3.15,<3.16"
 
 authors = [
     { name = "Mehmet Can Ay", email = "mehmet.ay@scai.fraunhofer.de" },
@@ -25,23 +25,23 @@ keywords = [
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Python :: 3 :: Only",
 ]
 
 dependencies = [
-    "fastapi[standard]>=0.141.1",
+    "fastapi[standard]>=0.143.0",
     "greenlet>=3.5.6",
-    "numpy>=2.5.1",
-    "pandas>=3.0.5",
-    "psycopg[binary]>=3.3.4",
-    "pydantic-settings>=2.14.2",
-    "pyjwt[crypto]>=2.13.0",
-    "sqlalchemy>=2.0.51",
+    "numpy>=2.5.3",
+    "pandas>=3.0.6",
+    "psycopg[binary]>=3.3.6",
+    "pydantic-settings>=2.15.0",
+    "pyjwt[crypto]>=2.15.1",
+    "sqlalchemy>=2.1.4",
 ]
 
 [dependency-groups]
-dev = ["ruff>=0.16.1"]
+dev = ["ruff>=0.17.0"]
 
 [project.urls]
 Homepage = "https://github.com/SCAI-BIO/PDataViewer"
@@ -50,7 +50,7 @@ Documentation = "https://github.com/SCAI-BIO/PDataViewer#readme"
 Tracker = "https://github.com/SCAI-BIO/PDataViewer/issues"
 
 [tool.ruff]
-line-length = 127
+line-length = 119
 
 [tool.ruff.lint]
 select = [
