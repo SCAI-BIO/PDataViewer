@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import Plotly from 'plotly.js-dist-min';
 import type { BoxData, Config, Layout, PlotlyHTMLElement } from 'plotly.js-dist-min';
@@ -8,9 +8,7 @@ import {
   wrapPlotText,
 } from '@shared/utils/responsive-plot';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class BoxplotBuilder {
   async createBoxplot(
     data: Record<string, number[]>,
