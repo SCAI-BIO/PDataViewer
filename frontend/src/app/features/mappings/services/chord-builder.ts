@@ -1,6 +1,6 @@
-import { inject, Injectable } from '@angular/core';
-import * as d3 from 'd3';
+import { inject, Service } from '@angular/core';
 
+import * as d3 from 'd3';
 import { map } from 'rxjs';
 
 import { Api } from '@core/services/api';
@@ -11,9 +11,8 @@ import type {
   LabeledChordGroup,
 } from '@shared/interfaces/chord-diagram';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ChordBuilder {
-  dataChunks: ChordData[] = [];
   private apiService = inject(Api);
   private colors: Record<string, string> = {};
 
@@ -136,8 +135,6 @@ export class ChordBuilder {
     if (currentNodes.length > 0) {
       chunks.push({ nodes: currentNodes, links: currentLinks });
     }
-
-    this.dataChunks = chunks;
     return chunks;
   }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import Plotly from 'plotly.js-dist-min';
 import type { Config, Layout, PlotlyHTMLElement, ScatterData } from 'plotly.js-dist-min';
@@ -13,9 +13,7 @@ import {
 // Line dash patterns to visually distinguish overlapping traces
 const DASH_PATTERNS = ['solid', 'dash', 'dot', 'dashdot', 'longdash', 'longdashdot'] as const;
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class LineplotBuilder {
   async createLineplot(
     data: LongitudinalData[],
@@ -44,12 +42,7 @@ export class LineplotBuilder {
     const traces: ScatterData[] = cohortEntries.map(([cohort, values], index): ScatterData => {
       // Sort by months for clean line rendering
       values.sort((a, b) => a.months - b.months);
-
-      const percentValues = values.map((dataPoint) =>
-        dataPoint.totalPatientCount > 0
-          ? (dataPoint.patientCount / dataPoint.totalPatientCount) * 100
-          : 0,
-      );
+      const percentValues = values.map((point) => this.getRetentionPercentage(point));
 
       // Determine dash pattern based on overlap group
       const dashIndex = overlapGroups.get(cohort) ?? 0;
@@ -92,6 +85,7 @@ export class LineplotBuilder {
           bordercolor: colors[cohort] || '#610030',
           font: { size: 12, family: 'Roboto, sans-serif', color: '#1a1a1a' },
         },
+        connectgaps: false,
       };
     });
 
@@ -265,11 +259,9 @@ export class LineplotBuilder {
     for (const [cohort, values] of cohortEntries) {
       const sorted = [...values].sort((a, b) => a.months - b.months);
       const sig = sorted
-        .map((dp) => {
-          const pct = (
-            dp.totalPatientCount > 0 ? (dp.patientCount / dp.totalPatientCount) * 100 : 0
-          ).toFixed(1);
-          return `${dp.months}:${pct}`;
+        .map((point) => {
+          const percentage = this.getRetentionPercentage(point);
+          return `${point.months}:${percentage?.toFixed(1) ?? 'missing'}`;
         })
         .join('|');
 
@@ -324,17 +316,21 @@ export class LineplotBuilder {
       const hoveredTraceIndex = eventData.points[0]?.curveNumber;
       if (hoveredTraceIndex == null) return;
 
-      for (let i = 0; i < traceCount; i++) {
-        void Plotly.restyle(
-          plotElement,
-          {
-            opacity: i === hoveredTraceIndex ? activeOpacity : dimmedOpacity,
-          },
-          [i],
-        ).catch((error: unknown) => {
-          console.error('LineplotBuilder: Hover highlight failed.', error);
-        });
+      const otherTraceIndices = Array.from({ length: traceCount }, (_, index) => index).filter(
+        (index) => index !== hoveredTraceIndex,
+      );
+
+      const updates = [
+        Plotly.restyle(plotElement, { opacity: activeOpacity }, [hoveredTraceIndex]),
+      ];
+
+      if (otherTraceIndices.length > 0) {
+        updates.push(Plotly.restyle(plotElement, { opacity: dimmedOpacity }, otherTraceIndices));
       }
+
+      void Promise.all(updates).catch((error: unknown) => {
+        console.error('LineplotBuilder: Hover highlight failed', error);
+      });
     });
 
     plotElement.on('plotly_unhover', () => {
@@ -344,5 +340,21 @@ export class LineplotBuilder {
         console.error('LineplotBuilder: Resetting opacity failed.', error);
       });
     });
+  }
+
+  private getRetentionPercentage(dataPoint: LongitudinalData): number | null {
+    const { patientCount, totalPatientCount } = dataPoint;
+
+    if (
+      !Number.isFinite(patientCount) ||
+      !Number.isFinite(totalPatientCount) ||
+      patientCount < 0 ||
+      totalPatientCount <= 0
+    ) {
+      return null;
+    }
+
+    const percentage = (patientCount / totalPatientCount) * 100;
+    return Number.isFinite(percentage) ? percentage : null;
   }
 }

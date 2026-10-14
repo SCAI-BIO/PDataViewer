@@ -1,31 +1,25 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Service, inject } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 import { environment } from '@environments/environment';
+import type { BiomarkerDataRequest } from '@shared/interfaces/biomarker';
 import type { ChordData } from '@shared/interfaces/chord-diagram';
 import type { LongitudinalData } from '@shared/interfaces/longitudinal-data';
 import type { Metadata } from '@shared/interfaces/metadata';
 import type { RankData } from '@shared/interfaces/rankdata';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class Api {
   private readonly apiUrl = environment.apiUrl;
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
 
-  fetchBiomarkerData(biomarker: string, cohort: string, diagnosis: string): Observable<number[]> {
-    const params = new HttpParams()
-      .set('biomarker', biomarker)
-      .set('cohort', cohort)
-      .set('diagnosis', diagnosis);
+  fetchBiomarkerData({ biomarker, cohort, diagnosis }: BiomarkerDataRequest): Observable<number[]> {
     return this.http.get<number[]>(
-      `${this.apiUrl}/biomarkers/cohorts/${encodeURIComponent(
-        cohort,
-      )}/diagnoses/${encodeURIComponent(diagnosis)}`,
-      { params },
+      `${this.apiUrl}/biomarkers/cohorts/${encodeURIComponent(cohort)}` +
+        `/diagnoses/${encodeURIComponent(diagnosis)}`,
+      { params: { biomarker } },
     );
   }
 
@@ -34,9 +28,8 @@ export class Api {
   }
 
   fetchChordsData(modality: string): Observable<ChordData> {
-    const params = new HttpParams().set('modality', modality);
     return this.http.get<ChordData>(`${this.apiUrl}/visualization/chords/`, {
-      params,
+      params: { modality },
     });
   }
 
@@ -45,16 +38,14 @@ export class Api {
   }
 
   fetchCohortsForBiomarker(biomarker: string): Observable<string[]> {
-    const params = new HttpParams().set('biomarker', biomarker);
     return this.http.get<string[]>(`${this.apiUrl}/biomarkers/cohorts`, {
-      params,
+      params: { biomarker },
     });
   }
 
   fetchDiagnosesForBiomarker(biomarker: string): Observable<string[]> {
-    const params = new HttpParams().set('biomarker', biomarker);
     return this.http.get<string[]>(`${this.apiUrl}/biomarkers/diagnoses`, {
-      params,
+      params: { biomarker },
     });
   }
 
