@@ -1,7 +1,7 @@
 cohort,participants,healthyControls,prodromalPatients,pdPatients,longitudinalPatients,followUpInterval,location,doi,link,color
 PPMI,3497,262,958,1127,1244,6 Months,"USA, Europe",https://doi.org/10.1016/j.pneurobio.2011.09.005,https://ida.loni.usc.edu/login.jsp,#d62728
 BIOFIND,232,106,0,126,0,14 Days,USA,https://doi.org/10.1002/mds.26613,https://ida.loni.usc.edu/login.jsp,#1f77b4
-LuxPARK,1018,520,0,498,229,12 Months,Luxembourg,https://doi.org/10.3389/fnagi.2018.00326,Shared by consortium,#ff7f0e
+LuxPARK,1018,520,0,498,229,48 Months,Luxembourg,https://doi.org/10.3389/fnagi.2018.00326,Shared by consortium,#ff7f0e
 LCC,2819,1224,0,1595,178,12 Months,,https://www.michaeljfox.org/news/lrrk2-cohort-consortium,https://www.michaeljfox.org/form/lrrk2-data-use-e-consent,#2ca02c
 Fox Insight,55001,16255,0,38745,13264,3 Months,Online Data Collection,https://doi.org/10.1038/s41597-020-0401-2,https://www.michaeljfox.org/fox-insight,#9467bd
 PRoBaND,2247,0,0,2247,,6 Months,UK,https://doi.org/10.3233/JPD-150662,https://www.dpag.ox.ac.uk/opdc/team/proband-tracking-parkinsons,#8c564b
