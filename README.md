@@ -7,13 +7,12 @@
 </picture>
 
 [![Backend linting](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/backend-linting.yml/badge.svg?branch=main)](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/backend-linting.yml)
-[![Frontend linting](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-linting.yml/badge.svg?branch=main)](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-linting.yml)
-[![Frontend tests](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-tests.yml/badge.svg?branch=main)](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-tests.yml)
+[![Frontend checks](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-checks.yml/badge.svg?branch=main)](https://github.com/SCAI-BIO/PDataViewer/actions/workflows/frontend-checks.yml)
 [![Version](https://img.shields.io/github/v/release/SCAI-BIO/PDataViewer)](https://github.com/SCAI-BIO/PDataViewer/releases)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![DOI](https://zenodo.org/badge/785700235.svg)](https://zenodo.org/doi/10.5281/zenodo.13629127)
 
-PDataViewer is a web application that lets users explore the Parkinson’s disease data landscape and identify cohort datasets suited to their research needs.
+PDataViewer is a React and FastAPI web application that lets researchers explore the Parkinson’s disease data landscape, compare data availability across cohorts, and identify datasets suited to their research needs.
 
 - [PDataViewer](#pdataviewer)
   - [Introduction](#introduction)
@@ -24,6 +23,7 @@ PDataViewer is a web application that lets users explore the Parkinson’s disea
     - [Install the Backend Dependencies](#install-the-backend-dependencies)
     - [Install the Frontend Dependencies](#install-the-frontend-dependencies)
   - [Backend Configuration](#backend-configuration)
+  - [Frontend Configuration](#frontend-configuration)
   - [Usage](#usage)
     - [Run the Backend Locally](#run-the-backend-locally)
     - [Run Backend Preprocessing](#run-backend-preprocessing)
@@ -32,8 +32,7 @@ PDataViewer is a web application that lets users explore the Parkinson’s disea
     - [Run the Frontend via Docker](#run-the-frontend-via-docker)
     - [Run the Frontend and Backend via Docker Compose](#run-the-frontend-and-backend-via-docker-compose)
   - [Development Checks](#development-checks)
-    - [Frontend Linting](#frontend-linting)
-    - [Frontend Tests](#frontend-tests)
+    - [Frontend Checks](#frontend-checks)
     - [Backend Linting](#backend-linting)
     - [Backend Compilation Check](#backend-compilation-check)
   - [Published Container Images](#published-container-images)
@@ -50,7 +49,7 @@ Major Parkinson’s disease cohort datasets were accessed and curated in a data-
 
 ## Project Structure
 
-The repository contains an Angular frontend, a FastAPI backend, and supporting deployment files.
+The repository contains a React + TypeScript frontend built with Vite, a Python FastAPI backend, and supporting container and deployment files.
 
 ```text
 PDataViewer/
@@ -83,13 +82,25 @@ PDataViewer/
 ├── frontend/
 │   ├── public/
 │   ├── src/
-│   │   └── app/
-│   │       ├── core/
-│   │       ├── features/
-│   │       └── shared/
+│   │   ├── app/
+│   │   ├── components/
+│   │   ├── features/
+│   │   │   ├── biomarkers/
+│   │   │   ├── cohorts/
+│   │   │   ├── contact-us/
+│   │   │   ├── home/
+│   │   │   ├── longitudinal/
+│   │   │   ├── mappings/
+│   │   │   └── study-picker/
+│   │   ├── hooks/
+│   │   ├── lib/
+│   │   ├── index.css
+│   │   └── main.tsx
 │   ├── Dockerfile.dev
 │   ├── Dockerfile.prod
-│   └── package.json
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.ts
 ├── docker-compose.yml
 └── README.md
 ```
@@ -108,13 +119,15 @@ backend/src/pdataviewer/database/
 
 The preprocessing package is an offline workflow used to generate biomarker and longitudinal import files. It is not part of the running API.
 
+The frontend uses React Router for navigation, TanStack Query for server state, and a feature-oriented structure. See [frontend/README.md](frontend/README.md) for frontend-specific development instructions.
+
 ## Requirements
 
 For local development:
 
 - [Python](https://www.python.org/) >=3.14, <3.15
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)
-- [Node.js](https://nodejs.org/) 26
+- [Node.js](https://nodejs.org/) 26 (recommended; the frontend also supports the versions listed in its `package.json` `engines` field)
 - npm
 - Git
 - PostgreSQL 18
@@ -173,12 +186,32 @@ KEYCLOAK_URL=http://localhost:8080
 KEYCLOAK_REALM=myrealm
 KEYCLOAK_CLIENT_ID=pdataviewer-api
 
-ALLOWED_ORIGINS='["http://localhost:4200"]'
+ALLOWED_ORIGINS='["http://localhost:5173","http://localhost:8080"]'
 ```
 
-`ALLOWED_ORIGINS` must be a valid JSON array of origin strings.
+`ALLOWED_ORIGINS` must be a valid JSON array of origin strings. The example allows the Vite development server (`5173`) and a locally served Nginx production frontend (`8080`). Adapt these origins to your actual deployment.
 
-Do not commit `.env` files. Environment-specific values should be supplied through local environment variables, Docker, Docker Compose, Kubernetes, or Helm.
+Do not commit backend `.env` files containing credentials. Environment-specific values should be supplied through local environment variables, Docker, Docker Compose, Kubernetes, or Helm.
+
+## Frontend Configuration
+
+Vite embeds public `VITE_*` configuration into the JavaScript bundle **at build time**. The React frontend currently expects the following variable:
+
+| Variable       | Purpose                                                                    |
+| -------------- | -------------------------------------------------------------------------- |
+| `VITE_API_URL` | Base URL for the FastAPI backend; required for the production Docker build |
+
+For local development, create `frontend/.env.local`:
+
+```dotenv
+VITE_API_URL=/api
+```
+
+With the configured Vite development proxy, `/api` requests are forwarded to the local backend (typically `http://localhost:5000`). The proxy works only during Vite development; it is **not** available in the Nginx production image. A production `/api` URL requires an equivalent Nginx or ingress reverse-proxy route; otherwise, build with a browser-accessible absolute API URL.
+
+GitHub Actions supplies `VITE_API_URL` to the production frontend Docker build using a repository variable and a Docker build argument. Updating a runtime container environment variable does **not** change a URL already compiled into the frontend.
+
+The Google Analytics measurement ID is currently configured in the frontend analytics module rather than read from an environment variable. Its script is loaded after explicit consent. A measurement ID is public, but credentials must never be put in `VITE_*` variables.
 
 ## Usage
 
@@ -311,14 +344,15 @@ docker run --rm \
 
 ### Run the Frontend Locally
 
-Start the Angular development server:
+From the repository root, start the Vite development server:
 
 ```bash
 cd frontend
-npm start
+npm ci
+npm run dev
 ```
 
-The web application is available at [localhost:4200](http://localhost:4200).
+The web application is typically available at [localhost:5173](http://localhost:5173). Configure `frontend/.env.local` as described above, and start the FastAPI backend for data-dependent features.
 
 ### Run the Frontend via Docker
 
@@ -327,6 +361,7 @@ From the repository root, build the production frontend image:
 ```bash
 docker build \
   -f frontend/Dockerfile.prod \
+  --build-arg VITE_API_URL=http://localhost:8000 \
   -t pdataviewer-frontend:local \
   frontend
 ```
@@ -336,6 +371,7 @@ On PowerShell:
 ```powershell
 docker build `
   -f frontend/Dockerfile.prod `
+  --build-arg VITE_API_URL=http://localhost:8000 `
   -t pdataviewer-frontend:local `
   frontend
 ```
@@ -349,11 +385,11 @@ docker run --rm \
   pdataviewer-frontend:local
 ```
 
-The application is available at [localhost:8080](http://localhost:8080).
+The application is available at [localhost:8080](http://localhost:8080). This example assumes the backend is accessible from the **browser** at `http://localhost:8000` and allows the frontend's origin (`http://localhost:8080`) in backend CORS settings. Change the build argument for your environment. The production image serves static files using Nginx.
 
 ### Run the Frontend and Backend via Docker Compose
 
-The API and web application can be deployed together with Docker Compose.
+The API and web application can be deployed together with Docker Compose. Before using a Compose configuration created for Angular, ensure it has been migrated to the React Dockerfile, correct frontend port, backend configuration, and build-time `VITE_API_URL`. In particular, Vite's development proxy is not automatically present in a production Nginx container.
 
 Verify that Docker Compose is installed:
 
@@ -383,19 +419,16 @@ docker compose down
 
 ## Development Checks
 
-### Frontend Linting
+### Frontend Checks
+
+The frontend defines one command for CI-compatible linting, testing, type checking, and production bundling:
 
 ```bash
 cd frontend
-npm run lint
+npm run check
 ```
 
-### Frontend Tests
-
-```bash
-cd frontend
-npm test -- --watch=false
-```
+This runs `lint:ci` (Oxlint with warnings denied), `test:run` (Vitest once), and `build` (`tsc -b && vite build`). Individual checks can also be run with `npm run lint`, `npm run typecheck`, `npm run test:run`, and `npm run build`. The frontend workflow can use the same `npm run check` command.
 
 ### Backend Linting
 
@@ -466,9 +499,4 @@ docker run --rm \
   ghcr.io/scai-bio/pdataviewer/backend:<version>
 ```
 
-Stable releases may also be published with the `latest` tag:
-
-```bash
-docker pull ghcr.io/scai-bio/pdataviewer/frontend:latest
-docker pull ghcr.io/scai-bio/pdataviewer/backend:latest
-```
+The release workflow currently publishes versioned tags. Do not assume a `latest` tag exists unless it is explicitly configured in the image metadata action.

@@ -25,30 +25,29 @@ updates:
       interval: "weekly"
 
     groups:
-      angular:
+      react:
         applies-to: version-updates
         patterns:
-          - "@angular/*"
-          - "@angular-devkit/*"
-        update-types:
-          - "minor"
-          - "patch"
+          - "react"
+          - "react-dom"
+          - "react-router"
+          - "@types/react"
+          - "@types/react-dom"
+
+      vite-tooling:
+        applies-to: version-updates
+        patterns:
+          - "vite"
+          - "vitest"
+          - "@vitejs/*"
+          - "@rolldown/*"
+          - "@babel/*"
+          - "babel-plugin-react-compiler"
 
       other-dependencies:
         applies-to: version-updates
         patterns:
           - "*"
-        exclude-patterns:
-          - "@angular/*"
-          - "@angular-devkit/*"
-
-    ignore:
-      - dependency-name: "@angular/*"
-        update-types:
-          - "version-update:semver-major"
-      - dependency-name: "@angular-devkit/*"
-        update-types:
-          - "version-update:semver-major"
 
     labels:
       - "chore"

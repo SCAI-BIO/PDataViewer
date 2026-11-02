@@ -1,29 +1,15 @@
-# FIRST STAGE: Build the Angular Application
-FROM node:26.11 AS build
+FROM node:26.11
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the current directory contents into the working directory
-COPY . .
-
-# Install dependencies
+# Install dependencies separately to cache this layer.
+COPY package.json package-lock.json ./
 RUN npm ci
 
-# Install Angular CLI globally
-RUN npm install -g @angular/cli
+# Copy the React/Vite application.
+COPY . .
 
-# Build the Angular application
-RUN ng build --configuration=development
+EXPOSE 5173
 
-# SECOND STAGE: Serve the application using Nginx
-FROM nginx:1.31.8-alpine
-
-# Copy the built application from the previous stage
-COPY --from=build /app/dist/pdataviewer/browser /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx serve
-CMD ["nginx", "-g", "daemon off;"]
+# Start Vite with hot module replacement.
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173", "--strictPort"]

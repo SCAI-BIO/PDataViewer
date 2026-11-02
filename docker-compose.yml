@@ -1,29 +1,31 @@
-version: "3.8"
-
 services:
   frontend:
-    image: pdataviewer-frontend
+    image: pdataviewer-frontend:dev
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:80"
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:5000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
 
   backend:
-    image: pdataviewer-backend
+    image: pdataviewer-backend:dev
     build:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      USER_NAME: admin
-      PASSWORD: admin
       POSTGRES_USER: testuser
       POSTGRES_PASSWORD: testpass
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_DB: testdb
+      ALLOWED_ORIGINS: '["http://localhost:5173"]'
     ports:
       - "5000:80"
     depends_on:
