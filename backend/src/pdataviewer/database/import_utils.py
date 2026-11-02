@@ -4,6 +4,8 @@ from typing import Any
 
 import pandas as pd
 
+MISSING_TOTAL_SCORE = "No total score."
+
 
 def read_csv_bytes(csv_data: bytes, *, source_name: str, **read_csv_kwargs: Any) -> pd.DataFrame:
     """Read CSV bytes and provide a source-specific validation error."""

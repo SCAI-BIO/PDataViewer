@@ -7,7 +7,13 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pdataviewer.database.import_utils import is_missing_scalar, read_csv_bytes, require_columns, required_string
+from pdataviewer.database.import_utils import (
+    MISSING_TOTAL_SCORE,
+    is_missing_scalar,
+    read_csv_bytes,
+    require_columns,
+    required_string,
+)
 from pdataviewer.database.models import Concept, ConceptSource, Mapping
 from pdataviewer.database.repositories.base import BaseRepository
 from pdataviewer.database.repositories.cohorts import CohortRepository
@@ -170,7 +176,8 @@ class ConceptRepository(BaseRepository):
         if is_missing_scalar(value):
             return []
 
-        return list(dict.fromkeys(part.strip() for part in str(value).split(",") if part.strip()))
+        parts = (part.strip() for part in str(value).split(","))
+        return list(dict.fromkeys(part for part in parts if part and part.casefold() != MISSING_TOTAL_SCORE.casefold()))
 
     async def _insert_cohort_concepts(self, concepts: set[tuple[str, int]]) -> None:
         if not concepts:

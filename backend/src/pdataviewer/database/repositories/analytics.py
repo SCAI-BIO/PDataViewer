@@ -3,12 +3,12 @@ from collections.abc import Iterable
 from itertools import combinations
 
 import pandas as pd
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.engine import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
-from pdataviewer.database.import_utils import required_string
+from pdataviewer.database.import_utils import MISSING_TOTAL_SCORE, required_string
 from pdataviewer.database.models import Cohort, Concept, ConceptSource, Mapping
 from pdataviewer.database.repositories.base import BaseRepository
 from pdataviewer.database.repositories.cohorts import CohortRepository
@@ -35,6 +35,7 @@ def _build_chord_statement(modality: str):
             Concept.source_type == ConceptSource.CDM,
             cohort_concept.source_type == ConceptSource.COHORT,
             Mapping.modality == modality,
+            func.lower(func.trim(cohort_concept.variable)) != MISSING_TOTAL_SCORE.casefold(),
         )
     )
 
@@ -165,6 +166,7 @@ class AnalyticsRepository(BaseRepository):
                 Concept.source_type == ConceptSource.CDM,
                 cohort_concept.source_type == ConceptSource.COHORT,
                 Concept.variable.in_(requested_variables),
+                func.lower(func.trim(cohort_concept.variable)) != MISSING_TOTAL_SCORE.casefold(),
             )
             .distinct()
         )

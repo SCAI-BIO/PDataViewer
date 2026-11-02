@@ -6,10 +6,11 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from pdataviewer.database.import_utils import MISSING_TOTAL_SCORE
+
 BACKEND_DIRECTORY = Path(__file__).resolve().parents[3]
 DEFAULT_DATA_DIRECTORY = Path(os.getenv("PDATAVIEWER_DATA_DIRECTORY", BACKEND_DIRECTORY / "data"))
 
-MISSING_TOTAL_SCORE = "No total score."
 MAPPING_SEPARATOR = ", "
 IGNORED_CDM_COLUMNS = ["CURIE", "Definition", "Synonyms"]
 INVALID_FILENAME_CHARACTERS = re.compile(r'[\\/*?:"<>|]')
