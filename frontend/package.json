@@ -34,8 +34,8 @@
     "react-router": "^8.5.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@rolldown/plugin-babel": "^0.2.4",
+    "@babel/core": "^8.0.10",
+    "@rolldown/plugin-babel": "^0.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/babel__core": "^7.20.5",
     "@types/d3-chord": "^3.0.6",
