@@ -1,22 +1,22 @@
-name: Frontend tests
+name: Frontend checks
 
 on:
   push:
     branches: [main]
     paths:
       - "frontend/**"
-      - ".github/workflows/frontend-tests.yml"
+      - ".github/workflows/frontend-checks.yml"
   pull_request:
     branches: [main]
     paths:
       - "frontend/**"
-      - ".github/workflows/frontend-tests.yml"
+      - ".github/workflows/frontend-checks.yml"
 
 permissions:
   contents: read
 
 concurrency:
-  group: frontend-tests-${{ github.ref }}
+  group: frontend-checks-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
