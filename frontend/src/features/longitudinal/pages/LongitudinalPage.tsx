@@ -17,7 +17,7 @@ const LongitudinalChart = lazy(() =>
 export function LongitudinalPage() {
   const {
     selectedVariable,
-    setSelectedVariable,
+    setUserSelection,
     variables,
     colors,
     variablesQuery,
@@ -55,7 +55,7 @@ export function LongitudinalPage() {
         <VariableSelector
           variables={variables}
           value={selectedVariable}
-          onValueChange={setSelectedVariable}
+          onValueChange={setUserSelection}
           isLoading={variablesQuery.isLoading}
           disabled={variablesQuery.isError && variablesQuery.data === undefined}
         />

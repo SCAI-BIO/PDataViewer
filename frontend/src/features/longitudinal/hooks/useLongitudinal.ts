@@ -8,6 +8,7 @@ import { groupRetentionByCohort } from "../utils/retention";
 
 const EMPTY_VARIABLES: string[] = [];
 const EMPTY_COLORS: Readonly<Record<string, string>> = {};
+const DEFAULT_VARIABLE = "Visit";
 
 function selectCohortColors(metadata: Metadata): Record<string, string> {
   return Object.fromEntries(
@@ -16,8 +17,13 @@ function selectCohortColors(metadata: Metadata): Record<string, string> {
 }
 
 export function useLongitudinal() {
-  const [selectedVariable, setSelectedVariable] = useState("");
+  const [userSelection, setUserSelection] = useState<string | null>(null);
   const variablesQuery = useQuery(longitudinalQueries.variables());
+  const variables = variablesQuery.data ?? EMPTY_VARIABLES;
+
+  const selectedVariable =
+    userSelection ??
+    (variables.includes(DEFAULT_VARIABLE) ? DEFAULT_VARIABLE : "");
 
   const measurementsQuery = useQuery({
     ...longitudinalQueries.byVariable(selectedVariable),
@@ -32,8 +38,8 @@ export function useLongitudinal() {
 
   return {
     selectedVariable,
-    setSelectedVariable,
-    variables: variablesQuery.data ?? EMPTY_VARIABLES,
+    setUserSelection,
+    variables,
     colors: metadataQuery.data ?? EMPTY_COLORS,
     variablesQuery,
     measurementsQuery,
