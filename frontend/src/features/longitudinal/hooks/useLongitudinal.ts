@@ -8,7 +8,7 @@ import { groupRetentionByCohort } from "../utils/retention";
 
 const EMPTY_VARIABLES: string[] = [];
 const EMPTY_COLORS: Readonly<Record<string, string>> = {};
-const DEFAULT_VARIABLE = "Visit";
+const DEFAULT_VARIABLE = "Study Visit";
 
 function selectCohortColors(metadata: Metadata): Record<string, string> {
   return Object.fromEntries(
