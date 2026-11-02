@@ -10,7 +10,7 @@ from pdataviewer.database.import_utils import (
     require_columns,
     required_string,
 )
-from pdataviewer.database.models import Cohort
+from pdataviewer.database.models import Cohort, LongitudinalMeasurement
 from pdataviewer.database.repositories.base import BaseRepository
 
 REQUIRED_METADATA_COLUMNS = {
@@ -45,6 +45,12 @@ class CohortRepository(BaseRepository):
         """Return cohort database identifiers keyed by cohort name."""
         result = await self.session.execute(select(Cohort.name, Cohort.id))
         return {name: cohort_id for name, cohort_id in result.all()}
+
+    async def get_longitudinal_cohort_ids(self) -> set[int]:
+        """Return cohorts with imported longitudinal measurements."""
+        statement = select(LongitudinalMeasurement.cohort_id).distinct()
+        result = await self.session.execute(statement)
+        return set(result.scalars().all())
 
     async def import_metadata(self, csv_data: bytes) -> None:
         """Import cohort metadata from CSV bytes."""
