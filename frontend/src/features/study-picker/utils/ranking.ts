@@ -7,6 +7,7 @@ export interface RankingRow extends RankedCohort {
   readonly color: string | null;
   readonly accessLink: string | null;
   readonly availableVariables: readonly string[];
+  readonly longitudinalDataAvailable: boolean | null;
 }
 
 export function prepareRankingRows(
@@ -28,7 +29,9 @@ export function prepareRankingRows(
       ...ranking,
       rank: index + 1,
       color: cohortMetadata?.color ?? null,
-      accessLink: cohortMetadata.link ?? null,
+      accessLink: cohortMetadata?.link ?? null,
+      longitudinalDataAvailable:
+        cohortMetadata?.longitudinalDataAvailable ?? null,
       availableVariables: submittedVariables.filter(
         (variable) => !missingVariables.has(variable),
       ),
@@ -37,7 +40,10 @@ export function prepareRankingRows(
 }
 
 export function getLongitudinalHref(row: RankingRow): string | null {
-  if (row.availableVariables.length === 0) {
+  if (
+    row.longitudinalDataAvailable !== true ||
+    row.availableVariables.length === 0
+  ) {
     return null;
   }
 

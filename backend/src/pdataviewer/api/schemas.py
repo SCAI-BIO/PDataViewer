@@ -25,6 +25,7 @@ class CohortMetadata(APIModel):
     doi: str | None
     link: str | None
     color: str
+    longitudinal_data_available: bool = False
 
 
 class LongitudinalData(APIModel):

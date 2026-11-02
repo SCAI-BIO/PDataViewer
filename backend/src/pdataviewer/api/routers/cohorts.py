@@ -21,4 +21,10 @@ async def get_cohort_metadata(
 ) -> dict[str, CohortMetadata]:
     """Return cohort metadata indexed by cohort name."""
     cohorts = await repository.get_all()
-    return {cohort.name: CohortMetadata.model_validate(cohort) for cohort in cohorts}
+    available_ids = await repository.get_longitudinal_cohort_ids()
+    return {
+        cohort.name: CohortMetadata.model_validate(cohort).model_copy(
+            update={"longitudinal_data_available": cohort.id in available_ids}
+        )
+        for cohort in cohorts
+    }

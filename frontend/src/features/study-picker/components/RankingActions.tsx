@@ -1,5 +1,11 @@
 import { cn } from "cn";
-import { ChartNoAxesCombined, ExternalLink, Users } from "lucide-react";
+import {
+  Ban,
+  ChartNoAxesCombined,
+  CircleHelp,
+  ExternalLink,
+  Users,
+} from "lucide-react";
 import { Link } from "react-router";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -12,10 +18,40 @@ interface RankingActionProps {
 }
 
 export function LongitudinalAction({ row }: RankingActionProps) {
+  if (row.longitudinalDataAvailable !== true) {
+    const unavailable = row.longitudinalDataAvailable === false;
+
+    return (
+      <span
+        className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-muted px-2.5 py-1.5 text-xs text-muted-foreground"
+        title={
+          unavailable
+            ? "Longitudinal data are not available in PDataViewer"
+            : "Longitudinal data availability could not be determined."
+        }
+      >
+        {unavailable ? (
+          <Ban className="size-4" aria-hidden="true" />
+        ) : (
+          <CircleHelp className="size-4" aria-hidden="true" />
+        )}
+        {unavailable ? "Data unavailable" : "Unknown"}
+      </span>
+    );
+  }
+
   const href = getLongitudinalHref(row);
 
   if (!href) {
-    return <span className="text-sm text-muted-foreground">Not available</span>;
+    return (
+      <span
+        className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-muted px-2.5 py-1.5 text-xs text-muted-foreground"
+        title="No longitudinal data match the selected variables."
+      >
+        <Ban className="size-4" aria-hidden="true" />
+        Not available
+      </span>
+    );
   }
 
   return (

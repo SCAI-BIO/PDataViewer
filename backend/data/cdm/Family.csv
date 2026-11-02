@@ -1,46 +1,31 @@
 Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,UMLS,Fox Insight,DATATOP,PINE,UK Biobank,PostCEPT,SPARX,Rank
-Mother Dementia,SNOMED:429961000,Family history of Dementia - Mother,,,,rfqu_fh_dementia2,,mother_dement_and_alz,,4326002,C2315857,ABRGFamDemMother,,,,,,1
-Father Dementia,SNOMED:429961000,Family history of Dementia - Father,,,,rfqu_fh_dementia1,,father_dement_and_alz,,4326002,C2315857,ABRGFamDemFather,,,,,,1
-Sibling Dementia,SNOMED:429961000,Family history of dementia - Sibling,,,,rfqu_fh_dementia3,,"brother_dement_and_alz, sister_dement_and_alz, hafsib_dement_and_alt",,4326002,C2315857,"ABRGFamDemSibFull,ABRGFamDemSibHalf",,,,,,1
-Mother AD,SNOMED:394877006,Family history of Alzheimer's disease - Mother,,,,rfqu_fh_dementia2,,mother_dement_and_alz,,4216175,C1271045,FamAlzheimerMoth,,,,,,1
-Father AD,SNOMED:394877006,Family history of Alzheimer's disease - Father,,,,rfqu_fh_dementia1,,father_dement_and_alz,,4216175,C1271045,FamAlzheimerFath,,,,,,1
-Sibling AD,SNOMED:394877006,Family history of Alzheimer's disease - Sibling,,,,rfqu_fh_dementia3,,"brother_dement_and_alz, sister_dement_and_alz, hafsib_dement_and_alt",,4216175,C1271045,"FamAlzheimerSib,FamAlzheimerHalfSib",,,,,,1
-Mother Parkinsonism,SNOMED:275117004,Family history of Parkinsonism - Mother,,BIOMOMPD,,,,,,4169013,C2939151,NeurMothCondPark,,,,,,1
-Father Parkinsonism,SNOMED:275117004,Family history of Parkinsonism - Father,,BIODADPD,,,,,,4169013,C2939151,NeurFathCondPark,,,,,,1
-Sibling Parkinsonism,SNOMED:275117004,Family history of Parkinsonism - Sibling,,"FULBROPD, FULSISPD",,,,,,4169013,C2939151,"FamParkinsonSib,FamParkinsonHalfSib",,,,,,1
-Maternal Grandparents Parkinsonism,SNOMED:275117004,Family history of Parkinsonism - Maternal grandparents,,MAGPARPD,MAGPARPD,,,,,4169013,C2939151,,,,,,,1
-Paternal Grandparents Parkinsonism,SNOMED:275117004,Family history of Parkinsonism - Paternal grandparents,,PAGPARPD,PAGPARPD,,,,,4169013,C2939151,,,,,,,1
-Maternal Aunts and Uncles Parkinsonism,SNOMED:275117004,Family history of Parkinsonism - Maternal aunts and uncles,,MATAUPD,MATAUPD,,,,,4169013,C2939151,,,,,,,1
-Paternal Aunts and Uncles Parkinsonism,SNOMED:275117004,Family history of Parkinsonism - Paternal aunts and uncles,,PATAUPD,PATAUPD,,,,,4169013,C2939151,,,,,,,1
-Relatives Parkinsonism,SNOMED:275117004,Family history of Parkinsonism - Relatives,,DISFAMPD,,,,,,4169013,C2939151,,,,,,,1
-Children Parkinsonism,SNOMED:275117004,Family history of Parkinsonism - Children,,KIDSPD,,,,,,4169013,C2939151,NeurChildParkN,,,,,,1
-Mother PD,SNOMED:297240003,Family history of Parkinson's disease - Mother,,BIOMOMPD,BIOMOMPD,rfqu_fh_mother4,biomompd,mother_pd,sum_motherpd,4182334,C0574092,FamParkinsonMoth,,,,,,1
-Father PD,SNOMED:297240003,Family history of Parkinson's disease - Father,,BIODADPD,BIODADPD,rfqu_fh_father4,biodadpd,father_pd,sum_fatherpd,4182334,C0574092,FamParkinsonFath,,,,,,1
-Sibling 1 PD,SNOMED:297240003,Family history of Parkinson's disease - Sibling 1,,"FULSIBPD, HAFSIBPD","FULSIBPD, HAFSIBPD","rfqu_fh_brother1_4, rfqu_fh_sister1_4","fulsibpd, hafsibpd","brother_pd, sister_pd, hafsib_pd","sum_fullsibpd, sum_halfsibpd",4182334,C0574092,NeurSibPark1,,,,,,1
-Sibling 2 PD,SNOMED:297240003,Family history of Parkinson's disease - Sibling 2,,"FULSIBPD, HAFSIBPD","FULSIBPD, HAFSIBPD","rfqu_fh_brother2_4, rfqu_fh_sister2_4","fulsibpd, hafsibpd","brother_pd, sister_pd, hafsib_pd","sum_fullsibpd, sum_halfsibpd",4182334,C0574092,NeurSibPark2,,,,,,1
-Sibling 3 PD,SNOMED:297240003,Family history of Parkinson's disease - Sibling 3,,"FULSIBPD, HAFSIBPD","FULSIBPD, HAFSIBPD","rfqu_fh_brother3_4, rfqu_fh_sister3_4","fulsibpd, hafsibpd","brother_pd, sister_pd, hafsib_pd","sum_fullsibpd, sum_halfsibpd",4182334,C0574092,NeurSibPark3,,,,,,1
-Sibling 4 PD,SNOMED:297240003,Family history of Parkinson's disease - Sibling 4,,"FULSIBPD, HAFSIBPD","FULSIBPD, HAFSIBPD","rfqu_fh_brother4_4, rfqu_fh_sister4_4","fulsibpd, hafsibpd","brother_pd, sister_pd, hafsib_pd","sum_fullsibpd, sum_halfsibpd",4182334,C0574092,NeurSibPark4,,,,,,1
-Sibling 5 PD,SNOMED:297240003,Family history of Parkinson's disease - Sibling 5,,"FULSIBPD, HAFSIBPD","FULSIBPD, HAFSIBPD","rfqu_fh_brother5_4, rfqu_fh_sister5_4","fulsibpd, hafsibpd","brother_pd, sister_pd, hafsib_pd","sum_fullsibpd, sum_halfsibpd",4182334,C0574092,NeurSibPark5,,,,,,1
-Sibling 6 PD,SNOMED:297240003,Family history of Parkinson's disease - Sibling 6,,"FULSIBPD, HAFSIBPD","FULSIBPD, HAFSIBPD","rfqu_fh_brother6_4, rfqu_fh_sister6_4","fulsibpd, hafsibpd","brother_pd, sister_pd, hafsib_pd","sum_fullsibpd, sum_halfsibpd",4182334,C0574092,NeurSibPark6,,,,,,1
-Sibling 7 PD,SNOMED:297240003,Family history of Parkinson's disease - Sibling 7,,"FULSIBPD, HAFSIBPD","FULSIBPD, HAFSIBPD","rfqu_fh_brother7_4, rfqu_fh_sister7_4","fulsibpd, hafsibpd","brother_pd, sister_pd, hafsib_pd","sum_fullsibpd, sum_halfsibpd",4182334,C0574092,NeurSibPark7,,,,,,1
-Sibling 8 PD,SNOMED:297240003,Family history of Parkinson's disease - Sibling 8,,"FULSIBPD, HAFSIBPD","FULSIBPD, HAFSIBPD","rfqu_fh_brother8_4, rfqu_fh_sister8_4","fulsibpd, hafsibpd","brother_pd, sister_pd, hafsib_pd","sum_fullsibpd, sum_halfsibpd",4182334,C0574092,NeurSibPark8,,,,,,1
-Maternal Grandparents PD,SNOMED:297240003,Family history of Parkinson's disease - Maternal grandparents,,MAGPARPD,MAGPARPD,,magparpd,matgrand_pd,sum_matgrandpd,4182334,C0574092,"FamParkinsonMatGrMoth,FamParkinsonMatGrFath",,,,,matrnlgrandsnum,1
-Paternal Grandparents PD,SNOMED:297240003,Family history of Parkinson's disease - Paternal grandparents,,PAGPARPD,PAGPARPD,,pagparpd,patgrand_pd,sum_patgrandpd,4182334,C0574092,"FamParkinsonPatGrMoth,FamParkinsonPatGrFath",,,,,patrnlgrandsnum,1
-Maternal Aunts and Uncles PD,SNOMED:297240003,Family history of Parkinson's disease - Maternal aunts and uncles,,MATAUPD,MATAUPD,,mataupd,matauun_pd,sum_mataupd,4182334,C0574092,"FamParkinsonMatAunt,FamParkinsonMatUnc",,,,,matrnlantsuncsnum,1
-Paternal Aunts and Uncles PD,SNOMED:297240003,Family history of Parkinson's disease - Paternal aunts and uncles,,PATAUPD,PATAUPD,,pataupd,patauun_pd,sum_pataupd,4182334,C0574092,"FamParkinsonPatAunt,FamParkinsonPatUnc",,,,,patrnlantsuncsnum,1
-Relatives PD,SNOMED:297240003,Family history of Parkinson's disease - Relatives,,DISFAMPD,,rfqu_fh_parkinsons1,,,sum_fmhx_pd,4182334,C0574092,,,,,,,1
-Children 1 PD,SNOMED:297240003,Family history of Parkinson's disease - Children 1,,KIDSPD,KIDSPD,rfqu_fh_child1_4,kidspd,"malechild_pd, femalechild_pd",sum_childrenpd,4182334,C0574092,NeurChildPark1,,,,,,1
-Children 2 PD,SNOMED:297240003,Family history of Parkinson's disease - Children 2,,KIDSPD,KIDSPD,rfqu_fh_child2_4,kidspd,"malechild_pd, femalechild_pd",sum_childrenpd,4182334,C0574092,NeurChildPark2,,,,,,1
-Children 3 PD,SNOMED:297240003,Family history of Parkinson's disease - Children 3,,KIDSPD,KIDSPD,rfqu_fh_child3_4,kidspd,"malechild_pd, femalechild_pd",sum_childrenpd,4182334,C0574092,NeurChildPark3,,,,,,1
-Children 4 PD,SNOMED:297240003,Family history of Parkinson's disease - Children 4,,KIDSPD,KIDSPD,rfqu_fh_child4_4,kidspd,"malechild_pd, femalechild_pd",sum_childrenpd,4182334,C0574092,NeurChildPark4,,,,,,1
-Children 5 PD,SNOMED:297240003,Family history of Parkinson's disease - Children 5,,KIDSPD,KIDSPD,rfqu_fh_child5_4,kidspd,"malechild_pd, femalechild_pd",sum_childrenpd,4182334,C0574092,NeurChildPark5,,,,,,1
-Children 6 PD,SNOMED:297240003,Family history of Parkinson's disease - Children 6,,KIDSPD,KIDSPD,rfqu_fh_child6_4,kidspd,"malechild_pd, femalechild_pd",sum_childrenpd,4182334,C0574092,NeurChildPark6,,,,,,1
-Children 7 PD,SNOMED:297240003,Family history of Parkinson's disease - Children 7,,KIDSPD,KIDSPD,rfqu_fh_child7_4,kidspd,"malechild_pd, femalechild_pd",sum_childrenpd,4182334,C0574092,NeurChildPark7,,,,,,1
-Children 8 PD,SNOMED:297240003,Family history of Parkinson's disease - Children 8,,KIDSPD,KIDSPD,rfqu_fh_child8_4,kidspd,"malechild_pd, femalechild_pd",sum_childrenpd,4182334,C0574092,NeurChildPark8,,,,,,1
-Father Tremor,SNOMED:430726002,Family history of tremor - Father,,,,rfqu_fh_tremor1,,,,4334466,C2317094,FamTremorFath,,,,,,1
-Mother Tremor,SNOMED:430726002,Family history of tremor - Mother,,,,rfqu_fh_tremor2,,,,4334466,C2317094,FamTremorMoth,,,,,,1
-Sibling Tremor,SNOMED:430726002,Family history of tremor - Sibling,,,,rfqu_fh_tremor3,,,,4334466,C2317094,"FamTremorSib,FamTremorHalfSib",,,,,,1
-Children Tremor,SNOMED:430726002,Family history of tremor - Children,,,,rfqu_fh_tremor5,,,,4334466,C2317094,FamTremorChild,,,,,,1
+Dementia in Mother,SNOMED:429961000,Family history of Dementia - Mother,,,,rfqu_fh_dementia2,,mother_dement_and_alz,,4326002.0,C2315857,ABRGFamDemMother,,,,,,1
+Dementia in Father,SNOMED:429961000,Family history of Dementia - Father,,,,rfqu_fh_dementia1,,father_dement_and_alz,,4326002.0,C2315857,ABRGFamDemFather,,,,,,1
+Dementia in Sibling,SNOMED:429961000,Family history of dementia - Sibling,,,,rfqu_fh_dementia3,,"brother_dement_and_alz, sister_dement_and_alz, hafsib_dement_and_alt",,4326002.0,C2315857,,,,,,,1
+Alzheimer's Disease in Mother,SNOMED:394877006,Family history of Alzheimer's disease - Mother,,,,rfqu_fh_dementia2,,mother_dement_and_alz,,4216175.0,C1271045,FamAlzheimerMoth,,,,,,1
+Alzheimer's Disease in Father,SNOMED:394877006,Family history of Alzheimer's disease - Father,,,,rfqu_fh_dementia1,,father_dement_and_alz,,4216175.0,C1271045,FamAlzheimerFath,,,,,,1
+Alzheimer's Disease in Sibling,SNOMED:394877006,Family history of Alzheimer's disease - Sibling,,,,rfqu_fh_dementia3,,"brother_dement_and_alz, sister_dement_and_alz, hafsib_dement_and_alt",,4216175.0,C1271045,,,,,,,1
+Parkinsonism in Mother,SNOMED:275117004,Family history of Parkinsonism - Mother,,BIOMOMPD,,,,,,4169013.0,C2939151,NeurMothCondPark,,,,,,1
+Parkinsonism in Father,SNOMED:275117004,Family history of Parkinsonism - Father,,BIODADPD,,,,,,4169013.0,C2939151,NeurFathCondPark,,,,,,1
+Parkinsonism in Maternal Grandparents,SNOMED:275117004,Family history of Parkinsonism - Maternal grandparents,,MAGPARPD,MAGPARPD,,,,,4169013.0,C2939151,,,,,,,1
+Parkinsonism in Paternal Grandparents,SNOMED:275117004,Family history of Parkinsonism - Paternal grandparents,,PAGPARPD,PAGPARPD,,,,,4169013.0,C2939151,,,,,,,1
+Parkinsonism in Maternal Aunts and Uncles,SNOMED:275117004,Family history of Parkinsonism - Maternal aunts and uncles,,MATAUPD,MATAUPD,,,,,4169013.0,C2939151,,,,,,,1
+Parkinsonism in Paternal Aunts and Uncles,SNOMED:275117004,Family history of Parkinsonism - Paternal aunts and uncles,,PATAUPD,PATAUPD,,,,,4169013.0,C2939151,,,,,,,1
+Parkinsonism in Relatives,SNOMED:275117004,Family history of Parkinsonism - Relatives,,DISFAMPD,,,,,,4169013.0,C2939151,,,,,,,1
+Parkinsonism in Children,SNOMED:275117004,Family history of Parkinsonism - Children,,KIDSPD,,,,,,4169013.0,C2939151,NeurChildParkN,,,,,,1
+Parkinson's Disease in Mother,SNOMED:297240003,Family history of Parkinson's disease - Mother,,BIOMOMPD,BIOMOMPD,rfqu_fh_mother4,biomompd,mother_pd,sum_motherpd,4182334.0,C0574092,FamParkinsonMoth,,,,,,1
+Parkinson's Disease in Father,SNOMED:297240003,Family history of Parkinson's disease - Father,,BIODADPD,BIODADPD,rfqu_fh_father4,biodadpd,father_pd,sum_fatherpd,4182334.0,C0574092,FamParkinsonFath,,,,,,1
+Parkinson's Disease in Sibling,SNOMED:297240003,Family history of Parkinson's disease,,,,"rfqu_fh_brother1_4, rfqu_fh_sister1_4, rfqu_fh_brother2_4, rfqu_fh_sister2_4, rfqu_fh_brother3_4, rfqu_fh_sister3_4, rfqu_fh_brother4_4, rfqu_fh_sister4_4, rfqu_fh_brother5_4, rfqu_fh_sister5_4, rfqu_fh_brother6_4, rfqu_fh_sister6_4, rfqu_fh_brother7_4, rfqu_fh_sister7_4, rfqu_fh_brother8_4, rfqu_fh_sister8_4",,"brother_pd, sister_pd, hafsib_pd","sum_fullsibpd, sum_halfsibpd",4182334.0,C0574092,,,,,,,1
+Parkinson's Disease Maternal Grandparents,SNOMED:297240003,Family history of Parkinson's disease - Maternal grandparents,,MAGPARPD,MAGPARPD,,magparpd,matgrand_pd,sum_matgrandpd,4182334.0,C0574092,,,,,,matrnlgrandsnum,1
+Parkinson's Disease in Paternal Grandparents,SNOMED:297240003,Family history of Parkinson's disease - Paternal grandparents,,PAGPARPD,PAGPARPD,,pagparpd,patgrand_pd,sum_patgrandpd,4182334.0,C0574092,,,,,,patrnlgrandsnum,1
+Parkinson's Disease in Maternal Aunts and Uncles,SNOMED:297240003,Family history of Parkinson's disease - Maternal aunts and uncles,,MATAUPD,MATAUPD,,mataupd,matauun_pd,sum_mataupd,4182334.0,C0574092,,,,,,matrnlantsuncsnum,1
+Parkinson's Disesae in Paternal Aunts and Uncles,SNOMED:297240003,Family history of Parkinson's disease - Paternal aunts and uncles,,PATAUPD,PATAUPD,,pataupd,patauun_pd,sum_pataupd,4182334.0,C0574092,,,,,,patrnlantsuncsnum,1
+Parkinsos's Disease in Relatives,SNOMED:297240003,Family history of Parkinson's disease - Relatives,,DISFAMPD,,rfqu_fh_parkinsons1,,,sum_fmhx_pd,4182334.0,C0574092,,,,,,,1
+Parkinson's Disease in Children,SNOMED:297240003,Family history of Parkinson's disease - Children,,KIDSPD,KIDSPD,"rfqu_fh_child1_4, rfqu_fh_child2_4, rfqu_fh_child3_4, rfqu_fh_child4_4, rfqu_fh_child5_4, rfqu_fh_child6_4, rfqu_fh_child7_4, rfqu_fh_child8_4",kidspd,"malechild_pd, femalechild_pd",sum_childrenpd,4182334.0,C0574092,"NeurChildPark1, NeurChildPark2, NeurChildPark3, NeurChildPark4, NeurChildPark5, NeurChildPark6, NeurChildPark7, NeurChildPark8",,,,,,1
+Tremor in Father,SNOMED:430726002,Family history of tremor - Father,,,,rfqu_fh_tremor1,,,,4334466.0,C2317094,FamTremorFath,,,,,,1
+Tremor in Mother,SNOMED:430726002,Family history of tremor - Mother,,,,rfqu_fh_tremor2,,,,4334466.0,C2317094,FamTremorMoth,,,,,,1
+Tremor in Sibling,SNOMED:430726002,Family history of tremor - Sibling,,,,rfqu_fh_tremor3,,,,4334466.0,C2317094,,,,,,,1
+Tremor in Children,SNOMED:430726002,Family history of tremor - Children,,,,rfqu_fh_tremor5,,,,4334466.0,C2317094,FamTremorChild,,,,,,1
 R1441G - Family,,"PARK8.Shows a progressive reduction in neurite length and branching; shows an increase in activity in phosphorylation of RAB8A and RAB10; decreases phosphorylation-dependent binding to YWHAG; dbSNP:rs33939927, UniProtKB: Q5S007, VARIANT ID: VAR_024946",,,,,r1441gf,,,,,,,,,,,1
 R1441C - Family,,"PARK8. Shows an increase in activity in both autophosphorylation and  phosphorylation of a generic substrate; loss of interaction with SEC16A; shows an increase in activity in phosphorylation of RAB10; decreases phosphorylation-dependent binding to YWHAG; dbSNP:rs33939927, UniProtKB: Q5S007, VARIANT ID: VAR_024945",,,,,r1441cf,,,,,,,,,,,1
 N1437H - Family,,"Autosomal dominant Parkinson disease 8 (ClinVar), ClinGen: CA343577, ClinVar: RCV000032457, Ensembl: rs74163686, dbSNP: rs74163686",,,,,n1437hf,,,,,,,,,,,1

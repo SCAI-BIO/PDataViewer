@@ -6,6 +6,7 @@ export interface CohortMetadata {
   readonly prodromalParticipants: number | null;
   readonly pdParticipants: number | null;
   readonly longitudinalParticipants: number | null;
+  readonly longitudinalDataAvailable: boolean;
   readonly followUpInterval: string | null;
   readonly location: string | null;
   readonly doi: string | null;
