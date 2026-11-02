@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchVariables } from "@/lib/api/cdm";
 import { fetchMetadata, type Metadata } from "@/lib/api/cohorts";
 
+import { fetchStudyPickerVariables } from "../api";
 import { studyPickerQueries } from "../queries";
 import type { RankedCohort } from "../types";
 
@@ -16,8 +16,8 @@ export function useStudyPicker() {
   const [submittedVariables, setSubmittedVariables] = useState<string[]>([]);
 
   const variablesQuery = useQuery({
-    queryKey: ["cdm", "variables"],
-    queryFn: ({ signal }) => fetchVariables(signal),
+    queryKey: ["study-picker", "variables"],
+    queryFn: ({ signal }) => fetchStudyPickerVariables(signal),
   });
 
   const metadataQuery = useQuery({

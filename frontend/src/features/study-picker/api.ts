@@ -2,6 +2,10 @@ import { api } from "@/lib/api/client";
 
 import type { RankedCohort } from "./types";
 
+export function fetchStudyPickerVariables(signal?: AbortSignal): Promise<string[]> {
+  return api.get<string[]>("/study-picker/variables", { signal });
+}
+
 export function rankCohorts(
   variables: readonly string[],
   signal?: AbortSignal,
