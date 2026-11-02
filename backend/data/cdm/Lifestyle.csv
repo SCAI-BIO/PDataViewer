@@ -1,5 +1,5 @@
 Feature,CURIE,Definition,Synonyms,PPMI,BIOFIND,LuxPARK,LCC,PRoBaND,OPDC,OMOP,UMLS,Fox Insight,DATATOP,PINE,UK Biobank,PostCEPT,SPARX,Rank
-Smoking,NCIT:C173060,Individual's smoking history or smoking habit,Smoking Question,,CIGCURR,rfqu_smoking2,CIGLFREG,smoke_current_amount,merqp_smoking,45880274.0,C0037369,,,,"1239-0.0, 1239-1.0, 1239-2.0, 1239-3.0",,,1
+Tobacco Smoking,NCIT:C173060,Individual's smoking history or smoking habit,Smoking Question,,CIGCURR,rfqu_smoking2,CIGLFREG,smoke_current_amount,merqp_smoking,45880274.0,C0037369,,,,"1239-0.0, 1239-1.0, 1239-2.0, 1239-3.0",,,1
 Smokeless Tobacco Use,NCIT:C137998,"Use of smokeless tobacco in any form, e.g., chewing or sniffing.","Tobacco, Smokeless, Smokeless Tobacco Use",,,,CHWREG,,,903666.0,C4527315,sm7,F1200_25,,,,,1
 Alcohol Consumption,NCIT:C16273,"Consumption of liquids containing ethanol, including the behaviors associated with drinking the alcohol.",Alcohol Consumption,,ALCCURR,rfqu_alcohol2,alclfreg,,,4203148.0,C0001948,,,,"20117-0.0, 20117-1.0, 20117-2.0, 20117-3.0",,,1
 Coffee Consumption,EFO:0004330,Behaviors associated with the ingesting of coffee,caffeine consumption,,,,ccoff,coffee_current,,4022874.0,,,,,"100240-0.0, 100240-1.0, 100240-2.0, 100240-3.0, 100240-4.0",,,1
