@@ -1,5 +1,5 @@
 # Stage 1: Build React/Vite.
-FROM node:26.11 AS build
+FROM node:26.13 AS build
 
 WORKDIR /app
 
