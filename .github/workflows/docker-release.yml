@@ -64,7 +64,7 @@ jobs:
 
           uv version "$VERSION"
 
-      - name: Update frontend Version
+      - name: Update frontend version
         working-directory: frontend
         env:
           VERSION: ${{ steps.version.outputs.value }}
@@ -96,6 +96,8 @@ jobs:
           push: true
           tags: ${{ steps.frontend-meta.outputs.tags }}
           labels: ${{ steps.frontend-meta.outputs.labels }}
+          build-args: |
+            VITE_API_URL=${{ vars.VITE_API_URL }}
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,mode=max,scope=frontend
           sbom: true
