@@ -43,19 +43,17 @@ const MappingsPage = lazy(() =>
   })),
 );
 
+const RaceDistributionPage = lazy(() =>
+  import("@/features/races/pages/RaceDistributionPage").then((module) => ({
+    default: module.RaceDistributionPage,
+  })),
+);
+
 const StudyPickerPage = lazy(() =>
   import("@/features/study-picker/pages/StudyPickerPage").then((module) => ({
     default: module.StudyPickerPage,
   })),
 );
-
-const placeholderRoutes = [
-  { path: "biomarkers", title: "Biomarkers" },
-  { path: "study-picker", title: "Study Picker" },
-  { path: "mappings", title: "Mappings" },
-  { path: "plot-longitudinal", title: "Longitudinal Plot" },
-  { path: "contact-us", title: "Contact Us" },
-];
 
 function RouteLoading() {
   return <LoadingState message="Loading page..." className="min-h-60" />;
@@ -124,20 +122,14 @@ export function AppRouter() {
             }
           />
 
-          {placeholderRoutes.map(({ path, title }) => (
-            <Route
-              key={path}
-              path={path}
-              element={
-                <div className="p-6">
-                  <h1 className="text-2xl font-semibold">{title}</h1>
-                  <p className="mt-2 text-muted-foreground">
-                    This feature has not been migrated yet.
-                  </p>
-                </div>
-              }
-            />
-          ))}
+          <Route
+            path="races"
+            element={
+              <Suspense fallback={<RouteLoading />}>
+                <RaceDistributionPage />
+              </Suspense>
+            }
+          />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

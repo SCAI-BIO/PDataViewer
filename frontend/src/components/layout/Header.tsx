@@ -14,8 +14,9 @@ const navigation = [
   { path: "/cohorts", label: "Cohorts" },
   { path: "/biomarkers", label: "Biomarkers" },
   { path: "/study-picker", label: "Study Picker" },
-  { path: "/mappings", label: "Mappings" },
   { path: "/longitudinal", label: "Longitudinal" },
+  { path: "/mappings", label: "Mappings" },
+  { path: "/races", label: "Race" },
   { path: "/contact-us", label: "Contact Us" },
 ] as const;
 
