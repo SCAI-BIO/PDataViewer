@@ -31,6 +31,18 @@ async def get_race_distribution(
 
 
 @router.get(
+    "/cohorts",
+    description="Get names of cohorts with imported race data.",
+    response_model=list[str],
+)
+async def get_race_cohorts(
+    repository: Annotated[CohortRaceRepository, Depends(get_cohort_race_repository)],
+) -> list[str]:
+    """Return cohorts available for race distribution filtering."""
+    return await repository.get_cohort_names()
+
+
+@router.get(
     "/cohorts/{cohort_name}",
     description="Get race response counts for a specific cohort.",
     response_model=list[CohortRaceData],

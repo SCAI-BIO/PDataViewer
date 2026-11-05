@@ -71,6 +71,15 @@ def _parse_counts_csv(csv_data: bytes) -> list[tuple[int, str, str, dict[str, in
 class CohortRaceRepository(BaseRepository):
     """Read and import aggregated cohort race responses."""
 
+    async def get_cohort_names(self) -> list[str]:
+        """Return names of cohorts with imported race data."""
+        statement = (
+            select(Cohort.name).join(CohortRace, CohortRace.cohort_id == Cohort.id).distinct().order_by(Cohort.name)
+        )
+
+        result = await self.session.execute(statement)
+        return list(result.scalars().all())
+
     async def get_by_cohort(self, cohort_name: str) -> list[CohortRace]:
         """Return race counts for a cohort identified by name."""
         statement = (
