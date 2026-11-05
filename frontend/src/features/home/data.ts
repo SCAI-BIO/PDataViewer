@@ -43,6 +43,15 @@ export const featureSections = [
     path: "/mappings",
     inverted: false,
   },
+  {
+    title: "Race Distribution",
+    description:
+      "Explore the distribution of reported race categories across Parkinson's disease cohorts.",
+    image: "/home/races.svg",
+    alt: "Doughnut chart showing the distribution of reported race categories across cohorts",
+    path: "/races",
+    inverted: true,
+  },
 ] as const;
 
 export type FeatureSectionData = (typeof featureSections)[number];

@@ -15,7 +15,7 @@ from pdataviewer.api.config import (
     SWAGGER_UI_OAUTH_CONFIG,
 )
 from pdataviewer.api.dependencies import dispose_engine, engine
-from pdataviewer.api.routers import biomarkers, cdm, cohorts, longitudinal, study_picker, visualization
+from pdataviewer.api.routers import biomarkers, cdm, cohorts, longitudinal, races, study_picker, visualization
 from pdataviewer.api.routers import database as database_router
 from pdataviewer.database.models import Base
 
@@ -59,6 +59,7 @@ app.include_router(cdm.router)
 app.include_router(cohorts.router)
 app.include_router(visualization.router)
 app.include_router(study_picker.router)
+app.include_router(races.router)
 app.include_router(database_router.router)
 
 

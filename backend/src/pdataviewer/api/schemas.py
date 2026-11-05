@@ -66,6 +66,26 @@ class RankedCohort(APIModel):
     missing: str
 
 
+class RaceDistributionData(APIModel):
+    """Aggregated race selections across cohorts."""
+
+    name: str
+    value: int
+    valid_count: int
+    unknown_count: int
+    missing_count: int
+
+
+class CohortRaceData(APIModel):
+    """Race response counts for an individual cohort."""
+
+    name: str
+    selected_count: int
+    valid_count: int
+    unknown_count: int
+    missing_count: int
+
+
 class MessageResponse(APIModel):
     """A response containing a human-readable status message."""
 
@@ -79,3 +99,4 @@ class UploadType(StrEnum):
     BIOMARKERS = "biomarkers"
     METADATA = "metadata"
     CDM = "cdm"
+    RACE = "race"

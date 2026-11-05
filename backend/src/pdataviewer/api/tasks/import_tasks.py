@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from pdataviewer.api.dependencies import AsyncSessionLocal
 from pdataviewer.api.services.imports import ImportService, PreparedImport
 from pdataviewer.database.repositories.biomarkers import BiomarkerRepository
+from pdataviewer.database.repositories.cohort_race import CohortRaceRepository
 from pdataviewer.database.repositories.cohorts import CohortRepository
 from pdataviewer.database.repositories.concepts import ConceptRepository
 from pdataviewer.database.repositories.longitudinal import LongitudinalRepository
@@ -21,6 +22,7 @@ def _create_import_service(session: AsyncSession) -> ImportService:
         concept_repository=ConceptRepository(session=session, cohort_repository=cohort_repository),
         longitudinal_repository=LongitudinalRepository(session=session, cohort_repository=cohort_repository),
         biomarker_repository=BiomarkerRepository(session=session, cohort_repository=cohort_repository),
+        cohort_race_repository=CohortRaceRepository(session=session),
     )
 
 

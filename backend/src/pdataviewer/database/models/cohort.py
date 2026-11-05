@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from pdataviewer.database.models.base import Base
 
 if TYPE_CHECKING:
+    from pdataviewer.database.models.cohort_race import CohortRace
     from pdataviewer.database.models.concepts import Concept
     from pdataviewer.database.models.measurements import BiomarkerMeasurement, LongitudinalMeasurement
 
@@ -39,5 +40,9 @@ class Cohort(Base):
     )
 
     biomarker_measurements: Mapped[list[BiomarkerMeasurement]] = relationship(
+        back_populates="cohort", cascade="all, delete-orphan", passive_deletes=True
+    )
+
+    race_counts: Mapped[list[CohortRace]] = relationship(
         back_populates="cohort", cascade="all, delete-orphan", passive_deletes=True
     )

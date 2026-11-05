@@ -7,7 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 from pdataviewer.api.config import DATABASE_URL
 from pdataviewer.database.repositories import AnalyticsRepository, CohortRepository, LongitudinalRepository
 from pdataviewer.database.repositories.biomarkers import BiomarkerRepository
+from pdataviewer.database.repositories.cohort_race import CohortRaceRepository
 from pdataviewer.database.repositories.concepts import ConceptRepository
+from pdataviewer.database.repositories.race import RaceRepository
 
 engine: AsyncEngine = create_async_engine(
     DATABASE_URL, pool_size=10, max_overflow=20, pool_timeout=30, pool_pre_ping=True, pool_recycle=1800
@@ -53,6 +55,16 @@ def get_biomarker_repository(session: Annotated[AsyncSession, Depends(get_sessio
     """Provide the biomarker repository."""
     cohort_repository = CohortRepository(session)
     return BiomarkerRepository(session=session, cohort_repository=cohort_repository)
+
+
+def get_race_repository(session: Annotated[AsyncSession, Depends(get_session)]) -> RaceRepository:
+    """Provide the race repository."""
+    return RaceRepository(session=session)
+
+
+def get_cohort_race_repository(session: Annotated[AsyncSession, Depends(get_session)]) -> CohortRaceRepository:
+    """Provide the cohort race repository."""
+    return CohortRaceRepository(session=session)
 
 
 def get_database_engine() -> AsyncEngine:

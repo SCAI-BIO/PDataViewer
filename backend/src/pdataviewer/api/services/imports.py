@@ -13,6 +13,7 @@ from pdataviewer.api.upload_utils import (
     get_variable_name,
 )
 from pdataviewer.database.repositories.biomarkers import BiomarkerRepository
+from pdataviewer.database.repositories.cohort_race import CohortRaceRepository
 from pdataviewer.database.repositories.cohorts import CohortRepository
 from pdataviewer.database.repositories.concepts import ConceptRepository
 from pdataviewer.database.repositories.longitudinal import LongitudinalRepository
@@ -63,11 +64,13 @@ class ImportService:
         concept_repository: ConceptRepository,
         longitudinal_repository: LongitudinalRepository,
         biomarker_repository: BiomarkerRepository,
+        cohort_race_repository: CohortRaceRepository,
     ) -> None:
         self.cohort_repository = cohort_repository
         self.concept_repository = concept_repository
         self.longitudinal_repository = longitudinal_repository
         self.biomarker_repository = biomarker_repository
+        self.cohort_race_repository = cohort_race_repository
 
     async def process(self, prepared_import: PreparedImport) -> None:
         """Process a prepared CSV file or ZIP archive."""
@@ -132,6 +135,9 @@ class ImportService:
 
             case UploadType.BIOMARKERS:
                 await self.biomarker_repository.import_measurements(data, variable_name)
+
+            case UploadType.RACE:
+                await self.cohort_race_repository.import_counts(data)
 
             case _:
                 raise ValueError(f"Unsupported upload type: {upload_type!r}")
