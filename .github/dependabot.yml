@@ -3,14 +3,14 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     labels:
       - "ci/cd"
 
   - package-ecosystem: "uv"
     directory: "/backend"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     groups:
       all-dependencies:
         patterns:
@@ -22,7 +22,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
-      interval: "weekly"
+      interval: "daily"
 
     groups:
       react:
@@ -58,7 +58,7 @@ updates:
       - "/backend"
       - "/frontend"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     labels:
       - "chore"
       - "docker"
